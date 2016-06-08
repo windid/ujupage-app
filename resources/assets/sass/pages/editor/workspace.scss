@@ -1,0 +1,54 @@
+@import "../../bootstrap/mixins/border-radius";
+
+$page-width-2:960px;
+$page-width-pc:400px;
+
+.workspace{
+    margin:45px 0 10px 0;
+    //z-index:809000;
+}
+
+#content-area{
+    position:absolute;
+    //width:$page-width-pc - 2;
+    left:50%;
+    top:45px;
+    //margin-left:-$page-width-pc / 2 + 1;
+    bottom:10px;
+}
+
+.editable-area{
+    position:relative;
+    //width:$page-width-pc;
+    margin:0 auto;
+    border-left:1px dashed #ccc;
+    border-right:1px dashed #ccc;
+    height:100%;
+}
+
+.page-item{
+    position: absolute;
+    z-index:100;
+}
+
+.page-item:hover{
+    outline:1px solid #ccc;
+}
+
+.page-section{
+    top:0px;
+    border-bottom:1px dashed #ccc;
+}
+
+.page-section-operation{
+    position:absolute;
+    top:5px;
+    //left:$page-width-pc + 5;
+    z-index:50;
+    min-width:160px;
+}
+
+.page-section-operation button{
+    box-shadow: 0px 0px 8px #ddd;
+}
+

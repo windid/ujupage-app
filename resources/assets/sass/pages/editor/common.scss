@@ -1,0 +1,17 @@
+
+.fr{
+	float:right;
+}
+
+.fl{
+	float:left;
+}
+
+.flipx {
+    -moz-transform:scaleX(-1);
+    -webkit-transform:scaleX(-1);
+    -o-transform:scaleX(-1);
+    transform:scaleX(-1);
+    /*IE*/
+    filter:FlipH;
+}

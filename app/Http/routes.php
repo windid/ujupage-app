@@ -37,8 +37,12 @@ Route::group(['prefix' => $zone, 'as' => $zone , 'namespace' => ucwords($zone)] 
     Route::post('password/reset', ['as' => '.password.reset.post', 'uses' => 'PasswordController@postReset']);      
 });
 
-Route::get('/', function () {    
+Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('editor', function () {
+    return view('editor');
 });
 
 Blade::setContentTags('[[', ']]');        // for variables and all things Blade

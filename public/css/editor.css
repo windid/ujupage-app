@@ -14,10 +14,11 @@
   z-index: 810000;
   height: 45px;
   width: 100%;
+  min-width: 960px;
   position: fixed;
   top: 0;
   border-bottom: 5px solid #555;
-  background-color: #f9f9f9; }
+  background: #f9f9f9 url("../img/editor_header_bg.gif"); }
 
 .header-holder {
   font-size: 0;
@@ -52,7 +53,8 @@
   background-color: #428bca !important; }
 
 .version-switch {
-  margin: 5px 20px; }
+  margin: 5px 20px;
+  box-shadow: 0px 0px 8px #ddd; }
 
 .toolbar {
   position: fixed;
@@ -64,7 +66,8 @@
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px; }
+  border-bottom-left-radius: 10px;
+  box-shadow: 0px 0px 8px #ddd; }
 
 .toolbar-header {
   border-top-right-radius: 10px;
@@ -90,6 +93,7 @@
   border-top-left-radius: 33px;
   border-bottom-right-radius: 33px;
   border-bottom-left-radius: 33px;
+  box-shadow: 0px 0px 8px #ddd;
   cursor: pointer;
   font-size: 12px;
   color: #333; }
@@ -107,21 +111,39 @@
   margin: 1px; }
 
 .workspace {
-  margin: 45px 0 10px 0;
-  z-index: 809000; }
+  margin: 45px 0 10px 0; }
+
+#content-area {
+  position: absolute;
+  left: 50%;
+  top: 45px;
+  bottom: 10px; }
 
 .editable-area {
   position: relative;
-  width: 960px;
   margin: 0 auto;
   border-left: 1px dashed #ccc;
   border-right: 1px dashed #ccc;
   height: 100%; }
 
 .page-item {
-  position: absolute; }
+  position: absolute;
+  z-index: 100; }
 
 .page-item:hover {
   outline: 1px solid #ccc; }
+
+.page-section {
+  top: 0px;
+  border-bottom: 1px dashed #ccc; }
+
+.page-section-operation {
+  position: absolute;
+  top: 5px;
+  z-index: 50;
+  min-width: 160px; }
+
+.page-section-operation button {
+  box-shadow: 0px 0px 8px #ddd; }
 
 /*# sourceMappingURL=editor.css.map */
