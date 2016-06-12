@@ -18,7 +18,7 @@
   position: fixed;
   top: 0;
   border-bottom: 5px solid #555;
-  background: #f9f9f9 url("../img/editor_header_bg.gif"); }
+  background: #f9f9f9; }
 
 .header-holder {
   font-size: 0;

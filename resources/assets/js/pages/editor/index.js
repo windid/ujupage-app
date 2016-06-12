@@ -1,14 +1,12 @@
-var Vue = require('vue')
-var editor = require('./components/editor.vue')
+import Vue from 'vue'
+import editor from './components/editor.vue'
 
 new Vue({
   el: 'body',
   components: { editor }
 })
 
-console.log(page);
-
-var sections = [
+var pageSections = [
   {
     style:{"background":"#900","height":200},
     elements:{
@@ -56,5 +54,3 @@ var sections = [
     },
   }
 ];
-
-page.init(sections);
