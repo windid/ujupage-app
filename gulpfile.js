@@ -28,7 +28,7 @@ elixir(function(mix) {
 });
 
 elixir(function(mix) {
-    mix.webpack('pages/editor/index.js', {
+    mix.webpack('editor/index.js', {
         module: {
             loaders: [
                 {test: /\.css$/, loader: 'style-loader!css-loader'},
