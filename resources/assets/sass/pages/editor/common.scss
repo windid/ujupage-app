@@ -1,17 +1,30 @@
 
 .fr{
-	float:right;
+  float:right;
 }
 
 .fl{
-	float:left;
+  float:left;
 }
 
 .flipx {
-    -moz-transform:scaleX(-1);
-    -webkit-transform:scaleX(-1);
-    -o-transform:scaleX(-1);
-    transform:scaleX(-1);
-    /*IE*/
-    filter:FlipH;
+  -moz-transform:scaleX(-1);
+  -webkit-transform:scaleX(-1);
+  -o-transform:scaleX(-1);
+  transform:scaleX(-1);
+  /*IE*/
+  filter:FlipH;
+}
+
+.shadow {
+  box-shadow: 0px 0px 8px #ddd;
+}
+
+.btn {
+  @extend .shadow;
+}
+
+html,body{
+  height:100%;
+  overflow:hidden;
 }

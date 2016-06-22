@@ -5,59 +5,55 @@ $tool-border-color: #BEE1F1;
 $tool-border-color-hover: #98CFE9;
 
 .toolbar{
-	position:fixed;
-	z-index:810000;
-	width:$tool-size + 20px;
-	text-align:center;
-	top:55px;
-	left:10px;
-	@include border-top-radius(10px);
-	@include border-bottom-radius(10px);
-	box-shadow: 0px 0px 8px #ddd;
+  position:fixed;
+  z-index:810000;
+  width:$tool-size + 20px;
+  text-align:center;
+  top:55px;
+  left:10px;
+  @include border-top-radius(10px);
+  @include border-bottom-radius(10px);
 }
 
 
 .toolbar-header{
-	@include border-top-radius(10px);
-	background-color:#555;
-	line-height:35px;
-	color:#fff;
+  @include border-top-radius(10px);
+  background-color:#555;
+  line-height:35px;
+  color:#fff;
 }
 
 .toolbar-body{
-	border:1px solid #ccc;
-	background-color:#fff;
-	padding:10px;
-	@include border-bottom-radius(10px);
+  border:1px solid #ccc;
+  background-color:#fff;
+  padding:10px;
+  @include border-bottom-radius(10px);
 }
 
 .tool{
-	width: $tool-size;
-	height:$tool-size;
-	margin-top:10px;
-	padding:4px;
-	border:5px solid $tool-border-color;
-	@include border-top-radius($tool-size/2);
-	@include border-bottom-radius($tool-size/2);
-	box-shadow: 0px 0px 8px #ddd;
-	cursor:pointer;
-	font-size:12px;
-	color:#333;
+  width: $tool-size;
+  height:$tool-size;
+  margin-top:10px;
+  padding:4px;
+  border:5px solid $tool-border-color;
+  @include border-top-radius($tool-size/2);
+  @include border-bottom-radius($tool-size/2);
+  cursor:pointer;
+  font-size:12px;
+  color:#333;
 }
 
 .tool:hover{
-	border-color:$tool-border-color-hover;
-	color:#333;
+  border-color:$tool-border-color-hover;
+  color:#333;
 }
 
 .tool span{
-	color:#337ab7;
-	font-size:24px;
+  color:#337ab7;
+  font-size:24px;
 }
 
 .tool-name{
-	border-top:1px solid $tool-border-color;
-	margin:1px;
+  border-top:1px solid $tool-border-color;
+  margin:1px;
 }
-
-

@@ -1,56 +1,60 @@
 <template>
-<div class="toolbar">
-  <div class="toolbar-header">组件</div>
-  <div class="toolbar-body">
-    <div v-for="tool in tools" class="tool" v-on:click="tool.action">
-      <span class="glyphicon glyphicon-{{tool.style}}"></span>
-      <div class="tool-name">{{tool.name}}</div>
+  <div class="toolbar shadow">
+    <div class="toolbar-header">组件</div>
+    <div class="toolbar-body">
+      <div v-for="item in list" class="tool shadow" @click="item.action">
+        <span class="glyphicon glyphicon-{{item.style}}"></span>
+        <div class="tool-name">{{item.name}}</div>
+      </div>
     </div>
   </div>
-</div>
 </template>
-
 <script>
+import { addSection }  from '../store/actions'
 export default {
+  name: 'editorToolbar',
+  vuex: {
+    actions:{
+      addSection
+    }
+  },
   data () {
     return {
-      tools: [
+      list: [
         {
           name:'版块',
           style:'modal-window',
-          action:function(){
-            page.addSection();
-          }
+          action:this.addSection
         },
         {
           name:'图片',
           style:'picture',
           action:function(){
-            page.addElement("image");
+            console.log(this);
           }
         },
         {
           name:'文字',
           style:'font',
           action:function(){
-            page.addElement("text");
+            
           }
         },
         {
           name:'按钮',
           style:'expand',
           action:function(){
-            page.addElement("button");
+            
           }
         },
         {
           name:'视频',
           style:'facetime-video',
           action:function(){
-            page.addElement("video");
+            
           }
         },
-          /*
+        /*
         {
           name:'形状',
           'style':'stop',
@@ -58,12 +62,12 @@ export default {
 
           }
         },
-          */
+        */
         {
           name:'表单',
           style:'edit',
           action:function(){
-            page.addElement("form");
+            
           }
         }
       ]

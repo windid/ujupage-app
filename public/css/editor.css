@@ -10,6 +10,13 @@
   -webkit-filter: FlipH;
   filter: FlipH; }
 
+.shadow, .btn {
+  box-shadow: 0px 0px 8px #ddd; }
+
+html, body {
+  height: 100%;
+  overflow: hidden; }
+
 .header {
   z-index: 810000;
   height: 45px;
@@ -17,7 +24,8 @@
   min-width: 960px;
   position: fixed;
   top: 0;
-  border-bottom: 5px solid #555;
+  border-top: 1px solid #ccc;
+  border-bottom: 4px solid #555;
   background: #f9f9f9; }
 
 .header-holder {
@@ -38,6 +46,18 @@
 .header-holder li:hover {
   background-color: #ddd; }
 
+.do-disabled {
+  cursor: default !important; }
+
+.do-disabled span {
+  opacity: 0.4; }
+
+.do-disabled:hover {
+  background-color: #f9f9f9 !important; }
+
+.color-schemes {
+  padding: 0 !important; }
+
 .go-to-dashboard {
   text-align: center;
   width: 60px; }
@@ -53,8 +73,7 @@
   background-color: #428bca !important; }
 
 .version-switch {
-  margin: 5px 20px;
-  box-shadow: 0px 0px 8px #ddd; }
+  margin: 5px 20px; }
 
 .toolbar {
   position: fixed;
@@ -66,8 +85,7 @@
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
-  box-shadow: 0px 0px 8px #ddd; }
+  border-bottom-left-radius: 10px; }
 
 .toolbar-header {
   border-top-right-radius: 10px;
@@ -93,7 +111,6 @@
   border-top-left-radius: 33px;
   border-bottom-right-radius: 33px;
   border-bottom-left-radius: 33px;
-  box-shadow: 0px 0px 8px #ddd;
   cursor: pointer;
   font-size: 12px;
   color: #333; }
@@ -110,40 +127,62 @@
   border-top: 1px solid #BEE1F1;
   margin: 1px; }
 
+.main {
+  height: 100%;
+  margin-top: 45px;
+  overflow: auto; }
+
 .workspace {
-  margin: 45px 0 10px 0; }
+  position: relative;
+  z-index: 0; }
 
 #content-area {
   position: absolute;
-  left: 50%;
-  top: 45px;
-  bottom: 10px; }
+  left: 50%; }
 
 .editable-area {
   position: relative;
   margin: 0 auto;
-  border-left: 1px dashed #ccc;
-  border-right: 1px dashed #ccc;
+  border-left: 1px dashed #03ddff;
+  border-right: 1px dashed #03ddff;
   height: 100%; }
-
-.page-item {
-  position: absolute;
-  z-index: 100; }
-
-.page-item:hover {
-  outline: 1px solid #ccc; }
 
 .page-section {
   top: 0px;
-  border-bottom: 1px dashed #ccc; }
+  border-bottom: 1px dashed #03ddff; }
 
 .page-section-operation {
   position: absolute;
   top: 5px;
   z-index: 50;
-  min-width: 160px; }
+  min-width: 180px; }
 
-.page-section-operation button {
+.fade-transition {
+  transition: all .3s ease;
+  overflow: hidden; }
+
+.fade-enter, .fade-leave {
+  opacity: 0; }
+
+.element {
+  position: absolute; }
+
+.el-content.outline {
+  outline: 1px solid #03ddff;
   box-shadow: 0px 0px 8px #ddd; }
+
+.el-content:hover {
+  outline: 1px solid #03ddff; }
+
+.el-toolbar {
+  position: absolute;
+  min-width: 500px;
+  left: -1px; }
+
+.el-toolbar.top {
+  top: -43px; }
+
+.el-toolbar.bottom {
+  bottom: -43px; }
 
 /*# sourceMappingURL=editor.css.map */
