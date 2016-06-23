@@ -1,6 +1,6 @@
 <template>
-  <editor-header @click="setActiveElementId('')"></editor-header>
-  <div class="main" @click="setActiveElementId('')">
+  <editor-header></editor-header>
+  <div class="main">
     <editor-toolbar></editor-toolbar>
     <editor-workspace></editor-workspace>
   </div> 

@@ -15,8 +15,8 @@ const state = {
     version: 'mobile',
     //当前页面激活的板块，将显示该板块的操作按钮，在添加页面元素时，将添加到此板块中
     currentSectionId: 0,
-    //当前处于编辑状态的板块
-    editingSectionId: null,
+    //编辑状态中的板块id
+    activeSectionId: null,
     //是否可以执行撤销操作
     undo: false,
     //是否可以执行重做操作
@@ -147,11 +147,11 @@ const state = {
   ]
 }
 
-var initstate = merge([],state.sections);
+let initstate = merge([],state.sections);
 
 /* 页面初始状态 */
-var sectionStates = [initstate];
-var sectionHistoryIndex= 0;
+let sectionStates = [initstate];
+let sectionHistoryIndex= 0;
 
 const mutations = {
 
@@ -166,9 +166,9 @@ const mutations = {
 
   //计算页面高度，在初始加载以及进行了撤销重做动作之后执行
   SUM_PAGE_HEIGHT(state){
-    var heightPC  = 0;
-    var heightM   = 0;
-    for (var sectionId in state.sections){
+    let heightPC  = 0;
+    let heightM   = 0;
+    for (let sectionId in state.sections){
       heightPC += parseInt(state.sections[sectionId].style.height);
       heightM += parseInt(state.sections[sectionId].styleM.height);
     }
@@ -179,7 +179,7 @@ const mutations = {
 
   //移动板块
   MOVE_SECTION(state, dir, sectionId){
-    var target = sectionId
+    let target = sectionId
       if (dir === 'down' && sectionId < state.sections.length-1){
         target++;
       }
@@ -211,9 +211,28 @@ const mutations = {
     mutations.SAVE_SECTIONS_STATE(state);
   },
 
+  //修改板块
+  MODIFY_SECTION(state,sectionId,style){
+    let stateSection = state.sections[sectionId];
+    if (state.workspace.version === 'pc'){
+      state.sections[sectionId].style = extend({}, stateSection.style, style);
+    } else {
+      state.sections[sectionId].styleM = extend({}, stateSection.styleM, style);
+    }
+    
+    mutations.SAVE_SECTIONS_STATE(state);
+  },
+
   //设置当前活动的页面板块
   SET_CURRENT_SECTION_ID (state,sectionId){
-    state.workspace.currentSectionId = sectionId;
+    if (state.workspace.activeSectionId === null){
+      state.workspace.currentSectionId = sectionId;
+    }
+  },
+
+  //设置当前处于编辑状态的Section
+  SET_ACTIVE_SECTION_ID(state, sectionId){
+    state.workspace.activeSectionId = sectionId;
   },
 
   //设置当前处于编辑状态的元素id
@@ -227,9 +246,12 @@ const mutations = {
     //state.sections = merge([],state.sections);
 
     //此方案只刷新单个section
-    var section = state.sections[sectionId];
-    delete section['elements'][elementId];
-    state.sections.$set(sectionId, merge({},section));
+    //let section = state.sections[sectionId];
+    //delete section['elements'][elementId];
+    //state.sections.$set(sectionId, merge({},section));
+
+    //原来这才是正确的姿势
+    Vue.delete(state.sections[sectionId]['elements'],elementId);
     mutations.SAVE_SECTIONS_STATE(state);
   },
 
@@ -281,27 +303,28 @@ const mutations = {
   },
 
   MOVE_ELEMENT(state, sectionId, elementId, positionInPage, elementHeight){    
-    var sumSectionsHeight  = 0;
-    var sectionHeight = 0;
+    let sumSectionsHeight  = 0;
+    let sectionHeight = 0;
 
     //从元素中间到页头的高度
-    var elementLine = positionInPage.top + elementHeight / 2;
+    let elementLine = positionInPage.top + elementHeight / 2;
 
     //计算移动后该元素落入哪个section
-    var newSectionId = -1;
+    let newSectionId = -1;
     while (elementLine >= sumSectionsHeight){
       newSectionId ++;
       sectionHeight = parseInt((state.workspace.version == 'pc') ? state.sections[newSectionId].style.height : state.sections[newSectionId].styleM.height);
       sumSectionsHeight += sectionHeight;
     }
 
-    var style = {
+    let style = {
       top: positionInPage.top - (sumSectionsHeight - sectionHeight) + "px",
       left: positionInPage.left + "px"
     }
 
+    //旧元素
+    let elState = state.sections[sectionId].elements[elementId];
     //更新元素坐标，如果移到了新的section，则把另一版本的坐标重置
-    var elState = state.sections[sectionId].elements[elementId];
     if (state.workspace.version == 'pc'){
       elState.style = extend({}, elState.style, style);
       if (newSectionId !== sectionId){
@@ -314,45 +337,8 @@ const mutations = {
       }
     }
 
-
-    var oldSection = state.sections[sectionId];
-
-    delete state.sections[sectionId].elements[elementId];
-    state.sections[newSectionId].elements[elementId] = elState;
-
-    var newSection = state.sections[newSectionId];
-
-    state.sections.$set(sectionId,merge({},oldSection));
-    state.sections.$set(newSectionId,merge({},newSection));
-    
-    // console.log(state.sections[newSectionId].elements[elementId].style.top);
-    // console.log(state.sections[newSectionId].elements[elementId].styleM.top);
-
-    mutations.SAVE_SECTIONS_STATE(state);
-  },
-
-  //修改元素
-  MODIFY_ELEMENT(state, sectionId, elementId, style){
-    var stateelement = state.sections[sectionId].elements[elementId];
-    state.sections[sectionId].elements[elementId].style = extend({}, stateelement.style, style);
-    mutations.SAVE_SECTIONS_STATE(state);
-  },
-
-  //新增元素
-  ADD_ELEMENT(state, startSectionId, startelementId, endSectionId,style){
-    var startsection = state.sections[startSectionId];
-    var endsection = state.sections[endSectionId];
-    //缓存旧的元素
-    var stateelement = state.sections[startSectionId].elements[startelementId];
-    stateelement.style = extend({}, stateelement.style, style);
-    
-    //删除旧的元素
-    delete state.sections[startSectionId].elements[startelementId];
-    state.sections.$set(startSectionId, merge({},startsection));
-
-    //更新新的元素
-    state.sections[endSectionId].elements[startelementId] = stateelement;
-    state.sections.$set(endSectionId, merge({},endsection));
+    Vue.delete(state.sections[sectionId]['elements'],elementId);
+    Vue.set(state.sections[newSectionId]['elements'],elementId,elState);
 
     mutations.SAVE_SECTIONS_STATE(state);
   }

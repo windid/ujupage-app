@@ -7,10 +7,6 @@ export default {
       default:false,
       twoWay: true
     },
-    id: {
-      type: String,
-      required: true
-    },
     //dropdown 向下弹出，dropup向上弹出
     dir: {
       type:String,
@@ -24,19 +20,36 @@ export default {
   },
   data (){
     return {
-      
+      clickOnThisDropdown: false
+    }
+  },
+  methods:{
+    dropdownClick: function(){
+      this.clickOnThisDropdown = true;
+    }
+  },
+  events: {
+    'body-click': function(){
+      if (this.clickOnThisDropdown){
+        this.clickOnThisDropdown = false;
+      } else {
+        this.show = false;
+      }
     }
   }
 }
 </script>
 
 <template>
-<div v-bind:class="[dir,{open:show}]">
-  <div class="dropdown-toggle" id="{{id}}" data-toggle="dropdown" @click="show=!show">
+<div class="{{dir}} open" @click="dropdownClick">
+  <div class="dropdown-toggle" @click="show=!show">
     <slot name="button"></slot>
   </div>
-  <div class="dropdown-menu" v-bind:class="{'dropdown-menu-right': (align == 'right')}" aria-labelledby="{{id}}">
+  <div v-show="show" class="dropdown-menu" v-bind:class="{'dropdown-menu-right': (align == 'right')}" transition="fade">
     <slot name="content"></slot>
   </div>
 </div>
 </template>
+<style>
+  
+</style>

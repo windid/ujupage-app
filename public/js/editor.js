@@ -61,7 +61,12 @@
 	
 	var vm = new Vue({
 	  el: 'body',
-	  components: { editor: _editor2.default }
+	  components: { editor: _editor2.default },
+	  methods: {
+	    bodyClick: function bodyClick(event) {
+	      this.$broadcast('body-click', event);
+	    }
+	  }
 	});
 
 /***/ },
@@ -74,7 +79,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/editor.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(63)
+	__vue_template__ = __webpack_require__(71)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -106,15 +111,15 @@
 	
 	var _editorHeader2 = _interopRequireDefault(_editorHeader);
 	
-	var _editorToolbar = __webpack_require__(29);
+	var _editorToolbar = __webpack_require__(31);
 	
 	var _editorToolbar2 = _interopRequireDefault(_editorToolbar);
 	
-	var _editorWorkspace = __webpack_require__(32);
+	var _editorWorkspace = __webpack_require__(34);
 	
 	var _editorWorkspace2 = _interopRequireDefault(_editorWorkspace);
 	
-	var _store = __webpack_require__(59);
+	var _store = __webpack_require__(69);
 	
 	var _store2 = _interopRequireDefault(_store);
 	
@@ -147,7 +152,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/editor-header.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(28)
+	__vue_template__ = __webpack_require__(30)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -243,51 +248,65 @@
 	  dispatch('SET_CURRENT_SECTION_ID', sectionId);
 	};
 	
-	var moveSection = exports.moveSection = function moveSection(_ref4, dir, sectionId) {
+	var setActiveSectionId = exports.setActiveSectionId = function setActiveSectionId(_ref4, sectionId) {
 	  var dispatch = _ref4.dispatch;
 	  var state = _ref4.state;
+	
+	  dispatch('SET_ACTIVE_SECTION_ID', sectionId);
+	};
+	
+	var moveSection = exports.moveSection = function moveSection(_ref5, dir, sectionId) {
+	  var dispatch = _ref5.dispatch;
+	  var state = _ref5.state;
 	
 	  dispatch('MOVE_SECTION', dir, sectionId);
 	};
 	
-	var removeSection = exports.removeSection = function removeSection(_ref5, sectionId) {
-	  var dispatch = _ref5.dispatch;
-	  var state = _ref5.state;
+	var removeSection = exports.removeSection = function removeSection(_ref6, sectionId) {
+	  var dispatch = _ref6.dispatch;
+	  var state = _ref6.state;
 	
 	  dispatch('REMOVE_SECTION', sectionId);
 	};
 	
-	var addSection = exports.addSection = function addSection(_ref6) {
-	  var dispatch = _ref6.dispatch;
-	  var state = _ref6.state;
+	var modifySection = exports.modifySection = function modifySection(_ref7, sectionId, style) {
+	  var dispatch = _ref7.dispatch;
+	  var state = _ref7.state;
+	
+	  dispatch('MODIFY_SECTION', sectionId, style);
+	};
+	
+	var addSection = exports.addSection = function addSection(_ref8) {
+	  var dispatch = _ref8.dispatch;
+	  var state = _ref8.state;
 	
 	  dispatch('ADD_SECTION');
 	};
 	
-	var redo = exports.redo = function redo(_ref7) {
-	  var dispatch = _ref7.dispatch;
-	  var state = _ref7.state;
+	var redo = exports.redo = function redo(_ref9) {
+	  var dispatch = _ref9.dispatch;
+	  var state = _ref9.state;
 	
 	  dispatch('REDO');
 	};
 	
-	var undo = exports.undo = function undo(_ref8) {
-	  var dispatch = _ref8.dispatch;
-	  var state = _ref8.state;
+	var undo = exports.undo = function undo(_ref10) {
+	  var dispatch = _ref10.dispatch;
+	  var state = _ref10.state;
 	
 	  dispatch('UNDO');
 	};
 	
-	var toggleVersion = exports.toggleVersion = function toggleVersion(_ref9) {
-	  var dispatch = _ref9.dispatch;
-	  var state = _ref9.state;
+	var toggleVersion = exports.toggleVersion = function toggleVersion(_ref11) {
+	  var dispatch = _ref11.dispatch;
+	  var state = _ref11.state;
 	
 	  dispatch('VERSION');
 	};
 	
-	var moveElement = exports.moveElement = function moveElement(_ref10, sectionId, elementId, positionInPage, elementHeight) {
-	  var dispatch = _ref10.dispatch;
-	  var state = _ref10.state;
+	var moveElement = exports.moveElement = function moveElement(_ref12, sectionId, elementId, positionInPage, elementHeight) {
+	  var dispatch = _ref12.dispatch;
+	  var state = _ref12.state;
 	
 	  dispatch('MOVE_ELEMENT', sectionId, elementId, positionInPage, elementHeight);
 	};
@@ -784,7 +803,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/modal.vue?b5017fb0"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA2EA;EACA,gBAAA;EACA,gBAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,qCAAA;EAAA,6BAAA;CACA;;AAEA;EACA,oBAAA;EACA,aAAA;CACA;;AAEA;EACA,mBAAA;EACA,eAAA;EACA,gBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,iCAAA;EAAA,yBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;CACA;;AAEA;EACA,aAAA;EACA,iBAAA;EACA,sBAAA;EACA,iBAAA;EACA,mBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;EACA,kBAAA;CACA;;AAEA;;;;;;;GAOA;;AAEA;EACA,WAAA;CACA;;AAEA;;EAEA,eAAA;CACA","file":"modal.vue","sourcesContent":["<script>\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    },\n    width: {\n      type: String,\n    \tdefault: \"500px\"\n    },\n    height: {\n      type: String,\n    \tdefault: \"auto\"\n    }\n  },\n  data (){\n    return {\n      bodyHeight:\"auto\"\n    }\n  },\n  methods:{\n  \tstopPropagation: function(event){\n  \t\tevent.stopPropagation()\n  \t}\n  },\n  ready:function(){\n    //如果传入的高度是百分比，根据用户浏览器高度转化为像素\n    var heightUnit = this.height.substr(this.height.length-1)\n    if (heightUnit === '%'){\n      var browserHeight = document.documentElement.clientHeight;\n      var modalHeight = parseInt( browserHeight * parseInt(this.height) / 100 );\n      this.bodyHeight = (modalHeight - 107) + 'px'\n    } else {\n      this.bodyHeight = this.height;\n    }\n  // \tdocument.body.style.overflow = 'hidden';\n  //  document.body.style['margin-right'] = '15px';\n  },\n  // destroyed:function(){\n  //   document.body.style.overflow = 'auto';\n  //   document.body.style['margin-right'] = '0';\n  // }\n}\n</script>\n\n<template>\n  <div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n    <div class=\"modal-wrapper\">\n      <div class=\"modal-container\" :style=\"{width:width}\" @click=\"stopPropagation\">\n        \n\n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n          <slot name=\"header\">\n          </slot>\n        </div>\n        \n        <div class=\"modal-body\" :style=\"{height:bodyHeight}\">\n          <slot name=\"body\">\n          </slot>\n        </div>\n\n        <div class=\"modal-footer\">\n          <slot name=\"footer\">\n            <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n          </slot>\n        </div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<style>\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/modal.vue?3295b986"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA2EA;EACA,gBAAA;EACA,gBAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,qCAAA;EAAA,6BAAA;CACA;;AAEA;EACA,oBAAA;EACA,aAAA;CACA;;AAEA;EACA,mBAAA;EACA,eAAA;EACA,gBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,iCAAA;EAAA,yBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;CACA;;AAEA;EACA,aAAA;EACA,iBAAA;EACA,sBAAA;EACA,iBAAA;EACA,mBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;EACA,kBAAA;CACA;;AAEA;;;;;;;GAOA;;AAEA;EACA,WAAA;CACA;;AAEA;;EAEA,eAAA;CACA","file":"modal.vue","sourcesContent":["<script>\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    },\n    width: {\n      type: String,\n    \tdefault: \"500px\"\n    },\n    height: {\n      type: String,\n    \tdefault: \"auto\"\n    }\n  },\n  data (){\n    return {\n      bodyHeight:\"auto\"\n    }\n  },\n  methods:{\n  \tstopPropagation: function(event){\n  \t\tevent.stopPropagation()\n  \t}\n  },\n  ready:function(){\n    //如果传入的高度是百分比，根据用户浏览器高度转化为像素\n    var heightUnit = this.height.substr(this.height.length-1)\n    if (heightUnit === '%'){\n      var browserHeight = document.documentElement.clientHeight;\n      var modalHeight = parseInt( browserHeight * parseInt(this.height) / 100 );\n      this.bodyHeight = (modalHeight - 107) + 'px'\n    } else {\n      this.bodyHeight = this.height;\n    }\n  // \tdocument.body.style.overflow = 'hidden';\n  //  document.body.style['margin-right'] = '15px';\n  },\n  // destroyed:function(){\n  //   document.body.style.overflow = 'auto';\n  //   document.body.style['margin-right'] = '0';\n  // }\n}\n</script>\n\n<template>\n  <div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n    <div class=\"modal-wrapper\">\n      <div class=\"modal-container\" :style=\"{width:width}\" @click=\"stopPropagation\">\n        \n\n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n          <slot name=\"header\">\n          </slot>\n        </div>\n        \n        <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n          <slot name=\"body\">\n          </slot>\n        </div>\n\n        <div class=\"modal-footer\">\n          <slot name=\"footer\">\n            <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n          </slot>\n        </div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<style>\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -841,7 +860,7 @@
 /* 18 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n  <div class=\"modal-wrapper\">\n    <div class=\"modal-container\" :style=\"{width:width}\" @click=\"stopPropagation\">\n      \n\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n        <slot name=\"header\">\n        </slot>\n      </div>\n      \n      <div class=\"modal-body\" :style=\"{height:bodyHeight}\">\n        <slot name=\"body\">\n        </slot>\n      </div>\n\n      <div class=\"modal-footer\">\n        <slot name=\"footer\">\n          <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n        </slot>\n      </div>\n    </div>\n  </div>\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n  <div class=\"modal-wrapper\">\n    <div class=\"modal-container\" :style=\"{width:width}\" @click=\"stopPropagation\">\n      \n\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n        <slot name=\"header\">\n        </slot>\n      </div>\n      \n      <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n        <slot name=\"body\">\n        </slot>\n      </div>\n\n      <div class=\"modal-footer\">\n        <slot name=\"footer\">\n          <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n        </slot>\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 /***/ },
 /* 19 */
@@ -860,7 +879,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/color-schemes.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(27)
+	__vue_template__ = __webpack_require__(29)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -913,7 +932,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.color-schemes-content{\n  cursor:default;\n  width:300px;\n  height:400px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/color-schemes.vue?5722edb5"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAgDA;EACA,eAAA;EACA,YAAA;EACA,aAAA;EACA,iBAAA;EACA,aAAA;CACA;;AAEA;EACA,sBAAA;EACA,UAAA;EACA,aAAA;EACA,YAAA;EACA,WAAA;CACA;;AAEA;EACA,mBAAA;CACA;;AAEA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;CACA;;AAEA;EACA,eAAA;EACA,kBAAA;CACA","file":"color-schemes.vue","sourcesContent":["<script>\nimport dropdown from './dropdown.vue'\n\nexport default {\n  components: {\n    dropdown\n  },\n  data () {\n    return {\n      colorSchemes:[\n        {name:\"海滩\",         colors:['#E6E2AF',\"#A7A37E\",\"#EFECCA\",\"#046380\",\"#002F2F\"]},\n        {name:\"佛罗伦萨\",      colors:['#468966',\"#FFF0A5\",\"#FFB03B\",\"#B64926\",\"#8E2800\"]},\n        {name:\"淡蓝\",         colors:['#FCFFF5',\"#D1DBBD\",\"#91AA9D\",\"#3E606F\",\"#193441\"]},\n        {name:\"菲德拉\",       colors:['#FF6138',\"#FFFF9D\",\"#BEEB9F\",\"#79BD8F\",\"#00A388\"]},\n        {name:\"蜜罐\",         colors:['#105B63',\"#FFFAD5\",\"#FFD34E\",\"#DB9E36\",\"#BD4932\"]},\n        {name:\"阿司匹林C\",    colors:['#225378',\"#1695A3\",\"#ACF0F2\",\"#F3FFE2\",\"#EB7F00\"]},\n      ],\n      show: false\n    }\n  }\n}\n</script>\n\n<template>\n  <dropdown :id=\"'color-schemes'\" :align=\"'right'\" :show.sync=\"show\">\n    <div slot=\"button\" style=\"padding:0 14px;\">\n      配色 <span class=\"glyphicon glyphicon-th-large\"></span>\n    </div>\n    <template slot=\"content\">\n      <div class=\"color-schemes-content\">\n        <div v-for=\"colorScheme in colorSchemes\">\n          <div>{{colorScheme.name}}</div>\n          <ul class=\"list-inline color-schemes-group\">\n            <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\"></li>\n          </ul>\n        </div>\n      </div>\n      <div class=\"color-schemes-footer\">\n        <span class=\"fl\">自定义</span>\n        <button class=\"btn btn-default btn-sm\" @click=\"show=false\">取消</button>\n        <button class=\"btn btn-success btn-sm\" @click=\"\">保存更改</button>\n      </div>\n    </template>\n  </dropdown>\n</template>\n\n<style>\n\n.color-schemes-content{\n  cursor:default;\n  width:300px;\n  height:400px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.color-schemes-content{\n  cursor:default;\n  height:400px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/color-schemes.vue?581be14a"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAgDA;EACA,eAAA;EACA,aAAA;EACA,iBAAA;EACA,aAAA;CACA;;AAEA;EACA,sBAAA;EACA,UAAA;EACA,aAAA;EACA,YAAA;EACA,WAAA;CACA;;AAEA;EACA,mBAAA;CACA;;AAEA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;CACA;;AAEA;EACA,eAAA;EACA,kBAAA;CACA","file":"color-schemes.vue","sourcesContent":["<script>\nimport dropdown from './dropdown.vue'\n\nexport default {\n  components: {\n    dropdown\n  },\n  data () {\n    return {\n      colorSchemes:[\n        {name:\"海滩\",         colors:['#E6E2AF',\"#A7A37E\",\"#EFECCA\",\"#046380\",\"#002F2F\"]},\n        {name:\"佛罗伦萨\",      colors:['#468966',\"#FFF0A5\",\"#FFB03B\",\"#B64926\",\"#8E2800\"]},\n        {name:\"淡蓝\",         colors:['#FCFFF5',\"#D1DBBD\",\"#91AA9D\",\"#3E606F\",\"#193441\"]},\n        {name:\"菲德拉\",       colors:['#FF6138',\"#FFFF9D\",\"#BEEB9F\",\"#79BD8F\",\"#00A388\"]},\n        {name:\"蜜罐\",         colors:['#105B63',\"#FFFAD5\",\"#FFD34E\",\"#DB9E36\",\"#BD4932\"]},\n        {name:\"阿司匹林C\",    colors:['#225378',\"#1695A3\",\"#ACF0F2\",\"#F3FFE2\",\"#EB7F00\"]},\n      ],\n      show: false\n    }\n  }\n}\n</script>\n\n<template>\n  <dropdown :id=\"'color-schemes'\" :align=\"'right'\" :show.sync=\"show\">\n    <div slot=\"button\" style=\"padding:0 14px;\">\n      配色 <span class=\"glyphicon glyphicon-th-large\"></span>\n    </div>\n    <template slot=\"content\">\n      <div class=\"color-schemes-content\">\n        <div v-for=\"colorScheme in colorSchemes\">\n          <!-- <div>{{colorScheme.name}}</div> -->\n          <ul class=\"list-inline color-schemes-group\">\n            <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\"></li>\n          </ul>\n        </div>\n      </div>\n      <div class=\"color-schemes-footer\">\n        <span class=\"fl\">自定义</span>\n        <button class=\"btn btn-default btn-sm\" @click=\"show=false\">取消</button>\n        <button class=\"btn btn-success btn-sm\" @click=\"\">完成</button>\n      </div>\n    </template>\n  </dropdown>\n</template>\n\n<style>\n\n.color-schemes-content{\n  cursor:default;\n  height:400px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -951,12 +970,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(25)
+	__webpack_require__(25)
+	__vue_script__ = __webpack_require__(27)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/dropdown.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(26)
+	__vue_template__ = __webpack_require__(28)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -976,6 +996,46 @@
 
 /***/ },
 /* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(26);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(12)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./dropdown.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./dropdown.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(11)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"dropdown.vue","sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 27 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -991,10 +1051,6 @@
 	      default: false,
 	      twoWay: true
 	    },
-	    id: {
-	      type: String,
-	      required: true
-	    },
 	
 	    dir: {
 	      type: String,
@@ -1007,39 +1063,56 @@
 	    }
 	  },
 	  data: function data() {
-	    return {};
+	    return {
+	      clickOnThisDropdown: false
+	    };
+	  },
+	
+	  methods: {
+	    dropdownClick: function dropdownClick() {
+	      this.clickOnThisDropdown = true;
+	    }
+	  },
+	  events: {
+	    'body-click': function bodyClick() {
+	      if (this.clickOnThisDropdown) {
+	        this.clickOnThisDropdown = false;
+	      } else {
+	        this.show = false;
+	      }
+	    }
 	  }
 	};
-
-/***/ },
-/* 26 */
-/***/ function(module, exports) {
-
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div v-bind:class=\"[dir,{open:show}]\">\n  <div class=\"dropdown-toggle\" id=\"{{id}}\" data-toggle=\"dropdown\" @click=\"show=!show\">\n    <slot name=\"button\"></slot>\n  </div>\n  <div class=\"dropdown-menu\" v-bind:class=\"{'dropdown-menu-right': (align == 'right')}\" aria-labelledby=\"{{id}}\">\n    <slot name=\"content\"></slot>\n  </div>\n</div>\n";
-
-/***/ },
-/* 27 */
-/***/ function(module, exports) {
-
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :id=\"'color-schemes'\" :align=\"'right'\" :show.sync=\"show\">\n  <div slot=\"button\" style=\"padding:0 14px;\">\n    配色 <span class=\"glyphicon glyphicon-th-large\"></span>\n  </div>\n  <template slot=\"content\">\n    <div class=\"color-schemes-content\">\n      <div v-for=\"colorScheme in colorSchemes\">\n        <div>{{colorScheme.name}}</div>\n        <ul class=\"list-inline color-schemes-group\">\n          <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\"></li>\n        </ul>\n      </div>\n    </div>\n    <div class=\"color-schemes-footer\">\n      <span class=\"fl\">自定义</span>\n      <button class=\"btn btn-default btn-sm\" @click=\"show=false\">取消</button>\n      <button class=\"btn btn-success btn-sm\" @click=\"\">保存更改</button>\n    </div>\n  </template>\n</dropdown>\n";
 
 /***/ },
 /* 28 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"header\">\n  <ul class=\"header-holder list-inline fl\">\n    <li class=\"go-to-dashboard\"><a href=\"./dashboard\"><span class=\"glyphicon glyphicon-home\"></span></a></li>\n    <li><a>创建一个A/B测试</a></li>\n  </ul>\n  <div class=\"btn-group btn-group-sm version-switch\" role=\"group\" aria-label=\"...\">\n    <button type=\"button\" class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='pc'}\" @click=\"toggleVersion\">桌面版 <span class=\"glyphicon glyphicon-blackboard\"></span></button>\n    <button type=\"button\" class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='mobile'}\" @click=\"toggleVersion\">移动版 <span class=\"glyphicon glyphicon-phone\"></span></button>\n  </div>\n\n  <ul class=\"header-holder list-inline fr\">\n    <li><span class=\"glyphicon glyphicon-question-sign\"></span></li>\n    <li @click=\"undo\" v-bind:class=\"{'do-disabled':workspace.undo === false}\"><span class=\"glyphicon glyphicon-share-alt flipx\"></span></li>\n    <li @click=\"redo\" v-bind:class=\"{'do-disabled':workspace.redo === false}\"><span class=\"glyphicon glyphicon-share-alt\"></span></li>\n    <li class=\"color-schemes\"><color-schemes></color-schemes></li>\n    <li @click=\"showSettings=true\">设置 <span class=\"glyphicon glyphicon-cog\"></span></li>\n    <li>保存 <span class=\"glyphicon glyphicon-floppy-disk\"></span></li>\n    <li>预览 <span class=\"glyphicon glyphicon-eye-open\"></span></li>\n    <li class=\"publish\">发布 <span class=\"glyphicon glyphicon-send\"></span></li>\n  </ul>\n</div>\n<editor-settings v-if=\"showSettings\" :show.sync=\"showSettings\"></editor-settings>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"{{dir}} open\" @click=\"dropdownClick\">\n  <div class=\"dropdown-toggle\" @click=\"show=!show\">\n    <slot name=\"button\"></slot>\n  </div>\n  <div v-show=\"show\" class=\"dropdown-menu\" v-bind:class=\"{'dropdown-menu-right': (align == 'right')}\" transition=\"fade\">\n    <slot name=\"content\"></slot>\n  </div>\n</div>\n";
 
 /***/ },
 /* 29 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :id=\"'color-schemes'\" :align=\"'right'\" :show.sync=\"show\">\n  <div slot=\"button\" style=\"padding:0 14px;\">\n    配色 <span class=\"glyphicon glyphicon-th-large\"></span>\n  </div>\n  <template slot=\"content\">\n    <div class=\"color-schemes-content\">\n      <div v-for=\"colorScheme in colorSchemes\">\n        <!-- <div>{{colorScheme.name}}</div> -->\n        <ul class=\"list-inline color-schemes-group\">\n          <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\"></li>\n        </ul>\n      </div>\n    </div>\n    <div class=\"color-schemes-footer\">\n      <span class=\"fl\">自定义</span>\n      <button class=\"btn btn-default btn-sm\" @click=\"show=false\">取消</button>\n      <button class=\"btn btn-success btn-sm\" @click=\"\">完成</button>\n    </div>\n  </template>\n</dropdown>\n";
+
+/***/ },
+/* 30 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div class=\"header\">\n  <ul class=\"header-holder list-inline fl\">\n    <li class=\"go-to-dashboard\"><a href=\"./dashboard\"><span class=\"glyphicon glyphicon-home\"></span></a></li>\n    <li><a>创建一个A/B测试</a></li>\n  </ul>\n  <div class=\"btn-group btn-group-sm version-switch\" role=\"group\" aria-label=\"...\">\n    <button type=\"button\" class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='pc'}\" @click=\"toggleVersion\">桌面版 <span class=\"glyphicon glyphicon-blackboard\"></span></button>\n    <button type=\"button\" class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='mobile'}\" @click=\"toggleVersion\">移动版 <span class=\"glyphicon glyphicon-phone\"></span></button>\n  </div>\n\n  <ul class=\"header-holder list-inline fr\">\n    <li><span class=\"glyphicon glyphicon-question-sign\"></span></li>\n    <li @click=\"undo\" v-bind:class=\"{'do-disabled':workspace.undo === false}\"><span class=\"glyphicon glyphicon-share-alt flipx\"></span></li>\n    <li @click=\"redo\" v-bind:class=\"{'do-disabled':workspace.redo === false}\"><span class=\"glyphicon glyphicon-share-alt\"></span></li>\n    <li class=\"color-schemes\"><color-schemes></color-schemes></li>\n    <li @click=\"showSettings=true\">设置 <span class=\"glyphicon glyphicon-cog\"></span></li>\n    <li>保存 <span class=\"glyphicon glyphicon-floppy-disk\"></span></li>\n    <li>预览 <span class=\"glyphicon glyphicon-eye-open\"></span></li>\n    <li class=\"publish\">发布 <span class=\"glyphicon glyphicon-send\"></span></li>\n  </ul>\n</div>\n<editor-settings v-if=\"showSettings\" :show.sync=\"showSettings\"></editor-settings>\n";
+
+/***/ },
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(30)
+	__vue_script__ = __webpack_require__(32)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/editor-toolbar.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(31)
+	__vue_template__ = __webpack_require__(33)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1058,7 +1131,7 @@
 	})()}
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1110,94 +1183,10 @@
 	};
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div class=\"toolbar shadow\">\n  <div class=\"toolbar-header\">组件</div>\n  <div class=\"toolbar-body\">\n    <div v-for=\"item in list\" class=\"tool shadow\" @click=\"item.action\">\n      <span class=\"glyphicon glyphicon-{{item.style}}\"></span>\n      <div class=\"tool-name\">{{item.name}}</div>\n    </div>\n  </div>\n</div>\n";
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(33)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] resources/assets/js/components/editor-workspace.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(58)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  var id = "./editor-workspace.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _actions = __webpack_require__(6);
-	
-	var _getters = __webpack_require__(7);
-	
-	var _elementText = __webpack_require__(34);
-	
-	var _elementText2 = _interopRequireDefault(_elementText);
-	
-	var _elementImage = __webpack_require__(45);
-	
-	var _elementImage2 = _interopRequireDefault(_elementImage);
-	
-	var _sectionEdit = __webpack_require__(48);
-	
-	var _sectionEdit2 = _interopRequireDefault(_sectionEdit);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  name: 'editorWorkspace',
-	  components: {
-	    "element-text": _elementText2.default,
-	    "element-image": _elementImage2.default,
-	    "section-edit": _sectionEdit2.default
-	  },
-	  data: function data() {
-	    return {
-	      showSectionEdit: false
-	    };
-	  },
-	
-	  vuex: {
-	    actions: {
-	      setActiveElementId: _actions.setActiveElementId,
-	      setCurrentSectionId: _actions.setCurrentSectionId,
-	      removeSection: _actions.removeSection,
-	      moveSection: _actions.moveSection
-	    },
-	    getters: {
-	      workspace: _getters.getWorkspaceData,
-	      sections: _getters.getSections,
-	      colorSet: _getters.getColorSet
-	    }
-	  }
-	};
 
 /***/ },
 /* 34 */
@@ -1208,8 +1197,8 @@
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] resources/assets/js/components/element-text.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(44)
+	  console.warn("[vue-loader] resources/assets/js/components/editor-workspace.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(68)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1219,7 +1208,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "./element-text.vue"
+	  var id = "./editor-workspace.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1241,7 +1230,186 @@
 	
 	var _getters = __webpack_require__(7);
 	
-	var _elementCommon = __webpack_require__(36);
+	var _elementText = __webpack_require__(36);
+	
+	var _elementText2 = _interopRequireDefault(_elementText);
+	
+	var _elementImage = __webpack_require__(47);
+	
+	var _elementImage2 = _interopRequireDefault(_elementImage);
+	
+	var _sectionEdit = __webpack_require__(50);
+	
+	var _sectionEdit2 = _interopRequireDefault(_sectionEdit);
+	
+	var _lodash = __webpack_require__(66);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  name: 'editorWorkspace',
+	  components: {
+	    "element-text": _elementText2.default,
+	    "element-image": _elementImage2.default,
+	    "section-edit": _sectionEdit2.default
+	  },
+	  data: function data() {
+	    return {
+	      sectionEditing: false
+	    };
+	  },
+	
+	  methods: {
+	    editSection: function editSection(sectionId) {
+	      this.sectionEditing = true;
+	      this.setActiveSectionId(sectionId);
+	    },
+	    closeSidebar: function closeSidebar() {
+	      this.sectionEditing = false;
+	      this.setActiveSectionId(null);
+	    }
+	  },
+	  vuex: {
+	    actions: {
+	      setActiveElementId: _actions.setActiveElementId,
+	      setCurrentSectionId: _actions.setCurrentSectionId,
+	      setActiveSectionId: _actions.setActiveSectionId,
+	      removeSection: _actions.removeSection,
+	      moveSection: _actions.moveSection,
+	      modifySection: _actions.modifySection
+	    },
+	    getters: {
+	      workspace: _getters.getWorkspaceData,
+	      sections: _getters.getSections,
+	      colorSet: _getters.getColorSet
+	    }
+	  },
+	  ready: function ready() {
+	    resizeEvent(this);
+	  }
+	};
+	
+	
+	var resizeEvent = function resizeEvent(vue) {
+	  var sectionminheight = 30,
+	      startY = void 0,
+	      startHeight = void 0,
+	      toolbarh = 45,
+	      strheight = 'height',
+	      strpx = "px",
+	      strbody = 'body';
+	
+	  var setSectionHeight = function setSectionHeight(height) {
+	    if (height > sectionminheight) {
+	      window.$section.css(strheight, height + strpx);
+	    }
+	  };
+	
+	  $(strbody).on('mousedown click', '.resize-line', function (e) {
+	    window.$section = $(e.target).parent();
+	    startY = e.clientY - toolbarh;
+	    var $parent = $(this).parent();
+	    startHeight = $parent.height();
+	
+	    $parent.find('.resize-line-wrap').css('z-index', 99999);
+	    vue.setActiveElementId("");
+	
+	    $(strbody).mousemove(function (e) {
+	      var clientY = e.clientY - toolbarh;
+	      var $this = $(e.target);
+	      var allelement = [];
+	
+	      window.$section.find('.element').each(function (e) {
+	        var h = $(this).height() + $(this).position().top;
+	        allelement.push(h);
+	      });
+	
+	      window.elmaxheight = (0, _lodash.max)(allelement);
+	
+	      var sectionmaxheight = window.$section.height();
+	
+	      var newheight = startHeight + clientY - startY;
+	
+	      if (allelement.length >= 1) {
+	        if (sectionmaxheight > elmaxheight && newheight > elmaxheight || newheight > elmaxheight) {
+	          setSectionHeight(newheight);
+	        }
+	      } else if (newheight > sectionmaxheight) {
+	          setSectionHeight(newheight);
+	        } else {
+	          setSectionHeight(newheight);
+	        }
+	    });
+	
+	    $(strbody).mouseout(function (e) {
+	      var allelement = [];
+	      window.$section.find('.element').each(function (e) {
+	        var h = $(this).parent().offset().top - 45 + $(this).position().top + $(this).height() + $('.main').scrollTop();
+	        allelement.push(h);
+	      });
+	
+	      if (e.clientY < (0, _lodash.max)(allelement)) {
+	        setSectionHeight(elmaxheight);
+	      }
+	    });
+	  });
+	
+	  $(strbody).off('mouseup').mouseup(function () {
+	    if (window.$section) {
+	      $('.resize-line-wrap').removeAttr('style');
+	      var style = {
+	        height: window.$section.height() + strpx
+	      };
+	      vue.modifySection($('.page-section').index(window.$section), style);
+	      window.$section = null;
+	    }
+	    $(this).off('mousemove mouseout click');
+	  });
+	};
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(37)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/element-text.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(46)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./element-text.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _actions = __webpack_require__(6);
+	
+	var _getters = __webpack_require__(7);
+	
+	var _elementCommon = __webpack_require__(38);
 	
 	var _elementCommon2 = _interopRequireDefault(_elementCommon);
 	
@@ -1266,7 +1434,6 @@
 	
 	  methods: {
 	    edit: function edit(event) {
-	      event.stopPropagation();
 	      this.buttonGroup = 'edit';
 	    },
 	    shit: function shit() {}
@@ -1275,16 +1442,16 @@
 	};
 
 /***/ },
-/* 36 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(37)
+	__vue_script__ = __webpack_require__(39)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/element-common.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(43)
+	__vue_template__ = __webpack_require__(45)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1303,7 +1470,7 @@
 	})()}
 
 /***/ },
-/* 37 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1312,7 +1479,7 @@
 	  value: true
 	});
 	
-	var _draggabilly = __webpack_require__(38);
+	var _draggabilly = __webpack_require__(40);
 	
 	var _draggabilly2 = _interopRequireDefault(_draggabilly);
 	
@@ -1339,26 +1506,36 @@
 	  data: function data() {
 	    return {
 	      elToolbarPosition: 'top',
-	      elPositionInPage: { left: 0, top: 0 }
+	      elPositionInPage: { left: 0, top: 0 },
+	      clickOnThisElement: false
 	    };
 	  },
 	
 	  methods: {
 	    showToolbar: function showToolbar(event) {
-	      event.stopPropagation();
 	      this.setActiveElementId(this.elementId);
+	      this.clickOnThisElement = true;
 	      var viewTop = getElementTop(this.$el) - document.documentElement.scrollTop;
 	      if (viewTop < 95) {
 	        this.elToolbarPosition = 'bottom';
 	      } else {
 	        this.elToolbarPosition = 'top';
 	      }
-	    },
-	    stopPropagation: function stopPropagation(event) {
-	      event.stopPropagation();
+	    }
+	  },
+	  events: {
+	    'body-click': function bodyClick(event) {
+	      if (this.clickOnThisElement) {
+	        this.clickOnThisElement = false;
+	      } else if (this.workspace.activeElementId === this.elementId) {
+	        this.setActiveElementId('');
+	      }
 	    }
 	  },
 	  ready: function ready() {
+	
+	    window.addEventListener('resize', this.handleResize);
+	
 	    var draggie = new _draggabilly2.default(this.$el, {
 	      containment: '#content-area'
 	    });
@@ -1400,7 +1577,7 @@
 	}
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -1418,8 +1595,8 @@
 	  if ( true ) {
 	    // AMD
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(39),
-	        __webpack_require__(40)
+	        __webpack_require__(41),
+	        __webpack_require__(42)
 	      ], __WEBPACK_AMD_DEFINE_RESULT__ = function( getSize, Unidragger ) {
 	        return factory( window, getSize, Unidragger );
 	      }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -1881,7 +2058,7 @@
 
 
 /***/ },
-/* 39 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -2096,7 +2273,7 @@
 
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -2114,7 +2291,7 @@
 	  if ( true ) {
 	    // AMD
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	      __webpack_require__(41)
+	      __webpack_require__(43)
 	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function( Unipointer ) {
 	      return factory( window, Unipointer );
 	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -2386,7 +2563,7 @@
 
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -2403,7 +2580,7 @@
 	  if ( true ) {
 	    // AMD
 	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	      __webpack_require__(42)
+	      __webpack_require__(44)
 	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function( EvEmitter ) {
 	      return factory( window, EvEmitter );
 	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -2695,7 +2872,7 @@
 
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -2810,28 +2987,28 @@
 
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div :style=\"(workspace.version == 'pc') ? element.style : element.styleM\" class=\"element\" @click=\"showToolbar\">\n  <!-- Todo:这里要对输出的html进行过滤以防xss漏洞 -->\n  <div class=\"el-content\" id=\"element-{{elementId}}\" v-bind:class=\"{'outline':workspace.activeElementId === elementId}\">\n    <slot name=\"content\"></slot>\n  </div>\n  <div v-if=\"workspace.activeElementId === elementId\" transition=\"fade\" class=\"el-toolbar {{elToolbarPosition}}\" @click=\"stopPropagation\">\n    <div v-show=\"buttonGroup == 'main'\" class=\"btn-group\" role=\"group\">\n      <slot name=\"main-buttons-extend\"></slot>\n      <button type=\"button\" class=\"btn btn-default\" title=\"复制一个\"><span class=\"glyphicon glyphicon-duplicate\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"移到顶层\"><span class=\"glyphicon glyphicon-circle-arrow-up\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"移到底层\"><span class=\"glyphicon glyphicon-circle-arrow-down\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"删除\" @click=\"removeElement(sectionId,elementId)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n    </div>\n    <div v-show=\"buttonGroup == 'position'\" class=\"btn-group\" role=\"group\">\n      <button type=\"button\" class=\"btn btn-success\">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</span></button>\n    </div>\n    <slot name=\"button-groups\"></slot>\n  </div>\n</div>\n";
+	module.exports = "\n<div :style=\"(workspace.version == 'pc') ? element.style : element.styleM\" class=\"element\" @click=\"showToolbar\">\n  <!-- Todo:这里要对输出的html进行过滤以防xss漏洞 -->\n  <div class=\"el-content\" id=\"element-{{elementId}}\" v-bind:class=\"{'outline':workspace.activeElementId === elementId}\">\n    <slot name=\"content\"></slot>\n  </div>\n  <div v-if=\"workspace.activeElementId === elementId\" transition=\"fade\" class=\"el-toolbar {{elToolbarPosition}}\">\n    <div v-show=\"buttonGroup == 'main'\" class=\"btn-group\" role=\"group\">\n      <slot name=\"main-buttons-extend\"></slot>\n      <button type=\"button\" class=\"btn btn-default\" title=\"复制一个\"><span class=\"glyphicon glyphicon-duplicate\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"移到顶层\"><span class=\"glyphicon glyphicon-circle-arrow-up\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"移到底层\"><span class=\"glyphicon glyphicon-circle-arrow-down\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"删除\" @click=\"removeElement(sectionId,elementId)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n    </div>\n    <div v-show=\"buttonGroup == 'position'\" class=\"btn-group\" role=\"group\">\n      <button type=\"button\" class=\"btn btn-success\">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</span></button>\n    </div>\n    <slot name=\"button-groups\"></slot>\n  </div>\n</div>\n";
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\">\n  <div slot=\"content\" @dblclick=\"edit\">\n    {{{element.content}}}\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <button type=\"button\" class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</button>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup == 'edit'\" class=\"btn-group\" role=\"group\">\n      <button type=\"button\" class=\"btn btn-default\" title=\"颜色\"><span class=\"glyphicon glyphicon-text-color\"></span> <span class=\"caret\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"字号\"><span class=\"glyphicon glyphicon-text-size\"></span> <span class=\"caret\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"行高\"><span class=\"glyphicon glyphicon-text-height\"></span> <span class=\"caret\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"对齐\"><span class=\"glyphicon glyphicon-align-left\"></span> <span class=\"caret\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"加粗\">B</button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"斜体\"><i>I</i></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"斜体\"><u>U</u></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"链接\"><span class=\"glyphicon glyphicon-link\"></span></button>\n      <button type=\"button\" class=\"btn btn-success\" title=\"完成编辑\">完成</button>\n    </div>\n  </template>\n</element-common>\n";
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(46)
+	__vue_script__ = __webpack_require__(48)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/element-image.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(47)
+	__vue_template__ = __webpack_require__(49)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2850,7 +3027,7 @@
 	})()}
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2863,7 +3040,7 @@
 	
 	var _getters = __webpack_require__(7);
 	
-	var _elementCommon = __webpack_require__(36);
+	var _elementCommon = __webpack_require__(38);
 	
 	var _elementCommon2 = _interopRequireDefault(_elementCommon);
 	
@@ -2893,23 +3070,23 @@
 	};
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\">\n  <div slot=\"content\" @dbclick=\"edit()\">\n    <img v-bind:src=\"element.src\" width=\"{{(workspace.version == 'pc') ? element.style.width : element.styleM.width}}\" height=\"auto\">\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <button type=\"button\" class=\"btn btn-primary\" title=\"更换图片\">更换图片</button>\n    <button type=\"button\" class=\"btn btn-default\" title=\"链接\"><span class=\"glyphicon glyphicon-link\"></span></button>\n  </template>\n  <template slot=\"button-groups\">\n    \n  </template>\n</element-common>\n";
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(49)
-	__vue_script__ = __webpack_require__(51)
+	__webpack_require__(51)
+	__vue_script__ = __webpack_require__(53)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/section-edit.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(57)
+	__vue_template__ = __webpack_require__(65)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2928,13 +3105,13 @@
 	})()}
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(50);
+	var content = __webpack_require__(52);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(12)(content, {});
@@ -2954,7 +3131,7 @@
 	}
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(11)();
@@ -2968,7 +3145,7 @@
 
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2977,20 +3154,30 @@
 	  value: true
 	});
 	
-	__webpack_require__(6);
+	var _actions = __webpack_require__(6);
 	
 	var _getters = __webpack_require__(7);
 	
-	var _sidebar = __webpack_require__(52);
+	var _sidebar = __webpack_require__(54);
 	
 	var _sidebar2 = _interopRequireDefault(_sidebar);
+	
+	var _colorPicker = __webpack_require__(59);
+	
+	var _colorPicker2 = _interopRequireDefault(_colorPicker);
+	
+	var _colorMixin = __webpack_require__(63);
+	
+	var _colorMixin2 = _interopRequireDefault(_colorMixin);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
 	  name: 'sectionEdit',
+	  mixins: [_colorMixin2.default],
 	  components: {
-	    sidebar: _sidebar2.default
+	    sidebar: _sidebar2.default,
+	    colorPicker: _colorPicker2.default
 	  },
 	  props: {
 	    show: {
@@ -3001,32 +3188,38 @@
 	  },
 	  data: function data() {
 	    return {
-	      currentTab: 'seo'
+	      backgroundColor: "0"
 	    };
 	  },
 	
-	  methods: {},
+	  methods: {
+	    closeSidebar: function closeSidebar() {
+	      this.show = false;
+	      this.setActiveSectionId(null);
+	    }
+	  },
 	  vuex: {
-	    actions: {},
+	    actions: {
+	      setActiveSectionId: _actions.setActiveSectionId
+	    },
 	    getters: {
-	      workspace: _getters.getWorkspaceData,
-	      colorSet: _getters.getColorSet
+	      workspace: _getters.getWorkspaceData
 	    }
 	  }
 	};
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(53)
-	__vue_script__ = __webpack_require__(55)
+	__webpack_require__(55)
+	__vue_script__ = __webpack_require__(57)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/sidebar.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(56)
+	__vue_template__ = __webpack_require__(58)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -3045,13 +3238,13 @@
 	})()}
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(54);
+	var content = __webpack_require__(56);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(12)(content, {});
@@ -3071,7 +3264,7 @@
 	}
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(11)();
@@ -3079,13 +3272,13 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.sidebar-mask {\n  position: fixed;\n  z-index: 800000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0);\n  display: table;\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n\n.sidebar-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.sidebar-container {\n  width:240px;\n  position: absolute;\n  right: 0;\n  height:100%;\n  margin-top:45px;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  -webkit-transition: all .4s ease;\n  transition: all .4s ease;\n}\n\n.sidebar-header {\n  padding:12px;\n}\n\n.sidebar-body {\n  padding:12px;\n  background: #eee;\n  border-top:1px solid #ccc;\n  border-bottom:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"sidebar\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the sidebar transition by editing\n * these styles.\n */\n\n.sidebar-enter, .sidebar-leave {\n  opacity: 0;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/sidebar.vue?026d7af8"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA6CA;EACA,gBAAA;EACA,gBAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,mCAAA;EACA,eAAA;EACA,qCAAA;EAAA,6BAAA;CACA;;AAEA;EACA,oBAAA;EACA,aAAA;CACA;;AAEA;EACA,YAAA;EACA,mBAAA;EACA,SAAA;EACA,YAAA;EACA,gBAAA;EACA,uBAAA;EACA,yCAAA;EACA,iCAAA;EAAA,yBAAA;CACA;;AAEA;EACA,aAAA;CACA;;AAEA;EACA,aAAA;EACA,iBAAA;EACA,0BAAA;EACA,6BAAA;EACA,iBAAA;EACA,mBAAA;CACA;;;AAGA;;;;;;;GAOA;;AAEA;EACA,WAAA;CACA","file":"sidebar.vue","sourcesContent":["<script>\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      \n    }\n  },\n  methods:{\n  \tstopPropagation: function(event){\n  \t\tevent.stopPropagation()\n  \t}\n  },\n  ready:function(){\n    \n  }\n}\n</script>\n\n<template>\n  <div class=\"sidebar-mask\" transition=\"sidebar\">\n    <div class=\"sidebar-wrapper\">\n      <div class=\"sidebar-container\" @click=\"stopPropagation\">\n        \n        <div class=\"sidebar-header\">\n          <slot name=\"header\">\n          </slot>\n        </div>\n        \n        <div class=\"sidebar-body\">\n          <slot name=\"body\">\n          </slot>\n        </div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<style>\n.sidebar-mask {\n  position: fixed;\n  z-index: 800000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0);\n  display: table;\n  transition: opacity .3s ease;\n}\n\n.sidebar-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.sidebar-container {\n  width:240px;\n  position: absolute;\n  right: 0;\n  height:100%;\n  margin-top:45px;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .4s ease;\n}\n\n.sidebar-header {\n  padding:12px;\n}\n\n.sidebar-body {\n  padding:12px;\n  background: #eee;\n  border-top:1px solid #ccc;\n  border-bottom:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"sidebar\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the sidebar transition by editing\n * these styles.\n */\n\n.sidebar-enter, .sidebar-leave {\n  opacity: 0;\n}\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n}\n\n.sidebar-body {\n  background: #eee;\n  border-top:1px solid #ccc;\n  border-bottom:1px solid #ccc;\n  min-height:500px;\n  overflow-x: auto;\n  position: relative;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/sidebar.vue?02a0a0d8"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAuCA;EACA,eAAA;EACA,eAAA;EACA,YAAA;EACA,SAAA;EACA,SAAA;EACA,YAAA;EACA,uBAAA;EACA,yCAAA;CACA;;AAEA;EACA,aAAA;CACA;;AAEA;EACA,iBAAA;EACA,0BAAA;EACA,6BAAA;EACA,iBAAA;EACA,iBAAA;EACA,mBAAA;CACA","file":"sidebar.vue","sourcesContent":["<script>\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      \n    }\n  },\n  methods:{\n  \t\n  },\n  ready:function(){\n    \n  }\n}\n</script>\n\n<template>\n  <div class=\"sidebar\" transition=\"fade\" v-if=\"show\">\n    \n    <div class=\"sidebar-header\">\n      <slot name=\"header\">\n      </slot>\n    </div>\n    \n    <div class=\"sidebar-body\">\n      <slot name=\"body\">\n      </slot>\n    </div>\n  </div>\n</template>\n\n<style>\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n}\n\n.sidebar-body {\n  background: #eee;\n  border-top:1px solid #ccc;\n  border-bottom:1px solid #ccc;\n  min-height:500px;\n  overflow-x: auto;\n  position: relative;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -3105,34 +3298,87 @@
 	    return {};
 	  },
 	
-	  methods: {
-	    stopPropagation: function stopPropagation(event) {
-	      event.stopPropagation();
-	    }
-	  },
+	  methods: {},
 	  ready: function ready() {}
 	};
-
-/***/ },
-/* 56 */
-/***/ function(module, exports) {
-
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"sidebar-mask\" transition=\"sidebar\">\n  <div class=\"sidebar-wrapper\">\n    <div class=\"sidebar-container\" @click=\"stopPropagation\">\n      \n      <div class=\"sidebar-header\">\n        <slot name=\"header\">\n        </slot>\n      </div>\n      \n      <div class=\"sidebar-body\">\n        <slot name=\"body\">\n        </slot>\n      </div>\n    </div>\n  </div>\n</div>\n";
-
-/***/ },
-/* 57 */
-/***/ function(module, exports) {
-
-	module.exports = "\n\n\n\n\n<sidebar :show.sync=\"show\">\n  \n  <div slot=\"header\">\n    <button class=\"btn btn-success btn\" @click=\"show = false\">&nbsp; 完成 &nbsp;</button>\n    <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n  </div>\n  <div slot=\"body\">\n    \n  </div>\n    \n</sidebar>\n";
 
 /***/ },
 /* 58 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"workspace\" :style=\"{height: workspace.height + 10 + 'px'}\">\n  <div id=\"content-area\" :style=\"{height: workspace.height + 'px', width: (workspace.width-2) + 'px', marginLeft:(-workspace.width/2 + 1) +'px'}\"></div>\n  <div v-for=\"(sectionId, section) in sections\" class=\"page-section\" :style=\"(workspace.version == 'pc') ? section.style : section.styleM\"  v-on:mouseover=\"setCurrentSectionId(sectionId)\">\n    <div class=\"editable-area\" :style=\"{width: workspace.width + 'px'}\">\n      <!-- 页面元素组件 -->\n      <component v-for=\"(elementId,element) in section.elements\" :is=\"'element-' + element.type\" :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\"></component>\n      <!-- 板块操作按钮组 -->\n      <div class=\"btn-group page-section-operation\" role=\"group\" v-show=\"workspace.currentSectionId==sectionId\" transition=\"fade\" :style=\"{left: workspace.width + 5 + 'px'}\">\n        <button type=\"button\" class=\"btn btn-primary\" title=\"修改\" @click=\"showSectionEdit = true\"><span class=\"glyphicon glyphicon-pencil\"></span></button>\n        <button type=\"button\" class=\"btn btn-default\" title=\"上移\" @click=\"moveSection('up',sectionId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></button>\n        <button type=\"button\" class=\"btn btn-default\" title=\"下移\" @click=\"moveSection('down',sectionId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></button>\n        <button type=\"button\" class=\"btn btn-default\" title=\"删除\" @click=\"removeSection(sectionId)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n      </div>\n    </div>\n  </div>\n  <div style=\"height:60px;\"></div>\n  <section-edit :show.sync=\"showSectionEdit\" v-if=\"showSectionEdit\"></section-edit>\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"sidebar\" transition=\"fade\" v-if=\"show\">\n  \n  <div class=\"sidebar-header\">\n    <slot name=\"header\">\n    </slot>\n  </div>\n  \n  <div class=\"sidebar-body\">\n    <slot name=\"body\">\n    </slot>\n  </div>\n</div>\n";
 
 /***/ },
 /* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(60)
+	__vue_script__ = __webpack_require__(62)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/color-picker.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(64)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./color-picker.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(61);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(12)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./color-picker.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./color-picker.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(11)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n.color-block {\n  height: 30px;\n  margin: 6px;\n  border: 2px solid #eee;\n  cursor: pointer;\n  border-radius: 4px;\n  text-align: center;\n  line-height: 30px;\n}\n\n.color-block:hover, .color-button:hover{\n  border: 1px solid #ccc;\n}\n\n.color-button{\n  width:100%;\n  height:30px;\n  border-radius: 4px;\n  border: 2px solid #eee;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/color-picker.vue?8a6f64c6"],"names":[],"mappings":";AACA;EACA,aAAA;EACA,YAAA;EACA,uBAAA;EACA,gBAAA;EACA,mBAAA;EACA,mBAAA;EACA,kBAAA;CACA;;AAEA;EACA,uBAAA;CACA;;AAEA;EACA,WAAA;EACA,YAAA;EACA,mBAAA;EACA,uBAAA;CACA","file":"color-picker.vue","sourcesContent":["<style>\n.color-block {\n  height: 30px;\n  margin: 6px;\n  border: 2px solid #eee;\n  cursor: pointer;\n  border-radius: 4px;\n  text-align: center;\n  line-height: 30px;\n}\n\n.color-block:hover, .color-button:hover{\n  border: 1px solid #ccc;\n}\n\n.color-button{\n  width:100%;\n  height:30px;\n  border-radius: 4px;\n  border: 2px solid #eee;\n}\n</style>\n\n<template>\n  <dropdown :show.sync=\"show\">\n    <div slot=\"button\">\n      <div class=\"color-button\" :style=\"{background:getColor(color)}\"></div>\n    </div>\n    <div slot=\"content\">\n      <div v-for=\"colorItem in colorSet\" :style=\"{background: colorItem}\" class=\"color-block\"></div>\n      <div class=\"color-block\">自定义颜色</div>\n    </div>\n  </dropdown>\n</template>\n\n<script>\nimport colorMixin from '../mixins/colorMixin.js'\nimport dropdown from './dropdown.vue'\nimport { getColorSet } from '../store/getters'\n\nexport default {\n  name:'colorPicker',\n  mixins: [colorMixin],\n  components: {\n    dropdown\n  },\n  props: {\n    color: {\n      type: String,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      show: false\n    }\n  },\n  methods:{\n    \n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      colorSet: getColorSet\n    }\n  }\n}\n</script>"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3141,1015 +3387,90 @@
 	  value: true
 	});
 	
-	var _vuex = __webpack_require__(60);
+	var _colorMixin = __webpack_require__(63);
 	
-	var _vuex2 = _interopRequireDefault(_vuex);
+	var _colorMixin2 = _interopRequireDefault(_colorMixin);
 	
-	var _lodash = __webpack_require__(61);
+	var _dropdown = __webpack_require__(24);
+	
+	var _dropdown2 = _interopRequireDefault(_dropdown);
+	
+	var _getters = __webpack_require__(7);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// Vue.use(Vuex)
-	var state = {
-	  workspace: {
-	    //页面宽度，桌面960，移动400
-	    width: 400,
-	    //
-	    height: 1600,
-	    //PC版页面高度，需计算
-	    heightPC: 1400,
-	    //移动版页面高度，需计算
-	    heightM: 1600,
-	    //pc为桌面版，mobile为移动版
-	    version: 'mobile',
-	    //当前页面激活的板块，将显示该板块的操作按钮，在添加页面元素时，将添加到此板块中
-	    currentSectionId: 0,
-	    //当前处于编辑状态的板块
-	    editingSectionId: null,
-	    //是否可以执行撤销操作
-	    undo: false,
-	    //是否可以执行重做操作
-	    redo: false,
-	    //编辑状态中的页面元素id
-	    activeElementId: ""
+	exports.default = {
+	  name: 'colorPicker',
+	  mixins: [_colorMixin2.default],
+	  components: {
+	    dropdown: _dropdown2.default
 	  },
-	
-	  settings: {
-	    'seo': {
-	      'pageTitle': 'Hello, Juye Page!',
-	      'keywords': 'Landing Pages, 落地页, 着陆页',
-	      'description': 'It is an amazing tool for e-marketing!'
-	    },
-	    'conversion': {}
-	  },
-	
-	  colorSet: ['#E6E2AF', "#A7A37E", "#EFECCA", "#046380", "#002F2F"],
-	
-	  sections: [{
-	    style: { background: "#333", height: "300px" },
-	    styleM: { background: "#333", height: "300px" },
-	    elements: {}
-	  }, {
-	    style: { background: "#900", height: "200px" },
-	    styleM: { background: "#ccc", height: "300px" },
-	    elements: {
-	      "bifsdc": {
-	        type: "text",
-	        content: "wdfsdf<br>dksjlfjslkd jksdfs ksdfksd",
-	        style: {
-	          left: "200px",
-	          top: "100px",
-	          width: "500px",
-	          zIndex: 100
-	        },
-	        styleM: {
-	          left: "100px",
-	          top: "100px",
-	          width: "200px",
-	          zIndex: 100
-	        }
-	      }
-	    }
-	  }, // "fgh24g":{
-	  //   type:"button",
-	  // },
-	  // "nrgs13":{
-	  //   type:"video",
-	  // },
-	  // "bwdkfk":{
-	  //   type:"form",
-	  // }
-	  {
-	    style: { background: "", height: "300px" },
-	    styleM: { background: "", height: "500px" },
-	    elements: {
-	      "123ghfdv": {
-	        type: "text",
-	        content: "Hello, World!",
-	        style: {
-	          left: "500px",
-	          top: "100px",
-	          width: "458px",
-	          zIndex: 1000
-	        },
-	        styleM: {
-	          left: "150px",
-	          top: "100px",
-	          width: "200px",
-	          zIndex: 100
-	        }
-	      },
-	      "testurltesturl": {
-	        type: "image",
-	        src: "http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
-	        style: {
-	          left: "200px",
-	          top: "100px",
-	          width: "333px",
-	          zIndex: 101
-	        },
-	        styleM: {
-	          left: "50px",
-	          top: "150px",
-	          width: "120px",
-	          zIndex: 101
-	        }
-	      }
-	    }
-	  }, {
-	    style: { background: "#909", height: "300px" },
-	    styleM: { background: "#909", height: "200px" },
-	    elements: {
-	      "bvsdfg23": {
-	        type: "text",
-	        content: "Hello, World!",
-	        style: {
-	          left: "500px",
-	          top: "100px",
-	          width: "458px",
-	          zIndex: 1000
-	        },
-	        styleM: {
-	          left: "150px",
-	          top: "100px",
-	          width: "200px",
-	          zIndex: 2000
-	        }
-	      }
-	    }
-	  }, {
-	    style: { background: "#4b6fc1", height: "300px" },
-	    styleM: { background: "#4b6fc1", height: "300px" },
-	    elements: {}
-	  }]
-	};
-	
-	var initstate = (0, _lodash.merge)([], state.sections);
-	
-	/* 页面初始状态 */
-	var sectionStates = [initstate];
-	var sectionHistoryIndex = 0;
-	
-	var mutations = {
-	
-	  //对sections进行操作过保存其状态，供撤销重做
-	
-	  SAVE_SECTIONS_STATE: function SAVE_SECTIONS_STATE(state) {
-	    sectionHistoryIndex += 1;
-	    sectionStates = sectionStates.slice(0, sectionHistoryIndex);
-	    sectionStates.push((0, _lodash.merge)([], state.sections));
-	    state.workspace.undo = true;
-	    state.workspace.redo = false;
-	  },
-	
-	
-	  //计算页面高度，在初始加载以及进行了撤销重做动作之后执行
-	  SUM_PAGE_HEIGHT: function SUM_PAGE_HEIGHT(state) {
-	    var heightPC = 0;
-	    var heightM = 0;
-	    for (var sectionId in state.sections) {
-	      heightPC += parseInt(state.sections[sectionId].style.height);
-	      heightM += parseInt(state.sections[sectionId].styleM.height);
-	    }
-	    state.workspace.heightPC = heightPC;
-	    state.workspace.heightM = heightM;
-	    state.workspace.height = state.workspace.version == 'pc' ? heightPC : heightM;
-	  },
-	
-	
-	  //移动板块
-	  MOVE_SECTION: function MOVE_SECTION(state, dir, sectionId) {
-	    var target = sectionId;
-	    if (dir === 'down' && sectionId < state.sections.length - 1) {
-	      target++;
-	    }
-	    if (dir === 'up' && sectionId > 0) {
-	      target--;
-	    }
-	
-	    if (sectionId != target) {
-	      state.sections[sectionId] = state.sections.splice(target, 1, state.sections[sectionId])[0];
-	      mutations.SAVE_SECTIONS_STATE(state);
+	  props: {
+	    color: {
+	      type: String,
+	      required: true,
+	      twoWay: true
 	    }
 	  },
-	
-	
-	  //添加板块
-	  ADD_SECTION: function ADD_SECTION(state) {
-	    state.sections.push({
-	      style: { background: "", height: "200px" },
-	      styleM: { background: "", height: "200px" },
-	      elements: {}
-	    });
-	    state.workspace.height += 200;
-	    mutations.SAVE_SECTIONS_STATE(state);
-	  },
-	
-	
-	  //删除板块
-	  REMOVE_SECTION: function REMOVE_SECTION(state, sectionId) {
-	    state.workspace.height -= parseInt(state.sections[sectionId].style.height);
-	    state.sections.splice(sectionId, 1);
-	    mutations.SAVE_SECTIONS_STATE(state);
-	  },
-	
-	
-	  //设置当前活动的页面板块
-	  SET_CURRENT_SECTION_ID: function SET_CURRENT_SECTION_ID(state, sectionId) {
-	    state.workspace.currentSectionId = sectionId;
-	  },
-	
-	
-	  //设置当前处于编辑状态的元素id
-	  SET_ACTIVE_ELEMENT_ID: function SET_ACTIVE_ELEMENT_ID(state, elementId) {
-	    state.workspace.activeElementId = elementId;
-	  },
-	  REMOVE_ELEMENT: function REMOVE_ELEMENT(state, sectionId, elementId) {
-	    //旧方案会引起sections整体刷新
-	    //delete state.sections[sectionId]['elements'][elementId];
-	    //state.sections = merge([],state.sections);
-	
-	    //此方案只刷新单个section
-	    var section = state.sections[sectionId];
-	    delete section['elements'][elementId];
-	    state.sections.$set(sectionId, (0, _lodash.merge)({}, section));
-	    mutations.SAVE_SECTIONS_STATE(state);
-	  },
-	
-	
-	  //重做
-	  REDO: function REDO(state) {
-	    if (sectionStates.length > sectionHistoryIndex + 1) {
-	      sectionHistoryIndex += 1;
-	      state.sections = (0, _lodash.merge)([], sectionStates[sectionHistoryIndex]);
-	
-	      //控制按钮是否可点击
-	      state.workspace.undo = true;
-	      if (sectionStates.length == sectionHistoryIndex + 1) {
-	        state.workspace.redo = false;
-	      }
-	
-	      //重新计算页面高度
-	      mutations.SUM_PAGE_HEIGHT(state);
-	    }
-	  },
-	
-	
-	  //撤销
-	  UNDO: function UNDO(state) {
-	    if (sectionHistoryIndex >= 1) {
-	      sectionHistoryIndex -= 1;
-	      state.sections = (0, _lodash.merge)([], sectionStates[sectionHistoryIndex]);
-	
-	      //控制按钮是否可点击
-	      state.workspace.redo = true;
-	      if (sectionHistoryIndex == 0) {
-	        state.workspace.undo = false;
-	      }
-	
-	      //重新计算页面高度
-	      mutations.SUM_PAGE_HEIGHT(state);
-	    }
-	  },
-	
-	
-	  //版本切换
-	  VERSION: function VERSION(state) {
-	    if (state.workspace.version == 'mobile') {
-	      state.workspace.version = 'pc';
-	      state.workspace.width = 960;
-	    } else {
-	      state.workspace.version = 'mobile';
-	      state.workspace.width = 400;
-	    }
-	    //重新计算页面高度
-	    mutations.SUM_PAGE_HEIGHT(state);
-	  },
-	  MOVE_ELEMENT: function MOVE_ELEMENT(state, sectionId, elementId, positionInPage, elementHeight) {
-	    var sumSectionsHeight = 0;
-	    var sectionHeight = 0;
-	
-	    //从元素中间到页头的高度
-	    var elementLine = positionInPage.top + elementHeight / 2;
-	
-	    //计算移动后该元素落入哪个section
-	    var newSectionId = -1;
-	    while (elementLine >= sumSectionsHeight) {
-	      newSectionId++;
-	      sectionHeight = parseInt(state.workspace.version == 'pc' ? state.sections[newSectionId].style.height : state.sections[newSectionId].styleM.height);
-	      sumSectionsHeight += sectionHeight;
-	    }
-	
-	    var style = {
-	      top: positionInPage.top - (sumSectionsHeight - sectionHeight) + "px",
-	      left: positionInPage.left + "px"
+	  data: function data() {
+	    return {
+	      show: false
 	    };
-	
-	    //更新元素坐标，如果移到了新的section，则把另一版本的坐标重置
-	    var elState = state.sections[sectionId].elements[elementId];
-	    if (state.workspace.version == 'pc') {
-	      elState.style = (0, _lodash.extend)({}, elState.style, style);
-	      if (newSectionId !== sectionId) {
-	        //elState.styleM = extend({}, elState.styleM, {top:'0px'});
-	      }
-	    } else {
-	        elState.styleM = (0, _lodash.extend)({}, elState.styleM, style);
-	        if (newSectionId !== sectionId) {
-	          //elState.style = extend({}, elState.style, {top:'0px'});
-	        }
-	      }
-	
-	    var oldSection = state.sections[sectionId];
-	
-	    delete state.sections[sectionId].elements[elementId];
-	    state.sections[newSectionId].elements[elementId] = elState;
-	
-	    var newSection = state.sections[newSectionId];
-	
-	    state.sections.$set(sectionId, (0, _lodash.merge)({}, oldSection));
-	    state.sections.$set(newSectionId, (0, _lodash.merge)({}, newSection));
-	
-	    // console.log(state.sections[newSectionId].elements[elementId].style.top);
-	    // console.log(state.sections[newSectionId].elements[elementId].styleM.top);
-	
-	    mutations.SAVE_SECTIONS_STATE(state);
 	  },
 	
-	
-	  //修改元素
-	  MODIFY_ELEMENT: function MODIFY_ELEMENT(state, sectionId, elementId, style) {
-	    var stateelement = state.sections[sectionId].elements[elementId];
-	    state.sections[sectionId].elements[elementId].style = (0, _lodash.extend)({}, stateelement.style, style);
-	    mutations.SAVE_SECTIONS_STATE(state);
-	  },
-	
-	
-	  //新增元素
-	  ADD_ELEMENT: function ADD_ELEMENT(state, startSectionId, startelementId, endSectionId, style) {
-	    var startsection = state.sections[startSectionId];
-	    var endsection = state.sections[endSectionId];
-	    //缓存旧的元素
-	    var stateelement = state.sections[startSectionId].elements[startelementId];
-	    stateelement.style = (0, _lodash.extend)({}, stateelement.style, style);
-	
-	    //删除旧的元素
-	    delete state.sections[startSectionId].elements[startelementId];
-	    state.sections.$set(startSectionId, (0, _lodash.merge)({}, startsection));
-	
-	    //更新新的元素
-	    state.sections[endSectionId].elements[startelementId] = stateelement;
-	    state.sections.$set(endSectionId, (0, _lodash.merge)({}, endsection));
-	
-	    mutations.SAVE_SECTIONS_STATE(state);
+	  methods: {},
+	  vuex: {
+	    actions: {},
+	    getters: {
+	      colorSet: _getters.getColorSet
+	    }
 	  }
 	};
-	
-	exports.default = new _vuex2.default.Store({
-	  state: state,
-	  mutations: mutations
-	});
 
 /***/ },
-/* 60 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/*!
-	 * Vuex v0.6.3
-	 * (c) 2016 Evan You
-	 * Released under the MIT License.
-	 */
-	(function (global, factory) {
-	   true ? module.exports = factory() :
-	  typeof define === 'function' && define.amd ? define(factory) :
-	  (global.Vuex = factory());
-	}(this, function () { 'use strict';
+	"use strict";
 	
-	  var babelHelpers = {};
-	  babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-	    return typeof obj;
-	  } : function (obj) {
-	    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
-	  };
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	
-	  babelHelpers.classCallCheck = function (instance, Constructor) {
-	    if (!(instance instanceof Constructor)) {
-	      throw new TypeError("Cannot call a class as a function");
+	var _getters = __webpack_require__(7);
+	
+	exports.default = {
+	  vuex: {
+	    actions: {},
+	    getters: {
+	      colorSet: _getters.getColorSet
 	    }
-	  };
-	
-	  babelHelpers.createClass = function () {
-	    function defineProperties(target, props) {
-	      for (var i = 0; i < props.length; i++) {
-	        var descriptor = props[i];
-	        descriptor.enumerable = descriptor.enumerable || false;
-	        descriptor.configurable = true;
-	        if ("value" in descriptor) descriptor.writable = true;
-	        Object.defineProperty(target, descriptor.key, descriptor);
-	      }
-	    }
-	
-	    return function (Constructor, protoProps, staticProps) {
-	      if (protoProps) defineProperties(Constructor.prototype, protoProps);
-	      if (staticProps) defineProperties(Constructor, staticProps);
-	      return Constructor;
-	    };
-	  }();
-	
-	  babelHelpers.toConsumableArray = function (arr) {
-	    if (Array.isArray(arr)) {
-	      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-	
-	      return arr2;
-	    } else {
-	      return Array.from(arr);
-	    }
-	  };
-	
-	  babelHelpers;
-	
-	  /**
-	   * Merge an array of objects into one.
-	   *
-	   * @param {Array<Object>} arr
-	   * @return {Object}
-	   */
-	
-	  function mergeObjects(arr) {
-	    return arr.reduce(function (prev, obj) {
-	      Object.keys(obj).forEach(function (key) {
-	        var existing = prev[key];
-	        if (existing) {
-	          // allow multiple mutation objects to contain duplicate
-	          // handlers for the same mutation type
-	          if (Array.isArray(existing)) {
-	            existing.push(obj[key]);
-	          } else {
-	            prev[key] = [prev[key], obj[key]];
-	          }
-	        } else {
-	          prev[key] = obj[key];
-	        }
-	      });
-	      return prev;
-	    }, {});
-	  }
-	
-	  /**
-	   * Deep clone an object. Faster than JSON.parse(JSON.stringify()).
-	   *
-	   * @param {*} obj
-	   * @return {*}
-	   */
-	
-	  function deepClone(obj) {
-	    if (Array.isArray(obj)) {
-	      return obj.map(deepClone);
-	    } else if (obj && (typeof obj === 'undefined' ? 'undefined' : babelHelpers.typeof(obj)) === 'object') {
-	      var cloned = {};
-	      var keys = Object.keys(obj);
-	      for (var i = 0, l = keys.length; i < l; i++) {
-	        var key = keys[i];
-	        cloned[key] = deepClone(obj[key]);
-	      }
-	      return cloned;
-	    } else {
-	      return obj;
-	    }
-	  }
-	
-	  /**
-	   * Hacks to get access to Vue internals.
-	   * Maybe we should expose these...
-	   */
-	
-	  var Watcher = void 0;
-	  function getWatcher(vm) {
-	    if (!Watcher) {
-	      var unwatch = vm.$watch('__vuex__', function (a) {
-	        return a;
-	      });
-	      Watcher = vm._watchers[0].constructor;
-	      unwatch();
-	    }
-	    return Watcher;
-	  }
-	
-	  var Dep = void 0;
-	  function getDep(vm) {
-	    if (!Dep) {
-	      Dep = vm._data.__ob__.dep.constructor;
-	    }
-	    return Dep;
-	  }
-	
-	  var hook = typeof window !== 'undefined' && window.__VUE_DEVTOOLS_GLOBAL_HOOK__;
-	
-	  var devtoolMiddleware = {
-	    onInit: function onInit(state, store) {
-	      if (!hook) return;
-	      hook.emit('vuex:init', store);
-	      hook.on('vuex:travel-to-state', function (targetState) {
-	        var currentState = store._vm._data;
-	        store._dispatching = true;
-	        Object.keys(targetState).forEach(function (key) {
-	          currentState[key] = targetState[key];
-	        });
-	        store._dispatching = false;
-	      });
-	    },
-	    onMutation: function onMutation(mutation, state) {
-	      if (!hook) return;
-	      hook.emit('vuex:mutation', mutation, state);
-	    }
-	  };
-	
-	  function override (Vue) {
-	    // override init and inject vuex init procedure
-	    var _init = Vue.prototype._init;
-	    Vue.prototype._init = function () {
-	      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	
-	      options.init = options.init ? [vuexInit].concat(options.init) : vuexInit;
-	      _init.call(this, options);
-	    };
-	
-	    /**
-	     * Vuex init hook, injected into each instances init hooks list.
-	     */
-	
-	    function vuexInit() {
-	      var options = this.$options;
-	      var store = options.store;
-	      var vuex = options.vuex;
-	      // store injection
-	
-	      if (store) {
-	        this.$store = store;
-	      } else if (options.parent && options.parent.$store) {
-	        this.$store = options.parent.$store;
-	      }
-	      // vuex option handling
-	      if (vuex) {
-	        if (!this.$store) {
-	          console.warn('[vuex] store not injected. make sure to ' + 'provide the store option in your root component.');
-	        }
-	        var state = vuex.state;
-	        var getters = vuex.getters;
-	        var actions = vuex.actions;
-	        // handle deprecated state option
-	
-	        if (state && !getters) {
-	          console.warn('[vuex] vuex.state option will been deprecated in 1.0. ' + 'Use vuex.getters instead.');
-	          getters = state;
-	        }
-	        // getters
-	        if (getters) {
-	          options.computed = options.computed || {};
-	          for (var key in getters) {
-	            defineVuexGetter(this, key, getters[key]);
-	          }
-	        }
-	        // actions
-	        if (actions) {
-	          options.methods = options.methods || {};
-	          for (var _key in actions) {
-	            options.methods[_key] = makeBoundAction(this.$store, actions[_key], _key);
-	          }
-	        }
-	      }
-	    }
-	
-	    /**
-	     * Setter for all getter properties.
-	     */
-	
-	    function setter() {
-	      throw new Error('vuex getter properties are read-only.');
-	    }
-	
-	    /**
-	     * Define a Vuex getter on an instance.
-	     *
-	     * @param {Vue} vm
-	     * @param {String} key
-	     * @param {Function} getter
-	     */
-	
-	    function defineVuexGetter(vm, key, getter) {
-	      if (typeof getter !== 'function') {
-	        console.warn('[vuex] Getter bound to key \'vuex.getters.' + key + '\' is not a function.');
+	  },
+	  methods: {
+	    getColor: function getColor(color) {
+	      if (color.toString().substr(0, 1) == "#") {
+	        return color;
 	      } else {
-	        Object.defineProperty(vm, key, {
-	          enumerable: true,
-	          configurable: true,
-	          get: makeComputedGetter(vm.$store, getter),
-	          set: setter
-	        });
+	        return this.colorSet[color];
 	      }
 	    }
-	
-	    /**
-	     * Make a computed getter, using the same caching mechanism of computed
-	     * properties. In addition, it is cached on the raw getter function using
-	     * the store's unique cache id. This makes the same getter shared
-	     * across all components use the same underlying watcher, and makes
-	     * the getter evaluated only once during every flush.
-	     *
-	     * @param {Store} store
-	     * @param {Function} getter
-	     */
-	
-	    function makeComputedGetter(store, getter) {
-	      var id = store._getterCacheId;
-	
-	      // cached
-	      if (getter[id]) {
-	        return getter[id];
-	      }
-	      var vm = store._vm;
-	      var Watcher = getWatcher(vm);
-	      var Dep = getDep(vm);
-	      var watcher = new Watcher(vm, function (state) {
-	        return getter(state);
-	      }, null, { lazy: true });
-	      var computedGetter = function computedGetter() {
-	        if (watcher.dirty) {
-	          watcher.evaluate();
-	        }
-	        if (Dep.target) {
-	          watcher.depend();
-	        }
-	        return watcher.value;
-	      };
-	      getter[id] = computedGetter;
-	      return computedGetter;
-	    }
-	
-	    /**
-	     * Make a bound-to-store version of a raw action function.
-	     *
-	     * @param {Store} store
-	     * @param {Function} action
-	     * @param {String} key
-	     */
-	
-	    function makeBoundAction(store, action, key) {
-	      if (typeof action !== 'function') {
-	        console.warn('[vuex] Action bound to key \'vuex.actions.' + key + '\' is not a function.');
-	      }
-	      return function vuexBoundAction() {
-	        for (var _len = arguments.length, args = Array(_len), _key2 = 0; _key2 < _len; _key2++) {
-	          args[_key2] = arguments[_key2];
-	        }
-	
-	        return action.call.apply(action, [this, store].concat(args));
-	      };
-	    }
-	
-	    // option merging
-	    var merge = Vue.config.optionMergeStrategies.computed;
-	    Vue.config.optionMergeStrategies.vuex = function (toVal, fromVal) {
-	      if (!toVal) return fromVal;
-	      if (!fromVal) return toVal;
-	      return {
-	        getters: merge(toVal.getters, fromVal.getters),
-	        state: merge(toVal.state, fromVal.state),
-	        actions: merge(toVal.actions, fromVal.actions)
-	      };
-	    };
 	  }
-	
-	  var Vue = void 0;
-	  var uid = 0;
-	
-	  var Store = function () {
-	
-	    /**
-	     * @param {Object} options
-	     *        - {Object} state
-	     *        - {Object} actions
-	     *        - {Object} mutations
-	     *        - {Array} middlewares
-	     *        - {Boolean} strict
-	     */
-	
-	    function Store() {
-	      var _this = this;
-	
-	      var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	
-	      var _ref$state = _ref.state;
-	      var state = _ref$state === undefined ? {} : _ref$state;
-	      var _ref$mutations = _ref.mutations;
-	      var mutations = _ref$mutations === undefined ? {} : _ref$mutations;
-	      var _ref$modules = _ref.modules;
-	      var modules = _ref$modules === undefined ? {} : _ref$modules;
-	      var _ref$middlewares = _ref.middlewares;
-	      var middlewares = _ref$middlewares === undefined ? [] : _ref$middlewares;
-	      var _ref$strict = _ref.strict;
-	      var strict = _ref$strict === undefined ? false : _ref$strict;
-	      babelHelpers.classCallCheck(this, Store);
-	
-	      this._getterCacheId = 'vuex_store_' + uid++;
-	      this._dispatching = false;
-	      this._rootMutations = this._mutations = mutations;
-	      this._modules = modules;
-	      // bind dispatch to self
-	      var dispatch = this.dispatch;
-	      this.dispatch = function () {
-	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	          args[_key] = arguments[_key];
-	        }
-	
-	        dispatch.apply(_this, args);
-	      };
-	      // use a Vue instance to store the state tree
-	      // suppress warnings just in case the user has added
-	      // some funky global mixins
-	      if (!Vue) {
-	        throw new Error('[vuex] must call Vue.use(Vuex) before creating a store instance.');
-	      }
-	      var silent = Vue.config.silent;
-	      Vue.config.silent = true;
-	      this._vm = new Vue({
-	        data: state
-	      });
-	      Vue.config.silent = silent;
-	      this._setupModuleState(state, modules);
-	      this._setupModuleMutations(modules);
-	      this._setupMiddlewares(middlewares, state);
-	      // add extra warnings in strict mode
-	      if (strict) {
-	        this._setupMutationCheck();
-	      }
-	    }
-	
-	    /**
-	     * Getter for the entire state tree.
-	     * Read only.
-	     *
-	     * @return {Object}
-	     */
-	
-	    babelHelpers.createClass(Store, [{
-	      key: 'dispatch',
-	
-	
-	      /**
-	       * Dispatch an action.
-	       *
-	       * @param {String} type
-	       */
-	
-	      value: function dispatch(type) {
-	        for (var _len2 = arguments.length, payload = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-	          payload[_key2 - 1] = arguments[_key2];
-	        }
-	
-	        var silent = false;
-	        // compatibility for object actions, e.g. FSA
-	        if ((typeof type === 'undefined' ? 'undefined' : babelHelpers.typeof(type)) === 'object' && type.type && arguments.length === 1) {
-	          payload = [type.payload];
-	          if (type.silent) silent = true;
-	          type = type.type;
-	        }
-	        var mutation = this._mutations[type];
-	        var state = this.state;
-	        if (mutation) {
-	          this._dispatching = true;
-	          // apply the mutation
-	          if (Array.isArray(mutation)) {
-	            mutation.forEach(function (m) {
-	              return m.apply(undefined, [state].concat(babelHelpers.toConsumableArray(payload)));
-	            });
-	          } else {
-	            mutation.apply(undefined, [state].concat(babelHelpers.toConsumableArray(payload)));
-	          }
-	          this._dispatching = false;
-	          if (!silent) this._applyMiddlewares(type, payload);
-	        } else {
-	          console.warn('[vuex] Unknown mutation: ' + type);
-	        }
-	      }
-	
-	      /**
-	       * Watch state changes on the store.
-	       * Same API as Vue's $watch, except when watching a function,
-	       * the function gets the state as the first argument.
-	       *
-	       * @param {String|Function} expOrFn
-	       * @param {Function} cb
-	       * @param {Object} [options]
-	       */
-	
-	    }, {
-	      key: 'watch',
-	      value: function watch(expOrFn, cb, options) {
-	        var _this2 = this;
-	
-	        return this._vm.$watch(function () {
-	          return typeof expOrFn === 'function' ? expOrFn(_this2.state) : _this2._vm.$get(expOrFn);
-	        }, cb, options);
-	      }
-	
-	      /**
-	       * Hot update mutations & modules.
-	       *
-	       * @param {Object} options
-	       *        - {Object} [mutations]
-	       *        - {Object} [modules]
-	       */
-	
-	    }, {
-	      key: 'hotUpdate',
-	      value: function hotUpdate() {
-	        var _ref2 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	
-	        var mutations = _ref2.mutations;
-	        var modules = _ref2.modules;
-	
-	        this._rootMutations = this._mutations = mutations || this._rootMutations;
-	        this._setupModuleMutations(modules || this._modules);
-	      }
-	
-	      /**
-	       * Attach sub state tree of each module to the root tree.
-	       *
-	       * @param {Object} state
-	       * @param {Object} modules
-	       */
-	
-	    }, {
-	      key: '_setupModuleState',
-	      value: function _setupModuleState(state, modules) {
-	        Object.keys(modules).forEach(function (key) {
-	          Vue.set(state, key, modules[key].state || {});
-	        });
-	      }
-	
-	      /**
-	       * Bind mutations for each module to its sub tree and
-	       * merge them all into one final mutations map.
-	       *
-	       * @param {Object} updatedModules
-	       */
-	
-	    }, {
-	      key: '_setupModuleMutations',
-	      value: function _setupModuleMutations(updatedModules) {
-	        var modules = this._modules;
-	        var allMutations = [this._rootMutations];
-	        Object.keys(updatedModules).forEach(function (key) {
-	          modules[key] = updatedModules[key];
-	        });
-	        Object.keys(modules).forEach(function (key) {
-	          var module = modules[key];
-	          if (!module || !module.mutations) return;
-	          // bind mutations to sub state tree
-	          var mutations = {};
-	          Object.keys(module.mutations).forEach(function (name) {
-	            var original = module.mutations[name];
-	            mutations[name] = function (state) {
-	              for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-	                args[_key3 - 1] = arguments[_key3];
-	              }
-	
-	              original.apply(undefined, [state[key]].concat(args));
-	            };
-	          });
-	          allMutations.push(mutations);
-	        });
-	        this._mutations = mergeObjects(allMutations);
-	      }
-	
-	      /**
-	       * Setup mutation check: if the vuex instance's state is mutated
-	       * outside of a mutation handler, we throw en error. This effectively
-	       * enforces all mutations to the state to be trackable and hot-reloadble.
-	       * However, this comes at a run time cost since we are doing a deep
-	       * watch on the entire state tree, so it is only enalbed with the
-	       * strict option is set to true.
-	       */
-	
-	    }, {
-	      key: '_setupMutationCheck',
-	      value: function _setupMutationCheck() {
-	        var _this3 = this;
-	
-	        var Watcher = getWatcher(this._vm);
-	        /* eslint-disable no-new */
-	        new Watcher(this._vm, '$data', function () {
-	          if (!_this3._dispatching) {
-	            throw new Error('[vuex] Do not mutate vuex store state outside mutation handlers.');
-	          }
-	        }, { deep: true, sync: true });
-	        /* eslint-enable no-new */
-	      }
-	
-	      /**
-	       * Setup the middlewares. The devtools middleware is always
-	       * included, since it does nothing if no devtool is detected.
-	       *
-	       * A middleware can demand the state it receives to be
-	       * "snapshots", i.e. deep clones of the actual state tree.
-	       *
-	       * @param {Array} middlewares
-	       * @param {Object} state
-	       */
-	
-	    }, {
-	      key: '_setupMiddlewares',
-	      value: function _setupMiddlewares(middlewares, state) {
-	        var _this4 = this;
-	
-	        this._middlewares = [devtoolMiddleware].concat(middlewares);
-	        this._needSnapshots = middlewares.some(function (m) {
-	          return m.snapshot;
-	        });
-	        if (this._needSnapshots) {
-	          console.log('[vuex] One or more of your middlewares are taking state snapshots ' + 'for each mutation. Make sure to use them only during development.');
-	        }
-	        var initialSnapshot = this._prevSnapshot = this._needSnapshots ? deepClone(state) : null;
-	        // call init hooks
-	        this._middlewares.forEach(function (m) {
-	          if (m.onInit) {
-	            m.onInit(m.snapshot ? initialSnapshot : state, _this4);
-	          }
-	        });
-	      }
-	
-	      /**
-	       * Apply the middlewares on a given mutation.
-	       *
-	       * @param {String} type
-	       * @param {Array} payload
-	       */
-	
-	    }, {
-	      key: '_applyMiddlewares',
-	      value: function _applyMiddlewares(type, payload) {
-	        var _this5 = this;
-	
-	        var state = this.state;
-	        var prevSnapshot = this._prevSnapshot;
-	        var snapshot = void 0,
-	            clonedPayload = void 0;
-	        if (this._needSnapshots) {
-	          snapshot = this._prevSnapshot = deepClone(state);
-	          clonedPayload = deepClone(payload);
-	        }
-	        this._middlewares.forEach(function (m) {
-	          if (m.onMutation) {
-	            if (m.snapshot) {
-	              m.onMutation({ type: type, payload: clonedPayload }, snapshot, prevSnapshot, _this5);
-	            } else {
-	              m.onMutation({ type: type, payload: payload }, state, _this5);
-	            }
-	          }
-	        });
-	      }
-	    }, {
-	      key: 'state',
-	      get: function get() {
-	        return this._vm._data;
-	      },
-	      set: function set(v) {
-	        throw new Error('[vuex] Vuex root state is read only.');
-	      }
-	    }]);
-	    return Store;
-	  }();
-	
-	  function install(_Vue) {
-	    if (Vue) {
-	      console.warn('[vuex] already installed. Vue.use(Vuex) should be called only once.');
-	      return;
-	    }
-	    Vue = _Vue;
-	    override(Vue);
-	  }
-	
-	  // auto install in dist mode
-	  if (typeof window !== 'undefined' && window.Vue) {
-	    install(window.Vue);
-	  }
-	
-	  function createLogger() {
-	    console.warn('[vuex] Vuex.createLogger has been deprecated.' + 'Use `import createLogger from \'vuex/logger\' instead.');
-	  }
-	
-	  var index = {
-	    Store: Store,
-	    install: install,
-	    createLogger: createLogger
-	  };
-	
-	  return index;
-	
-	}));
+	};
 
 /***/ },
-/* 61 */
+/* 64 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :show.sync=\"show\">\n  <div slot=\"button\">\n    <div class=\"color-button\" :style=\"{background:getColor(color)}\"></div>\n  </div>\n  <div slot=\"content\">\n    <div v-for=\"colorItem in colorSet\" :style=\"{background: colorItem}\" class=\"color-block\"></div>\n    <div class=\"color-block\">自定义颜色</div>\n  </div>\n</dropdown>\n";
+
+/***/ },
+/* 65 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n<sidebar :show.sync=\"show\">\n  \n  <div slot=\"header\">\n    <button class=\"btn btn-success btn\" @click=\"closeSidebar\">&nbsp; 完成 &nbsp;</button>\n    <h5 class=\"fr\">修改板块背景</h5>\n  </div>\n  <div slot=\"body\" class=\"container-fluid\">\n    <div class=\"row\">\n      <div class=\"col-xs-5\"><color-picker :color.sync=\"backgroundColor\"></color-picker></div>\n      <div class=\"col-xs-7\">背景颜色</div>\n    </div>\n    <div class=\"row\">\n      <div class=\"col-xs-12\">背景图片</div>\n    </div>\n  </div>\n    \n</sidebar>\n";
+
+/***/ },
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -20395,10 +19716,10 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(67)(module), (function() { return this; }())))
 
 /***/ },
-/* 62 */
+/* 67 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -20414,10 +19735,1020 @@
 
 
 /***/ },
-/* 63 */
+/* 68 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<editor-header @click=\"setActiveElementId('')\"></editor-header>\n<div class=\"main\" @click=\"setActiveElementId('')\">\n  <editor-toolbar></editor-toolbar>\n  <editor-workspace></editor-workspace>\n</div> \n";
+	module.exports = "\n<div class=\"workspace\">\n  <div id=\"content-area\" :style=\"{height: workspace.height + 'px', width: (workspace.width-2) + 'px', marginLeft:(-workspace.width/2 + 1) +'px'}\"></div>\n  <div v-for=\"(sectionId, section) in sections\" class=\"page-section\" :style=\"(workspace.version == 'pc') ? section.style : section.styleM\"  v-on:mouseover=\"setCurrentSectionId(sectionId)\">\n    <div class=\"editable-area\" :style=\"{width: workspace.width + 'px'}\">\n      <!-- 页面元素组件 -->\n      <component v-for=\"(elementId,element) in section.elements\" :is=\"'element-' + element.type\" :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\"></component>\n      <!-- 板块操作按钮组 -->\n      <div class=\"btn-group page-section-operation\" role=\"group\" v-show=\"workspace.currentSectionId==sectionId\" transition=\"fade\" :style=\"{left: workspace.width + 5 + 'px'}\">\n        <template v-if=\"sectionEditing\">\n          <button type=\"button\" class=\"btn btn-success\" title=\"完成\" @click=\"closeSidebar\"><span class=\"glyphicon glyphicon-ok\"></span></button>\n        </template>\n        <template v-if=\"(!sectionEditing)\">\n          <button type=\"button\" class=\"btn btn-primary\" title=\"修改\" @click=\"editSection\"><span class=\"glyphicon glyphicon-pencil\"></span></button>\n          <button type=\"button\" class=\"btn btn-default\" title=\"上移\" @click=\"moveSection('up',sectionId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></button>\n          <button type=\"button\" class=\"btn btn-default\" title=\"下移\" @click=\"moveSection('down',sectionId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></button>\n          <button type=\"button\" class=\"btn btn-default\" title=\"删除\" @click=\"removeSection(sectionId)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n        </template>\n      </div>\n    </div>\n    <div class=\"resize-line\"></div>\n    <div class=\"resize-line-wrap\"></div>\n  </div>\n  <div style=\"height:60px;\"></div>\n  <section-edit :show.sync=\"sectionEditing\"></section-edit>\n</div>\n";
+
+/***/ },
+/* 69 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _vuex = __webpack_require__(70);
+	
+	var _vuex2 = _interopRequireDefault(_vuex);
+	
+	var _lodash = __webpack_require__(66);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// Vue.use(Vuex)
+	var state = {
+	  workspace: {
+	    //页面宽度，桌面960，移动400
+	    width: 400,
+	    //
+	    height: 1600,
+	    //PC版页面高度，需计算
+	    heightPC: 1400,
+	    //移动版页面高度，需计算
+	    heightM: 1600,
+	    //pc为桌面版，mobile为移动版
+	    version: 'mobile',
+	    //当前页面激活的板块，将显示该板块的操作按钮，在添加页面元素时，将添加到此板块中
+	    currentSectionId: 0,
+	    //编辑状态中的板块id
+	    activeSectionId: null,
+	    //是否可以执行撤销操作
+	    undo: false,
+	    //是否可以执行重做操作
+	    redo: false,
+	    //编辑状态中的页面元素id
+	    activeElementId: ""
+	  },
+	
+	  settings: {
+	    'seo': {
+	      'pageTitle': 'Hello, Juye Page!',
+	      'keywords': 'Landing Pages, 落地页, 着陆页',
+	      'description': 'It is an amazing tool for e-marketing!'
+	    },
+	    'conversion': {}
+	  },
+	
+	  colorSet: ['#E6E2AF', "#A7A37E", "#EFECCA", "#046380", "#002F2F"],
+	
+	  sections: [{
+	    style: { background: "#333", height: "300px" },
+	    styleM: { background: "#333", height: "300px" },
+	    elements: {}
+	  }, {
+	    style: { background: "#900", height: "200px" },
+	    styleM: { background: "#ccc", height: "300px" },
+	    elements: {
+	      "bifsdc": {
+	        type: "text",
+	        content: "wdfsdf<br>dksjlfjslkd jksdfs ksdfksd",
+	        style: {
+	          left: "200px",
+	          top: "100px",
+	          width: "500px",
+	          zIndex: 100
+	        },
+	        styleM: {
+	          left: "100px",
+	          top: "100px",
+	          width: "200px",
+	          zIndex: 100
+	        }
+	      }
+	    }
+	  }, // "fgh24g":{
+	  //   type:"button",
+	  // },
+	  // "nrgs13":{
+	  //   type:"video",
+	  // },
+	  // "bwdkfk":{
+	  //   type:"form",
+	  // }
+	  {
+	    style: { background: "", height: "300px" },
+	    styleM: { background: "", height: "500px" },
+	    elements: {
+	      "123ghfdv": {
+	        type: "text",
+	        content: "Hello, World!",
+	        style: {
+	          left: "500px",
+	          top: "100px",
+	          width: "458px",
+	          zIndex: 1000
+	        },
+	        styleM: {
+	          left: "150px",
+	          top: "100px",
+	          width: "200px",
+	          zIndex: 100
+	        }
+	      },
+	      "testurltesturl": {
+	        type: "image",
+	        src: "http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+	        style: {
+	          left: "200px",
+	          top: "100px",
+	          width: "333px",
+	          zIndex: 101
+	        },
+	        styleM: {
+	          left: "50px",
+	          top: "150px",
+	          width: "120px",
+	          zIndex: 101
+	        }
+	      }
+	    }
+	  }, {
+	    style: { background: "#909", height: "300px" },
+	    styleM: { background: "#909", height: "200px" },
+	    elements: {
+	      "bvsdfg23": {
+	        type: "text",
+	        content: "Hello, World!",
+	        style: {
+	          left: "500px",
+	          top: "100px",
+	          width: "458px",
+	          zIndex: 1000
+	        },
+	        styleM: {
+	          left: "150px",
+	          top: "100px",
+	          width: "200px",
+	          zIndex: 2000
+	        }
+	      }
+	    }
+	  }, {
+	    style: { background: "#4b6fc1", height: "300px" },
+	    styleM: { background: "#4b6fc1", height: "300px" },
+	    elements: {}
+	  }]
+	};
+	
+	var initstate = (0, _lodash.merge)([], state.sections);
+	
+	/* 页面初始状态 */
+	var sectionStates = [initstate];
+	var sectionHistoryIndex = 0;
+	
+	var mutations = {
+	
+	  //对sections进行操作过保存其状态，供撤销重做
+	
+	  SAVE_SECTIONS_STATE: function SAVE_SECTIONS_STATE(state) {
+	    sectionHistoryIndex += 1;
+	    sectionStates = sectionStates.slice(0, sectionHistoryIndex);
+	    sectionStates.push((0, _lodash.merge)([], state.sections));
+	    state.workspace.undo = true;
+	    state.workspace.redo = false;
+	  },
+	
+	
+	  //计算页面高度，在初始加载以及进行了撤销重做动作之后执行
+	  SUM_PAGE_HEIGHT: function SUM_PAGE_HEIGHT(state) {
+	    var heightPC = 0;
+	    var heightM = 0;
+	    for (var sectionId in state.sections) {
+	      heightPC += parseInt(state.sections[sectionId].style.height);
+	      heightM += parseInt(state.sections[sectionId].styleM.height);
+	    }
+	    state.workspace.heightPC = heightPC;
+	    state.workspace.heightM = heightM;
+	    state.workspace.height = state.workspace.version == 'pc' ? heightPC : heightM;
+	  },
+	
+	
+	  //移动板块
+	  MOVE_SECTION: function MOVE_SECTION(state, dir, sectionId) {
+	    var target = sectionId;
+	    if (dir === 'down' && sectionId < state.sections.length - 1) {
+	      target++;
+	    }
+	    if (dir === 'up' && sectionId > 0) {
+	      target--;
+	    }
+	
+	    if (sectionId != target) {
+	      state.sections[sectionId] = state.sections.splice(target, 1, state.sections[sectionId])[0];
+	      mutations.SAVE_SECTIONS_STATE(state);
+	    }
+	  },
+	
+	
+	  //添加板块
+	  ADD_SECTION: function ADD_SECTION(state) {
+	    state.sections.push({
+	      style: { background: "", height: "200px" },
+	      styleM: { background: "", height: "200px" },
+	      elements: {}
+	    });
+	    state.workspace.height += 200;
+	    mutations.SAVE_SECTIONS_STATE(state);
+	  },
+	
+	
+	  //删除板块
+	  REMOVE_SECTION: function REMOVE_SECTION(state, sectionId) {
+	    state.workspace.height -= parseInt(state.sections[sectionId].style.height);
+	    state.sections.splice(sectionId, 1);
+	    mutations.SAVE_SECTIONS_STATE(state);
+	  },
+	
+	
+	  //修改板块
+	  MODIFY_SECTION: function MODIFY_SECTION(state, sectionId, style) {
+	    var stateSection = state.sections[sectionId];
+	    if (state.workspace.version === 'pc') {
+	      state.sections[sectionId].style = (0, _lodash.extend)({}, stateSection.style, style);
+	    } else {
+	      state.sections[sectionId].styleM = (0, _lodash.extend)({}, stateSection.styleM, style);
+	    }
+	
+	    mutations.SAVE_SECTIONS_STATE(state);
+	  },
+	
+	
+	  //设置当前活动的页面板块
+	  SET_CURRENT_SECTION_ID: function SET_CURRENT_SECTION_ID(state, sectionId) {
+	    if (state.workspace.activeSectionId === null) {
+	      state.workspace.currentSectionId = sectionId;
+	    }
+	  },
+	
+	
+	  //设置当前处于编辑状态的Section
+	  SET_ACTIVE_SECTION_ID: function SET_ACTIVE_SECTION_ID(state, sectionId) {
+	    state.workspace.activeSectionId = sectionId;
+	  },
+	
+	
+	  //设置当前处于编辑状态的元素id
+	  SET_ACTIVE_ELEMENT_ID: function SET_ACTIVE_ELEMENT_ID(state, elementId) {
+	    state.workspace.activeElementId = elementId;
+	  },
+	  REMOVE_ELEMENT: function REMOVE_ELEMENT(state, sectionId, elementId) {
+	    //旧方案会引起sections整体刷新
+	    //delete state.sections[sectionId]['elements'][elementId];
+	    //state.sections = merge([],state.sections);
+	
+	    //此方案只刷新单个section
+	    //let section = state.sections[sectionId];
+	    //delete section['elements'][elementId];
+	    //state.sections.$set(sectionId, merge({},section));
+	
+	    //原来这才是正确的姿势
+	    Vue.delete(state.sections[sectionId]['elements'], elementId);
+	    mutations.SAVE_SECTIONS_STATE(state);
+	  },
+	
+	
+	  //重做
+	  REDO: function REDO(state) {
+	    if (sectionStates.length > sectionHistoryIndex + 1) {
+	      sectionHistoryIndex += 1;
+	      state.sections = (0, _lodash.merge)([], sectionStates[sectionHistoryIndex]);
+	
+	      //控制按钮是否可点击
+	      state.workspace.undo = true;
+	      if (sectionStates.length == sectionHistoryIndex + 1) {
+	        state.workspace.redo = false;
+	      }
+	
+	      //重新计算页面高度
+	      mutations.SUM_PAGE_HEIGHT(state);
+	    }
+	  },
+	
+	
+	  //撤销
+	  UNDO: function UNDO(state) {
+	    if (sectionHistoryIndex >= 1) {
+	      sectionHistoryIndex -= 1;
+	      state.sections = (0, _lodash.merge)([], sectionStates[sectionHistoryIndex]);
+	
+	      //控制按钮是否可点击
+	      state.workspace.redo = true;
+	      if (sectionHistoryIndex == 0) {
+	        state.workspace.undo = false;
+	      }
+	
+	      //重新计算页面高度
+	      mutations.SUM_PAGE_HEIGHT(state);
+	    }
+	  },
+	
+	
+	  //版本切换
+	  VERSION: function VERSION(state) {
+	    if (state.workspace.version == 'mobile') {
+	      state.workspace.version = 'pc';
+	      state.workspace.width = 960;
+	    } else {
+	      state.workspace.version = 'mobile';
+	      state.workspace.width = 400;
+	    }
+	    //重新计算页面高度
+	    mutations.SUM_PAGE_HEIGHT(state);
+	  },
+	  MOVE_ELEMENT: function MOVE_ELEMENT(state, sectionId, elementId, positionInPage, elementHeight) {
+	    var sumSectionsHeight = 0;
+	    var sectionHeight = 0;
+	
+	    //从元素中间到页头的高度
+	    var elementLine = positionInPage.top + elementHeight / 2;
+	
+	    //计算移动后该元素落入哪个section
+	    var newSectionId = -1;
+	    while (elementLine >= sumSectionsHeight) {
+	      newSectionId++;
+	      sectionHeight = parseInt(state.workspace.version == 'pc' ? state.sections[newSectionId].style.height : state.sections[newSectionId].styleM.height);
+	      sumSectionsHeight += sectionHeight;
+	    }
+	
+	    var style = {
+	      top: positionInPage.top - (sumSectionsHeight - sectionHeight) + "px",
+	      left: positionInPage.left + "px"
+	    };
+	
+	    //旧元素
+	    var elState = state.sections[sectionId].elements[elementId];
+	    //更新元素坐标，如果移到了新的section，则把另一版本的坐标重置
+	    if (state.workspace.version == 'pc') {
+	      elState.style = (0, _lodash.extend)({}, elState.style, style);
+	      if (newSectionId !== sectionId) {
+	        //elState.styleM = extend({}, elState.styleM, {top:'0px'});
+	      }
+	    } else {
+	        elState.styleM = (0, _lodash.extend)({}, elState.styleM, style);
+	        if (newSectionId !== sectionId) {
+	          //elState.style = extend({}, elState.style, {top:'0px'});
+	        }
+	      }
+	
+	    Vue.delete(state.sections[sectionId]['elements'], elementId);
+	    Vue.set(state.sections[newSectionId]['elements'], elementId, elState);
+	
+	    mutations.SAVE_SECTIONS_STATE(state);
+	  }
+	};
+	
+	exports.default = new _vuex2.default.Store({
+	  state: state,
+	  mutations: mutations
+	});
+
+/***/ },
+/* 70 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*!
+	 * Vuex v0.6.3
+	 * (c) 2016 Evan You
+	 * Released under the MIT License.
+	 */
+	(function (global, factory) {
+	   true ? module.exports = factory() :
+	  typeof define === 'function' && define.amd ? define(factory) :
+	  (global.Vuex = factory());
+	}(this, function () { 'use strict';
+	
+	  var babelHelpers = {};
+	  babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+	    return typeof obj;
+	  } : function (obj) {
+	    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+	  };
+	
+	  babelHelpers.classCallCheck = function (instance, Constructor) {
+	    if (!(instance instanceof Constructor)) {
+	      throw new TypeError("Cannot call a class as a function");
+	    }
+	  };
+	
+	  babelHelpers.createClass = function () {
+	    function defineProperties(target, props) {
+	      for (var i = 0; i < props.length; i++) {
+	        var descriptor = props[i];
+	        descriptor.enumerable = descriptor.enumerable || false;
+	        descriptor.configurable = true;
+	        if ("value" in descriptor) descriptor.writable = true;
+	        Object.defineProperty(target, descriptor.key, descriptor);
+	      }
+	    }
+	
+	    return function (Constructor, protoProps, staticProps) {
+	      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+	      if (staticProps) defineProperties(Constructor, staticProps);
+	      return Constructor;
+	    };
+	  }();
+	
+	  babelHelpers.toConsumableArray = function (arr) {
+	    if (Array.isArray(arr)) {
+	      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+	
+	      return arr2;
+	    } else {
+	      return Array.from(arr);
+	    }
+	  };
+	
+	  babelHelpers;
+	
+	  /**
+	   * Merge an array of objects into one.
+	   *
+	   * @param {Array<Object>} arr
+	   * @return {Object}
+	   */
+	
+	  function mergeObjects(arr) {
+	    return arr.reduce(function (prev, obj) {
+	      Object.keys(obj).forEach(function (key) {
+	        var existing = prev[key];
+	        if (existing) {
+	          // allow multiple mutation objects to contain duplicate
+	          // handlers for the same mutation type
+	          if (Array.isArray(existing)) {
+	            existing.push(obj[key]);
+	          } else {
+	            prev[key] = [prev[key], obj[key]];
+	          }
+	        } else {
+	          prev[key] = obj[key];
+	        }
+	      });
+	      return prev;
+	    }, {});
+	  }
+	
+	  /**
+	   * Deep clone an object. Faster than JSON.parse(JSON.stringify()).
+	   *
+	   * @param {*} obj
+	   * @return {*}
+	   */
+	
+	  function deepClone(obj) {
+	    if (Array.isArray(obj)) {
+	      return obj.map(deepClone);
+	    } else if (obj && (typeof obj === 'undefined' ? 'undefined' : babelHelpers.typeof(obj)) === 'object') {
+	      var cloned = {};
+	      var keys = Object.keys(obj);
+	      for (var i = 0, l = keys.length; i < l; i++) {
+	        var key = keys[i];
+	        cloned[key] = deepClone(obj[key]);
+	      }
+	      return cloned;
+	    } else {
+	      return obj;
+	    }
+	  }
+	
+	  /**
+	   * Hacks to get access to Vue internals.
+	   * Maybe we should expose these...
+	   */
+	
+	  var Watcher = void 0;
+	  function getWatcher(vm) {
+	    if (!Watcher) {
+	      var unwatch = vm.$watch('__vuex__', function (a) {
+	        return a;
+	      });
+	      Watcher = vm._watchers[0].constructor;
+	      unwatch();
+	    }
+	    return Watcher;
+	  }
+	
+	  var Dep = void 0;
+	  function getDep(vm) {
+	    if (!Dep) {
+	      Dep = vm._data.__ob__.dep.constructor;
+	    }
+	    return Dep;
+	  }
+	
+	  var hook = typeof window !== 'undefined' && window.__VUE_DEVTOOLS_GLOBAL_HOOK__;
+	
+	  var devtoolMiddleware = {
+	    onInit: function onInit(state, store) {
+	      if (!hook) return;
+	      hook.emit('vuex:init', store);
+	      hook.on('vuex:travel-to-state', function (targetState) {
+	        var currentState = store._vm._data;
+	        store._dispatching = true;
+	        Object.keys(targetState).forEach(function (key) {
+	          currentState[key] = targetState[key];
+	        });
+	        store._dispatching = false;
+	      });
+	    },
+	    onMutation: function onMutation(mutation, state) {
+	      if (!hook) return;
+	      hook.emit('vuex:mutation', mutation, state);
+	    }
+	  };
+	
+	  function override (Vue) {
+	    // override init and inject vuex init procedure
+	    var _init = Vue.prototype._init;
+	    Vue.prototype._init = function () {
+	      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+	      options.init = options.init ? [vuexInit].concat(options.init) : vuexInit;
+	      _init.call(this, options);
+	    };
+	
+	    /**
+	     * Vuex init hook, injected into each instances init hooks list.
+	     */
+	
+	    function vuexInit() {
+	      var options = this.$options;
+	      var store = options.store;
+	      var vuex = options.vuex;
+	      // store injection
+	
+	      if (store) {
+	        this.$store = store;
+	      } else if (options.parent && options.parent.$store) {
+	        this.$store = options.parent.$store;
+	      }
+	      // vuex option handling
+	      if (vuex) {
+	        if (!this.$store) {
+	          console.warn('[vuex] store not injected. make sure to ' + 'provide the store option in your root component.');
+	        }
+	        var state = vuex.state;
+	        var getters = vuex.getters;
+	        var actions = vuex.actions;
+	        // handle deprecated state option
+	
+	        if (state && !getters) {
+	          console.warn('[vuex] vuex.state option will been deprecated in 1.0. ' + 'Use vuex.getters instead.');
+	          getters = state;
+	        }
+	        // getters
+	        if (getters) {
+	          options.computed = options.computed || {};
+	          for (var key in getters) {
+	            defineVuexGetter(this, key, getters[key]);
+	          }
+	        }
+	        // actions
+	        if (actions) {
+	          options.methods = options.methods || {};
+	          for (var _key in actions) {
+	            options.methods[_key] = makeBoundAction(this.$store, actions[_key], _key);
+	          }
+	        }
+	      }
+	    }
+	
+	    /**
+	     * Setter for all getter properties.
+	     */
+	
+	    function setter() {
+	      throw new Error('vuex getter properties are read-only.');
+	    }
+	
+	    /**
+	     * Define a Vuex getter on an instance.
+	     *
+	     * @param {Vue} vm
+	     * @param {String} key
+	     * @param {Function} getter
+	     */
+	
+	    function defineVuexGetter(vm, key, getter) {
+	      if (typeof getter !== 'function') {
+	        console.warn('[vuex] Getter bound to key \'vuex.getters.' + key + '\' is not a function.');
+	      } else {
+	        Object.defineProperty(vm, key, {
+	          enumerable: true,
+	          configurable: true,
+	          get: makeComputedGetter(vm.$store, getter),
+	          set: setter
+	        });
+	      }
+	    }
+	
+	    /**
+	     * Make a computed getter, using the same caching mechanism of computed
+	     * properties. In addition, it is cached on the raw getter function using
+	     * the store's unique cache id. This makes the same getter shared
+	     * across all components use the same underlying watcher, and makes
+	     * the getter evaluated only once during every flush.
+	     *
+	     * @param {Store} store
+	     * @param {Function} getter
+	     */
+	
+	    function makeComputedGetter(store, getter) {
+	      var id = store._getterCacheId;
+	
+	      // cached
+	      if (getter[id]) {
+	        return getter[id];
+	      }
+	      var vm = store._vm;
+	      var Watcher = getWatcher(vm);
+	      var Dep = getDep(vm);
+	      var watcher = new Watcher(vm, function (state) {
+	        return getter(state);
+	      }, null, { lazy: true });
+	      var computedGetter = function computedGetter() {
+	        if (watcher.dirty) {
+	          watcher.evaluate();
+	        }
+	        if (Dep.target) {
+	          watcher.depend();
+	        }
+	        return watcher.value;
+	      };
+	      getter[id] = computedGetter;
+	      return computedGetter;
+	    }
+	
+	    /**
+	     * Make a bound-to-store version of a raw action function.
+	     *
+	     * @param {Store} store
+	     * @param {Function} action
+	     * @param {String} key
+	     */
+	
+	    function makeBoundAction(store, action, key) {
+	      if (typeof action !== 'function') {
+	        console.warn('[vuex] Action bound to key \'vuex.actions.' + key + '\' is not a function.');
+	      }
+	      return function vuexBoundAction() {
+	        for (var _len = arguments.length, args = Array(_len), _key2 = 0; _key2 < _len; _key2++) {
+	          args[_key2] = arguments[_key2];
+	        }
+	
+	        return action.call.apply(action, [this, store].concat(args));
+	      };
+	    }
+	
+	    // option merging
+	    var merge = Vue.config.optionMergeStrategies.computed;
+	    Vue.config.optionMergeStrategies.vuex = function (toVal, fromVal) {
+	      if (!toVal) return fromVal;
+	      if (!fromVal) return toVal;
+	      return {
+	        getters: merge(toVal.getters, fromVal.getters),
+	        state: merge(toVal.state, fromVal.state),
+	        actions: merge(toVal.actions, fromVal.actions)
+	      };
+	    };
+	  }
+	
+	  var Vue = void 0;
+	  var uid = 0;
+	
+	  var Store = function () {
+	
+	    /**
+	     * @param {Object} options
+	     *        - {Object} state
+	     *        - {Object} actions
+	     *        - {Object} mutations
+	     *        - {Array} middlewares
+	     *        - {Boolean} strict
+	     */
+	
+	    function Store() {
+	      var _this = this;
+	
+	      var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+	      var _ref$state = _ref.state;
+	      var state = _ref$state === undefined ? {} : _ref$state;
+	      var _ref$mutations = _ref.mutations;
+	      var mutations = _ref$mutations === undefined ? {} : _ref$mutations;
+	      var _ref$modules = _ref.modules;
+	      var modules = _ref$modules === undefined ? {} : _ref$modules;
+	      var _ref$middlewares = _ref.middlewares;
+	      var middlewares = _ref$middlewares === undefined ? [] : _ref$middlewares;
+	      var _ref$strict = _ref.strict;
+	      var strict = _ref$strict === undefined ? false : _ref$strict;
+	      babelHelpers.classCallCheck(this, Store);
+	
+	      this._getterCacheId = 'vuex_store_' + uid++;
+	      this._dispatching = false;
+	      this._rootMutations = this._mutations = mutations;
+	      this._modules = modules;
+	      // bind dispatch to self
+	      var dispatch = this.dispatch;
+	      this.dispatch = function () {
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	          args[_key] = arguments[_key];
+	        }
+	
+	        dispatch.apply(_this, args);
+	      };
+	      // use a Vue instance to store the state tree
+	      // suppress warnings just in case the user has added
+	      // some funky global mixins
+	      if (!Vue) {
+	        throw new Error('[vuex] must call Vue.use(Vuex) before creating a store instance.');
+	      }
+	      var silent = Vue.config.silent;
+	      Vue.config.silent = true;
+	      this._vm = new Vue({
+	        data: state
+	      });
+	      Vue.config.silent = silent;
+	      this._setupModuleState(state, modules);
+	      this._setupModuleMutations(modules);
+	      this._setupMiddlewares(middlewares, state);
+	      // add extra warnings in strict mode
+	      if (strict) {
+	        this._setupMutationCheck();
+	      }
+	    }
+	
+	    /**
+	     * Getter for the entire state tree.
+	     * Read only.
+	     *
+	     * @return {Object}
+	     */
+	
+	    babelHelpers.createClass(Store, [{
+	      key: 'dispatch',
+	
+	
+	      /**
+	       * Dispatch an action.
+	       *
+	       * @param {String} type
+	       */
+	
+	      value: function dispatch(type) {
+	        for (var _len2 = arguments.length, payload = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+	          payload[_key2 - 1] = arguments[_key2];
+	        }
+	
+	        var silent = false;
+	        // compatibility for object actions, e.g. FSA
+	        if ((typeof type === 'undefined' ? 'undefined' : babelHelpers.typeof(type)) === 'object' && type.type && arguments.length === 1) {
+	          payload = [type.payload];
+	          if (type.silent) silent = true;
+	          type = type.type;
+	        }
+	        var mutation = this._mutations[type];
+	        var state = this.state;
+	        if (mutation) {
+	          this._dispatching = true;
+	          // apply the mutation
+	          if (Array.isArray(mutation)) {
+	            mutation.forEach(function (m) {
+	              return m.apply(undefined, [state].concat(babelHelpers.toConsumableArray(payload)));
+	            });
+	          } else {
+	            mutation.apply(undefined, [state].concat(babelHelpers.toConsumableArray(payload)));
+	          }
+	          this._dispatching = false;
+	          if (!silent) this._applyMiddlewares(type, payload);
+	        } else {
+	          console.warn('[vuex] Unknown mutation: ' + type);
+	        }
+	      }
+	
+	      /**
+	       * Watch state changes on the store.
+	       * Same API as Vue's $watch, except when watching a function,
+	       * the function gets the state as the first argument.
+	       *
+	       * @param {String|Function} expOrFn
+	       * @param {Function} cb
+	       * @param {Object} [options]
+	       */
+	
+	    }, {
+	      key: 'watch',
+	      value: function watch(expOrFn, cb, options) {
+	        var _this2 = this;
+	
+	        return this._vm.$watch(function () {
+	          return typeof expOrFn === 'function' ? expOrFn(_this2.state) : _this2._vm.$get(expOrFn);
+	        }, cb, options);
+	      }
+	
+	      /**
+	       * Hot update mutations & modules.
+	       *
+	       * @param {Object} options
+	       *        - {Object} [mutations]
+	       *        - {Object} [modules]
+	       */
+	
+	    }, {
+	      key: 'hotUpdate',
+	      value: function hotUpdate() {
+	        var _ref2 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+	        var mutations = _ref2.mutations;
+	        var modules = _ref2.modules;
+	
+	        this._rootMutations = this._mutations = mutations || this._rootMutations;
+	        this._setupModuleMutations(modules || this._modules);
+	      }
+	
+	      /**
+	       * Attach sub state tree of each module to the root tree.
+	       *
+	       * @param {Object} state
+	       * @param {Object} modules
+	       */
+	
+	    }, {
+	      key: '_setupModuleState',
+	      value: function _setupModuleState(state, modules) {
+	        Object.keys(modules).forEach(function (key) {
+	          Vue.set(state, key, modules[key].state || {});
+	        });
+	      }
+	
+	      /**
+	       * Bind mutations for each module to its sub tree and
+	       * merge them all into one final mutations map.
+	       *
+	       * @param {Object} updatedModules
+	       */
+	
+	    }, {
+	      key: '_setupModuleMutations',
+	      value: function _setupModuleMutations(updatedModules) {
+	        var modules = this._modules;
+	        var allMutations = [this._rootMutations];
+	        Object.keys(updatedModules).forEach(function (key) {
+	          modules[key] = updatedModules[key];
+	        });
+	        Object.keys(modules).forEach(function (key) {
+	          var module = modules[key];
+	          if (!module || !module.mutations) return;
+	          // bind mutations to sub state tree
+	          var mutations = {};
+	          Object.keys(module.mutations).forEach(function (name) {
+	            var original = module.mutations[name];
+	            mutations[name] = function (state) {
+	              for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+	                args[_key3 - 1] = arguments[_key3];
+	              }
+	
+	              original.apply(undefined, [state[key]].concat(args));
+	            };
+	          });
+	          allMutations.push(mutations);
+	        });
+	        this._mutations = mergeObjects(allMutations);
+	      }
+	
+	      /**
+	       * Setup mutation check: if the vuex instance's state is mutated
+	       * outside of a mutation handler, we throw en error. This effectively
+	       * enforces all mutations to the state to be trackable and hot-reloadble.
+	       * However, this comes at a run time cost since we are doing a deep
+	       * watch on the entire state tree, so it is only enalbed with the
+	       * strict option is set to true.
+	       */
+	
+	    }, {
+	      key: '_setupMutationCheck',
+	      value: function _setupMutationCheck() {
+	        var _this3 = this;
+	
+	        var Watcher = getWatcher(this._vm);
+	        /* eslint-disable no-new */
+	        new Watcher(this._vm, '$data', function () {
+	          if (!_this3._dispatching) {
+	            throw new Error('[vuex] Do not mutate vuex store state outside mutation handlers.');
+	          }
+	        }, { deep: true, sync: true });
+	        /* eslint-enable no-new */
+	      }
+	
+	      /**
+	       * Setup the middlewares. The devtools middleware is always
+	       * included, since it does nothing if no devtool is detected.
+	       *
+	       * A middleware can demand the state it receives to be
+	       * "snapshots", i.e. deep clones of the actual state tree.
+	       *
+	       * @param {Array} middlewares
+	       * @param {Object} state
+	       */
+	
+	    }, {
+	      key: '_setupMiddlewares',
+	      value: function _setupMiddlewares(middlewares, state) {
+	        var _this4 = this;
+	
+	        this._middlewares = [devtoolMiddleware].concat(middlewares);
+	        this._needSnapshots = middlewares.some(function (m) {
+	          return m.snapshot;
+	        });
+	        if (this._needSnapshots) {
+	          console.log('[vuex] One or more of your middlewares are taking state snapshots ' + 'for each mutation. Make sure to use them only during development.');
+	        }
+	        var initialSnapshot = this._prevSnapshot = this._needSnapshots ? deepClone(state) : null;
+	        // call init hooks
+	        this._middlewares.forEach(function (m) {
+	          if (m.onInit) {
+	            m.onInit(m.snapshot ? initialSnapshot : state, _this4);
+	          }
+	        });
+	      }
+	
+	      /**
+	       * Apply the middlewares on a given mutation.
+	       *
+	       * @param {String} type
+	       * @param {Array} payload
+	       */
+	
+	    }, {
+	      key: '_applyMiddlewares',
+	      value: function _applyMiddlewares(type, payload) {
+	        var _this5 = this;
+	
+	        var state = this.state;
+	        var prevSnapshot = this._prevSnapshot;
+	        var snapshot = void 0,
+	            clonedPayload = void 0;
+	        if (this._needSnapshots) {
+	          snapshot = this._prevSnapshot = deepClone(state);
+	          clonedPayload = deepClone(payload);
+	        }
+	        this._middlewares.forEach(function (m) {
+	          if (m.onMutation) {
+	            if (m.snapshot) {
+	              m.onMutation({ type: type, payload: clonedPayload }, snapshot, prevSnapshot, _this5);
+	            } else {
+	              m.onMutation({ type: type, payload: payload }, state, _this5);
+	            }
+	          }
+	        });
+	      }
+	    }, {
+	      key: 'state',
+	      get: function get() {
+	        return this._vm._data;
+	      },
+	      set: function set(v) {
+	        throw new Error('[vuex] Vuex root state is read only.');
+	      }
+	    }]);
+	    return Store;
+	  }();
+	
+	  function install(_Vue) {
+	    if (Vue) {
+	      console.warn('[vuex] already installed. Vue.use(Vuex) should be called only once.');
+	      return;
+	    }
+	    Vue = _Vue;
+	    override(Vue);
+	  }
+	
+	  // auto install in dist mode
+	  if (typeof window !== 'undefined' && window.Vue) {
+	    install(window.Vue);
+	  }
+	
+	  function createLogger() {
+	    console.warn('[vuex] Vuex.createLogger has been deprecated.' + 'Use `import createLogger from \'vuex/logger\' instead.');
+	  }
+	
+	  var index = {
+	    Store: Store,
+	    install: install,
+	    createLogger: createLogger
+	  };
+	
+	  return index;
+	
+	}));
+
+/***/ },
+/* 71 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<editor-header></editor-header>\n<div class=\"main\">\n  <editor-toolbar></editor-toolbar>\n  <editor-workspace></editor-workspace>\n</div> \n";
 
 /***/ }
 /******/ ]);

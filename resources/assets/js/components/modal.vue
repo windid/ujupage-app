@@ -57,7 +57,7 @@ export default {
           </slot>
         </div>
         
-        <div class="modal-body" :style="{height:bodyHeight}">
+        <div class="modal-body container-fluid" :style="{height:bodyHeight}">
           <slot name="body">
           </slot>
         </div>

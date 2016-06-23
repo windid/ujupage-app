@@ -28,3 +28,23 @@ html,body{
   height:100%;
   overflow:hidden;
 }
+
+.fade-transition {
+  transition: all .3s ease;
+  overflow: hidden;
+}
+
+.fade-enter, .fade-leave {
+  opacity: 0;
+}
+
+.section-transition {
+  transition: all .5s ease;
+  overflow: hidden;
+}
+
+.section-leave {
+  background-color: #aaa;
+  height: 0;
+  opacity: 0;
+}

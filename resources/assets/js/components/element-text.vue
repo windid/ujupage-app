@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     edit: function(event){
-      event.stopPropagation();
+      //event.stopPropagation();
       this.buttonGroup = 'edit';
     },
     shit: function(){

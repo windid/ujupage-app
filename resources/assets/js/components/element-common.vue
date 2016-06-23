@@ -4,7 +4,7 @@
     <div class="el-content" id="element-{{elementId}}" v-bind:class="{'outline':workspace.activeElementId === elementId}">
       <slot name="content"></slot>
     </div>
-    <div v-if="workspace.activeElementId === elementId" transition="fade" class="el-toolbar {{elToolbarPosition}}" @click="stopPropagation">
+    <div v-if="workspace.activeElementId === elementId" transition="fade" class="el-toolbar {{elToolbarPosition}}">
       <div v-show="buttonGroup == 'main'" class="btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
         <button type="button" class="btn btn-default" title="复制一个"><span class="glyphicon glyphicon-duplicate"></span></button>
@@ -43,35 +43,46 @@ export default {
   },
   data (){
     return {
-      elToolbarPosition:'top',
-      elPositionInPage:{left:0,top:0}
+      elToolbarPosition: 'top',
+      elPositionInPage: {left:0,top:0},
+      clickOnThisElement: false
     }
   },
   methods:{
     showToolbar: function(event){
-      event.stopPropagation();
+      //event.stopPropagation();
       this.setActiveElementId(this.elementId);
-      var viewTop = getElementTop(this.$el) - document.documentElement.scrollTop;
+      this.clickOnThisElement = true;
+      let viewTop = getElementTop(this.$el) - document.documentElement.scrollTop;
       if ( viewTop < 95){
         this.elToolbarPosition = 'bottom';
       } else {
         this.elToolbarPosition = 'top';
       }
-    },
-    stopPropagation: function(event){
-      event.stopPropagation();
+    }
+  },
+  events:{
+    'body-click': function(event){
+      if (this.clickOnThisElement){
+        this.clickOnThisElement = false;
+      } else if(this.workspace.activeElementId === this.elementId) {
+        this.setActiveElementId('')
+      }
     }
   },
   ready: function(){
-    var draggie = new draggabilly( this.$el, {
+
+    window.addEventListener('resize', this.handleResize)
+
+    let draggie = new draggabilly( this.$el, {
           containment:'#content-area'
     });
-    var startTop = 0;
-    var that = this;
+    let startTop = 0;
+    let that = this;
 
     draggie.on('dragEnd', function( event ) {
       that.buttonGroup = 'main';
-      var position = $(this.element).position();
+      let position = $(this.element).position();
       that.elPositionInPage.left = position.left;
       that.elPositionInPage.top  = startTop + position.top;
       that.moveElement(that.sectionId,that.elementId,that.elPositionInPage,that.$el.offsetHeight);
@@ -105,7 +116,7 @@ export default {
       // else if(remainingheight > maxheight || abstop > halfheight)
       // {
       //   let endSectionId = getCurrentSectionIndex(offsetheight);
-      //   var $editablearea  = $('.editable-area').eq(endSectionId);
+      //   let $editablearea  = $('.editable-area').eq(endSectionId);
       //   style.top = (($editablearea.height() + $editablearea.offset().top - 45) - that.elPositionInPage.top);
       //   // debugger;
       //   // //向下
@@ -131,7 +142,7 @@ export default {
     
     draggie.on('dragMove', function( event ) {
       that.buttonGroup = 'position';
-      var position = $(this.element).position();
+      let position = $(this.element).position();
       that.elPositionInPage.left = position.left;
       that.elPositionInPage.top  = startTop + position.top;
     });
@@ -140,11 +151,11 @@ export default {
 }
 
 // //获取当前section索引
-// var getCurrentSectionIndex = function(moveElementTop){
-//   var index;
+// let getCurrentSectionIndex = function(moveElementTop){
+//   let index;
 //   $('.editable-area').each(function(i){
-//      var $this = $(this);
-//      var offsetheight = ($this.offset().top - 45) + $this.height();
+//      let $this = $(this);
+//      let offsetheight = ($this.offset().top - 45) + $this.height();
 //      if(offsetheight >= moveElementTop){
 //         index = i;
 //         return false;
@@ -155,8 +166,8 @@ export default {
 
 //获取元素到页面顶部的距离
 function getElementTop(element){
-　var actualTop = element.offsetTop;
-　var current = element.offsetParent;
+　let actualTop = element.offsetTop;
+　let current = element.offsetParent;
 
 　while (current !== null){
 　　actualTop += current.offsetTop;

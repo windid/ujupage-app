@@ -29,7 +29,7 @@ export default {
     <template slot="content">
       <div class="color-schemes-content">
         <div v-for="colorScheme in colorSchemes">
-          <div>{{colorScheme.name}}</div>
+          <!-- <div>{{colorScheme.name}}</div> -->
           <ul class="list-inline color-schemes-group">
             <li v-for="color in colorScheme.colors" :style="{background:color}"></li>
           </ul>
@@ -38,7 +38,7 @@ export default {
       <div class="color-schemes-footer">
         <span class="fl">自定义</span>
         <button class="btn btn-default btn-sm" @click="show=false">取消</button>
-        <button class="btn btn-success btn-sm" @click="">保存更改</button>
+        <button class="btn btn-success btn-sm" @click="">完成</button>
       </div>
     </template>
   </dropdown>
@@ -48,7 +48,6 @@ export default {
 
 .color-schemes-content{
   cursor:default;
-  width:300px;
   height:400px;
   overflow-x: auto;
   padding:12px;

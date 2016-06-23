@@ -19,7 +19,7 @@
         }
     </style>
 </head>
-<body>
+<body @click="bodyClick">
 <editor></editor>
 @if ( Config::get('app.debug') )
     <script type="text/javascript">
