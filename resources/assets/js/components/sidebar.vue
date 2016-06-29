@@ -6,17 +6,6 @@ export default {
       required: true,
       twoWay: true
     }
-  },
-  data (){
-    return {
-      
-    }
-  },
-  methods:{
-  	
-  },
-  ready:function(){
-    
   }
 }
 </script>
@@ -53,10 +42,11 @@ export default {
 }
 
 .sidebar-body {
-  background: #eee;
+  padding:12px;
   border-top:1px solid #ccc;
   border-bottom:1px solid #ccc;
   min-height:500px;
+  background: #eee;
   overflow-x: auto;
   position: relative;
 }

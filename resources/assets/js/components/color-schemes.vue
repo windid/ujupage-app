@@ -1,9 +1,19 @@
 <script>
 import dropdown from './dropdown.vue'
+import { setColorSet }  from '../store/actions'
+import { getColorSet } from '../store/getters'
 
 export default {
   components: {
     dropdown
+  },
+  vuex: {
+    actions: {
+      setColorSet
+    },
+    getters: {
+      colorSet: getColorSet
+    }
   },
   data () {
     return {
@@ -22,33 +32,37 @@ export default {
 </script>
 
 <template>
-  <dropdown :id="'color-schemes'" :align="'right'" :show.sync="show">
-    <div slot="button" style="padding:0 14px;">
-      配色 <span class="glyphicon glyphicon-th-large"></span>
-    </div>
-    <template slot="content">
+  <dropdown :show.sync="show">
+    <slot></slot>
+    <div slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">
       <div class="color-schemes-content">
-        <div v-for="colorScheme in colorSchemes">
+        <div v-for="colorScheme in colorSchemes" @click="setColorSet(colorScheme.colors)">
           <!-- <div>{{colorScheme.name}}</div> -->
           <ul class="list-inline color-schemes-group">
-            <li v-for="color in colorScheme.colors" :style="{background:color}"></li>
+            <li v-for="color in colorScheme.colors" :style="{background:color}" title="{{color}}"></li>
+          </ul>
+        </div>
+        <div>
+          <div style="text-align:center">当前选择</div>
+          <ul class="list-inline color-schemes-group">
+            <li v-for="color in colorSet" :style="{background:color}" title="{{color}}"></li>
           </ul>
         </div>
       </div>
       <div class="color-schemes-footer">
         <span class="fl">自定义</span>
-        <button class="btn btn-default btn-sm" @click="show=false">取消</button>
-        <button class="btn btn-success btn-sm" @click="">完成</button>
+        <button class="btn btn-success btn-sm" @click="show=false">&nbsp; 完成 &nbsp;</button>
       </div>
-    </template>
+    </div>
   </dropdown>
+
 </template>
 
 <style>
 
 .color-schemes-content{
   cursor:default;
-  height:400px;
+  height:420px;
   overflow-x: auto;
   padding:12px;
 }

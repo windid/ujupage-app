@@ -1,6 +1,11 @@
 .main{
-  height:100%;
-  margin-top:45px;
+  height: auto;
+  position:absolute;
+  bottom:0;
+  top:45px;
+  left:0;
+  right:0;
+  min-width:980px;
   overflow:auto;
 }
 
@@ -29,6 +34,7 @@
 }
 
 .page-section-operation{
+  position: absolute;
   top:5px;
   z-index:10;
 }
@@ -52,9 +58,20 @@
 
 .el-toolbar{
   position:absolute;
-  min-width:400px;
-  z-index:79000;
+  height:auto;
+  padding:0;
+  z-index:90000;
+  margin-bottom:0;
   left:-1px;
+}
+
+.el-btn-group{
+  white-space: nowrap;
+  font-size:0;
+}
+
+.el-btn-group .btn{
+  float:none;
 }
 
 .el-toolbar.top{

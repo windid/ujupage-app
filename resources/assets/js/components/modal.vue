@@ -20,11 +20,6 @@ export default {
       bodyHeight:"auto"
     }
   },
-  methods:{
-  	stopPropagation: function(event){
-  		event.stopPropagation()
-  	}
-  },
   ready:function(){
     //如果传入的高度是百分比，根据用户浏览器高度转化为像素
     var heightUnit = this.height.substr(this.height.length-1)
@@ -48,7 +43,7 @@ export default {
 <template>
   <div class="modal-mask" transition="modal" @click="show=false">
     <div class="modal-wrapper">
-      <div class="modal-container" :style="{width:width}" @click="stopPropagation">
+      <div class="modal-container" :style="{width:width}" @click.stop>
         
 
         <div class="modal-header">

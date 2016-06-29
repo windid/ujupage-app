@@ -7,8 +7,8 @@
       <button type="button" class="btn btn-primary" title="编辑" @click="edit">编辑</button>
     </template>
     <template slot="button-groups">
-      <div v-show="buttonGroup == 'edit'" class="btn-group" role="group">
-        <button type="button" class="btn btn-default" title="颜色"><span class="glyphicon glyphicon-text-color"></span> <span class="caret"></span></button>
+      <div v-show="buttonGroup == 'edit'" class="btn-group el-btn-group" role="group">
+        <color-picker :color.sync="fontColor"><button type="button" class="btn btn-default" data-toggle="dropdown" title="颜色"><span class="glyphicon glyphicon-text-color"></span> <span class="caret"></span></button></color-picker>
         <button type="button" class="btn btn-default" title="字号"><span class="glyphicon glyphicon-text-size"></span> <span class="caret"></span></button>
         <button type="button" class="btn btn-default" title="行高"><span class="glyphicon glyphicon-text-height"></span> <span class="caret"></span></button>
         <button type="button" class="btn btn-default" title="对齐"><span class="glyphicon glyphicon-align-left"></span> <span class="caret"></span></button>
@@ -25,12 +25,16 @@
 import { setActiveElementId }  from '../store/actions'
 import { getWorkspaceData } from '../store/getters'
 import elementCommon from './element-common.vue'
+import colorPicker from './color-picker.vue'
+import colorMixin from '../mixins/colorMixin.js'
 
 export default {
   //接受父组件传参，element元素属性，sid:板块ID sectionId，eid:元素ID elementId
   props:['element','sectionId','elementId'],
+  mixins: [colorMixin],
   components: {
-    "element-common": elementCommon
+    elementCommon,
+    colorPicker
   },
   vuex: {
     actions: {
@@ -42,19 +46,15 @@ export default {
   },
   data (){
     return {
-      buttonGroup:'main'
+      buttonGroup:'main',
+      fontColor:"3"
     }
   },
   methods: {
     edit: function(event){
       //event.stopPropagation();
       this.buttonGroup = 'edit';
-    },
-    shit: function(){
     }
-  },
-  created: function(){
-    //this.$parent
   }
 }
 </script>

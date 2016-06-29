@@ -2,7 +2,7 @@
 .color-block {
   height: 30px;
   margin: 6px;
-  border: 2px solid #eee;
+  border: 2px solid #ddd;
   cursor: pointer;
   border-radius: 4px;
   text-align: center;
@@ -10,24 +10,26 @@
 }
 
 .color-block:hover, .color-button:hover{
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
 }
 
 .color-button{
+  cursor:pointer;
   width:100%;
+  min-width:60px;
   height:30px;
   border-radius: 4px;
-  border: 2px solid #eee;
+  border: 2px solid #ddd;
 }
 </style>
 
 <template>
   <dropdown :show.sync="show">
-    <div slot="button">
-      <div class="color-button" :style="{background:getColor(color)}"></div>
-    </div>
-    <div slot="content">
-      <div v-for="colorItem in colorSet" :style="{background: colorItem}" class="color-block"></div>
+    <slot><div data-toggle="dropdown" class="color-button" :style="{background:getColor(color)}"></div></slot>
+    <div slot="dropdown-menu" class="dropdown-menu">
+      <div v-for="colorItem in colorSet" :style="{background: colorItem}" @click="setColor($index)" class="color-block"></div>
+      <hr>
+      <div class="color-block" @click="setColor('')">无颜色</div>
       <div class="color-block">自定义颜色</div>
     </div>
   </dropdown>
@@ -46,7 +48,7 @@ export default {
   },
   props: {
     color: {
-      type: String,
+      // type: String,
       required: true,
       twoWay: true
     }
@@ -57,7 +59,10 @@ export default {
     }
   },
   methods:{
-    
+    setColor: function(newColor){
+      this.color = newColor;
+      this.show = false;
+    }
   },
   vuex: {
     actions: {

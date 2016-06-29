@@ -21,7 +21,7 @@ export default {
   //接受父组件传参，element元素属性，sid:板块ID sectionId，eid:元素ID elementId
   props:['element','sectionId','elementId'],
   components: {
-    "element-common": elementCommon
+    elementCommon
   },
   vuex: {
     actions: {

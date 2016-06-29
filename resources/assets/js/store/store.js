@@ -4,15 +4,15 @@ import {extend,merge} from 'lodash'
 const state = {
   workspace: {
     //页面宽度，桌面960，移动400
-    width: 400,
+    width: 960,
     //
-    height:1600,
+    height:1300,
     //PC版页面高度，需计算
-    heightPC: 1400,
+    heightPC: 1300,
     //移动版页面高度，需计算
-    heightM: 1600,
+    heightM: 1700,
     //pc为桌面版，mobile为移动版
-    version: 'mobile',
+    version: 'pc',
     //当前页面激活的板块，将显示该板块的操作按钮，在添加页面元素时，将添加到此板块中
     currentSectionId: 0,
     //编辑状态中的板块id
@@ -40,15 +40,19 @@ const state = {
 
   sections: [
     {
-      style:{background:"#333",height:"300px"},
-      styleM:{background:"#333",height:"300px"},
+      style:{
+        "pc":    {"background-color":"0",height:"200px"},
+        "mobile":{"background-color":"0",height:"300px"}
+      },
       elements:{
        
       }
     },
     {
-      style:{background:"#900",height:"200px"},
-      styleM:{background:"#ccc",height:"300px"},
+      style:{
+        "pc":    {"background-color":"1",height:"300px"},
+        "mobile":{"background-color":"1",height:"300px"}
+      },
       elements:{
         "bifsdc":{
           type:"text",
@@ -78,8 +82,10 @@ const state = {
       },
     },
     {
-      style:{background:"",height:"300px"},
-      styleM:{background:"",height:"500px"},
+      style:{
+        "pc":{"background-color":"",height:"200px"},
+        "mobile":{"background-color":"",height:"300px"}
+      },
       elements:{
         "123ghfdv":{
           type:"text",
@@ -116,8 +122,10 @@ const state = {
       }
     },
     {
-      style:{background:"#909",height:"300px"},
-      styleM:{background:"#909",height:"200px"},
+      style:{
+        "pc":{"background-color":"2",height:"300px"},
+        "mobile":{"background-color":"2",height:"500px"}
+      },
       elements:{
         "bvsdfg23":{
           type:"text",
@@ -138,8 +146,10 @@ const state = {
       }
     },
     {
-      style:{background:"#4b6fc1",height:"300px"},
-      styleM:{background:"#4b6fc1",height:"300px"},
+      style:{
+        "pc":{"background-color":"0",height:"300px"},
+        "mobile":{"background-color":"0",height:"300px"}
+      },
       elements:{
        
       }
@@ -169,8 +179,8 @@ const mutations = {
     let heightPC  = 0;
     let heightM   = 0;
     for (let sectionId in state.sections){
-      heightPC += parseInt(state.sections[sectionId].style.height);
-      heightM += parseInt(state.sections[sectionId].styleM.height);
+      heightPC += parseInt(state.sections[sectionId].style.pc.height);
+      heightM += parseInt(state.sections[sectionId].style.mobile.height);
     }
     state.workspace.heightPC = heightPC;
     state.workspace.heightM = heightM;
@@ -196,8 +206,10 @@ const mutations = {
   //添加板块
   ADD_SECTION(state){
     state.sections.push({
-      style: {background:"",height:"200px"},
-      styleM:{background:"",height:"200px"},
+      style:{
+        "pc":{"background-color":"",height:"200px"},
+        "mobile":{"background-color":"",height:"200px"}
+      },
       elements:{}
     });
     state.workspace.height += 200;
@@ -214,12 +226,12 @@ const mutations = {
   //修改板块
   MODIFY_SECTION(state,sectionId,style){
     let stateSection = state.sections[sectionId];
-    if (state.workspace.version === 'pc'){
-      state.sections[sectionId].style = extend({}, stateSection.style, style);
-    } else {
-      state.sections[sectionId].styleM = extend({}, stateSection.styleM, style);
-    }
-    
+    // if (state.workspace.version === 'pc'){
+    //   state.sections[sectionId].style = extend({}, stateSection.style, style);
+    // } else {
+    //   state.sections[sectionId].styleM = extend({}, stateSection.styleM, style);
+    // }
+    state.sections[sectionId].style[state.workspace.version] = extend({}, stateSection.style[state.workspace.version], style);
     mutations.SAVE_SECTIONS_STATE(state);
   },
 
@@ -241,16 +253,6 @@ const mutations = {
   },
 
   REMOVE_ELEMENT(state, sectionId, elementId){
-    //旧方案会引起sections整体刷新
-    //delete state.sections[sectionId]['elements'][elementId];
-    //state.sections = merge([],state.sections);
-
-    //此方案只刷新单个section
-    //let section = state.sections[sectionId];
-    //delete section['elements'][elementId];
-    //state.sections.$set(sectionId, merge({},section));
-
-    //原来这才是正确的姿势
     Vue.delete(state.sections[sectionId]['elements'],elementId);
     mutations.SAVE_SECTIONS_STATE(state);
   },
@@ -291,7 +293,7 @@ const mutations = {
 
   //版本切换
   VERSION(state) {
-    if (state.workspace.version == 'mobile'){
+    if (state.workspace.version === 'mobile'){
       state.workspace.version = 'pc';
       state.workspace.width = 960;
     } else {
@@ -313,7 +315,8 @@ const mutations = {
     let newSectionId = -1;
     while (elementLine >= sumSectionsHeight){
       newSectionId ++;
-      sectionHeight = parseInt((state.workspace.version == 'pc') ? state.sections[newSectionId].style.height : state.sections[newSectionId].styleM.height);
+      sectionHeight = parseInt(state.sections[newSectionId].style[state.workspace.version].height);
+      // parseInt((state.workspace.version == 'pc') ? state.sections[newSectionId].style.height : state.sections[newSectionId].styleM.height);
       sumSectionsHeight += sectionHeight;
     }
 
@@ -341,6 +344,10 @@ const mutations = {
     Vue.set(state.sections[newSectionId]['elements'],elementId,elState);
 
     mutations.SAVE_SECTIONS_STATE(state);
+  },
+
+  SET_COLOR_SET(state,colorSet){
+    state.colorSet = colorSet;
   }
 }
 

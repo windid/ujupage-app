@@ -1,6 +1,11 @@
+export const setColorSet = function ({ dispatch, state }, colorSet) {
+  dispatch('SET_COLOR_SET', colorSet)
+}
+
 export const setActiveElementId = function ({ dispatch, state }, elementId) {
   dispatch('SET_ACTIVE_ELEMENT_ID', elementId)
 }
+
 
 export const removeElement = function ({ dispatch, state }, sectionId, elementId) {
   dispatch('REMOVE_ELEMENT', sectionId, elementId)

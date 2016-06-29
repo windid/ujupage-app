@@ -15,9 +15,9 @@ import { setActiveElementId }  from '../store/actions'
 export default {
   name: 'editor',
   components: {
-    "editor-header": editorHeader,
-    "editor-toolbar": editorToolbar,
-    "editor-workspace": editorWorkspace
+    editorHeader,
+    editorToolbar,
+    editorWorkspace
   },
   vuex: {
     actions: {

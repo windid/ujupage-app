@@ -34,7 +34,7 @@ elixir(function(mix) {
                 {test: /\.css$/, loader: 'style-loader!css-loader'},
                 {test: /\.html$/, loader: 'text-loader'},
                 {test: /\.vue$/,loader: 'vue'},
-                {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: {presets:['es2015',"stage-0"],plugins:['transform-runtime']}}
+                {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: {compact: false,presets:['es2015',"stage-0"],plugins:['transform-runtime']}}
             ]
         },
 
