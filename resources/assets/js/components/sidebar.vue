@@ -1,4 +1,5 @@
 <script>
+
 export default {
   props: {
     show: {
@@ -43,12 +44,26 @@ export default {
 
 .sidebar-body {
   padding:12px;
-  border-top:1px solid #ccc;
-  border-bottom:1px solid #ccc;
-  min-height:500px;
-  background: #eee;
+  border-top:1px solid #ddd;
+  height:100%;
   overflow-x: auto;
   position: relative;
+}
+
+.sidebar-block{
+  padding:15px 0;
+}
+
+.sidebar-block .text-input{
+  width: 100%;
+
+  padding: 4px 8px;
+  border:1px solid #ccc;
+  border-radius: 4px;
+}
+
+.sidebar-block-inside{
+  padding-top:10px;
 }
 
 </style>

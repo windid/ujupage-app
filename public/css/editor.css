@@ -1,4 +1,14 @@
 @charset "UTF-8";
+body {
+  font-family: "Lantinghei SC","Open Sans",Arial,"Hiragino Sans GB","Microsoft YaHei",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif; }
+
+html, body {
+  height: 100%;
+  overflow: hidden; }
+
+input, button {
+  outline: none; }
+
 .fr {
   float: right; }
 
@@ -13,10 +23,6 @@
 
 .shadow, .btn {
   box-shadow: 0px 0px 8px #ddd; }
-
-html, body {
-  height: 100%;
-  overflow: hidden; }
 
 .fade-transition {
   transition: all .3s ease;
@@ -38,9 +44,8 @@ html, body {
   z-index: 810000;
   height: 45px;
   width: 100%;
-  min-width: 960px;
-  position: fixed;
-  top: 0;
+  min-width: 980px;
+  position: relative;
   border-top: 1px solid #ccc;
   border-bottom: 4px solid #555;
   background: #f9f9f9; }
@@ -64,7 +69,7 @@ html, body {
   background-color: #ddd; }
 
 .do-disabled {
-  cursor: default !important; }
+  cursor: not-allowed !important; }
 
 .do-disabled span {
   opacity: 0.4; }
@@ -145,8 +150,13 @@ html, body {
   margin: 1px; }
 
 .main {
-  height: 100%;
-  margin-top: 45px;
+  height: auto;
+  position: absolute;
+  bottom: 0;
+  top: 45px;
+  left: 0;
+  right: 0;
+  min-width: 980px;
   overflow: auto; }
 
 .workspace {
@@ -165,16 +175,21 @@ html, body {
   height: 100%; }
 
 .page-section {
-  top: 0px;
-  position: relative;
-  border-bottom: 1px dashed #03ddff; }
+  position: relative; }
 
 .page-section-operation {
+  position: absolute;
   top: 5px;
   z-index: 10; }
 
 .element {
   position: absolute; }
+
+.el-content {
+  position: relative; }
+
+.el-content p {
+  margin: 0; }
 
 .el-content.outline {
   outline: 1px solid #03ddff;
@@ -185,15 +200,28 @@ html, body {
 
 .el-toolbar {
   position: absolute;
-  min-width: 400px;
-  z-index: 79000;
+  height: auto;
+  padding: 0;
+  z-index: 90000;
+  margin-bottom: 0;
   left: -1px; }
+
+.el-btn-group {
+  white-space: nowrap;
+  font-size: 0; }
+
+.el-btn-group .btn {
+  float: none; }
 
 .el-toolbar.top {
   top: -43px; }
 
 .el-toolbar.bottom {
   bottom: -43px; }
+
+.is-dragging {
+  z-index: 100000;
+  cursor: move; }
 
 .resize-line-wrap {
   position: absolute;
@@ -210,10 +238,10 @@ html, body {
 .resize-line {
   position: absolute;
   width: 100%;
-  z-index: 10001;
+  z-index: 1;
   border-bottom: 1px dashed #03ddff;
   cursor: n-resize;
-  height: 5px;
+  height: 8px;
   bottom: -1px; }
 
 /* 禁止文本选择 */

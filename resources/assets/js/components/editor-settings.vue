@@ -8,7 +8,7 @@
 
 <template>
   <modal :show.sync="show" :width="'800px'" :height="'80%'" >
-    <div slot="header" class="settings-header">
+    <div slot="header">
       <ul class="nav nav-pills">
         <li role="presentation" :class="{active: currentTab === 'seo'}"><a href="#" @click="currentTab = 'seo'">SEO设置</a></li>
         <li role="presentation" :class="{active: currentTab === 'goal'}"><a href="#" @click="currentTab = 'goal'">转化目标</a></li>
@@ -96,7 +96,6 @@
       </div>
     </div>
     <div slot="footer">
-      <button class="btn btn-default btn-sm" @click="show = false">关闭</button>
       <button class="btn btn-success btn-sm" @click="saveSettings">保存更改</button>
     </div>
   </modal>
@@ -108,7 +107,6 @@ import { getWorkspaceData, getSettings } from '../store/getters'
 import modal from './modal.vue'
 
 export default {
-  name:'editorHeader',
   components: {
     modal
   },

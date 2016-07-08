@@ -2,6 +2,15 @@ body{
   font-family:"Lantinghei SC","Open Sans",Arial,"Hiragino Sans GB","Microsoft YaHei",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif;
 }
 
+html,body{
+  height:100%;
+  overflow:hidden;
+}
+
+input, button{
+  outline:none;
+}
+
 .fr{
   float:right;
 }
@@ -25,11 +34,6 @@ body{
 
 .btn {
   @extend .shadow;
-}
-
-html,body{
-  height:100%;
-  overflow:hidden;
 }
 
 .fade-transition {

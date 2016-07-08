@@ -1,16 +1,18 @@
 <template>
-  <editor-header></editor-header>
-  <div class="main">
-    <editor-toolbar></editor-toolbar>
-    <editor-workspace></editor-workspace>
-  </div> 
+  <div @mousedown="setActiveElementId('')">
+    <editor-header></editor-header>
+    <div class="main">
+      <editor-toolbar></editor-toolbar>
+      <editor-workspace></editor-workspace>
+    </div> 
+  </div>
 </template>
 <script>
 import editorHeader from './editor-header.vue'
 import editorToolbar from './editor-toolbar.vue'
 import editorWorkspace from './editor-workspace.vue'
 import store from '../store/store'
-import { setActiveElementId }  from '../store/actions'
+import { setActiveElementId, pageInit }  from '../store/actions'
 
 export default {
   name: 'editor',
@@ -21,10 +23,211 @@ export default {
   },
   vuex: {
     actions: {
-      setActiveElementId
+      setActiveElementId,
+      pageInit
     }
   },
-  store
+  store,
+  methods: {
+    loadPage: function(){
+      let data = {
+        page: {
+          colorSet: ['#E6E2AF',"#A7A37E","#EFECCA","#046380","#002F2F"],
+
+          sections: [
+            {
+              style:{
+                "pc":    {"background-color":"0",height:"400px"},
+                "mobile":{"background-color":"0",height:"400px"}
+              },
+              elements:{
+                // "dfgs234f":{
+                //   type:"image",
+                //   src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+                //   style:{
+                //     'pc':{
+                //       left:"200px",
+                //       top:"100px",
+                //       width:"",
+                //       zIndex:101
+                //     },
+                //     'mobile':{
+                //       left:"50px",
+                //       top:"150px",
+                //       width:"",
+                //       zIndex:101
+                //     }
+                //   }
+                // },
+                "fgh24g":{
+                  type:"button",
+                  text:"点击下载",
+                  colors:{
+                    backgroundColor:'2',
+                    borderColor:'3',
+                    fontColor:'4',
+                    hover:'2'
+                  },
+                  buttonStyle:{
+                    borderRadius:'5px',
+                    fontSize:'18px',
+                  },
+                  buttonClass:{
+                    shadow:true,
+                    bold:false,
+                    border:false
+                  },
+                  style:{
+                    'pc':{
+                      left:"100px",
+                      top:"20px",
+                      width:"160px",
+                      zIndex:300
+                    },
+                    'mobile':{
+                      left:"50px",
+                      top:"20px",
+                      width:"100px",
+                      zIndex:300
+                    }
+                  }
+                },
+                // "nrgs13":{
+                //   type:"video",
+                // },
+                "bwdkfk":{
+                  type:"form",
+                  style:{
+                    'pc':{
+                      left:"200px",
+                      top:"100px",
+                      width:"200px",
+                      zIndex:3000
+                    },
+                    'mobile':{
+                      left:"0px",
+                      top:"100px",
+                      width:"200px",
+                      zIndex:1342
+                    }
+                  }
+                }
+              }
+            },
+            {
+              style:{
+                "pc":    {"background-color":"1",height:"300px"},
+                "mobile":{"background-color":"1",height:"300px"}
+              },
+              elements:{
+                "bifsdc":{
+                  type:"text",
+                  content:"<p>wdfsdf<br>dksjlfjslkd jksdfs ksdfksd</p>",
+                  style:{
+                    'pc':{
+                      left:"200px",
+                      top:"100px",
+                      width:"500px",
+                      zIndex:100
+                    },
+                    'mobile':{
+                      left:"100px",
+                      top:"100px",
+                      width:"200px",
+                      zIndex:100
+                    }
+                  }
+                },
+              },
+            },
+            {
+              style:{
+                "pc":{"background-color":"",height:"200px"},
+                "mobile":{"background-color":"",height:"300px"}
+              },
+              elements:{
+                "123ghfdv":{
+                  type:"text",
+                  content:"Hello, World!",
+                  style:{
+                    'pc': {
+                      left:"500px",
+                      top:"100px",
+                      width:"458px",
+                      zIndex:1000
+                    },
+                    'mobile':{
+                      left:"150px",
+                      top:"100px",
+                      width:"200px",
+                      zIndex:100
+                    }
+                  }
+                },
+                "testurltesturl":{
+                  type:"image",
+                  src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+                  style:{
+                    'pc':{
+                      left:"200px",
+                      top:"100px",
+                      width:"333px",
+                      zIndex:101
+                    },
+                    'mobile':{
+                      left:"50px",
+                      top:"150px",
+                      width:"120px",
+                      zIndex:101
+                    }
+                  }
+                },
+              }
+            },
+            {
+              style:{
+                "pc":{"background-color":"2",height:"300px"},
+                "mobile":{"background-color":"2",height:"500px"}
+              },
+              elements:{
+                "bvsdfg23":{
+                  type:"text",
+                  content:"Hello, World!",
+                  style: {
+                    'pc':{
+                      left:"500px",
+                      top:"100px",
+                      width:"458px",
+                      zIndex:1000
+                    },
+                    'mobile':{
+                      left:"150px",
+                      top:"100px",
+                      width:"200px",
+                      zIndex:2000
+                    }
+                  }
+                },
+              }
+            },
+            {
+              style:{
+                "pc":{"background-color":"0",height:"300px"},
+                "mobile":{"background-color":"0",height:"300px"}
+              },
+              elements:{
+               
+              }
+            },
+          ] //end sections
+        }//end page
+      }
+      this.pageInit(data);
+    }
+  },
+  created: function(){
+    this.loadPage()
+  }
 }
 </script>
 

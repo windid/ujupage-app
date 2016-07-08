@@ -1,34 +1,12 @@
-<template>
-  <div :style="elStyles" class="element" @click="showToolbar">
-    <!-- Todo:这里要对输出的html进行过滤以防xss漏洞 -->
-    <div class="el-content" id="element-{{elementId}}" :style="{zIndex:((workspace.version == 'pc') ? element.style.zIndex : element.styleM.zIndex)}" v-bind:class="{'outline':workspace.activeElementId === elementId}">
-      <slot name="content"></slot>
-    </div>
-    <div v-if="workspace.activeElementId === elementId" class="el-toolbar {{elToolbarPosition}}">
-      <div v-show="buttonGroup == 'main'" class="btn-group el-btn-group" role="group">
-        <slot name="main-buttons-extend"></slot>
-        <button type="button" class="btn btn-default" title="复制一个"><span class="glyphicon glyphicon-duplicate"></span></button>
-        <button type="button" class="btn btn-default" title="移到顶层"><span class="glyphicon glyphicon-circle-arrow-up"></span></button>
-        <button type="button" class="btn btn-default" title="移到底层"><span class="glyphicon glyphicon-circle-arrow-down"></span></button>
-        <button type="button" class="btn btn-default" title="删除" @click="removeElement(sectionId,elementId)"><span class="glyphicon glyphicon-trash"></span></button>
-      </div>
-      <div v-show="buttonGroup == 'position'" class="btn-group el-btn-group" role="group">
-        <button type="button" class="btn btn-success">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</span></button>
-      </div>
-      <slot name="button-groups"></slot>
-    </div>
-  </div>
-</template>
 <script>
 import draggabilly from 'draggabilly'
-
 import { setActiveElementId,removeElement,moveElement}  from '../store/actions'
 import { getWorkspaceData } from '../store/getters'
 import { merge } from 'lodash'
 
 export default {
   //接受父组件传参，element元素属性, sectionId:板块ID, elementId:元素ID
-  props:['element','sectionId','elementId','buttonGroup'],
+  props:['element','sectionId','elementId','buttonGroup','draggable'],
   vuex: {
     actions: {
       setActiveElementId,
@@ -43,133 +21,82 @@ export default {
     return {
       elToolbarPosition: 'top',
       elPositionInPage: {left:0,top:0},
-      clickOnThisElement: false
+      clickOnThisElement: false,
+      draggie: null
     }
   },
   computed: {
     elStyles: function(){
-      let styles = merge({},(this.workspace.version == 'pc') ? this.element.style : this.element.styleM)
+      let styles = merge({},this.element.style[this.workspace.version])
       delete styles.zIndex;
       return styles
     }
   },
   methods:{
-    showToolbar: function(event){
-      //event.stopPropagation();
-      this.setActiveElementId(this.elementId);
-      this.clickOnThisElement = true;
+    showToolbar: function(){
+      if (this.workspace.activeElementId !== this.elementId) {
+        this.setActiveElementId(this.elementId);
+        this.buttonGroup = 'main';
+      }
+      
       let viewTop = getElementTop(this.$el) - document.documentElement.scrollTop;
       if ( viewTop < 95){
         this.elToolbarPosition = 'bottom';
       } else {
         this.elToolbarPosition = 'top';
       }
+    },
+    dragEnable: function(){
+      this.draggie = new draggabilly( this.$el, {
+        containment:'#content-area'
+      });
+      let startTop = 0;
+      let that = this;
+
+      this.draggie.on('dragEnd', function( event ) {
+        that.buttonGroup = 'main';
+        let position = $(this.element).position();
+        that.elPositionInPage.left = position.left;
+        that.elPositionInPage.top  = startTop + position.top;
+        that.moveElement(that.sectionId,that.elementId,that.elPositionInPage,that.$el.offsetHeight);
+      });
+
+      this.draggie.on('dragStart', function( event ) {
+        that.showToolbar();
+        startTop = getElementTop(that.$el) - 45 - that.$el.offsetTop;
+      })
+      
+      this.draggie.on('dragMove', function( event ) {
+        that.buttonGroup = 'position';
+        let position = $(this.element).position();
+        that.elPositionInPage.left = position.left;
+        that.elPositionInPage.top  = startTop + position.top;
+      });
+    },
+    dragDisable: function(){
+      let left = this.$el.style.left;
+      let top = this.$el.style.top;
+      this.draggie.destroy()
+      this.$el.style.top = top;
+      this.$el.style.left = left;
     }
   },
-  events:{
-    'body-click': function(event){
-      if (this.clickOnThisElement){
-        this.clickOnThisElement = false;
-      } else if(this.workspace.activeElementId === this.elementId) {
-        this.setActiveElementId('')
+  watch: {
+    'draggable': function(status){
+      if (status){
+        this.dragEnable();
+      } else {
+        this.dragDisable();
       }
-      return true;
     }
   },
   ready: function(){
-
-    let draggie = new draggabilly( this.$el, {
-      containment:'#content-area'
-    });
-    let startTop = 0;
-    let that = this;
-
-    draggie.on('dragEnd', function( event ) {
-      that.buttonGroup = 'main';
-      let position = $(this.element).position();
-      that.elPositionInPage.left = position.left;
-      that.elPositionInPage.top  = startTop + position.top;
-      that.moveElement(that.sectionId,that.elementId,that.elPositionInPage,that.$el.offsetHeight);
-      // let $this = $(this.element);
-      // let boerderheight = 0;
-      // //自身高度
-      // let height =($this.height() + boerderheight);
-      // //自身一半高度
-      // let halfheight = height / 2;
-      // let position = $this.position();
-      // //绝对相对高度
-      // let abstop = Math.abs(position.top);
-      // //区域高度
-      // let sectionheight = $this.parent().height();
-      // //剩余高度
-      // let remainingheight = height + position.top;
-      // //区域最大高度
-      // let maxheight = sectionheight + halfheight;
-      // //偏移高度
-      // let offsetheight = that.elPositionInPage.top + halfheight;
-      // //坐标
-      // let style ={
-      //   left: position.left + 'px',
-      // }
-      // //当前区域移动
-      // if(height - remainingheight < halfheight && remainingheight < maxheight){
-      //   style.top = position.top +'px';
-      //   that.modifyElement(that.sectionId,that.elementId,style);
-      // }
-      // //向下方向移动 || 向上方向移动
-      // else if(remainingheight > maxheight || abstop > halfheight)
-      // {
-      //   let endSectionId = getCurrentSectionIndex(offsetheight);
-      //   let $editablearea  = $('.editable-area').eq(endSectionId);
-      //   style.top = (($editablearea.height() + $editablearea.offset().top - 45) - that.elPositionInPage.top);
-      //   // debugger;
-      //   // //向下
-      //   // if(remainingheight > maxheight)
-      //   // {
-      //   //   style.top = ($editablearea.height() - style.top + 1) + 'px';
-      //   // }
-      //   // else
-      //   // //向上
-      //   // if(abstop > halfheight)
-      //   // {
-      //   //   style.top = ($editablearea.height() - style.top - 1) + 'px';
-      //   // }
-      //   style.top = ($editablearea.height() - style.top) + 'px';
-      //   that.addElement(that.sectionId,that.elementId,endSectionId,style)
-      // }
-    });
-
-    draggie.on('dragStart', function( event ) {
-      that.showToolbar(event);
-      startTop = getElementTop(that.$el) - 45 - that.$el.offsetTop;
-    })
-    
-    draggie.on('dragMove', function( event ) {
-      that.buttonGroup = 'position';
-      let position = $(this.element).position();
-      that.elPositionInPage.left = position.left;
-      that.elPositionInPage.top  = startTop + position.top;
-    });
-    // this.elToolbarButtons = this.mainButtonGroup;
+    this.dragEnable();
   }
 }
 
-// //获取当前section索引
-// let getCurrentSectionIndex = function(moveElementTop){
-//   let index;
-//   $('.editable-area').each(function(i){
-//      let $this = $(this);
-//      let offsetheight = ($this.offset().top - 45) + $this.height();
-//      if(offsetheight >= moveElementTop){
-//         index = i;
-//         return false;
-//      }
-//   });
-//   return index;
-// }
-
 //获取元素到页面顶部的距离
-let getElementTop = function(element){
+let getElementTop = function( element ){
 　let actualTop = element.offsetTop;
 　let current = element.offsetParent;
 
@@ -181,3 +108,25 @@ let getElementTop = function(element){
 　return actualTop;
 } 
 </script>
+
+<template>
+  <div :style="elStyles" class="element" @click="showToolbar" @mousedown.stop>
+    <div class="el-content" id="element-{{elementId}}" :style="{zIndex:element.style[this.workspace.version].zIndex}" v-bind:class="{'outline':workspace.activeElementId === elementId}">
+      <slot name="content"></slot>
+    </div>
+    <div v-if="workspace.activeElementId === elementId" class="el-toolbar {{elToolbarPosition}}">
+      <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
+        <slot name="main-buttons-extend"></slot>
+        <div class="btn btn-default" title="复制一个"><span class="glyphicon glyphicon-duplicate"></span></div>
+        <div class="btn btn-default" title="移到顶层"><span class="glyphicon glyphicon-circle-arrow-up"></span></div>
+        <div class="btn btn-default" title="移到底层"><span class="glyphicon glyphicon-circle-arrow-down"></span></div>
+        <div class="btn btn-default" title="删除" @click="removeElement(sectionId,elementId)"><span class="glyphicon glyphicon-trash"></span></div>
+      </div>
+      <div v-show="buttonGroup === 'position'" class="btn-group el-btn-group" role="group">
+        <div class="btn btn-success">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</span></div>
+      </div>
+      <slot name="button-groups"></slot>
+    </div>
+    <slot name="tools"></slot>
+  </div>
+</template>

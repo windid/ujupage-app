@@ -1,11 +1,5 @@
 <style>
-.sidebar-block{
-  padding:10px 0;
-  border-bottom:1px solid #ddd;
-}
-.sidebar-block-inside{
-  padding-top:10px;
-}
+
 .border-width{
   height: 30px;
   border:2px solid #ddd;
@@ -16,10 +10,11 @@
 </style>
 
 <template>
+<div>
   <sidebar :show.sync="show">
     
     <div slot="header">
-      <button class="btn btn-success" @click="sectionEditDone">&nbsp; 完成 &nbsp;</button>
+      <div class="btn btn-success" @click="sectionEditDone">&nbsp; 完成 &nbsp;</div>
       <!-- <tooltip placement="left" content="同时修改桌面版和移动版">
         <h5 class="fr"><label><input type="checkbox"> 同步</label></h5>
       </tooltip> -->
@@ -35,6 +30,7 @@
     </div>
       
   </sidebar>
+</div>
 </template>
 
 <script>
@@ -42,7 +38,9 @@ import { setActiveSectionId,modifySection }  from '../store/actions'
 import { getWorkspaceData,getSections } from '../store/getters'
 import sidebar from './sidebar.vue'
 import colorPicker from './color-picker.vue'
-import colorMixin from '../mixins/colorMixin.js'
+import colorMixin from '../mixins/colorMixin'
+import eventHandler from '../utils/eventHandler'
+import { merge } from 'lodash'
 // import { tooltip } from '../libs/vue-strap'
 
 export default {
@@ -56,12 +54,16 @@ export default {
   props: {
     sectionId: {
       required: true
+    },
+    show: {
+      type: Boolean,
+      required: true,
+      twoWay: true
     }
   },
   data (){
     return {
       backgroundColor:"0",
-      show:true,
       style:{}
       // style:this.sections[this.sectionId]['style'][this.workspace.version]
       //section: this.sections[this.workspace.activeSectionId]
@@ -102,8 +104,19 @@ export default {
       sections: getSections
     }
   },
-  ready: function(){
-    this.style = this.sections[this.sectionId]['style'][this.workspace.version]
+  created(){
+    this.style = merge({},this.sections[this.sectionId]['style'][this.workspace.version]);
+  },
+  ready (){
+    var el = this.$el;
+    this._closeEvent = eventHandler.listen(window, 'click', (e)=> {
+      if (!el.contains(e.target)){
+        this.sectionEditDone()
+      }
+    })
+  },
+  beforeDestroy() {
+    if (this._closeEvent) this._closeEvent.remove()
   }
 }
 </script>

@@ -6,11 +6,11 @@ const state = {
     //页面宽度，桌面960，移动400
     width: 960,
     //
-    height:1300,
+    height:0,
     //PC版页面高度，需计算
-    heightPC: 1300,
+    heightPC: 0,
     //移动版页面高度，需计算
-    heightM: 1700,
+    heightM: 0,
     //pc为桌面版，mobile为移动版
     version: 'pc',
     //当前页面激活的板块，将显示该板块的操作按钮，在添加页面元素时，将添加到此板块中
@@ -36,140 +36,30 @@ const state = {
     }
   },
 
-  colorSet: ['#E6E2AF',"#A7A37E","#EFECCA","#046380","#002F2F"],
-
-  sections: [
-    {
-      style:{
-        "pc":    {"background-color":"0",height:"200px"},
-        "mobile":{"background-color":"0",height:"300px"}
-      },
-      elements:{
-       
-      }
-    },
-    {
-      style:{
-        "pc":    {"background-color":"1",height:"300px"},
-        "mobile":{"background-color":"1",height:"300px"}
-      },
-      elements:{
-        "bifsdc":{
-          type:"text",
-          content:"wdfsdf<br>dksjlfjslkd jksdfs ksdfksd",
-          style:{
-            left:"200px",
-            top:"100px",
-            width:"500px",
-            zIndex:100
-          },
-          styleM:{
-            left:"100px",
-            top:"100px",
-            width:"200px",
-            zIndex:100
-          }
-        },
-        // "fgh24g":{
-        //   type:"button",
-        // },
-        // "nrgs13":{
-        //   type:"video",
-        // },
-        // "bwdkfk":{
-        //   type:"form",
-        // }
-      },
-    },
-    {
-      style:{
-        "pc":{"background-color":"",height:"200px"},
-        "mobile":{"background-color":"",height:"300px"}
-      },
-      elements:{
-        "123ghfdv":{
-          type:"text",
-          content:"Hello, World!",
-          style:{
-            left:"500px",
-            top:"100px",
-            width:"458px",
-            zIndex:1000
-          },
-          styleM:{
-            left:"150px",
-            top:"100px",
-            width:"200px",
-            zIndex:100
-          }
-        },
-        "testurltesturl":{
-          type:"image",
-          src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
-          style:{
-            left:"200px",
-            top:"100px",
-            width:"333px",
-            zIndex:101
-          },
-          styleM:{
-            left:"50px",
-            top:"150px",
-            width:"120px",
-            zIndex:101
-          }
-        },
-      }
-    },
-    {
-      style:{
-        "pc":{"background-color":"2",height:"300px"},
-        "mobile":{"background-color":"2",height:"500px"}
-      },
-      elements:{
-        "bvsdfg23":{
-          type:"text",
-          content:"Hello, World!",
-          style:{
-            left:"500px",
-            top:"100px",
-            width:"458px",
-            zIndex:1000
-          },
-          styleM:{
-            left:"150px",
-            top:"100px",
-            width:"200px",
-            zIndex:2000
-          }
-        },
-      }
-    },
-    {
-      style:{
-        "pc":{"background-color":"0",height:"300px"},
-        "mobile":{"background-color":"0",height:"300px"}
-      },
-      elements:{
-       
-      }
-    },
-  ]
+  page: {}
 }
 
-let initstate = merge([],state.sections);
+let initPage = merge({},state.page);
 
 /* 页面初始状态 */
-let sectionStates = [initstate];
-let sectionHistoryIndex= 0;
+let pageStates = [initPage];
+let pageHistoryIndex= 0;
 
 const mutations = {
+  
+  //页面初始加载
+  PAGE_INIT (state, data) {
+    state.page = data.page;
+    pageStates = [merge({},state.page)];
+    pageHistoryIndex = 0;
+    mutations.SUM_PAGE_HEIGHT(state);
+  },
 
-  //对sections进行操作过保存其状态，供撤销重做
-  SAVE_SECTIONS_STATE (state) {
-    sectionHistoryIndex += 1;
-    sectionStates = sectionStates.slice(0,sectionHistoryIndex);
-    sectionStates.push(merge([],state.sections));
+  //对sections进行操作过后保存其状态，供撤销重做
+  SAVE_PAGE_STATE (state) {
+    pageHistoryIndex += 1;
+    pageStates = pageStates.slice(0,pageHistoryIndex);
+    pageStates.push(merge({},state.page));
     state.workspace.undo = true;
     state.workspace.redo = false;
   },
@@ -178,9 +68,9 @@ const mutations = {
   SUM_PAGE_HEIGHT(state){
     let heightPC  = 0;
     let heightM   = 0;
-    for (let sectionId in state.sections){
-      heightPC += parseInt(state.sections[sectionId].style.pc.height);
-      heightM += parseInt(state.sections[sectionId].style.mobile.height);
+    for (let sectionId in state.page.sections){
+      heightPC += parseInt(state.page.sections[sectionId].style.pc.height);
+      heightM += parseInt(state.page.sections[sectionId].style.mobile.height);
     }
     state.workspace.heightPC = heightPC;
     state.workspace.heightM = heightM;
@@ -190,7 +80,7 @@ const mutations = {
   //移动板块
   MOVE_SECTION(state, dir, sectionId){
     let target = sectionId
-      if (dir === 'down' && sectionId < state.sections.length-1){
+      if (dir === 'down' && sectionId < state.page.sections.length-1){
         target++;
       }
       if (dir === 'up' && sectionId > 0){
@@ -198,14 +88,14 @@ const mutations = {
       }
 
       if (sectionId != target){
-        state.sections[sectionId] = state.sections.splice(target, 1, state.sections[sectionId])[0];
-        mutations.SAVE_SECTIONS_STATE(state);
+        state.page.sections[sectionId] = state.page.sections.splice(target, 1, state.page.sections[sectionId])[0];
+        mutations.SAVE_PAGE_STATE(state);
       }
   },
 
   //添加板块
   ADD_SECTION(state){
-    state.sections.push({
+    state.page.sections.push({
       style:{
         "pc":{"background-color":"",height:"200px"},
         "mobile":{"background-color":"",height:"200px"}
@@ -213,26 +103,26 @@ const mutations = {
       elements:{}
     });
     state.workspace.height += 200;
-    mutations.SAVE_SECTIONS_STATE(state);
+    mutations.SAVE_PAGE_STATE(state);
   },
 
   //删除板块
   REMOVE_SECTION(state, sectionId){
-    state.workspace.height  -= parseInt(state.sections[sectionId].style.height);
-    state.sections.splice(sectionId,1);
-    mutations.SAVE_SECTIONS_STATE(state);
+    state.workspace.height  -= parseInt(state.page.sections[sectionId].style.height);
+    state.page.sections.splice(sectionId,1);
+    mutations.SAVE_PAGE_STATE(state);
   },
 
   //修改板块
   MODIFY_SECTION(state,sectionId,style){
-    let stateSection = state.sections[sectionId];
+    let stateSection = state.page.sections[sectionId];
     // if (state.workspace.version === 'pc'){
-    //   state.sections[sectionId].style = extend({}, stateSection.style, style);
+    //   state.page.sections[sectionId].style = extend({}, stateSection.style, style);
     // } else {
-    //   state.sections[sectionId].styleM = extend({}, stateSection.styleM, style);
+    //   state.page.sections[sectionId].styleM = extend({}, stateSection.styleM, style);
     // }
-    state.sections[sectionId].style[state.workspace.version] = extend({}, stateSection.style[state.workspace.version], style);
-    mutations.SAVE_SECTIONS_STATE(state);
+    state.page.sections[sectionId].style[state.workspace.version] = extend({}, stateSection.style[state.workspace.version], style);
+    mutations.SAVE_PAGE_STATE(state);
   },
 
   //设置当前活动的页面板块
@@ -252,20 +142,15 @@ const mutations = {
     state.workspace.activeElementId = elementId;
   },
 
-  REMOVE_ELEMENT(state, sectionId, elementId){
-    Vue.delete(state.sections[sectionId]['elements'],elementId);
-    mutations.SAVE_SECTIONS_STATE(state);
-  },
-
   //重做
   REDO(state) {
-    if(sectionStates.length > sectionHistoryIndex+1){
-      sectionHistoryIndex += 1;
-      state.sections = merge([],sectionStates[sectionHistoryIndex]);
+    if(pageStates.length > pageHistoryIndex+1){
+      pageHistoryIndex += 1;
+      state.page = merge({},pageStates[pageHistoryIndex]);
       
       //控制按钮是否可点击
       state.workspace.undo = true;
-      if (sectionStates.length == sectionHistoryIndex+1){
+      if (pageStates.length == pageHistoryIndex+1){
         state.workspace.redo = false;
       }
 
@@ -276,13 +161,13 @@ const mutations = {
 
   //撤销
   UNDO(state) {
-    if(sectionHistoryIndex >= 1){
-      sectionHistoryIndex -= 1;
-      state.sections = merge([],sectionStates[sectionHistoryIndex]);
+    if(pageHistoryIndex >= 1){
+      pageHistoryIndex -= 1;
+      state.page = merge({},pageStates[pageHistoryIndex]);
       
       //控制按钮是否可点击
       state.workspace.redo = true;
-      if (sectionHistoryIndex == 0){
+      if (pageHistoryIndex == 0){
         state.workspace.undo = false;
       }
 
@@ -291,7 +176,7 @@ const mutations = {
     }
   },
 
-  //版本切换
+  // 版本切换
   VERSION(state) {
     if (state.workspace.version === 'mobile'){
       state.workspace.version = 'pc';
@@ -304,6 +189,15 @@ const mutations = {
     mutations.SUM_PAGE_HEIGHT(state);
   },
 
+
+  //删除元素
+  REMOVE_ELEMENT(state, sectionId, elementId){
+    Vue.delete(state.page.sections[sectionId]['elements'],elementId);
+    mutations.SAVE_PAGE_STATE(state);
+  },
+
+  // 移动元素
+  // 逻辑写得太复杂了，以后得重构
   MOVE_ELEMENT(state, sectionId, elementId, positionInPage, elementHeight){    
     let sumSectionsHeight  = 0;
     let sectionHeight = 0;
@@ -315,8 +209,8 @@ const mutations = {
     let newSectionId = -1;
     while (elementLine >= sumSectionsHeight){
       newSectionId ++;
-      sectionHeight = parseInt(state.sections[newSectionId].style[state.workspace.version].height);
-      // parseInt((state.workspace.version == 'pc') ? state.sections[newSectionId].style.height : state.sections[newSectionId].styleM.height);
+      sectionHeight = parseInt(state.page.sections[newSectionId].style[state.workspace.version].height);
+      // parseInt((state.workspace.version == 'pc') ? state.page.sections[newSectionId].style.height : state.page.sections[newSectionId].styleM.height);
       sumSectionsHeight += sectionHeight;
     }
 
@@ -326,32 +220,31 @@ const mutations = {
     }
 
     //旧元素
-    let elState = state.sections[sectionId].elements[elementId];
-    //更新元素坐标，如果移到了新的section，则把另一版本的坐标重置
-    if (state.workspace.version == 'pc'){
-      elState.style = extend({}, elState.style, style);
-      if (newSectionId !== sectionId){
-        //elState.styleM = extend({}, elState.styleM, {top:'0px'});
-      }
-    } else {
-      elState.styleM= extend({}, elState.styleM, style);
-      if (newSectionId !== sectionId){
-        //elState.style = extend({}, elState.style, {top:'0px'});
-      }
-    }
+    let elState = state.page.sections[sectionId].elements[elementId];
+    elState.style[state.workspace.version] = extend({}, elState.style[state.workspace.version], style);
 
-    Vue.delete(state.sections[sectionId]['elements'],elementId);
-    Vue.set(state.sections[newSectionId]['elements'],elementId,elState);
+    // if (newSectionId !== sectionId){
+    Vue.delete(state.page.sections[sectionId]['elements'],elementId);
+    Vue.set(state.page.sections[newSectionId]['elements'],elementId,elState);
+    // }
 
-    mutations.SAVE_SECTIONS_STATE(state);
+    mutations.SAVE_PAGE_STATE(state);
+  },
+
+  MODIFY_ELEMENT(state, sectionId, elementId, newPropsObj){
+    let newElement = merge({}, state.page.sections[sectionId]['elements'][elementId], newPropsObj);
+    Vue.set(state.page.sections[sectionId]['elements'], elementId, newElement);
+    mutations.SAVE_PAGE_STATE(state);
   },
 
   SET_COLOR_SET(state,colorSet){
-    state.colorSet = colorSet;
+    state.page.colorSet = colorSet;
+    mutations.SAVE_PAGE_STATE(state);
   }
 }
 
 export default new Vuex.Store({
   state,
-  mutations
+  mutations,
+  strict: true
 })

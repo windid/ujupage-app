@@ -1,4 +1,11 @@
+Vue.config.debug = true
+
+import VueResource from 'vue-resource'
 import editor from '../components/editor.vue'
+
+Vue.use(VueResource);
+
+Vue.http.options.root = '/root';
 
 // import tooltip from '../libs/vue-strap/src/tooltip.vue'
 

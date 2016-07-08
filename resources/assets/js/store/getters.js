@@ -3,7 +3,7 @@ export function getWorkspaceData (state) {
 }
 
 export function getSections (state) {
-  return state.sections
+  return state.page.sections
 }
 
 export function getSettings (state) {
@@ -11,5 +11,5 @@ export function getSettings (state) {
 }
 
 export function getColorSet (state) {
-  return state.colorSet
+  return state.page.colorSet
 }

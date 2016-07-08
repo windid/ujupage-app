@@ -28,9 +28,7 @@
 }
 
 .page-section{
-  top:0px;
-  position: relative;
-  border-bottom:1px dashed #03ddff;
+  position:relative;
 }
 
 .page-section-operation{
@@ -44,7 +42,11 @@
 }
 
 .el-content{
-  
+  position: relative;
+}
+
+.el-content p{
+  margin:0;
 }
 
 .el-content.outline{
@@ -82,6 +84,11 @@
   bottom:-43px;
 }
 
+.is-dragging{
+  z-index:100000;
+  cursor:move;
+}
+
 .resize-line-wrap{
   position: absolute;
   bottom: -49px;
@@ -98,13 +105,12 @@
 .resize-line{
   position: absolute;
   width: 100%;
-  z-index: 10001;
+  z-index: 1;
   border-bottom: 1px dashed #03ddff;
   cursor: n-resize;
-  height: 5px;
+  height: 8px;
   bottom: -1px;
 }
-
 
 /* 禁止文本选择 */
 body{

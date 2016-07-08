@@ -9,8 +9,8 @@ export default {
   methods: {
     getColor: function(color){
       if (color === "" || color == null){
-        return "transparent";
-      } else if (color.toString().substr(0,1) == "#"){
+        return "";
+      } else if (color.toString().substr(0,1) === "#"){
         return color;
       } else {
         return this.colorSet[color];

@@ -1,9 +1,9 @@
 # 如何安装
 
-1. 安装compose、npm（自行google）
+1. 安装composer、npm（自行google）
 2. 进入到ujupage-app安装目录
-3. 运行compose install
-4. 运行npm i
+3. 运行composer install
+4. 运行npm install
 
 # 前端测试
 1. 启动开发服务器 php artisan serve

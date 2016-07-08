@@ -5,8 +5,8 @@
       <li><a>创建一个A/B测试</a></li>
     </ul>
     <div class="btn-group btn-group-sm version-switch" role="group" aria-label="...">
-      <button type="button" class="btn btn-default" v-bind:class="{'active':workspace.version=='pc'}" @click="toggleVersion">桌面版 <span class="glyphicon glyphicon-blackboard"></span></button>
-      <button type="button" class="btn btn-default" v-bind:class="{'active':workspace.version=='mobile'}" @click="toggleVersion">移动版 <span class="glyphicon glyphicon-phone"></span></button>
+      <div class="btn btn-default" v-bind:class="{'active':workspace.version=='pc'}" @click="toggleVersion">桌面版 <span class="glyphicon glyphicon-blackboard"></span></div>
+      <div class="btn btn-default" v-bind:class="{'active':workspace.version=='mobile'}" @click="toggleVersion">移动版 <span class="glyphicon glyphicon-phone"></span></div>
     </div>
 
     <ul class="header-holder list-inline fr">

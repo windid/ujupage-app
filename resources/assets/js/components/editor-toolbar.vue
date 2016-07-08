@@ -47,13 +47,13 @@ export default {
             
           }
         },
-        {
-          name:'视频',
-          style:'facetime-video',
-          action:function(){
+        // {
+        //   name:'视频',
+        //   style:'facetime-video',
+        //   action:function(){
             
-          }
-        },
+        //   }
+        // },
         /*
         {
           name:'形状',
