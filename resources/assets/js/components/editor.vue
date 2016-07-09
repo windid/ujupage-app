@@ -62,17 +62,13 @@ export default {
                 "fgh24g":{
                   type:"button",
                   text:"点击下载",
-                  colors:{
+                  settings:{
                     backgroundColor:'2',
                     borderColor:'3',
                     fontColor:'4',
-                    hover:'2'
-                  },
-                  buttonStyle:{
+                    hoverColor:'2',
                     borderRadius:'5px',
                     fontSize:'18px',
-                  },
-                  buttonClass:{
                     shadow:true,
                     bold:false,
                     border:false
@@ -90,25 +86,68 @@ export default {
                       width:"100px",
                       zIndex:300
                     }
-                  }
+                  },
+                  link:{}
                 },
-                // "nrgs13":{
-                //   type:"video",
-                // },
                 "bwdkfk":{
                   type:"form",
                   style:{
                     'pc':{
                       left:"200px",
                       top:"100px",
-                      width:"200px",
+                      width:"300px",
                       zIndex:3000
                     },
                     'mobile':{
-                      left:"0px",
+                      left:"50px",
                       top:"100px",
-                      width:"200px",
+                      width:"300px",
                       zIndex:1342
+                    }
+                  },
+                  settings:{
+                    labelInside:true,
+                    innerShadow:true,
+                    fieldColor:"#fff",
+                    inputColor:"4",
+                    borderColor:"#ccc",
+                  },
+                  fields:[
+                    {
+                      label: "姓名",
+                      type: "text",
+                      validator: ['required'],
+                    },
+                    {
+                      label: "手机号码",
+                      type: "text",
+                      validator: ['required','mobile'],
+                    },
+                    {
+                      label: "省/市/县",
+                      type: "china-state",
+                      validator: ['required']
+                    },
+                    {
+                      label: "性别",
+                      type: "radio",
+                      options:['男','女'],
+                      validator: ['required'],
+                      hideLabel: false
+                    }
+                  ],
+                  button:{
+                    text:"提交",
+                    settings:{
+                      backgroundColor:'2',
+                      borderColor:'3',
+                      fontColor:'4',
+                      hoverColor:'2',
+                      borderRadius:'5px',
+                      fontSize:'18px',
+                      shadow:true,
+                      bold:false,
+                      border:false
                     }
                   }
                 }
