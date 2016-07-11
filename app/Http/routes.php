@@ -11,30 +11,38 @@
 |
 */
 App::setLocale('zh-CN');
-
-$zone = 'auth';
-Route::group(['prefix' => $zone, 'as' => $zone , 'namespace' => ucwords($zone)] ,function() {
-   
-    // 登录 
-    Route::get('login', ['as' => '.login', 'uses' => 'AuthController@getLogin']);
-    Route::post('login', ['as' => '.login.post', 'uses' => 'AuthController@postLogin']);
-    
+$zone = "testauth";
+// 测试页面
+Route::group(['prefix' => $zone, 'as' => $zone] ,function() {
     // 注册
-    Route::get('register', ['as' => '.register', 'uses' => 'AuthController@getRegister']);
+    Route::get('register', ['as' => '.register', 'uses' => 'Auth\AuthController@getRegister']);
+    // 登录 
+    Route::get('login', ['as' => '.login', 'uses' => 'Auth\AuthController@getLogin']);
+    // 忘记密码
+    Route::get('forget', ['as' => '.forget', 'uses' => 'Auth\PasswordController@getEmail']);
+    // 重设密码
+    Route::get('password/reset/{token}', ['as' => '.password.reset', 'uses' => 'Auth\PasswordController@getReset']);     
+});
+
+
+$zone = "auth";
+Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone)], function(){   
+    // 获取csrf
+    Route::get('csrf_token', function(){
+       return response()->json(['csrf_token' => csrf_token()]); 
+    });
+    // 注册
     Route::post('register', ['as' => '.register.post', 'uses' => 'AuthController@postRegister']);
     // 激活
     Route::get('active/{token}', ['as' => '.active', 'uses' => 'AuthController@getActive']);
-    
-    // 退出
-    Route::get('logout', ['as' => '.logout', 'uses' => 'AuthController@getLogout']);
-    
     // 忘记密码
-    Route::get('forget', ['as' => '.forget', 'uses' => 'PasswordController@getEmail']);
     Route::post('forget', ['as' => '.forget.post', 'uses' => 'PasswordController@postEmail']);
-    
     // 重设密码
-    Route::get('password/reset/{token}', ['as' => '.password.reset', 'uses' => 'PasswordController@getReset']);
-    Route::post('password/reset', ['as' => '.password.reset.post', 'uses' => 'PasswordController@postReset']);      
+    Route::post('password/reset', ['as' => '.password.reset.post', 'uses' => 'PasswordController@postReset']);  
+    // 获取access_token
+    Route::post('access_token', ['as' => '.access_token', 'uses' => function() {
+        return response()->json(Authorizer::issueAccessToken());
+    }]);
 });
 
 Route::get('/', function () {    
