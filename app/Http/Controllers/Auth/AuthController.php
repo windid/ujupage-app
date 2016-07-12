@@ -12,11 +12,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Models\UserActive;
 
-use LucaDegasperi\OAuth2Server\Facades\Authorizer;
-
 class AuthController extends Controller {
 
     protected $redirectPath = '/';
+    //protected $username = 'username';
 
     /*
       |--------------------------------------------------------------------------
@@ -71,9 +70,9 @@ use AuthenticatesAndRegistersUsers,
             );
         }
 
-        $this->create($request->all());
+        $user = $this->create($request->all());
         
-        return response()->json(Authorizer::issueAccessToken());        
+        return json_encode(['auth' => $user]);        
     }
 
     /**
@@ -153,6 +152,7 @@ use AuthenticatesAndRegistersUsers,
      * @return \Illuminate\Http\Response
      */
     public function postLogin(Request $request) {
+        
         $this->validate($request, [
             $this->loginUsername() => 'required', 'password' => 'required',
         ]);
@@ -173,14 +173,10 @@ use AuthenticatesAndRegistersUsers,
      * 退出登录
      */
     public function getLogout(Request $request) {
-        if (!$request->has('token')) {
-            return response()->json(['result' => 'false']);
-        }
-
-        $user = User::where('token', $request->get('token'))->first();
+        $user = Auth::user();
         if ($user) {
             Auth::logout();
-            User::where('token', $request->get('token'))
+            User::where('id', $user->id)
                     ->update(['token' => UserActive::createNewToken()]);
 
             return response()->json(['result' => 'true']);

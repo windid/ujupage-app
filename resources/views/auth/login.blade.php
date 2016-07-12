@@ -4,10 +4,10 @@
     </head>
     <body>
         
-        <form action="[[route('auth.access_token')]]" method="post">
+        <form action="[[route('oauth.login.post')]]" method="post">
             [[csrf_field()]]
             
-            <input type="text" name="username" value="" placeholder="邮箱"/>
+            <input type="text" name="email" value="" placeholder="邮箱"/>
             <input type="password" name="password" value="" placeholder="密码"/>
             <input type="hidden" name="grant_type" value="password" />
             <input type="hidden" name="client_id" value="1" />

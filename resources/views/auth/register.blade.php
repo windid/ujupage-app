@@ -4,7 +4,7 @@
     </head>
     <body>
         
-        <form action="[[route('auth.register.post')]]" method="post">
+        <form action="[[route('oauth.register.post')]]" method="post">
             [[csrf_field()]]
             
             <input type="text" name="name" value="[[old('name')]]" placeholder="名称"/>
