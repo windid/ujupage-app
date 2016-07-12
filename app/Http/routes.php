@@ -44,6 +44,28 @@ Route::group(['prefix'=> $zone, 'as' => $zone], function(){
      */
 });
 
+$zone = 'editor';
+Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'middleware' => 'auth'], function(){   
+    Route::group(['prefix'=>'image', 'as' => '.image'], function(){        
+        // 图片列表        
+        Route::get('list/{dirname?}/{page?}/{page_size?}', ['as' => '.list', 'uses' => 'ImageController@getIndex']);
+        // 创建文件夹
+        Route::get('dir', ['as' => '.dir', 'uses' => 'ImageController@dir']);
+        // 创建文件夹
+        Route::get('mkdir/{dirname}', ['as' => '.mkdir', 'uses' => 'ImageController@mkdir']);
+        // 修改文件夹
+        Route::get('moddir/{dirname}', ['as' => '.moddir', 'uses' => 'ImageController@moddir']);
+        // 删除文件夹
+        Route::get('deldir/{dirname}', ['as' => '.deldir', 'uses' => 'ImageController@deldir']);
+        // 上传图片
+        Route::post('upload', ['as' => '.mkdir', 'uses' => 'ImageController@upload']);
+        // 修改图片信息
+        Route::post('modimage', ['as' => '.moddir', 'uses' => 'ImageController@modimage']);
+        // 删除图片
+        Route::get('delimage/{id}', ['as' => '.deldir', 'uses' => 'ImageController@delimage']);
+    });
+});
+
 
 Blade::setContentTags('[[', ']]');        // for variables and all things Blade
 Blade::setEscapedContentTags('[!!', '!!]');   // for escaped data
