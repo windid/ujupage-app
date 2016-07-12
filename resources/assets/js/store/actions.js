@@ -28,6 +28,11 @@ export const modifyElement = function ({ dispatch, state }, sectionId, elementId
   dispatch('MODIFY_ELEMENT', sectionId, elementId, newPropsObj)
 }
 
+//修改元素style
+export const replaceElement = function ({ dispatch, state }, sectionId, elementId, newElement) {
+  dispatch('REPLACE_ELEMENT', sectionId, elementId, newElement)
+}
+
 //设置当前板块
 export const setCurrentSectionId = function ({ dispatch, state }, sectionId) {
   dispatch('SET_CURRENT_SECTION_ID', sectionId)

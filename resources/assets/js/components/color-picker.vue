@@ -27,7 +27,7 @@ export default {
   },
   methods:{
     setColor: function(newColor){
-      this.color = newColor;
+      this.color = newColor + '';
       this.show = false;
     },
     inputColor: function(e){
@@ -53,8 +53,14 @@ export default {
   <dropdown :show.sync="show">
     <slot><div data-toggle="dropdown" class="color-button" :style="{background:getColor(color)}"></div></slot>
     <div slot="dropdown-menu" class="dropdown-menu" :class="{'dropdown-menu-right':position === 'right'}">
-      <div v-for="colorItem in colorSet" :style="{background: colorItem}" @click="setColor($index)" class="color-block"></div>
-      <div class="color-block" @click="setColor('')">无颜色</div>
+      <div v-for="colorItem in colorSet" :style="{background: colorItem}" @click="setColor($index)" class="color-block" :class="{'selected':$index.toString() === color}"></div>
+      <div class="common-color-blocks-wrapper">
+        <div class="color-block common-color-block" style="background:#000;color:#fff" @click="setColor('#000000')" :class="{'selected':color == '#000'}">黑</div>
+        <div class="color-block common-color-block" style="background:#fff" @click="setColor('#ffffff')" :class="{'selected':color == '#fff'}">白</div>
+        <div class="color-block common-color-block" style="background:#bbb" @click="setColor('#cccccc')" :class="{'selected':color == '#ccc'}">灰</div>
+        <div class="color-block common-color-block" @click="setColor('')">透</div>
+        <div style="clear:both"></div>
+      </div>
       <div class="input-group color-block">
         <div class="input-group-addon" :style="{background:getColor(color)}"> &nbsp; </div>
         <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色">
@@ -73,11 +79,21 @@ export default {
   cursor: pointer;
   border-radius: 4px;
   text-align: center;
-  line-height: 30px;
+  line-height: 26px;
+}
+
+.color-block.selected {
+  border:2px solid #666;
 }
 
 .color-block:hover, .color-button:hover{
   border: 2px solid #ccc;
+}
+
+.common-color-block {
+  float:left;
+  width:35px;
+  margin-right:1px;
 }
 
 .color-button{

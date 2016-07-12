@@ -7,19 +7,28 @@ export default {
       required: true,
       twoWay: true
     }
+  },
+  data(){
+    return {
+      bodyHeight:'auto',
+    }
+  },
+  ready(){
+    var browserHeight = document.documentElement.clientHeight;
+    this.bodyHeight = (browserHeight - 100) + 'px';
   }
 }
 </script>
 
 <template>
-  <div class="sidebar" transition="fade" v-if="show">
+  <div class="sidebar" v-if="show">
     
     <div class="sidebar-header">
       <slot name="header">
       </slot>
     </div>
     
-    <div class="sidebar-body">
+    <div class="sidebar-body" :style="{height:bodyHeight}">
       <slot name="body">
       </slot>
     </div>
@@ -40,11 +49,12 @@ export default {
 
 .sidebar-header {
   padding:10px;
+  height: 55px;
+  border-bottom: 1px solid #ddd;
 }
 
 .sidebar-body {
   padding:12px;
-  border-top:1px solid #ddd;
   height:100%;
   overflow-x: auto;
   position: relative;

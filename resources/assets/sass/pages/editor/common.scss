@@ -3,9 +3,11 @@ html,body{
   overflow:hidden;
 }
 
-input, button{
+input, button, textarea{
   outline:none;
 }
+
+textarea { resize: none; } 
 
 .fr{
   float:right;
@@ -39,6 +41,15 @@ input, button{
 
 .fade-enter, .fade-leave {
   opacity: 0;
+}
+
+.collapse-transition {
+  transition: max-height .3s ease;
+  overflow: hidden;
+}
+
+.collapse-enter, .collapse-leave {
+  max-height: 0!important;
 }
 
 .section-transition {

@@ -1,5 +1,3 @@
-Vue.config.debug = true
-
 import VueResource from 'vue-resource'
 import editor from '../components/editor.vue'
 

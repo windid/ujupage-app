@@ -37,8 +37,8 @@ export default {
           sections: [
             {
               style:{
-                "pc":    {"background-color":"0",height:"400px"},
-                "mobile":{"background-color":"0",height:"400px"}
+                "pc":    {"background-color":"0",height:"500px"},
+                "mobile":{"background-color":"0",height:"500px"}
               },
               elements:{
                 // "dfgs234f":{
@@ -62,7 +62,7 @@ export default {
                 "fgh24g":{
                   type:"button",
                   text:"点击下载",
-                  settings:{
+                  props:{
                     backgroundColor:'2',
                     borderColor:'3',
                     fontColor:'4',
@@ -94,23 +94,26 @@ export default {
                   style:{
                     'pc':{
                       left:"200px",
-                      top:"100px",
+                      top:"150px",
                       width:"300px",
                       zIndex:3000
                     },
                     'mobile':{
                       left:"50px",
-                      top:"100px",
+                      top:"150px",
                       width:"300px",
                       zIndex:1342
                     }
                   },
-                  settings:{
+                  props:{
                     labelInside:true,
                     innerShadow:true,
                     fieldColor:"#fff",
                     inputColor:"4",
                     borderColor:"#ccc",
+                    labelColor:"3",
+                    redirect:"",
+                    thankyou:"表单提交成功，感谢！"
                   },
                   fields:[
                     {
@@ -124,21 +127,32 @@ export default {
                       validator: ['required','mobile'],
                     },
                     {
-                      label: "省/市/县",
+                      label: "收货地址",
                       type: "china-state",
                       validator: ['required']
+                    },
+                    {
+                      label: "详细地址",
+                      type: "textarea",
+                      validator: []
+                    },
+                    {
+                      label: "testDropdown",
+                      type: "dropdown",
+                      options: ["wawawa","hahaha","hehehe"]
                     },
                     {
                       label: "性别",
                       type: "radio",
                       options:['男','女'],
                       validator: ['required'],
+                      optionsInLine: true,
                       hideLabel: false
                     }
                   ],
                   button:{
                     text:"提交",
-                    settings:{
+                    props:{
                       backgroundColor:'2',
                       borderColor:'3',
                       fontColor:'4',
@@ -236,7 +250,7 @@ export default {
                     'pc':{
                       left:"500px",
                       top:"100px",
-                      width:"458px",
+                      width:"125px",
                       zIndex:1000
                     },
                     'mobile':{

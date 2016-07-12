@@ -62,7 +62,7 @@ export default {
 
 <template>
   <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable">
-    <div v-el:content slot="content" @dblclick="edit" contenteditable="false" :style="{cursor:editing ? 'text' : 'default'}">
+    <div v-el:content slot="content" @dblclick="edit" contenteditable="false" style="outline:none" :style="{cursor:editing ? 'text' : 'default'}">
       {{{element.content}}}
     </div>
     <template slot="main-buttons-extend">

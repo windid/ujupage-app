@@ -64,7 +64,22 @@
   padding:0;
   z-index:90000;
   margin-bottom:0;
+}
+
+.el-toolbar.top{
+  top:-43px;
+}
+
+.el-toolbar.bottom{
+  bottom:-43px;
+}
+
+.el-toolbar.left{
   left:-1px;
+}
+
+.el-toolbar.right{
+  right:-1px;
 }
 
 .el-btn-group{
@@ -74,14 +89,6 @@
 
 .el-btn-group .btn{
   float:none;
-}
-
-.el-toolbar.top{
-  top:-43px;
-}
-
-.el-toolbar.bottom{
-  bottom:-43px;
 }
 
 .el-overlay {

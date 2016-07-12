@@ -4,7 +4,7 @@ import {extend,merge} from 'lodash'
 const state = {
   workspace: {
     //页面宽度，桌面960，移动400
-    width: 960,
+    width: 400,
     //
     height:0,
     //PC版页面高度，需计算
@@ -12,7 +12,7 @@ const state = {
     //移动版页面高度，需计算
     heightM: 0,
     //pc为桌面版，mobile为移动版
-    version: 'pc',
+    version: 'mobile',
     //当前页面激活的板块，将显示该板块的操作按钮，在添加页面元素时，将添加到此板块中
     currentSectionId: 0,
     //编辑状态中的板块id
@@ -233,6 +233,11 @@ const mutations = {
 
   MODIFY_ELEMENT(state, sectionId, elementId, newPropsObj){
     let newElement = merge({}, state.page.sections[sectionId]['elements'][elementId], newPropsObj);
+    Vue.set(state.page.sections[sectionId]['elements'], elementId, newElement);
+    mutations.SAVE_PAGE_STATE(state);
+  },
+
+  REPLACE_ELEMENT(state, sectionId, elementId, newElement){
     Vue.set(state.page.sections[sectionId]['elements'], elementId, newElement);
     mutations.SAVE_PAGE_STATE(state);
   },

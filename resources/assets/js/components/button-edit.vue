@@ -26,10 +26,10 @@ export default {
   computed:{
     borderRadius:{
       set: function(newValue){
-        this.button.settings.borderRadius = newValue + 'px';
+        this.button.props.borderRadius = newValue + 'px';
       },
       get: function(){
-        return parseInt(this.button.settings.borderRadius);
+        return parseInt(this.button.props.borderRadius);
       }
     }
   },
@@ -47,39 +47,40 @@ export default {
       <div class="btn btn-success" @click="editDone">&nbsp; 完成 &nbsp;</div>
     </div>
     <div slot="body">
+    
       <div class="sidebar-block">
         <div class="input-group shadow">
           <div class="input-group-addon"> 按钮文字 </div>
           <input type="text" class="form-control input-text-shadow" v-model="button.text">
         </div>
-        
       </div>
+
       <div class="sidebar-block color-groups">
 
-        <color-picker :color.sync="button.settings.backgroundColor">
+        <color-picker :color.sync="button.props.backgroundColor">
           <div  data-toggle="dropdown" class="float-color-picker">
-            <div class="float-color-block shadow" :style="{background:getColor(button.settings.backgroundColor)}"></div>
+            <div class="float-color-block shadow" :style="{background:getColor(button.props.backgroundColor)}"></div>
             <div class="float-color-block-text">按钮</div>
           </div>
         </color-picker>
 
-        <color-picker :color.sync="button.settings.hoverColor">
+        <color-picker :color.sync="button.props.hoverColor">
           <div  data-toggle="dropdown" class="float-color-picker">
-            <div class="float-color-block shadow" :style="{background:getColor(button.settings.hoverColor)}"></div>
+            <div class="float-color-block shadow" :style="{background:getColor(button.props.hoverColor)}"></div>
             <div class="float-color-block-text">悬停</div>
           </div>
         </color-picker>
         
-        <color-picker :color.sync="button.settings.fontColor" :position="'right'">
+        <color-picker :color.sync="button.props.fontColor" :position="'right'">
           <div  data-toggle="dropdown" class="float-color-picker">
-            <div class="float-color-block shadow" :style="{background:getColor(button.settings.fontColor)}"></div>
+            <div class="float-color-block shadow" :style="{background:getColor(button.props.fontColor)}"></div>
             <div class="float-color-block-text">文字</div>
           </div>
         </color-picker>
 
-        <color-picker :color.sync="button.settings.borderColor" :position="'right'">
+        <color-picker :color.sync="button.props.borderColor" :position="'right'">
           <div  data-toggle="dropdown" class="float-color-picker">
-            <div class="float-color-block shadow" :style="{background:getColor(button.settings.borderColor)}"></div>
+            <div class="float-color-block shadow" :style="{background:getColor(button.props.borderColor)}"></div>
             <div class="float-color-block-text">边框</div>
           </div>
         </color-picker>
@@ -90,7 +91,7 @@ export default {
         <div class="input-group font-size-input">
           <div class="input-group-addon">字号</div>
           <div class="input-group-btn">
-            <font-size :font-size.sync="button.settings.fontSize"></font-size>
+            <font-size :font-size.sync="button.props.fontSize"></font-size>
           </div>
         </div>
         <div class="input-group corner-radius-input shadow">
@@ -101,11 +102,51 @@ export default {
       </div>
 
       <div class="sidebar-block" style="text-align:center;">
-        <checkbox-button :value.sync="button.settings.bold">加粗</checkbox-button> &nbsp; 
-        <checkbox-button :value.sync="button.settings.shadow">阴影</checkbox-button> &nbsp; 
-        <checkbox-button :value.sync="button.settings.border">边框</checkbox-button>
+        <checkbox-button :value.sync="button.props.bold">加粗</checkbox-button> &nbsp; 
+        <checkbox-button :value.sync="button.props.shadow">阴影</checkbox-button> &nbsp; 
+        <checkbox-button :value.sync="button.props.border">边框</checkbox-button>
       </div>
       
     </div>
   </sidebar>
 </template>
+
+<style>
+
+.float-color-picker{
+  float:left;
+  width:48px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.color-groups .btn-group{
+  margin-left:4px;
+}
+
+.color-groups .btn-group:first-child{
+  margin:0;
+}
+
+.float-color-block{
+  height:30px;
+  width:100%;
+  border:2px solid #ccc;
+  border-radius: 4px;
+}
+
+.font-size-input{
+  float:left;
+  width:100px;
+}
+
+.corner-radius-input{
+  float:right;
+  width:100px;
+}
+
+.float-color-block-text{
+  margin-top:4px;
+}
+</style>
+

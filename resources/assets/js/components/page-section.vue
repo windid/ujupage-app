@@ -73,13 +73,13 @@ export default {
       <!-- 板块操作按钮组 -->
       <div class="btn-group-vertical page-section-operation" role="group" v-show="workspace.currentSectionId==sectionId" transition="fade" :style="{left: workspace.width + 5 + 'px'}">
         <template v-if="workspace.activeSectionId === sectionId">
-          <button type="button" class="btn btn-success" title="完成" @click="sectionEditDone"><span class="glyphicon glyphicon-ok"></span></button>
+          <div class="btn btn-success" title="完成" @click="sectionEditDone"><span class="glyphicon glyphicon-ok"></span></div>
         </template>
         <template v-if="(workspace.activeSectionId !== sectionId)">
-          <button type="button" class="btn btn-primary" title="修改" @click.stop="editSection"><span class="glyphicon glyphicon-pencil"></span></button>
-          <button type="button" class="btn btn-default" title="上移" @click="moveSection('up',sectionId)"><span class="glyphicon glyphicon-chevron-up"></span></button>
-          <button type="button" class="btn btn-default" title="下移" @click="moveSection('down',sectionId)"><span class="glyphicon glyphicon-chevron-down"></span></button>
-          <button type="button" class="btn btn-default" title="删除" @click="removeSection(sectionId)"><span class="glyphicon glyphicon-trash"></span></button>
+          <div class="btn btn-primary" title="修改" @click.stop="editSection"><span class="glyphicon glyphicon-pencil"></span></div>
+          <div class="btn btn-default" title="上移" @click="moveSection('up',sectionId)"><span class="glyphicon glyphicon-chevron-up"></span></div>
+          <div class="btn btn-default" title="下移" @click="moveSection('down',sectionId)"><span class="glyphicon glyphicon-chevron-down"></span></div>
+          <div class="btn btn-default" title="删除" @click="removeSection(sectionId)"><span class="glyphicon glyphicon-trash"></span></div>
         </template>
       </div>
     </div>

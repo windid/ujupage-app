@@ -19,7 +19,8 @@ export default {
   },
   data (){
     return {
-      elToolbarPosition: 'top',
+      // elToolbarPosition: 'top',
+      toolbarPosition:'top left',
       elPositionInPage: {left:0,top:0},
       clickOnThisElement: false,
       draggie: null
@@ -39,12 +40,13 @@ export default {
         this.buttonGroup = 'main';
       }
       
-      let viewTop = getElementTop(this.$el) - document.documentElement.scrollTop;
-      if ( viewTop < 95){
-        this.elToolbarPosition = 'bottom';
-      } else {
-        this.elToolbarPosition = 'top';
-      }
+      const viewTop = getElementTop(this.$el) - document.documentElement.scrollTop;
+      const toolbarPositionY = (viewTop < 95) ? 'bottom' : 'top';
+
+      const viewRight = this.workspace.width - parseInt(this.elStyles.left);
+      const toolbarPositionX = (viewRight < 300) ? 'right' : 'left';
+
+      this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX;
     },
     dragEnable: function(){
       this.draggie = new draggabilly( this.$el, {
@@ -63,6 +65,7 @@ export default {
 
       this.draggie.on('dragStart', function( event ) {
         that.showToolbar();
+        that.$dispatch('drag-start');
         startTop = getElementTop(that.$el) - 45 - that.$el.offsetTop;
       })
       
@@ -114,7 +117,7 @@ let getElementTop = function( element ){
     <div class="el-content" id="element-{{elementId}}" :style="{zIndex:element.style[this.workspace.version].zIndex}" v-bind:class="{'outline':workspace.activeElementId === elementId}">
       <slot name="content"></slot>
     </div>
-    <div v-if="workspace.activeElementId === elementId" class="el-toolbar {{elToolbarPosition}}">
+    <div v-if="workspace.activeElementId === elementId" class="el-toolbar {{toolbarPosition}}" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
         <div class="btn btn-default" title="复制一个"><span class="glyphicon glyphicon-duplicate"></span></div>

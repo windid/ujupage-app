@@ -35,7 +35,7 @@ export default {
       //组件实例化时将传入的element参数复制到button中，以避免直接修改store中的状态
       button: {
         text: this.element.text,
-        settings: merge({}, this.element.settings),
+        props: merge({}, this.element.props),
       },
       //js模拟css hover伪类效果
       hover: false
@@ -60,6 +60,7 @@ export default {
       this.buttonGroup = 'main';
       if (this.changed){
         this.modifyElement(this.sectionId, this.elementId, this.button);
+        this.changed = false;
       }
     }
   },
@@ -97,17 +98,17 @@ export default {
       @mouseleave = "hover = false"
       :style="[
         {
-          borderRadius: button.settings.borderRadius,
-          fontSize: button.settings.fontSize,
-          backgroundColor:hover ? getColor(button.settings.hoverColor) : getColor(button.settings.backgroundColor),
-          borderColor:getColor(button.settings.borderColor),
-          color:getColor(button.settings.fontColor)
+          borderRadius: button.props.borderRadius,
+          fontSize: button.props.fontSize,
+          backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),
+          borderColor:getColor(button.props.borderColor),
+          color:getColor(button.props.fontColor)
         }
       ]" 
       :class="{
-        'element-button-shadow':button.settings.shadow,
-        'element-button-border':button.settings.border,
-        'element-button-bold':button.settings.bold
+        'element-button-shadow':button.props.shadow,
+        'element-button-border':button.props.border,
+        'element-button-bold':button.props.bold
       }">
       {{button.text}}
     </div>
@@ -147,42 +148,6 @@ export default {
 
 .element-button-shadow{
   box-shadow:1px 3px 6px #888;
-}
-
-.float-color-picker{
-  float:left;
-  width:48px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.color-groups .btn-group{
-  margin-left:4px;
-}
-
-.color-groups .btn-group:first-child{
-  margin:0;
-}
-
-.float-color-block{
-  height:30px;
-  width:100%;
-  border:2px solid #ccc;
-  border-radius: 4px;
-}
-
-.font-size-input{
-  float:left;
-  width:100px;
-}
-
-.corner-radius-input{
-  float:right;
-  width:100px;
-}
-
-.float-color-block-text{
-  margin-top:4px;
 }
 
 </style>
