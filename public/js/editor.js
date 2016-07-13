@@ -53,11 +53,41 @@
 
 	'use strict';
 	
-	var _editor = __webpack_require__(2);
+	var _vueResource = __webpack_require__(2);
+	
+	var _vueResource2 = _interopRequireDefault(_vueResource);
+	
+	var _editor = __webpack_require__(3);
 	
 	var _editor2 = _interopRequireDefault(_editor);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	Vue.use(_vueResource2.default);
+	
+	Vue.http.options.root = '/root';
+	
+	// import tooltip from '../libs/vue-strap/src/tooltip.vue'
+	
+	// // import eventHandler from '../utils/eventHandler.js'
+	// import {merge} from 'lodash'
+	
+	// Vue.directive('tooltip',function(settings){
+	//   let defaults = {
+	//     position: 'bottom',
+	//     content: '',
+	//     trigger: 'hover'
+	//   };
+	//   settings = merge({},defaults,settings);
+	
+	//   $(this.el).replaceWith(function(){
+	//     let content = '';
+	//     content += "<tooltip>" + $(this.el).outerHTML + "</tooltip>";
+	//     return content
+	//   });
+	
+	//   console.log(this.el);
+	// });
 	
 	var vm = new Vue({
 	  el: 'body',
@@ -71,15 +101,1332 @@
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	/*!
+	 * vue-resource v0.9.1
+	 * https://github.com/vuejs/vue-resource
+	 * Released under the MIT License.
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
+	 */
+	
+	var RESOLVED = 0;
+	var REJECTED = 1;
+	var PENDING = 2;
+	
+	function Promise$2(executor) {
+	
+	    this.state = PENDING;
+	    this.value = undefined;
+	    this.deferred = [];
+	
+	    var promise = this;
+	
+	    try {
+	        executor(function (x) {
+	            promise.resolve(x);
+	        }, function (r) {
+	            promise.reject(r);
+	        });
+	    } catch (e) {
+	        promise.reject(e);
+	    }
+	}
+	
+	Promise$2.reject = function (r) {
+	    return new Promise$2(function (resolve, reject) {
+	        reject(r);
+	    });
+	};
+	
+	Promise$2.resolve = function (x) {
+	    return new Promise$2(function (resolve, reject) {
+	        resolve(x);
+	    });
+	};
+	
+	Promise$2.all = function all(iterable) {
+	    return new Promise$2(function (resolve, reject) {
+	        var count = 0,
+	            result = [];
+	
+	        if (iterable.length === 0) {
+	            resolve(result);
+	        }
+	
+	        function resolver(i) {
+	            return function (x) {
+	                result[i] = x;
+	                count += 1;
+	
+	                if (count === iterable.length) {
+	                    resolve(result);
+	                }
+	            };
+	        }
+	
+	        for (var i = 0; i < iterable.length; i += 1) {
+	            Promise$2.resolve(iterable[i]).then(resolver(i), reject);
+	        }
+	    });
+	};
+	
+	Promise$2.race = function race(iterable) {
+	    return new Promise$2(function (resolve, reject) {
+	        for (var i = 0; i < iterable.length; i += 1) {
+	            Promise$2.resolve(iterable[i]).then(resolve, reject);
+	        }
+	    });
+	};
+	
+	var p$1 = Promise$2.prototype;
+	
+	p$1.resolve = function resolve(x) {
+	    var promise = this;
+	
+	    if (promise.state === PENDING) {
+	        if (x === promise) {
+	            throw new TypeError('Promise settled with itself.');
+	        }
+	
+	        var called = false;
+	
+	        try {
+	            var then = x && x['then'];
+	
+	            if (x !== null && typeof x === 'object' && typeof then === 'function') {
+	                then.call(x, function (x) {
+	                    if (!called) {
+	                        promise.resolve(x);
+	                    }
+	                    called = true;
+	                }, function (r) {
+	                    if (!called) {
+	                        promise.reject(r);
+	                    }
+	                    called = true;
+	                });
+	                return;
+	            }
+	        } catch (e) {
+	            if (!called) {
+	                promise.reject(e);
+	            }
+	            return;
+	        }
+	
+	        promise.state = RESOLVED;
+	        promise.value = x;
+	        promise.notify();
+	    }
+	};
+	
+	p$1.reject = function reject(reason) {
+	    var promise = this;
+	
+	    if (promise.state === PENDING) {
+	        if (reason === promise) {
+	            throw new TypeError('Promise settled with itself.');
+	        }
+	
+	        promise.state = REJECTED;
+	        promise.value = reason;
+	        promise.notify();
+	    }
+	};
+	
+	p$1.notify = function notify() {
+	    var promise = this;
+	
+	    nextTick(function () {
+	        if (promise.state !== PENDING) {
+	            while (promise.deferred.length) {
+	                var deferred = promise.deferred.shift(),
+	                    onResolved = deferred[0],
+	                    onRejected = deferred[1],
+	                    resolve = deferred[2],
+	                    reject = deferred[3];
+	
+	                try {
+	                    if (promise.state === RESOLVED) {
+	                        if (typeof onResolved === 'function') {
+	                            resolve(onResolved.call(undefined, promise.value));
+	                        } else {
+	                            resolve(promise.value);
+	                        }
+	                    } else if (promise.state === REJECTED) {
+	                        if (typeof onRejected === 'function') {
+	                            resolve(onRejected.call(undefined, promise.value));
+	                        } else {
+	                            reject(promise.value);
+	                        }
+	                    }
+	                } catch (e) {
+	                    reject(e);
+	                }
+	            }
+	        }
+	    });
+	};
+	
+	p$1.then = function then(onResolved, onRejected) {
+	    var promise = this;
+	
+	    return new Promise$2(function (resolve, reject) {
+	        promise.deferred.push([onResolved, onRejected, resolve, reject]);
+	        promise.notify();
+	    });
+	};
+	
+	p$1.catch = function (onRejected) {
+	    return this.then(undefined, onRejected);
+	};
+	
+	var PromiseObj = window.Promise || Promise$2;
+	
+	function Promise$1(executor, context) {
+	
+	    if (executor instanceof PromiseObj) {
+	        this.promise = executor;
+	    } else {
+	        this.promise = new PromiseObj(executor.bind(context));
+	    }
+	
+	    this.context = context;
+	}
+	
+	Promise$1.all = function (iterable, context) {
+	    return new Promise$1(PromiseObj.all(iterable), context);
+	};
+	
+	Promise$1.resolve = function (value, context) {
+	    return new Promise$1(PromiseObj.resolve(value), context);
+	};
+	
+	Promise$1.reject = function (reason, context) {
+	    return new Promise$1(PromiseObj.reject(reason), context);
+	};
+	
+	Promise$1.race = function (iterable, context) {
+	    return new Promise$1(PromiseObj.race(iterable), context);
+	};
+	
+	var p = Promise$1.prototype;
+	
+	p.bind = function (context) {
+	    this.context = context;
+	    return this;
+	};
+	
+	p.then = function (fulfilled, rejected) {
+	
+	    if (fulfilled && fulfilled.bind && this.context) {
+	        fulfilled = fulfilled.bind(this.context);
+	    }
+	
+	    if (rejected && rejected.bind && this.context) {
+	        rejected = rejected.bind(this.context);
+	    }
+	
+	    return new Promise$1(this.promise.then(fulfilled, rejected), this.context);
+	};
+	
+	p.catch = function (rejected) {
+	
+	    if (rejected && rejected.bind && this.context) {
+	        rejected = rejected.bind(this.context);
+	    }
+	
+	    return new Promise$1(this.promise.catch(rejected), this.context);
+	};
+	
+	p.finally = function (callback) {
+	
+	    return this.then(function (value) {
+	        callback.call(this);
+	        return value;
+	    }, function (reason) {
+	        callback.call(this);
+	        return PromiseObj.reject(reason);
+	    });
+	};
+	
+	var debug = false;
+	var util = {};
+	var array = [];
+	function Util (Vue) {
+	    util = Vue.util;
+	    debug = Vue.config.debug || !Vue.config.silent;
+	}
+	
+	function warn(msg) {
+	    if (typeof console !== 'undefined' && debug) {
+	        console.warn('[VueResource warn]: ' + msg);
+	    }
+	}
+	
+	function error(msg) {
+	    if (typeof console !== 'undefined') {
+	        console.error(msg);
+	    }
+	}
+	
+	function nextTick(cb, ctx) {
+	    return util.nextTick(cb, ctx);
+	}
+	
+	function trim(str) {
+	    return str.replace(/^\s*|\s*$/g, '');
+	}
+	
+	var isArray = Array.isArray;
+	
+	function isString(val) {
+	    return typeof val === 'string';
+	}
+	
+	function isBoolean(val) {
+	    return val === true || val === false;
+	}
+	
+	function isFunction(val) {
+	    return typeof val === 'function';
+	}
+	
+	function isObject(obj) {
+	    return obj !== null && typeof obj === 'object';
+	}
+	
+	function isPlainObject(obj) {
+	    return isObject(obj) && Object.getPrototypeOf(obj) == Object.prototype;
+	}
+	
+	function isFormData(obj) {
+	    return typeof FormData !== 'undefined' && obj instanceof FormData;
+	}
+	
+	function when(value, fulfilled, rejected) {
+	
+	    var promise = Promise$1.resolve(value);
+	
+	    if (arguments.length < 2) {
+	        return promise;
+	    }
+	
+	    return promise.then(fulfilled, rejected);
+	}
+	
+	function options(fn, obj, opts) {
+	
+	    opts = opts || {};
+	
+	    if (isFunction(opts)) {
+	        opts = opts.call(obj);
+	    }
+	
+	    return merge(fn.bind({ $vm: obj, $options: opts }), fn, { $options: opts });
+	}
+	
+	function each(obj, iterator) {
+	
+	    var i, key;
+	
+	    if (typeof obj.length == 'number') {
+	        for (i = 0; i < obj.length; i++) {
+	            iterator.call(obj[i], obj[i], i);
+	        }
+	    } else if (isObject(obj)) {
+	        for (key in obj) {
+	            if (obj.hasOwnProperty(key)) {
+	                iterator.call(obj[key], obj[key], key);
+	            }
+	        }
+	    }
+	
+	    return obj;
+	}
+	
+	var assign = Object.assign || _assign;
+	
+	function merge(target) {
+	
+	    var args = array.slice.call(arguments, 1);
+	
+	    args.forEach(function (source) {
+	        _merge(target, source, true);
+	    });
+	
+	    return target;
+	}
+	
+	function defaults(target) {
+	
+	    var args = array.slice.call(arguments, 1);
+	
+	    args.forEach(function (source) {
+	
+	        for (var key in source) {
+	            if (target[key] === undefined) {
+	                target[key] = source[key];
+	            }
+	        }
+	    });
+	
+	    return target;
+	}
+	
+	function _assign(target) {
+	
+	    var args = array.slice.call(arguments, 1);
+	
+	    args.forEach(function (source) {
+	        _merge(target, source);
+	    });
+	
+	    return target;
+	}
+	
+	function _merge(target, source, deep) {
+	    for (var key in source) {
+	        if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
+	            if (isPlainObject(source[key]) && !isPlainObject(target[key])) {
+	                target[key] = {};
+	            }
+	            if (isArray(source[key]) && !isArray(target[key])) {
+	                target[key] = [];
+	            }
+	            _merge(target[key], source[key], deep);
+	        } else if (source[key] !== undefined) {
+	            target[key] = source[key];
+	        }
+	    }
+	}
+	
+	function root (options, next) {
+	
+	    var url = next(options);
+	
+	    if (isString(options.root) && !url.match(/^(https?:)?\//)) {
+	        url = options.root + '/' + url;
+	    }
+	
+	    return url;
+	}
+	
+	function query (options, next) {
+	
+	    var urlParams = Object.keys(Url.options.params),
+	        query = {},
+	        url = next(options);
+	
+	    each(options.params, function (value, key) {
+	        if (urlParams.indexOf(key) === -1) {
+	            query[key] = value;
+	        }
+	    });
+	
+	    query = Url.params(query);
+	
+	    if (query) {
+	        url += (url.indexOf('?') == -1 ? '?' : '&') + query;
+	    }
+	
+	    return url;
+	}
+	
+	/**
+	 * URL Template v2.0.6 (https://github.com/bramstein/url-template)
+	 */
+	
+	function expand(url, params, variables) {
+	
+	    var tmpl = parse(url),
+	        expanded = tmpl.expand(params);
+	
+	    if (variables) {
+	        variables.push.apply(variables, tmpl.vars);
+	    }
+	
+	    return expanded;
+	}
+	
+	function parse(template) {
+	
+	    var operators = ['+', '#', '.', '/', ';', '?', '&'],
+	        variables = [];
+	
+	    return {
+	        vars: variables,
+	        expand: function (context) {
+	            return template.replace(/\{([^\{\}]+)\}|([^\{\}]+)/g, function (_, expression, literal) {
+	                if (expression) {
+	
+	                    var operator = null,
+	                        values = [];
+	
+	                    if (operators.indexOf(expression.charAt(0)) !== -1) {
+	                        operator = expression.charAt(0);
+	                        expression = expression.substr(1);
+	                    }
+	
+	                    expression.split(/,/g).forEach(function (variable) {
+	                        var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
+	                        values.push.apply(values, getValues(context, operator, tmp[1], tmp[2] || tmp[3]));
+	                        variables.push(tmp[1]);
+	                    });
+	
+	                    if (operator && operator !== '+') {
+	
+	                        var separator = ',';
+	
+	                        if (operator === '?') {
+	                            separator = '&';
+	                        } else if (operator !== '#') {
+	                            separator = operator;
+	                        }
+	
+	                        return (values.length !== 0 ? operator : '') + values.join(separator);
+	                    } else {
+	                        return values.join(',');
+	                    }
+	                } else {
+	                    return encodeReserved(literal);
+	                }
+	            });
+	        }
+	    };
+	}
+	
+	function getValues(context, operator, key, modifier) {
+	
+	    var value = context[key],
+	        result = [];
+	
+	    if (isDefined(value) && value !== '') {
+	        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+	            value = value.toString();
+	
+	            if (modifier && modifier !== '*') {
+	                value = value.substring(0, parseInt(modifier, 10));
+	            }
+	
+	            result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : null));
+	        } else {
+	            if (modifier === '*') {
+	                if (Array.isArray(value)) {
+	                    value.filter(isDefined).forEach(function (value) {
+	                        result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : null));
+	                    });
+	                } else {
+	                    Object.keys(value).forEach(function (k) {
+	                        if (isDefined(value[k])) {
+	                            result.push(encodeValue(operator, value[k], k));
+	                        }
+	                    });
+	                }
+	            } else {
+	                var tmp = [];
+	
+	                if (Array.isArray(value)) {
+	                    value.filter(isDefined).forEach(function (value) {
+	                        tmp.push(encodeValue(operator, value));
+	                    });
+	                } else {
+	                    Object.keys(value).forEach(function (k) {
+	                        if (isDefined(value[k])) {
+	                            tmp.push(encodeURIComponent(k));
+	                            tmp.push(encodeValue(operator, value[k].toString()));
+	                        }
+	                    });
+	                }
+	
+	                if (isKeyOperator(operator)) {
+	                    result.push(encodeURIComponent(key) + '=' + tmp.join(','));
+	                } else if (tmp.length !== 0) {
+	                    result.push(tmp.join(','));
+	                }
+	            }
+	        }
+	    } else {
+	        if (operator === ';') {
+	            result.push(encodeURIComponent(key));
+	        } else if (value === '' && (operator === '&' || operator === '?')) {
+	            result.push(encodeURIComponent(key) + '=');
+	        } else if (value === '') {
+	            result.push('');
+	        }
+	    }
+	
+	    return result;
+	}
+	
+	function isDefined(value) {
+	    return value !== undefined && value !== null;
+	}
+	
+	function isKeyOperator(operator) {
+	    return operator === ';' || operator === '&' || operator === '?';
+	}
+	
+	function encodeValue(operator, value, key) {
+	
+	    value = operator === '+' || operator === '#' ? encodeReserved(value) : encodeURIComponent(value);
+	
+	    if (key) {
+	        return encodeURIComponent(key) + '=' + value;
+	    } else {
+	        return value;
+	    }
+	}
+	
+	function encodeReserved(str) {
+	    return str.split(/(%[0-9A-Fa-f]{2})/g).map(function (part) {
+	        if (!/%[0-9A-Fa-f]/.test(part)) {
+	            part = encodeURI(part);
+	        }
+	        return part;
+	    }).join('');
+	}
+	
+	function template (options) {
+	
+	    var variables = [],
+	        url = expand(options.url, options.params, variables);
+	
+	    variables.forEach(function (key) {
+	        delete options.params[key];
+	    });
+	
+	    return url;
+	}
+	
+	/**
+	 * Service for URL templating.
+	 */
+	
+	var ie = document.documentMode;
+	var el = document.createElement('a');
+	
+	function Url(url, params) {
+	
+	    var self = this || {},
+	        options = url,
+	        transform;
+	
+	    if (isString(url)) {
+	        options = { url: url, params: params };
+	    }
+	
+	    options = merge({}, Url.options, self.$options, options);
+	
+	    Url.transforms.forEach(function (handler) {
+	        transform = factory(handler, transform, self.$vm);
+	    });
+	
+	    return transform(options);
+	}
+	
+	/**
+	 * Url options.
+	 */
+	
+	Url.options = {
+	    url: '',
+	    root: null,
+	    params: {}
+	};
+	
+	/**
+	 * Url transforms.
+	 */
+	
+	Url.transforms = [template, query, root];
+	
+	/**
+	 * Encodes a Url parameter string.
+	 *
+	 * @param {Object} obj
+	 */
+	
+	Url.params = function (obj) {
+	
+	    var params = [],
+	        escape = encodeURIComponent;
+	
+	    params.add = function (key, value) {
+	
+	        if (isFunction(value)) {
+	            value = value();
+	        }
+	
+	        if (value === null) {
+	            value = '';
+	        }
+	
+	        this.push(escape(key) + '=' + escape(value));
+	    };
+	
+	    serialize(params, obj);
+	
+	    return params.join('&').replace(/%20/g, '+');
+	};
+	
+	/**
+	 * Parse a URL and return its components.
+	 *
+	 * @param {String} url
+	 */
+	
+	Url.parse = function (url) {
+	
+	    if (ie) {
+	        el.href = url;
+	        url = el.href;
+	    }
+	
+	    el.href = url;
+	
+	    return {
+	        href: el.href,
+	        protocol: el.protocol ? el.protocol.replace(/:$/, '') : '',
+	        port: el.port,
+	        host: el.host,
+	        hostname: el.hostname,
+	        pathname: el.pathname.charAt(0) === '/' ? el.pathname : '/' + el.pathname,
+	        search: el.search ? el.search.replace(/^\?/, '') : '',
+	        hash: el.hash ? el.hash.replace(/^#/, '') : ''
+	    };
+	};
+	
+	function factory(handler, next, vm) {
+	    return function (options) {
+	        return handler.call(vm, options, next);
+	    };
+	}
+	
+	function serialize(params, obj, scope) {
+	
+	    var array = isArray(obj),
+	        plain = isPlainObject(obj),
+	        hash;
+	
+	    each(obj, function (value, key) {
+	
+	        hash = isObject(value) || isArray(value);
+	
+	        if (scope) {
+	            key = scope + '[' + (plain || hash ? key : '') + ']';
+	        }
+	
+	        if (!scope && array) {
+	            params.add(value.name, value.value);
+	        } else if (hash) {
+	            serialize(params, value, key);
+	        } else {
+	            params.add(key, value);
+	        }
+	    });
+	}
+	
+	function xdrClient (request) {
+	    return new Promise$1(function (resolve) {
+	
+	        var xdr = new XDomainRequest(),
+	            handler = function (event) {
+	
+	            var response = request.respondWith(xdr.responseText, {
+	                status: xdr.status,
+	                statusText: xdr.statusText
+	            });
+	
+	            resolve(response);
+	        };
+	
+	        request.abort = function () {
+	            return xdr.abort();
+	        };
+	
+	        xdr.open(request.method, request.getUrl(), true);
+	        xdr.timeout = 0;
+	        xdr.onload = handler;
+	        xdr.onerror = handler;
+	        xdr.ontimeout = function () {};
+	        xdr.onprogress = function () {};
+	        xdr.send(request.getBody());
+	    });
+	}
+	
+	var ORIGIN_URL = Url.parse(location.href);
+	var SUPPORTS_CORS = 'withCredentials' in new XMLHttpRequest();
+	
+	function cors (request, next) {
+	
+	    if (!isBoolean(request.crossOrigin) && crossOrigin(request)) {
+	        request.crossOrigin = true;
+	    }
+	
+	    if (request.crossOrigin) {
+	
+	        if (!SUPPORTS_CORS) {
+	            request.client = xdrClient;
+	        }
+	
+	        delete request.emulateHTTP;
+	    }
+	
+	    next();
+	}
+	
+	function crossOrigin(request) {
+	
+	    var requestUrl = Url.parse(Url(request));
+	
+	    return requestUrl.protocol !== ORIGIN_URL.protocol || requestUrl.host !== ORIGIN_URL.host;
+	}
+	
+	function body (request, next) {
+	
+	    if (request.emulateJSON && isPlainObject(request.body)) {
+	        request.body = Url.params(request.body);
+	        request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+	    }
+	
+	    if (isFormData(request.body)) {
+	        delete request.headers['Content-Type'];
+	    }
+	
+	    if (isPlainObject(request.body)) {
+	        request.body = JSON.stringify(request.body);
+	    }
+	
+	    next(function (response) {
+	
+	        var contentType = response.headers['Content-Type'];
+	
+	        if (isString(contentType) && contentType.indexOf('application/json') === 0) {
+	
+	            try {
+	                response.data = response.json();
+	            } catch (e) {
+	                response.data = null;
+	            }
+	        } else {
+	            response.data = response.text();
+	        }
+	    });
+	}
+	
+	function jsonpClient (request) {
+	    return new Promise$1(function (resolve) {
+	
+	        var name = request.jsonp || 'callback',
+	            callback = '_jsonp' + Math.random().toString(36).substr(2),
+	            body = null,
+	            handler,
+	            script;
+	
+	        handler = function (event) {
+	
+	            var status = 0;
+	
+	            if (event.type === 'load' && body !== null) {
+	                status = 200;
+	            } else if (event.type === 'error') {
+	                status = 404;
+	            }
+	
+	            resolve(request.respondWith(body, { status: status }));
+	
+	            delete window[callback];
+	            document.body.removeChild(script);
+	        };
+	
+	        request.params[name] = callback;
+	
+	        window[callback] = function (result) {
+	            body = JSON.stringify(result);
+	        };
+	
+	        script = document.createElement('script');
+	        script.src = request.getUrl();
+	        script.type = 'text/javascript';
+	        script.async = true;
+	        script.onload = handler;
+	        script.onerror = handler;
+	
+	        document.body.appendChild(script);
+	    });
+	}
+	
+	function jsonp (request, next) {
+	
+	    if (request.method == 'JSONP') {
+	        request.client = jsonpClient;
+	    }
+	
+	    next(function (response) {
+	
+	        if (request.method == 'JSONP') {
+	            response.data = response.json();
+	        }
+	    });
+	}
+	
+	function before (request, next) {
+	
+	    if (isFunction(request.before)) {
+	        request.before.call(this, request);
+	    }
+	
+	    next();
+	}
+	
+	/**
+	 * HTTP method override Interceptor.
+	 */
+	
+	function method (request, next) {
+	
+	    if (request.emulateHTTP && /^(PUT|PATCH|DELETE)$/i.test(request.method)) {
+	        request.headers['X-HTTP-Method-Override'] = request.method;
+	        request.method = 'POST';
+	    }
+	
+	    next();
+	}
+	
+	function header (request, next) {
+	
+	    request.method = request.method.toUpperCase();
+	    request.headers = assign({}, Http.headers.common, !request.crossOrigin ? Http.headers.custom : {}, Http.headers[request.method.toLowerCase()], request.headers);
+	
+	    next();
+	}
+	
+	/**
+	 * Timeout Interceptor.
+	 */
+	
+	function timeout (request, next) {
+	
+	    var timeout;
+	
+	    if (request.timeout) {
+	        timeout = setTimeout(function () {
+	            request.cancel();
+	        }, request.timeout);
+	    }
+	
+	    next(function (response) {
+	
+	        clearTimeout(timeout);
+	    });
+	}
+	
+	function xhrClient (request) {
+	    return new Promise$1(function (resolve) {
+	
+	        var xhr = new XMLHttpRequest(),
+	            handler = function (event) {
+	
+	            var response = request.respondWith('response' in xhr ? xhr.response : xhr.responseText, {
+	                status: xhr.status === 1223 ? 204 : xhr.status, // IE9 status bug
+	                statusText: xhr.status === 1223 ? 'No Content' : trim(xhr.statusText),
+	                headers: parseHeaders(xhr.getAllResponseHeaders())
+	            });
+	
+	            resolve(response);
+	        };
+	
+	        request.abort = function () {
+	            return xhr.abort();
+	        };
+	
+	        xhr.open(request.method, request.getUrl(), true);
+	        xhr.timeout = 0;
+	        xhr.onload = handler;
+	        xhr.onerror = handler;
+	
+	        if (request.progress) {
+	            if (request.method === 'GET') {
+	                xhr.addEventListener('progress', request.progress);
+	            } else if (/^(POST|PUT)$/i.test(request.method)) {
+	                xhr.upload.addEventListener('progress', request.progress);
+	            }
+	        }
+	
+	        if (request.credentials === true) {
+	            xhr.withCredentials = true;
+	        }
+	
+	        each(request.headers || {}, function (value, header) {
+	            xhr.setRequestHeader(header, value);
+	        });
+	
+	        xhr.send(request.getBody());
+	    });
+	}
+	
+	function parseHeaders(str) {
+	
+	    var headers = {},
+	        value,
+	        name,
+	        i;
+	
+	    each(trim(str).split('\n'), function (row) {
+	
+	        i = row.indexOf(':');
+	        name = trim(row.slice(0, i));
+	        value = trim(row.slice(i + 1));
+	
+	        if (headers[name]) {
+	
+	            if (isArray(headers[name])) {
+	                headers[name].push(value);
+	            } else {
+	                headers[name] = [headers[name], value];
+	            }
+	        } else {
+	
+	            headers[name] = value;
+	        }
+	    });
+	
+	    return headers;
+	}
+	
+	function Client (context) {
+	
+	    var reqHandlers = [sendRequest],
+	        resHandlers = [],
+	        handler;
+	
+	    if (!isObject(context)) {
+	        context = null;
+	    }
+	
+	    function Client(request) {
+	        return new Promise$1(function (resolve) {
+	
+	            function exec() {
+	
+	                handler = reqHandlers.pop();
+	
+	                if (isFunction(handler)) {
+	                    handler.call(context, request, next);
+	                } else {
+	                    warn('Invalid interceptor of type ' + typeof handler + ', must be a function');
+	                    next();
+	                }
+	            }
+	
+	            function next(response) {
+	                when(response, function (response) {
+	
+	                    if (isFunction(response)) {
+	
+	                        resHandlers.unshift(response);
+	                    } else if (isObject(response)) {
+	
+	                        resHandlers.forEach(function (handler) {
+	                            handler.call(context, response);
+	                        });
+	
+	                        resolve(response);
+	
+	                        return;
+	                    }
+	
+	                    exec();
+	                });
+	            }
+	
+	            exec();
+	        }, context);
+	    }
+	
+	    Client.use = function (handler) {
+	        reqHandlers.push(handler);
+	    };
+	
+	    return Client;
+	}
+	
+	function sendRequest(request, resolve) {
+	
+	    var client = request.client || xhrClient;
+	
+	    resolve(client(request));
+	}
+	
+	var classCallCheck = function (instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	};
+	
+	/**
+	 * HTTP Response.
+	 */
+	
+	var Response = function () {
+	    function Response(body, _ref) {
+	        var url = _ref.url;
+	        var headers = _ref.headers;
+	        var status = _ref.status;
+	        var statusText = _ref.statusText;
+	        classCallCheck(this, Response);
+	
+	
+	        this.url = url;
+	        this.body = body;
+	        this.headers = headers || {};
+	        this.status = status || 0;
+	        this.statusText = statusText || '';
+	        this.ok = status >= 200 && status < 300;
+	    }
+	
+	    Response.prototype.text = function text() {
+	        return this.body;
+	    };
+	
+	    Response.prototype.blob = function blob() {
+	        return new Blob([this.body]);
+	    };
+	
+	    Response.prototype.json = function json() {
+	        return JSON.parse(this.body);
+	    };
+	
+	    return Response;
+	}();
+	
+	var Request = function () {
+	    function Request(options) {
+	        classCallCheck(this, Request);
+	
+	
+	        this.method = 'GET';
+	        this.body = null;
+	        this.params = {};
+	        this.headers = {};
+	
+	        assign(this, options);
+	    }
+	
+	    Request.prototype.getUrl = function getUrl() {
+	        return Url(this);
+	    };
+	
+	    Request.prototype.getBody = function getBody() {
+	        return this.body;
+	    };
+	
+	    Request.prototype.respondWith = function respondWith(body, options) {
+	        return new Response(body, assign(options || {}, { url: this.getUrl() }));
+	    };
+	
+	    return Request;
+	}();
+	
+	/**
+	 * Service for sending network requests.
+	 */
+	
+	var CUSTOM_HEADERS = { 'X-Requested-With': 'XMLHttpRequest' };
+	var COMMON_HEADERS = { 'Accept': 'application/json, text/plain, */*' };
+	var JSON_CONTENT_TYPE = { 'Content-Type': 'application/json;charset=utf-8' };
+	
+	function Http(options) {
+	
+	    var self = this || {},
+	        client = Client(self.$vm);
+	
+	    defaults(options || {}, self.$options, Http.options);
+	
+	    Http.interceptors.forEach(function (handler) {
+	        client.use(handler);
+	    });
+	
+	    return client(new Request(options)).then(function (response) {
+	
+	        return response.ok ? response : Promise$1.reject(response);
+	    }, function (response) {
+	
+	        if (response instanceof Error) {
+	            error(response);
+	        }
+	
+	        return Promise$1.reject(response);
+	    });
+	}
+	
+	Http.options = {};
+	
+	Http.headers = {
+	    put: JSON_CONTENT_TYPE,
+	    post: JSON_CONTENT_TYPE,
+	    patch: JSON_CONTENT_TYPE,
+	    delete: JSON_CONTENT_TYPE,
+	    custom: CUSTOM_HEADERS,
+	    common: COMMON_HEADERS
+	};
+	
+	Http.interceptors = [before, timeout, method, body, jsonp, header, cors];
+	
+	['get', 'delete', 'head', 'jsonp'].forEach(function (method) {
+	
+	    Http[method] = function (url, options) {
+	        return this(assign(options || {}, { url: url, method: method }));
+	    };
+	});
+	
+	['post', 'put', 'patch'].forEach(function (method) {
+	
+	    Http[method] = function (url, body, options) {
+	        return this(assign(options || {}, { url: url, method: method, body: body }));
+	    };
+	});
+	
+	function Resource(url, params, actions, options) {
+	
+	    var self = this || {},
+	        resource = {};
+	
+	    actions = assign({}, Resource.actions, actions);
+	
+	    each(actions, function (action, name) {
+	
+	        action = merge({ url: url, params: params || {} }, options, action);
+	
+	        resource[name] = function () {
+	            return (self.$http || Http)(opts(action, arguments));
+	        };
+	    });
+	
+	    return resource;
+	}
+	
+	function opts(action, args) {
+	
+	    var options = assign({}, action),
+	        params = {},
+	        body;
+	
+	    switch (args.length) {
+	
+	        case 2:
+	
+	            params = args[0];
+	            body = args[1];
+	
+	            break;
+	
+	        case 1:
+	
+	            if (/^(POST|PUT|PATCH)$/i.test(options.method)) {
+	                body = args[0];
+	            } else {
+	                params = args[0];
+	            }
+	
+	            break;
+	
+	        case 0:
+	
+	            break;
+	
+	        default:
+	
+	            throw 'Expected up to 4 arguments [params, body], got ' + args.length + ' arguments';
+	    }
+	
+	    options.body = body;
+	    options.params = assign({}, options.params, params);
+	
+	    return options;
+	}
+	
+	Resource.actions = {
+	
+	    get: { method: 'GET' },
+	    save: { method: 'POST' },
+	    query: { method: 'GET' },
+	    update: { method: 'PUT' },
+	    remove: { method: 'DELETE' },
+	    delete: { method: 'DELETE' }
+	
+	};
+	
+	function plugin(Vue) {
+	
+	    if (plugin.installed) {
+	        return;
+	    }
+	
+	    Util(Vue);
+	
+	    Vue.url = Url;
+	    Vue.http = Http;
+	    Vue.resource = Resource;
+	    Vue.Promise = Promise$1;
+	
+	    Object.defineProperties(Vue.prototype, {
+	
+	        $url: {
+	            get: function () {
+	                return options(Vue.url, this, this.$options.url);
+	            }
+	        },
+	
+	        $http: {
+	            get: function () {
+	                return options(Vue.http, this, this.$options.http);
+	            }
+	        },
+	
+	        $resource: {
+	            get: function () {
+	                return Vue.resource.bind(this);
+	            }
+	        },
+	
+	        $promise: {
+	            get: function () {
+	                var _this = this;
+	
+	                return function (executor) {
+	                    return new Vue.Promise(executor, _this);
+	                };
+	            }
+	        }
+	
+	    });
+	}
+	
+	if (typeof window !== 'undefined' && window.Vue) {
+	    window.Vue.use(plugin);
+	}
+	
+	module.exports = plugin;
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(3)
+	__vue_script__ = __webpack_require__(4)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/editor.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(71)
+	__vue_template__ = __webpack_require__(117)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -98,7 +1445,7 @@
 	})()}
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -107,7 +1454,7 @@
 	  value: true
 	});
 	
-	var _editorHeader = __webpack_require__(4);
+	var _editorHeader = __webpack_require__(5);
 	
 	var _editorHeader2 = _interopRequireDefault(_editorHeader);
 	
@@ -119,35 +1466,254 @@
 	
 	var _editorWorkspace2 = _interopRequireDefault(_editorWorkspace);
 	
-	var _store = __webpack_require__(69);
+	var _store = __webpack_require__(115);
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _actions = __webpack_require__(6);
+	var _actions = __webpack_require__(7);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
 	  name: 'editor',
 	  components: {
-	    "editor-header": _editorHeader2.default,
-	    "editor-toolbar": _editorToolbar2.default,
-	    "editor-workspace": _editorWorkspace2.default
+	    editorHeader: _editorHeader2.default,
+	    editorToolbar: _editorToolbar2.default,
+	    editorWorkspace: _editorWorkspace2.default
 	  },
 	  vuex: {
 	    actions: {
-	      setActiveElementId: _actions.setActiveElementId
+	      setActiveElementId: _actions.setActiveElementId,
+	      pageInit: _actions.pageInit
 	    }
 	  },
-	  store: _store2.default
+	  store: _store2.default,
+	  methods: {
+	    loadPage: function loadPage() {
+	      var data = {
+	        page: {
+	          colorSet: ['#E6E2AF', "#A7A37E", "#EFECCA", "#046380", "#002F2F"],
+	
+	          sections: [{
+	            style: {
+	              "pc": { "background-color": "0", height: "500px" },
+	              "mobile": { "background-color": "0", height: "500px" }
+	            },
+	            elements: {
+	              "fgh24g": {
+	                type: "button",
+	                text: "点击下载",
+	                props: {
+	                  backgroundColor: '2',
+	                  borderColor: '3',
+	                  fontColor: '4',
+	                  hoverColor: '2',
+	                  borderRadius: '5px',
+	                  fontSize: '18px',
+	                  shadow: true,
+	                  bold: false,
+	                  border: false
+	                },
+	                style: {
+	                  'pc': {
+	                    left: "100px",
+	                    top: "20px",
+	                    width: "160px",
+	                    zIndex: 300
+	                  },
+	                  'mobile': {
+	                    left: "50px",
+	                    top: "20px",
+	                    width: "100px",
+	                    zIndex: 300
+	                  }
+	                },
+	                link: {}
+	              },
+	              "bwdkfk": {
+	                type: "form",
+	                style: {
+	                  'pc': {
+	                    left: "200px",
+	                    top: "150px",
+	                    width: "300px",
+	                    zIndex: 3000
+	                  },
+	                  'mobile': {
+	                    left: "50px",
+	                    top: "150px",
+	                    width: "300px",
+	                    zIndex: 1342
+	                  }
+	                },
+	                props: {
+	                  labelInside: true,
+	                  innerShadow: true,
+	                  fieldColor: "#fff",
+	                  inputColor: "4",
+	                  borderColor: "#ccc",
+	                  labelColor: "3",
+	                  redirect: "",
+	                  thankyou: "表单提交成功，感谢！"
+	                },
+	                fields: [{
+	                  label: "姓名",
+	                  type: "text",
+	                  validator: ['required']
+	                }, {
+	                  label: "手机号码",
+	                  type: "text",
+	                  validator: ['required', 'mobile']
+	                }, {
+	                  label: "收货地址",
+	                  type: "china-state",
+	                  validator: ['required']
+	                }, {
+	                  label: "详细地址",
+	                  type: "textarea",
+	                  validator: []
+	                }, {
+	                  label: "testDropdown",
+	                  type: "dropdown",
+	                  options: ["wawawa", "hahaha", "hehehe"]
+	                }, {
+	                  label: "性别",
+	                  type: "radio",
+	                  options: ['男', '女'],
+	                  validator: ['required'],
+	                  optionsInLine: true,
+	                  hideLabel: false
+	                }],
+	                button: {
+	                  text: "提交",
+	                  props: {
+	                    backgroundColor: '2',
+	                    borderColor: '3',
+	                    fontColor: '4',
+	                    hoverColor: '2',
+	                    borderRadius: '5px',
+	                    fontSize: '18px',
+	                    shadow: true,
+	                    bold: false,
+	                    border: false
+	                  }
+	                }
+	              }
+	            }
+	          }, {
+	            style: {
+	              "pc": { "background-color": "1", height: "300px" },
+	              "mobile": { "background-color": "1", height: "300px" }
+	            },
+	            elements: {
+	              "bifsdc": {
+	                type: "text",
+	                content: "<p>wdfsdf<br>dksjlfjslkd jksdfs ksdfksd</p>",
+	                style: {
+	                  'pc': {
+	                    left: "200px",
+	                    top: "100px",
+	                    width: "500px",
+	                    zIndex: 100
+	                  },
+	                  'mobile': {
+	                    left: "100px",
+	                    top: "100px",
+	                    width: "200px",
+	                    zIndex: 100
+	                  }
+	                }
+	              }
+	            }
+	          }, {
+	            style: {
+	              "pc": { "background-color": "", height: "200px" },
+	              "mobile": { "background-color": "", height: "300px" }
+	            },
+	            elements: {
+	              "123ghfdv": {
+	                type: "text",
+	                content: "Hello, World!",
+	                style: {
+	                  'pc': {
+	                    left: "500px",
+	                    top: "100px",
+	                    width: "458px",
+	                    zIndex: 1000
+	                  },
+	                  'mobile': {
+	                    left: "150px",
+	                    top: "100px",
+	                    width: "200px",
+	                    zIndex: 100
+	                  }
+	                }
+	              },
+	              "testurltesturl": {
+	                type: "image",
+	                src: "http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+	                style: {
+	                  'pc': {
+	                    left: "200px",
+	                    top: "100px",
+	                    width: "333px",
+	                    zIndex: 101
+	                  },
+	                  'mobile': {
+	                    left: "50px",
+	                    top: "150px",
+	                    width: "120px",
+	                    zIndex: 101
+	                  }
+	                }
+	              }
+	            }
+	          }, {
+	            style: {
+	              "pc": { "background-color": "2", height: "300px" },
+	              "mobile": { "background-color": "2", height: "500px" }
+	            },
+	            elements: {
+	              "bvsdfg23": {
+	                type: "text",
+	                content: "Hello, World!",
+	                style: {
+	                  'pc': {
+	                    left: "500px",
+	                    top: "100px",
+	                    width: "125px",
+	                    zIndex: 1000
+	                  },
+	                  'mobile': {
+	                    left: "150px",
+	                    top: "100px",
+	                    width: "200px",
+	                    zIndex: 2000
+	                  }
+	                }
+	              }
+	            }
+	          }, {
+	            style: {
+	              "pc": { "background-color": "0", height: "300px" },
+	              "mobile": { "background-color": "0", height: "300px" }
+	            },
+	            elements: {}
+	          }] } };
+	      this.pageInit(data);
+	    }
+	  },
+	  created: function created() {
+	    this.loadPage();
+	  }
 	};
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(5)
+	__vue_script__ = __webpack_require__(6)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
@@ -171,7 +1737,7 @@
 	})()}
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -180,15 +1746,15 @@
 	  value: true
 	});
 	
-	var _actions = __webpack_require__(6);
+	var _actions = __webpack_require__(7);
 	
-	var _getters = __webpack_require__(7);
+	var _getters = __webpack_require__(8);
 	
-	var _editorSettings = __webpack_require__(8);
+	var _editorSettings = __webpack_require__(9);
 	
 	var _editorSettings2 = _interopRequireDefault(_editorSettings);
 	
-	var _colorSchemes = __webpack_require__(20);
+	var _colorSchemes = __webpack_require__(21);
 	
 	var _colorSchemes2 = _interopRequireDefault(_colorSchemes);
 	
@@ -197,8 +1763,8 @@
 	exports.default = {
 	  name: 'editorHeader',
 	  components: {
-	    'editor-settings': _editorSettings2.default,
-	    'color-schemes': _colorSchemes2.default
+	    editorSettings: _editorSettings2.default,
+	    colorSchemes: _colorSchemes2.default
 	  },
 	  data: function data() {
 	    return {
@@ -219,7 +1785,7 @@
 	};
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -227,92 +1793,136 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var setActiveElementId = exports.setActiveElementId = function setActiveElementId(_ref, elementId) {
+	//初始加载页面数据
+	var pageInit = exports.pageInit = function pageInit(_ref, data) {
 	  var dispatch = _ref.dispatch;
 	  var state = _ref.state;
+	
+	  dispatch('PAGE_INIT', data);
+	};
+	
+	//更新配色方案
+	var setColorSet = exports.setColorSet = function setColorSet(_ref2, colorSet) {
+	  var dispatch = _ref2.dispatch;
+	  var state = _ref2.state;
+	
+	  dispatch('SET_COLOR_SET', colorSet);
+	};
+	
+	//设置处于编辑状态的元素
+	var setActiveElementId = exports.setActiveElementId = function setActiveElementId(_ref3, elementId) {
+	  var dispatch = _ref3.dispatch;
+	  var state = _ref3.state;
 	
 	  dispatch('SET_ACTIVE_ELEMENT_ID', elementId);
 	};
 	
-	var removeElement = exports.removeElement = function removeElement(_ref2, sectionId, elementId) {
-	  var dispatch = _ref2.dispatch;
-	  var state = _ref2.state;
+	//删除元素
+	var removeElement = exports.removeElement = function removeElement(_ref4, sectionId, elementId) {
+	  var dispatch = _ref4.dispatch;
+	  var state = _ref4.state;
 	
 	  dispatch('REMOVE_ELEMENT', sectionId, elementId);
 	};
 	
-	var setCurrentSectionId = exports.setCurrentSectionId = function setCurrentSectionId(_ref3, sectionId) {
-	  var dispatch = _ref3.dispatch;
-	  var state = _ref3.state;
+	//移动元素
+	var moveElement = exports.moveElement = function moveElement(_ref5, sectionId, elementId, positionInPage, elementHeight) {
+	  var dispatch = _ref5.dispatch;
+	  var state = _ref5.state;
+	
+	  dispatch('MOVE_ELEMENT', sectionId, elementId, positionInPage, elementHeight);
+	};
+	
+	//修改元素style
+	var modifyElement = exports.modifyElement = function modifyElement(_ref6, sectionId, elementId, newPropsObj) {
+	  var dispatch = _ref6.dispatch;
+	  var state = _ref6.state;
+	
+	  dispatch('MODIFY_ELEMENT', sectionId, elementId, newPropsObj);
+	};
+	
+	//修改元素style
+	var replaceElement = exports.replaceElement = function replaceElement(_ref7, sectionId, elementId, newElement) {
+	  var dispatch = _ref7.dispatch;
+	  var state = _ref7.state;
+	
+	  dispatch('REPLACE_ELEMENT', sectionId, elementId, newElement);
+	};
+	
+	//设置当前板块
+	var setCurrentSectionId = exports.setCurrentSectionId = function setCurrentSectionId(_ref8, sectionId) {
+	  var dispatch = _ref8.dispatch;
+	  var state = _ref8.state;
 	
 	  dispatch('SET_CURRENT_SECTION_ID', sectionId);
 	};
 	
-	var setActiveSectionId = exports.setActiveSectionId = function setActiveSectionId(_ref4, sectionId) {
-	  var dispatch = _ref4.dispatch;
-	  var state = _ref4.state;
+	//设置编辑状态中的板块
+	var setActiveSectionId = exports.setActiveSectionId = function setActiveSectionId(_ref9, sectionId) {
+	  var dispatch = _ref9.dispatch;
+	  var state = _ref9.state;
 	
 	  dispatch('SET_ACTIVE_SECTION_ID', sectionId);
 	};
 	
-	var moveSection = exports.moveSection = function moveSection(_ref5, dir, sectionId) {
-	  var dispatch = _ref5.dispatch;
-	  var state = _ref5.state;
+	//移动板块
+	var moveSection = exports.moveSection = function moveSection(_ref10, dir, sectionId) {
+	  var dispatch = _ref10.dispatch;
+	  var state = _ref10.state;
 	
 	  dispatch('MOVE_SECTION', dir, sectionId);
 	};
 	
-	var removeSection = exports.removeSection = function removeSection(_ref6, sectionId) {
-	  var dispatch = _ref6.dispatch;
-	  var state = _ref6.state;
+	//删除板块
+	var removeSection = exports.removeSection = function removeSection(_ref11, sectionId) {
+	  var dispatch = _ref11.dispatch;
+	  var state = _ref11.state;
 	
 	  dispatch('REMOVE_SECTION', sectionId);
 	};
 	
-	var modifySection = exports.modifySection = function modifySection(_ref7, sectionId, style) {
-	  var dispatch = _ref7.dispatch;
-	  var state = _ref7.state;
+	//修改板块
+	var modifySection = exports.modifySection = function modifySection(_ref12, sectionId, style) {
+	  var dispatch = _ref12.dispatch;
+	  var state = _ref12.state;
 	
 	  dispatch('MODIFY_SECTION', sectionId, style);
 	};
 	
-	var addSection = exports.addSection = function addSection(_ref8) {
-	  var dispatch = _ref8.dispatch;
-	  var state = _ref8.state;
+	//添加板块
+	var addSection = exports.addSection = function addSection(_ref13) {
+	  var dispatch = _ref13.dispatch;
+	  var state = _ref13.state;
 	
 	  dispatch('ADD_SECTION');
 	};
 	
-	var redo = exports.redo = function redo(_ref9) {
-	  var dispatch = _ref9.dispatch;
-	  var state = _ref9.state;
+	//重做
+	var redo = exports.redo = function redo(_ref14) {
+	  var dispatch = _ref14.dispatch;
+	  var state = _ref14.state;
 	
 	  dispatch('REDO');
 	};
 	
-	var undo = exports.undo = function undo(_ref10) {
-	  var dispatch = _ref10.dispatch;
-	  var state = _ref10.state;
+	//撤销
+	var undo = exports.undo = function undo(_ref15) {
+	  var dispatch = _ref15.dispatch;
+	  var state = _ref15.state;
 	
 	  dispatch('UNDO');
 	};
 	
-	var toggleVersion = exports.toggleVersion = function toggleVersion(_ref11) {
-	  var dispatch = _ref11.dispatch;
-	  var state = _ref11.state;
+	//版本切换
+	var toggleVersion = exports.toggleVersion = function toggleVersion(_ref16) {
+	  var dispatch = _ref16.dispatch;
+	  var state = _ref16.state;
 	
 	  dispatch('VERSION');
 	};
-	
-	var moveElement = exports.moveElement = function moveElement(_ref12, sectionId, elementId, positionInPage, elementHeight) {
-	  var dispatch = _ref12.dispatch;
-	  var state = _ref12.state;
-	
-	  dispatch('MOVE_ELEMENT', sectionId, elementId, positionInPage, elementHeight);
-	};
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -329,7 +1939,7 @@
 	}
 	
 	function getSections(state) {
-	  return state.sections;
+	  return state.page.sections;
 	}
 	
 	function getSettings(state) {
@@ -337,21 +1947,21 @@
 	}
 	
 	function getColorSet(state) {
-	  return state.colorSet;
+	  return state.page.colorSet;
 	}
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(9)
-	__vue_script__ = __webpack_require__(13)
+	__webpack_require__(10)
+	__vue_script__ = __webpack_require__(14)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/editor-settings.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(19)
+	__vue_template__ = __webpack_require__(20)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -370,16 +1980,16 @@
 	})()}
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(10);
+	var content = __webpack_require__(11);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
+	var update = __webpack_require__(13)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -396,21 +2006,21 @@
 	}
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(11)();
+	exports = module.exports = __webpack_require__(12)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "\n\n.settings-body {\n  width:95%;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/editor-settings.vue?29c25a83"],"names":[],"mappings":";;AAEA;EACA,UAAA;CACA","file":"editor-settings.vue","sourcesContent":["<style>\n\n.settings-body {\n  width:95%;\n}\n\n</style>\n\n<template>\n  <modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'80%'\" >\n    <div slot=\"header\" class=\"settings-header\">\n      <ul class=\"nav nav-pills\">\n        <li role=\"presentation\" :class=\"{active: currentTab === 'seo'}\"><a href=\"#\" @click=\"currentTab = 'seo'\">SEO设置</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'goal'}\"><a href=\"#\" @click=\"currentTab = 'goal'\">转化目标</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'color'}\"><a href=\"#\" @click=\"currentTab = 'color'\">配色方案</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'background'}\"><a href=\"#\" @click=\"currentTab = 'background'\">页面背景</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'font'}\"><a href=\"#\" @click=\"currentTab = 'font'\">字体字号</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'data'}\"><a href=\"#\" @click=\"currentTab = 'data'\">数据跟踪</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'editor'}\"><a href=\"#\" @click=\"currentTab = 'editor'\">编辑器设置</a></li>\n      </ul>\n    </div>\n    \n    <div slot=\"body\" class=\"settings-body\">\n      <div v-show=\"currentTab === 'seo'\">\n        <form class=\"form-horizontal\">\n          <div class=\"form-group\">\n            <label for=\"settings-page-title\" class=\"col-sm-2 control-label\">网页标题</label>\n            <div class=\"col-sm-10\">\n              <input type=\"text\" class=\"form-control\" id=\"settings-page-title\" v-model=\"settings.seo.pageTitle\" placeholder=\"网页标题\">\n            </div>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"settings-keywords\" class=\"col-sm-2 control-label\">网页关键词</label>\n            <div class=\"col-sm-10\">\n              <input type=\"text\" class=\"form-control\" id=\"settings-keywords\" v-model=\"settings.seo.keywords\" placeholder=\"多个关键词用英文逗号隔开\">\n            </div>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"settings-description\" class=\"col-sm-2 control-label\">页面描述</label>\n            <div class=\"col-sm-10\">\n              <textarea class=\"form-control\" id=\"settings-description\" rows=\"3\"  v-model=\"settings.seo.description\"></textarea>\n            </div>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"settings-favicon\" class=\"col-sm-2 control-label\">页面图标</label>\n            <div class=\"col-sm-10\">\n               <button class=\"btn btn-default btn-sm\" id=\"settings-favicon\">上传</button> 扩展名为ico的Favicon图标\n            </div>\n          </div>\n          <div class=\"form-group\">\n            <div class=\"col-sm-offset-2 col-sm-10\">\n              <div class=\"checkbox\">\n                <label>\n                  <input type=\"checkbox\"> 禁止搜索引擎索引此页面\n                </label>\n              </div>\n            </div>\n          </div>\n        </form>\n      </div>\n      <div v-show=\"currentTab === 'goal'\">\n        {{currentTab}}\n      </div>\n      <div v-show=\"currentTab === 'color'\">\n        {{currentTab}}\n      </div>\n      <div v-show=\"currentTab === 'background'\">\n        {{currentTab}}\n      </div>\n      <div v-show=\"currentTab === 'font'\">\n        {{currentTab}}\n      </div>\n      <div v-show=\"currentTab === 'data'\">\n        <form class=\"form-horizontal\">\n          <div class=\"form-group\">\n            <div class=\"col-sm-offset-2 col-sm-10\">\n              <div class=\"checkbox\">\n                <label>\n                  <input type=\"checkbox\"> 开启外链和下载跟踪\n                </label>\n              </div>\n            </div>\n          </div>\n          <hr style=\"border-bottom:1px doshed #ccc\">\n          <h4>第三方数据跟踪API</h4>\n          <div class=\"form-group\">\n            <label for=\"settings-ga-id\" class=\"col-sm-2 control-label\">GA跟踪ID</label>\n            <div class=\"col-sm-10\">\n              <input type=\"text\" class=\"form-control\" id=\"settings-ga-id\" placeholder=\"如：UA-88888888-8\">\n            </div>\n          </div>\n        </form>\n      </div>\n      <div v-show=\"currentTab === 'editor'\">\n        {{currentTab}}\n      </div>\n    </div>\n    <div slot=\"footer\">\n      <button class=\"btn btn-default btn-sm\" @click=\"show = false\">关闭</button>\n      <button class=\"btn btn-success btn-sm\" @click=\"saveSettings\">保存更改</button>\n    </div>\n  </modal>\n</template>\n\n<script>\nimport {  }  from '../store/actions'\nimport { getWorkspaceData, getSettings } from '../store/getters'\nimport modal from './modal.vue'\n\nexport default {\n  name:'editorHeader',\n  components: {\n    modal\n  },\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true    \n    }\n  },\n  data (){\n    return {\n      currentTab: 'seo'\n    }\n  },\n  methods:{\n    saveSettings: function(){\n      console.log('Todo:用Ajax保存设置')\n    }\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      workspace: getWorkspaceData,\n      settings: getSettings\n    }\n  }\n}\n</script>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n.settings-body {\n  width:95%;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/editor-settings.vue?81dfbd9e"],"names":[],"mappings":";;AAEA;EACA,UAAA;CACA","file":"editor-settings.vue","sourcesContent":["<style>\n\n.settings-body {\n  width:95%;\n}\n\n</style>\n\n<template>\n  <modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'80%'\" >\n    <div slot=\"header\">\n      <ul class=\"nav nav-pills\">\n        <li role=\"presentation\" :class=\"{active: currentTab === 'seo'}\"><a href=\"#\" @click=\"currentTab = 'seo'\">SEO设置</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'goal'}\"><a href=\"#\" @click=\"currentTab = 'goal'\">转化目标</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'color'}\"><a href=\"#\" @click=\"currentTab = 'color'\">配色方案</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'background'}\"><a href=\"#\" @click=\"currentTab = 'background'\">页面背景</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'font'}\"><a href=\"#\" @click=\"currentTab = 'font'\">字体字号</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'data'}\"><a href=\"#\" @click=\"currentTab = 'data'\">数据跟踪</a></li>\n        <li role=\"presentation\" :class=\"{active: currentTab === 'editor'}\"><a href=\"#\" @click=\"currentTab = 'editor'\">编辑器设置</a></li>\n      </ul>\n    </div>\n    \n    <div slot=\"body\" class=\"settings-body\">\n      <div v-show=\"currentTab === 'seo'\">\n        <form class=\"form-horizontal\">\n          <div class=\"form-group\">\n            <label for=\"settings-page-title\" class=\"col-sm-2 control-label\">网页标题</label>\n            <div class=\"col-sm-10\">\n              <input type=\"text\" class=\"form-control\" id=\"settings-page-title\" v-model=\"settings.seo.pageTitle\" placeholder=\"网页标题\">\n            </div>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"settings-keywords\" class=\"col-sm-2 control-label\">网页关键词</label>\n            <div class=\"col-sm-10\">\n              <input type=\"text\" class=\"form-control\" id=\"settings-keywords\" v-model=\"settings.seo.keywords\" placeholder=\"多个关键词用英文逗号隔开\">\n            </div>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"settings-description\" class=\"col-sm-2 control-label\">页面描述</label>\n            <div class=\"col-sm-10\">\n              <textarea class=\"form-control\" id=\"settings-description\" rows=\"3\"  v-model=\"settings.seo.description\"></textarea>\n            </div>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"settings-favicon\" class=\"col-sm-2 control-label\">页面图标</label>\n            <div class=\"col-sm-10\">\n               <button class=\"btn btn-default btn-sm\" id=\"settings-favicon\">上传</button> 扩展名为ico的Favicon图标\n            </div>\n          </div>\n          <div class=\"form-group\">\n            <div class=\"col-sm-offset-2 col-sm-10\">\n              <div class=\"checkbox\">\n                <label>\n                  <input type=\"checkbox\"> 禁止搜索引擎索引此页面\n                </label>\n              </div>\n            </div>\n          </div>\n        </form>\n      </div>\n      <div v-show=\"currentTab === 'goal'\">\n        {{currentTab}}\n      </div>\n      <div v-show=\"currentTab === 'color'\">\n        {{currentTab}}\n      </div>\n      <div v-show=\"currentTab === 'background'\">\n        {{currentTab}}\n      </div>\n      <div v-show=\"currentTab === 'font'\">\n        {{currentTab}}\n      </div>\n      <div v-show=\"currentTab === 'data'\">\n        <form class=\"form-horizontal\">\n          <div class=\"form-group\">\n            <div class=\"col-sm-offset-2 col-sm-10\">\n              <div class=\"checkbox\">\n                <label>\n                  <input type=\"checkbox\"> 开启外链和下载跟踪\n                </label>\n              </div>\n            </div>\n          </div>\n          <hr style=\"border-bottom:1px doshed #ccc\">\n          <h4>第三方数据跟踪API</h4>\n          <div class=\"form-group\">\n            <label for=\"settings-ga-id\" class=\"col-sm-2 control-label\">GA跟踪ID</label>\n            <div class=\"col-sm-10\">\n              <input type=\"text\" class=\"form-control\" id=\"settings-ga-id\" placeholder=\"如：UA-88888888-8\">\n            </div>\n          </div>\n        </form>\n      </div>\n      <div v-show=\"currentTab === 'editor'\">\n        {{currentTab}}\n      </div>\n    </div>\n    <div slot=\"footer\">\n      <button class=\"btn btn-success btn-sm\" @click=\"saveSettings\">保存更改</button>\n    </div>\n  </modal>\n</template>\n\n<script>\nimport {  }  from '../store/actions'\nimport { getWorkspaceData, getSettings } from '../store/getters'\nimport modal from './modal.vue'\n\nexport default {\n  components: {\n    modal\n  },\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true    \n    }\n  },\n  data (){\n    return {\n      currentTab: 'seo'\n    }\n  },\n  methods:{\n    saveSettings: function(){\n      console.log('Todo:用Ajax保存设置')\n    }\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      workspace: getWorkspaceData,\n      settings: getSettings\n    }\n  }\n}\n</script>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	/*
@@ -466,7 +2076,7 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -688,7 +2298,7 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -697,18 +2307,17 @@
 	  value: true
 	});
 	
-	__webpack_require__(6);
+	__webpack_require__(7);
 	
-	var _getters = __webpack_require__(7);
+	var _getters = __webpack_require__(8);
 	
-	var _modal = __webpack_require__(14);
+	var _modal = __webpack_require__(15);
 	
 	var _modal2 = _interopRequireDefault(_modal);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  name: 'editorHeader',
 	  components: {
 	    modal: _modal2.default
 	  },
@@ -740,17 +2349,17 @@
 	};
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(15)
-	__vue_script__ = __webpack_require__(17)
+	__webpack_require__(16)
+	__vue_script__ = __webpack_require__(18)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/modal.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(18)
+	__vue_template__ = __webpack_require__(19)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -769,16 +2378,16 @@
 	})()}
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(16);
+	var content = __webpack_require__(17);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
+	var update = __webpack_require__(13)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -795,21 +2404,21 @@
 	}
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(11)();
+	exports = module.exports = __webpack_require__(12)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/modal.vue?3295b986"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA2EA;EACA,gBAAA;EACA,gBAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,qCAAA;EAAA,6BAAA;CACA;;AAEA;EACA,oBAAA;EACA,aAAA;CACA;;AAEA;EACA,mBAAA;EACA,eAAA;EACA,gBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,iCAAA;EAAA,yBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;CACA;;AAEA;EACA,aAAA;EACA,iBAAA;EACA,sBAAA;EACA,iBAAA;EACA,mBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;EACA,kBAAA;CACA;;AAEA;;;;;;;GAOA;;AAEA;EACA,WAAA;CACA;;AAEA;;EAEA,eAAA;CACA","file":"modal.vue","sourcesContent":["<script>\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    },\n    width: {\n      type: String,\n    \tdefault: \"500px\"\n    },\n    height: {\n      type: String,\n    \tdefault: \"auto\"\n    }\n  },\n  data (){\n    return {\n      bodyHeight:\"auto\"\n    }\n  },\n  methods:{\n  \tstopPropagation: function(event){\n  \t\tevent.stopPropagation()\n  \t}\n  },\n  ready:function(){\n    //如果传入的高度是百分比，根据用户浏览器高度转化为像素\n    var heightUnit = this.height.substr(this.height.length-1)\n    if (heightUnit === '%'){\n      var browserHeight = document.documentElement.clientHeight;\n      var modalHeight = parseInt( browserHeight * parseInt(this.height) / 100 );\n      this.bodyHeight = (modalHeight - 107) + 'px'\n    } else {\n      this.bodyHeight = this.height;\n    }\n  // \tdocument.body.style.overflow = 'hidden';\n  //  document.body.style['margin-right'] = '15px';\n  },\n  // destroyed:function(){\n  //   document.body.style.overflow = 'auto';\n  //   document.body.style['margin-right'] = '0';\n  // }\n}\n</script>\n\n<template>\n  <div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n    <div class=\"modal-wrapper\">\n      <div class=\"modal-container\" :style=\"{width:width}\" @click=\"stopPropagation\">\n        \n\n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n          <slot name=\"header\">\n          </slot>\n        </div>\n        \n        <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n          <slot name=\"body\">\n          </slot>\n        </div>\n\n        <div class=\"modal-footer\">\n          <slot name=\"footer\">\n            <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n          </slot>\n        </div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<style>\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/modal.vue?168f012e"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAsEA;EACA,gBAAA;EACA,gBAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,qCAAA;EAAA,6BAAA;CACA;;AAEA;EACA,oBAAA;EACA,aAAA;CACA;;AAEA;EACA,mBAAA;EACA,eAAA;EACA,gBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,iCAAA;EAAA,yBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;CACA;;AAEA;EACA,aAAA;EACA,iBAAA;EACA,sBAAA;EACA,iBAAA;EACA,mBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;EACA,kBAAA;CACA;;AAEA;;;;;;;GAOA;;AAEA;EACA,WAAA;CACA;;AAEA;;EAEA,eAAA;CACA","file":"modal.vue","sourcesContent":["<script>\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    },\n    width: {\n      type: String,\n    \tdefault: \"500px\"\n    },\n    height: {\n      type: String,\n    \tdefault: \"auto\"\n    }\n  },\n  data (){\n    return {\n      bodyHeight:\"auto\"\n    }\n  },\n  ready:function(){\n    //如果传入的高度是百分比，根据用户浏览器高度转化为像素\n    var heightUnit = this.height.substr(this.height.length-1)\n    if (heightUnit === '%'){\n      var browserHeight = document.documentElement.clientHeight;\n      var modalHeight = parseInt( browserHeight * parseInt(this.height) / 100 );\n      this.bodyHeight = (modalHeight - 107) + 'px'\n    } else {\n      this.bodyHeight = this.height;\n    }\n  // \tdocument.body.style.overflow = 'hidden';\n  //  document.body.style['margin-right'] = '15px';\n  },\n  // destroyed:function(){\n  //   document.body.style.overflow = 'auto';\n  //   document.body.style['margin-right'] = '0';\n  // }\n}\n</script>\n\n<template>\n  <div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n    <div class=\"modal-wrapper\">\n      <div class=\"modal-container\" :style=\"{width:width}\" @click.stop>\n        \n\n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n          <slot name=\"header\">\n          </slot>\n        </div>\n        \n        <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n          <slot name=\"body\">\n          </slot>\n        </div>\n\n        <div class=\"modal-footer\">\n          <slot name=\"footer\">\n            <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n          </slot>\n        </div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<style>\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -839,11 +2448,6 @@
 	    };
 	  },
 	
-	  methods: {
-	    stopPropagation: function stopPropagation(event) {
-	      event.stopPropagation();
-	    }
-	  },
 	  ready: function ready() {
 	    var heightUnit = this.height.substr(this.height.length - 1);
 	    if (heightUnit === '%') {
@@ -857,24 +2461,24 @@
 	};
 
 /***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n  <div class=\"modal-wrapper\">\n    <div class=\"modal-container\" :style=\"{width:width}\" @click=\"stopPropagation\">\n      \n\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n        <slot name=\"header\">\n        </slot>\n      </div>\n      \n      <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n        <slot name=\"body\">\n        </slot>\n      </div>\n\n      <div class=\"modal-footer\">\n        <slot name=\"footer\">\n          <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n        </slot>\n      </div>\n    </div>\n  </div>\n</div>\n";
-
-/***/ },
 /* 19 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n<modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'80%'\" >\n  <div slot=\"header\" class=\"settings-header\">\n    <ul class=\"nav nav-pills\">\n      <li role=\"presentation\" :class=\"{active: currentTab === 'seo'}\"><a href=\"#\" @click=\"currentTab = 'seo'\">SEO设置</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'goal'}\"><a href=\"#\" @click=\"currentTab = 'goal'\">转化目标</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'color'}\"><a href=\"#\" @click=\"currentTab = 'color'\">配色方案</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'background'}\"><a href=\"#\" @click=\"currentTab = 'background'\">页面背景</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'font'}\"><a href=\"#\" @click=\"currentTab = 'font'\">字体字号</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'data'}\"><a href=\"#\" @click=\"currentTab = 'data'\">数据跟踪</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'editor'}\"><a href=\"#\" @click=\"currentTab = 'editor'\">编辑器设置</a></li>\n    </ul>\n  </div>\n  \n  <div slot=\"body\" class=\"settings-body\">\n    <div v-show=\"currentTab === 'seo'\">\n      <form class=\"form-horizontal\">\n        <div class=\"form-group\">\n          <label for=\"settings-page-title\" class=\"col-sm-2 control-label\">网页标题</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-page-title\" v-model=\"settings.seo.pageTitle\" placeholder=\"网页标题\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-keywords\" class=\"col-sm-2 control-label\">网页关键词</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-keywords\" v-model=\"settings.seo.keywords\" placeholder=\"多个关键词用英文逗号隔开\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-description\" class=\"col-sm-2 control-label\">页面描述</label>\n          <div class=\"col-sm-10\">\n            <textarea class=\"form-control\" id=\"settings-description\" rows=\"3\"  v-model=\"settings.seo.description\"></textarea>\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-favicon\" class=\"col-sm-2 control-label\">页面图标</label>\n          <div class=\"col-sm-10\">\n             <button class=\"btn btn-default btn-sm\" id=\"settings-favicon\">上传</button> 扩展名为ico的Favicon图标\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <div class=\"col-sm-offset-2 col-sm-10\">\n            <div class=\"checkbox\">\n              <label>\n                <input type=\"checkbox\"> 禁止搜索引擎索引此页面\n              </label>\n            </div>\n          </div>\n        </div>\n      </form>\n    </div>\n    <div v-show=\"currentTab === 'goal'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'color'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'background'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'font'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'data'\">\n      <form class=\"form-horizontal\">\n        <div class=\"form-group\">\n          <div class=\"col-sm-offset-2 col-sm-10\">\n            <div class=\"checkbox\">\n              <label>\n                <input type=\"checkbox\"> 开启外链和下载跟踪\n              </label>\n            </div>\n          </div>\n        </div>\n        <hr style=\"border-bottom:1px doshed #ccc\">\n        <h4>第三方数据跟踪API</h4>\n        <div class=\"form-group\">\n          <label for=\"settings-ga-id\" class=\"col-sm-2 control-label\">GA跟踪ID</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-ga-id\" placeholder=\"如：UA-88888888-8\">\n          </div>\n        </div>\n      </form>\n    </div>\n    <div v-show=\"currentTab === 'editor'\">\n      {{currentTab}}\n    </div>\n  </div>\n  <div slot=\"footer\">\n    <button class=\"btn btn-default btn-sm\" @click=\"show = false\">关闭</button>\n    <button class=\"btn btn-success btn-sm\" @click=\"saveSettings\">保存更改</button>\n  </div>\n</modal>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n  <div class=\"modal-wrapper\">\n    <div class=\"modal-container\" :style=\"{width:width}\" @click.stop>\n      \n\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n        <slot name=\"header\">\n        </slot>\n      </div>\n      \n      <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n        <slot name=\"body\">\n        </slot>\n      </div>\n\n      <div class=\"modal-footer\">\n        <slot name=\"footer\">\n          <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n        </slot>\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 /***/ },
 /* 20 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n<modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'80%'\" >\n  <div slot=\"header\">\n    <ul class=\"nav nav-pills\">\n      <li role=\"presentation\" :class=\"{active: currentTab === 'seo'}\"><a href=\"#\" @click=\"currentTab = 'seo'\">SEO设置</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'goal'}\"><a href=\"#\" @click=\"currentTab = 'goal'\">转化目标</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'color'}\"><a href=\"#\" @click=\"currentTab = 'color'\">配色方案</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'background'}\"><a href=\"#\" @click=\"currentTab = 'background'\">页面背景</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'font'}\"><a href=\"#\" @click=\"currentTab = 'font'\">字体字号</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'data'}\"><a href=\"#\" @click=\"currentTab = 'data'\">数据跟踪</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'editor'}\"><a href=\"#\" @click=\"currentTab = 'editor'\">编辑器设置</a></li>\n    </ul>\n  </div>\n  \n  <div slot=\"body\" class=\"settings-body\">\n    <div v-show=\"currentTab === 'seo'\">\n      <form class=\"form-horizontal\">\n        <div class=\"form-group\">\n          <label for=\"settings-page-title\" class=\"col-sm-2 control-label\">网页标题</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-page-title\" v-model=\"settings.seo.pageTitle\" placeholder=\"网页标题\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-keywords\" class=\"col-sm-2 control-label\">网页关键词</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-keywords\" v-model=\"settings.seo.keywords\" placeholder=\"多个关键词用英文逗号隔开\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-description\" class=\"col-sm-2 control-label\">页面描述</label>\n          <div class=\"col-sm-10\">\n            <textarea class=\"form-control\" id=\"settings-description\" rows=\"3\"  v-model=\"settings.seo.description\"></textarea>\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-favicon\" class=\"col-sm-2 control-label\">页面图标</label>\n          <div class=\"col-sm-10\">\n             <button class=\"btn btn-default btn-sm\" id=\"settings-favicon\">上传</button> 扩展名为ico的Favicon图标\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <div class=\"col-sm-offset-2 col-sm-10\">\n            <div class=\"checkbox\">\n              <label>\n                <input type=\"checkbox\"> 禁止搜索引擎索引此页面\n              </label>\n            </div>\n          </div>\n        </div>\n      </form>\n    </div>\n    <div v-show=\"currentTab === 'goal'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'color'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'background'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'font'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'data'\">\n      <form class=\"form-horizontal\">\n        <div class=\"form-group\">\n          <div class=\"col-sm-offset-2 col-sm-10\">\n            <div class=\"checkbox\">\n              <label>\n                <input type=\"checkbox\"> 开启外链和下载跟踪\n              </label>\n            </div>\n          </div>\n        </div>\n        <hr style=\"border-bottom:1px doshed #ccc\">\n        <h4>第三方数据跟踪API</h4>\n        <div class=\"form-group\">\n          <label for=\"settings-ga-id\" class=\"col-sm-2 control-label\">GA跟踪ID</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-ga-id\" placeholder=\"如：UA-88888888-8\">\n          </div>\n        </div>\n      </form>\n    </div>\n    <div v-show=\"currentTab === 'editor'\">\n      {{currentTab}}\n    </div>\n  </div>\n  <div slot=\"footer\">\n    <button class=\"btn btn-success btn-sm\" @click=\"saveSettings\">保存更改</button>\n  </div>\n</modal>\n";
+
+/***/ },
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(21)
-	__vue_script__ = __webpack_require__(23)
+	__webpack_require__(22)
+	__vue_script__ = __webpack_require__(24)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
@@ -898,16 +2502,16 @@
 	})()}
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(22);
+	var content = __webpack_require__(23);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
+	var update = __webpack_require__(13)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -924,21 +2528,21 @@
 	}
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(11)();
+	exports = module.exports = __webpack_require__(12)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.color-schemes-content{\n  cursor:default;\n  height:400px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/color-schemes.vue?581be14a"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAgDA;EACA,eAAA;EACA,aAAA;EACA,iBAAA;EACA,aAAA;CACA;;AAEA;EACA,sBAAA;EACA,UAAA;EACA,aAAA;EACA,YAAA;EACA,WAAA;CACA;;AAEA;EACA,mBAAA;CACA;;AAEA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;CACA;;AAEA;EACA,eAAA;EACA,kBAAA;CACA","file":"color-schemes.vue","sourcesContent":["<script>\nimport dropdown from './dropdown.vue'\n\nexport default {\n  components: {\n    dropdown\n  },\n  data () {\n    return {\n      colorSchemes:[\n        {name:\"海滩\",         colors:['#E6E2AF',\"#A7A37E\",\"#EFECCA\",\"#046380\",\"#002F2F\"]},\n        {name:\"佛罗伦萨\",      colors:['#468966',\"#FFF0A5\",\"#FFB03B\",\"#B64926\",\"#8E2800\"]},\n        {name:\"淡蓝\",         colors:['#FCFFF5',\"#D1DBBD\",\"#91AA9D\",\"#3E606F\",\"#193441\"]},\n        {name:\"菲德拉\",       colors:['#FF6138',\"#FFFF9D\",\"#BEEB9F\",\"#79BD8F\",\"#00A388\"]},\n        {name:\"蜜罐\",         colors:['#105B63',\"#FFFAD5\",\"#FFD34E\",\"#DB9E36\",\"#BD4932\"]},\n        {name:\"阿司匹林C\",    colors:['#225378',\"#1695A3\",\"#ACF0F2\",\"#F3FFE2\",\"#EB7F00\"]},\n      ],\n      show: false\n    }\n  }\n}\n</script>\n\n<template>\n  <dropdown :id=\"'color-schemes'\" :align=\"'right'\" :show.sync=\"show\">\n    <div slot=\"button\" style=\"padding:0 14px;\">\n      配色 <span class=\"glyphicon glyphicon-th-large\"></span>\n    </div>\n    <template slot=\"content\">\n      <div class=\"color-schemes-content\">\n        <div v-for=\"colorScheme in colorSchemes\">\n          <!-- <div>{{colorScheme.name}}</div> -->\n          <ul class=\"list-inline color-schemes-group\">\n            <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\"></li>\n          </ul>\n        </div>\n      </div>\n      <div class=\"color-schemes-footer\">\n        <span class=\"fl\">自定义</span>\n        <button class=\"btn btn-default btn-sm\" @click=\"show=false\">取消</button>\n        <button class=\"btn btn-success btn-sm\" @click=\"\">完成</button>\n      </div>\n    </template>\n  </dropdown>\n</template>\n\n<style>\n\n.color-schemes-content{\n  cursor:default;\n  height:400px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.color-schemes-content{\n  cursor:default;\n  height:420px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/color-schemes.vue?59123528"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA8DA;EACA,eAAA;EACA,aAAA;EACA,iBAAA;EACA,aAAA;CACA;;AAEA;EACA,sBAAA;EACA,UAAA;EACA,aAAA;EACA,YAAA;EACA,WAAA;CACA;;AAEA;EACA,mBAAA;CACA;;AAEA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;CACA;;AAEA;EACA,eAAA;EACA,kBAAA;CACA","file":"color-schemes.vue","sourcesContent":["<script>\nimport dropdown from './dropdown.vue'\nimport { setColorSet }  from '../store/actions'\nimport { getColorSet } from '../store/getters'\n\nexport default {\n  components: {\n    dropdown\n  },\n  vuex: {\n    actions: {\n      setColorSet\n    },\n    getters: {\n      colorSet: getColorSet\n    }\n  },\n  data () {\n    return {\n      colorSchemes:[\n        {name:\"海滩\",         colors:['#E6E2AF',\"#A7A37E\",\"#EFECCA\",\"#046380\",\"#002F2F\"]},\n        {name:\"佛罗伦萨\",      colors:['#468966',\"#FFF0A5\",\"#FFB03B\",\"#B64926\",\"#8E2800\"]},\n        {name:\"淡蓝\",         colors:['#FCFFF5',\"#D1DBBD\",\"#91AA9D\",\"#3E606F\",\"#193441\"]},\n        {name:\"菲德拉\",       colors:['#FF6138',\"#FFFF9D\",\"#BEEB9F\",\"#79BD8F\",\"#00A388\"]},\n        {name:\"蜜罐\",         colors:['#105B63',\"#FFFAD5\",\"#FFD34E\",\"#DB9E36\",\"#BD4932\"]},\n        {name:\"阿司匹林C\",    colors:['#225378',\"#1695A3\",\"#ACF0F2\",\"#F3FFE2\",\"#EB7F00\"]},\n      ],\n      show: false\n    }\n  }\n}\n</script>\n\n<template>\n  <dropdown :show.sync=\"show\">\n    <slot></slot>\n    <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right\">\n      <div class=\"color-schemes-content\">\n        <div v-for=\"colorScheme in colorSchemes\" @click=\"setColorSet(colorScheme.colors)\">\n          <!-- <div>{{colorScheme.name}}</div> -->\n          <ul class=\"list-inline color-schemes-group\">\n            <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\" title=\"{{color}}\"></li>\n          </ul>\n        </div>\n        <div>\n          <div style=\"text-align:center\">当前选择</div>\n          <ul class=\"list-inline color-schemes-group\">\n            <li v-for=\"color in colorSet\" :style=\"{background:color}\" title=\"{{color}}\"></li>\n          </ul>\n        </div>\n      </div>\n      <div class=\"color-schemes-footer\">\n        <span class=\"fl\">自定义</span>\n        <button class=\"btn btn-success btn-sm\" @click=\"show=false\">&nbsp; 完成 &nbsp;</button>\n      </div>\n    </div>\n  </dropdown>\n\n</template>\n\n<style>\n\n.color-schemes-content{\n  cursor:default;\n  height:420px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -947,15 +2551,27 @@
 	  value: true
 	});
 	
-	var _dropdown = __webpack_require__(24);
+	var _dropdown = __webpack_require__(25);
 	
 	var _dropdown2 = _interopRequireDefault(_dropdown);
+	
+	var _actions = __webpack_require__(7);
+	
+	var _getters = __webpack_require__(8);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
 	  components: {
 	    dropdown: _dropdown2.default
+	  },
+	  vuex: {
+	    actions: {
+	      setColorSet: _actions.setColorSet
+	    },
+	    getters: {
+	      colorSet: _getters.getColorSet
+	    }
 	  },
 	  data: function data() {
 	    return {
@@ -966,12 +2582,11 @@
 	};
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(25)
-	__vue_script__ = __webpack_require__(27)
+	__vue_script__ = __webpack_require__(26)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
@@ -995,44 +2610,51 @@
 	})()}
 
 /***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(26);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./dropdown.vue", function() {
-				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./dropdown.vue");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
 /* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(11)();
-	// imports
+	'use strict';
 	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	
-	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"dropdown.vue","sourceRoot":"webpack://"}]);
+	var _eventHandler = __webpack_require__(27);
 	
-	// exports
-
+	var _eventHandler2 = _interopRequireDefault(_eventHandler);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: {
+	    show: {
+	      type: Boolean,
+	      required: true,
+	      twoWay: true
+	    }
+	  },
+	  methods: {
+	    toggleDropdown: function toggleDropdown(e) {
+	      e.preventDefault();
+	      this.show = !this.show;
+	    }
+	  },
+	  ready: function ready() {
+	    var _this = this;
+	
+	    var el = this.$el;
+	    var toggle = el.querySelector('[data-toggle="dropdown"]');
+	    if (toggle) {
+	      toggle.addEventListener('click', this.toggleDropdown);
+	    }
+	    this._closeEvent = _eventHandler2.default.listen(window, 'click', function (e) {
+	      if (!el.contains(e.target) || e.target.nodeName.toLowerCase() == 'a') _this.show = false;
+	    });
+	  },
+	  beforeDestroy: function beforeDestroy() {
+	    if (this._closeEvent) this._closeEvent.remove();
+	  }
+	};
 
 /***/ },
 /* 27 */
@@ -1043,64 +2665,54 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.default = {
-	  props: {
-	    show: {
-	      type: Boolean,
-	      required: true,
-	      default: false,
-	      twoWay: true
-	    },
+	var eventHandler = {
+	  /**
+	   * Listen to DOM events during the bubble phase.
+	   *
+	   * @param {DOMEventTarget} target DOM element to register listener on.
+	   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
+	   * @param {function} callback Callback function.
+	   * @return {object} Object with a `remove` method.
+	   */
 	
-	    dir: {
-	      type: String,
-	      default: 'dropdown'
-	    },
-	
-	    align: {
-	      type: String,
-	      defalut: 'left'
-	    }
-	  },
-	  data: function data() {
-	    return {
-	      clickOnThisDropdown: false
-	    };
-	  },
-	
-	  methods: {
-	    dropdownClick: function dropdownClick() {
-	      this.clickOnThisDropdown = true;
-	    }
-	  },
-	  events: {
-	    'body-click': function bodyClick() {
-	      if (this.clickOnThisDropdown) {
-	        this.clickOnThisDropdown = false;
-	      } else {
-	        this.show = false;
-	      }
+	  listen: function listen(target, eventType, callback) {
+	    if (target.addEventListener) {
+	      target.addEventListener(eventType, callback, false);
+	      return {
+	        remove: function remove() {
+	          target.removeEventListener(eventType, callback, false);
+	        }
+	      };
+	    } else if (target.attachEvent) {
+	      target.attachEvent('on' + eventType, callback);
+	      return {
+	        remove: function remove() {
+	          target.detachEvent('on' + eventType, callback);
+	        }
+	      };
 	    }
 	  }
 	};
+	
+	exports.default = eventHandler;
 
 /***/ },
 /* 28 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"{{dir}} open\" @click=\"dropdownClick\">\n  <div class=\"dropdown-toggle\" @click=\"show=!show\">\n    <slot name=\"button\"></slot>\n  </div>\n  <div v-show=\"show\" class=\"dropdown-menu\" v-bind:class=\"{'dropdown-menu-right': (align == 'right')}\" transition=\"fade\">\n    <slot name=\"content\"></slot>\n  </div>\n</div>\n";
+	module.exports = "\n<div class=\"btn-group\" v-bind:class=\"{open:show}\">\n  <slot></slot>\n  <slot name=\"dropdown-menu\"></slot>\n</div>\n";
 
 /***/ },
 /* 29 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :id=\"'color-schemes'\" :align=\"'right'\" :show.sync=\"show\">\n  <div slot=\"button\" style=\"padding:0 14px;\">\n    配色 <span class=\"glyphicon glyphicon-th-large\"></span>\n  </div>\n  <template slot=\"content\">\n    <div class=\"color-schemes-content\">\n      <div v-for=\"colorScheme in colorSchemes\">\n        <!-- <div>{{colorScheme.name}}</div> -->\n        <ul class=\"list-inline color-schemes-group\">\n          <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\"></li>\n        </ul>\n      </div>\n    </div>\n    <div class=\"color-schemes-footer\">\n      <span class=\"fl\">自定义</span>\n      <button class=\"btn btn-default btn-sm\" @click=\"show=false\">取消</button>\n      <button class=\"btn btn-success btn-sm\" @click=\"\">完成</button>\n    </div>\n  </template>\n</dropdown>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :show.sync=\"show\">\n  <slot></slot>\n  <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right\">\n    <div class=\"color-schemes-content\">\n      <div v-for=\"colorScheme in colorSchemes\" @click=\"setColorSet(colorScheme.colors)\">\n        <!-- <div>{{colorScheme.name}}</div> -->\n        <ul class=\"list-inline color-schemes-group\">\n          <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\" title=\"{{color}}\"></li>\n        </ul>\n      </div>\n      <div>\n        <div style=\"text-align:center\">当前选择</div>\n        <ul class=\"list-inline color-schemes-group\">\n          <li v-for=\"color in colorSet\" :style=\"{background:color}\" title=\"{{color}}\"></li>\n        </ul>\n      </div>\n    </div>\n    <div class=\"color-schemes-footer\">\n      <span class=\"fl\">自定义</span>\n      <button class=\"btn btn-success btn-sm\" @click=\"show=false\">&nbsp; 完成 &nbsp;</button>\n    </div>\n  </div>\n</dropdown>\n\n";
 
 /***/ },
 /* 30 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"header\">\n  <ul class=\"header-holder list-inline fl\">\n    <li class=\"go-to-dashboard\"><a href=\"./dashboard\"><span class=\"glyphicon glyphicon-home\"></span></a></li>\n    <li><a>创建一个A/B测试</a></li>\n  </ul>\n  <div class=\"btn-group btn-group-sm version-switch\" role=\"group\" aria-label=\"...\">\n    <button type=\"button\" class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='pc'}\" @click=\"toggleVersion\">桌面版 <span class=\"glyphicon glyphicon-blackboard\"></span></button>\n    <button type=\"button\" class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='mobile'}\" @click=\"toggleVersion\">移动版 <span class=\"glyphicon glyphicon-phone\"></span></button>\n  </div>\n\n  <ul class=\"header-holder list-inline fr\">\n    <li><span class=\"glyphicon glyphicon-question-sign\"></span></li>\n    <li @click=\"undo\" v-bind:class=\"{'do-disabled':workspace.undo === false}\"><span class=\"glyphicon glyphicon-share-alt flipx\"></span></li>\n    <li @click=\"redo\" v-bind:class=\"{'do-disabled':workspace.redo === false}\"><span class=\"glyphicon glyphicon-share-alt\"></span></li>\n    <li class=\"color-schemes\"><color-schemes></color-schemes></li>\n    <li @click=\"showSettings=true\">设置 <span class=\"glyphicon glyphicon-cog\"></span></li>\n    <li>保存 <span class=\"glyphicon glyphicon-floppy-disk\"></span></li>\n    <li>预览 <span class=\"glyphicon glyphicon-eye-open\"></span></li>\n    <li class=\"publish\">发布 <span class=\"glyphicon glyphicon-send\"></span></li>\n  </ul>\n</div>\n<editor-settings v-if=\"showSettings\" :show.sync=\"showSettings\"></editor-settings>\n";
+	module.exports = "\n<div class=\"header\">\n  <ul class=\"header-holder list-inline fl\">\n    <li class=\"go-to-dashboard\"><a href=\"./dashboard\"><span class=\"glyphicon glyphicon-home\"></span></a></li>\n    <li><a>创建一个A/B测试</a></li>\n  </ul>\n  <div class=\"btn-group btn-group-sm version-switch\" role=\"group\" aria-label=\"...\">\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='pc'}\" @click=\"toggleVersion\">桌面版 <span class=\"glyphicon glyphicon-blackboard\"></span></div>\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='mobile'}\" @click=\"toggleVersion\">移动版 <span class=\"glyphicon glyphicon-phone\"></span></div>\n  </div>\n\n  <ul class=\"header-holder list-inline fr\">\n    <li><span class=\"glyphicon glyphicon-question-sign\"></span></li>\n    <!-- <tooltip placement=\"bottom\" content=\"撤销\"> -->\n      <li @click=\"undo\" v-bind:class=\"{'do-disabled':workspace.undo === false}\"><span class=\"glyphicon glyphicon-share-alt flipx\"></span></li>\n    <!-- </tooltip> -->\n    <!-- <tooltip placement=\"bottom\" content=\"重做\"> -->\n      <li @click=\"redo\" v-bind:class=\"{'do-disabled':workspace.redo === false}\"><span class=\"glyphicon glyphicon-share-alt\"></span></li>\n    <!-- </tooltip> -->\n    <color-schemes><li data-toggle=\"dropdown\">配色 <span class=\"glyphicon glyphicon-th-large\"></span></li></color-schemes>\n    <li @click=\"showSettings=true\">设置 <span class=\"glyphicon glyphicon-cog\"></span></li>\n    <li>保存 <span class=\"glyphicon glyphicon-floppy-disk\"></span></li>\n    <li>预览 <span class=\"glyphicon glyphicon-eye-open\"></span></li>\n    <li class=\"publish\">发布 <span class=\"glyphicon glyphicon-send\"></span></li>\n  </ul>\n</div>\n<editor-settings v-if=\"showSettings\" :show.sync=\"showSettings\"></editor-settings>\n";
 
 /***/ },
 /* 31 */
@@ -1140,7 +2752,7 @@
 	  value: true
 	});
 	
-	var _actions = __webpack_require__(6);
+	var _actions = __webpack_require__(7);
 	
 	exports.default = {
 	  name: 'editorToolbar',
@@ -1170,10 +2782,6 @@
 	        style: 'expand',
 	        action: function action() {}
 	      }, {
-	        name: '视频',
-	        style: 'facetime-video',
-	        action: function action() {}
-	      }, {
 	        name: '表单',
 	        style: 'edit',
 	        action: function action() {}
@@ -1198,7 +2806,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/editor-workspace.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(68)
+	__vue_template__ = __webpack_require__(114)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1226,145 +2834,30 @@
 	  value: true
 	});
 	
-	var _actions = __webpack_require__(6);
+	var _getters = __webpack_require__(8);
 	
-	var _getters = __webpack_require__(7);
+	var _pageSection = __webpack_require__(36);
 	
-	var _elementText = __webpack_require__(36);
-	
-	var _elementText2 = _interopRequireDefault(_elementText);
-	
-	var _elementImage = __webpack_require__(47);
-	
-	var _elementImage2 = _interopRequireDefault(_elementImage);
-	
-	var _sectionEdit = __webpack_require__(50);
-	
-	var _sectionEdit2 = _interopRequireDefault(_sectionEdit);
-	
-	var _lodash = __webpack_require__(66);
+	var _pageSection2 = _interopRequireDefault(_pageSection);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  name: 'editorWorkspace',
 	  components: {
-	    "element-text": _elementText2.default,
-	    "element-image": _elementImage2.default,
-	    "section-edit": _sectionEdit2.default
+	    pageSection: _pageSection2.default
 	  },
 	  data: function data() {
-	    return {
-	      sectionEditing: false
-	    };
+	    return {};
 	  },
 	
-	  methods: {
-	    editSection: function editSection(sectionId) {
-	      this.sectionEditing = true;
-	      this.setActiveSectionId(sectionId);
-	    },
-	    closeSidebar: function closeSidebar() {
-	      this.sectionEditing = false;
-	      this.setActiveSectionId(null);
-	    }
-	  },
+	  methods: {},
 	  vuex: {
-	    actions: {
-	      setActiveElementId: _actions.setActiveElementId,
-	      setCurrentSectionId: _actions.setCurrentSectionId,
-	      setActiveSectionId: _actions.setActiveSectionId,
-	      removeSection: _actions.removeSection,
-	      moveSection: _actions.moveSection,
-	      modifySection: _actions.modifySection
-	    },
+	    actions: {},
 	    getters: {
 	      workspace: _getters.getWorkspaceData,
-	      sections: _getters.getSections,
-	      colorSet: _getters.getColorSet
+	      sections: _getters.getSections
 	    }
-	  },
-	  ready: function ready() {
-	    resizeEvent(this);
 	  }
-	};
-	
-	
-	var resizeEvent = function resizeEvent(vue) {
-	  var sectionminheight = 30,
-	      startY = void 0,
-	      startHeight = void 0,
-	      toolbarh = 45,
-	      strheight = 'height',
-	      strpx = "px",
-	      strbody = 'body';
-	
-	  var setSectionHeight = function setSectionHeight(height) {
-	    if (height > sectionminheight) {
-	      window.$section.css(strheight, height + strpx);
-	    }
-	  };
-	
-	  $(strbody).on('mousedown click', '.resize-line', function (e) {
-	    window.$section = $(e.target).parent();
-	    startY = e.clientY - toolbarh;
-	    var $parent = $(this).parent();
-	    startHeight = $parent.height();
-	
-	    $parent.find('.resize-line-wrap').css('z-index', 99999);
-	    vue.setActiveElementId("");
-	
-	    $(strbody).mousemove(function (e) {
-	      var clientY = e.clientY - toolbarh;
-	      var $this = $(e.target);
-	      var allelement = [];
-	
-	      window.$section.find('.element').each(function (e) {
-	        var h = $(this).height() + $(this).position().top;
-	        allelement.push(h);
-	      });
-	
-	      window.elmaxheight = (0, _lodash.max)(allelement);
-	
-	      var sectionmaxheight = window.$section.height();
-	
-	      var newheight = startHeight + clientY - startY;
-	
-	      if (allelement.length >= 1) {
-	        if (sectionmaxheight > elmaxheight && newheight > elmaxheight || newheight > elmaxheight) {
-	          setSectionHeight(newheight);
-	        }
-	      } else if (newheight > sectionmaxheight) {
-	          setSectionHeight(newheight);
-	        } else {
-	          setSectionHeight(newheight);
-	        }
-	    });
-	
-	    $(strbody).mouseout(function (e) {
-	      var allelement = [];
-	      window.$section.find('.element').each(function (e) {
-	        var h = $(this).parent().offset().top - 45 + $(this).position().top + $(this).height() + $('.main').scrollTop();
-	        allelement.push(h);
-	      });
-	
-	      if (e.clientY < (0, _lodash.max)(allelement)) {
-	        setSectionHeight(elmaxheight);
-	      }
-	    });
-	  });
-	
-	  $(strbody).off('mouseup').mouseup(function () {
-	    if (window.$section) {
-	      $('.resize-line-wrap').removeAttr('style');
-	      var style = {
-	        height: window.$section.height() + strpx
-	      };
-	      vue.modifySection($('.page-section').index(window.$section), style);
-	      window.$section = null;
-	    }
-	    $(this).off('mousemove mouseout click');
-	  });
 	};
 
 /***/ },
@@ -1376,8 +2869,8 @@
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] resources/assets/js/components/element-text.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(46)
+	  console.warn("[vue-loader] resources/assets/js/components/page-section.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(113)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1387,7 +2880,7 @@
 	  var hotAPI = require("vue-hot-reload-api")
 	  hotAPI.install(require("vue"), false)
 	  if (!hotAPI.compatible) return
-	  var id = "./element-text.vue"
+	  var id = "./page-section.vue"
 	  if (!module.hot.data) {
 	    hotAPI.createRecord(id, module.exports)
 	  } else {
@@ -1405,40 +2898,75 @@
 	  value: true
 	});
 	
-	var _actions = __webpack_require__(6);
+	var _actions = __webpack_require__(7);
 	
-	var _getters = __webpack_require__(7);
+	var _getters = __webpack_require__(8);
 	
-	var _elementCommon = __webpack_require__(38);
+	var _sectionEdit = __webpack_require__(38);
 	
-	var _elementCommon2 = _interopRequireDefault(_elementCommon);
+	var _sectionEdit2 = _interopRequireDefault(_sectionEdit);
+	
+	var _elementText = __webpack_require__(56);
+	
+	var _elementText2 = _interopRequireDefault(_elementText);
+	
+	var _elementImage = __webpack_require__(67);
+	
+	var _elementImage2 = _interopRequireDefault(_elementImage);
+	
+	var _elementButton = __webpack_require__(80);
+	
+	var _elementButton2 = _interopRequireDefault(_elementButton);
+	
+	var _elementForm = __webpack_require__(98);
+	
+	var _elementForm2 = _interopRequireDefault(_elementForm);
+	
+	var _colorMixin = __webpack_require__(51);
+	
+	var _colorMixin2 = _interopRequireDefault(_colorMixin);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  props: ['element', 'sectionId', 'elementId'],
+	  mixins: [_colorMixin2.default],
+	  props: ['sectionId', 'section'],
 	  components: {
-	    "element-common": _elementCommon2.default
-	  },
-	  vuex: {
-	    actions: {},
-	    getters: {
-	      workspace: _getters.getWorkspaceData
-	    }
+	    elementText: _elementText2.default,
+	    elementImage: _elementImage2.default,
+	    elementButton: _elementButton2.default,
+	    elementForm: _elementForm2.default,
+	    sectionEdit: _sectionEdit2.default
 	  },
 	  data: function data() {
 	    return {
-	      buttonGroup: 'main'
+	      sectionEditing: false
 	    };
 	  },
 	
 	  methods: {
-	    edit: function edit(event) {
-	      this.buttonGroup = 'edit';
+	    editSection: function editSection() {
+	      this.sectionEditing = true;
+	      this.setActiveSectionId(this.sectionId);
 	    },
-	    shit: function shit() {}
+	    sectionEditDone: function sectionEditDone() {
+	      this.sectionEditing = false;
+	      this.setActiveSectionId(null);
+	    }
 	  },
-	  created: function created() {}
+	  vuex: {
+	    actions: {
+	      setCurrentSectionId: _actions.setCurrentSectionId,
+	      setActiveSectionId: _actions.setActiveSectionId,
+	      removeSection: _actions.removeSection,
+	      moveSection: _actions.moveSection,
+	      modifySection: _actions.modifySection
+	    },
+	    getters: {
+	      workspace: _getters.getWorkspaceData
+	    }
+	  },
+	  ready: function ready() {}
 	};
 
 /***/ },
@@ -1446,1647 +2974,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(39)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] resources/assets/js/components/element-common.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(45)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  var id = "./element-common.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _draggabilly = __webpack_require__(40);
-	
-	var _draggabilly2 = _interopRequireDefault(_draggabilly);
-	
-	var _actions = __webpack_require__(6);
-	
-	var _getters = __webpack_require__(7);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  name: 'elementCommon',
-	
-	  props: ['element', 'sectionId', 'elementId', 'buttonGroup'],
-	  vuex: {
-	    actions: {
-	      setActiveElementId: _actions.setActiveElementId,
-	      removeElement: _actions.removeElement,
-	      moveElement: _actions.moveElement
-	    },
-	    getters: {
-	      workspace: _getters.getWorkspaceData
-	    }
-	  },
-	  data: function data() {
-	    return {
-	      elToolbarPosition: 'top',
-	      elPositionInPage: { left: 0, top: 0 },
-	      clickOnThisElement: false
-	    };
-	  },
-	
-	  methods: {
-	    showToolbar: function showToolbar(event) {
-	      this.setActiveElementId(this.elementId);
-	      this.clickOnThisElement = true;
-	      var viewTop = getElementTop(this.$el) - document.documentElement.scrollTop;
-	      if (viewTop < 95) {
-	        this.elToolbarPosition = 'bottom';
-	      } else {
-	        this.elToolbarPosition = 'top';
-	      }
-	    }
-	  },
-	  events: {
-	    'body-click': function bodyClick(event) {
-	      if (this.clickOnThisElement) {
-	        this.clickOnThisElement = false;
-	      } else if (this.workspace.activeElementId === this.elementId) {
-	        this.setActiveElementId('');
-	      }
-	    }
-	  },
-	  ready: function ready() {
-	
-	    window.addEventListener('resize', this.handleResize);
-	
-	    var draggie = new _draggabilly2.default(this.$el, {
-	      containment: '#content-area'
-	    });
-	    var startTop = 0;
-	    var that = this;
-	
-	    draggie.on('dragEnd', function (event) {
-	      that.buttonGroup = 'main';
-	      var position = $(this.element).position();
-	      that.elPositionInPage.left = position.left;
-	      that.elPositionInPage.top = startTop + position.top;
-	      that.moveElement(that.sectionId, that.elementId, that.elPositionInPage, that.$el.offsetHeight);
-	    });
-	
-	    draggie.on('dragStart', function (event) {
-	      that.showToolbar(event);
-	      startTop = getElementTop(that.$el) - 45 - that.$el.offsetTop;
-	    });
-	
-	    draggie.on('dragMove', function (event) {
-	      that.buttonGroup = 'position';
-	      var position = $(this.element).position();
-	      that.elPositionInPage.left = position.left;
-	      that.elPositionInPage.top = startTop + position.top;
-	    });
-	  }
-	};
-	
-	function getElementTop(element) {
-	  var actualTop = element.offsetTop;
-	  var current = element.offsetParent;
-	
-	  while (current !== null) {
-	    actualTop += current.offsetTop;
-	    current = current.offsetParent;
-	  }
-	
-	  return actualTop;
-	}
-
-/***/ },
-/* 40 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	 * Draggabilly v2.1.1
-	 * Make that shiz draggable
-	 * http://draggabilly.desandro.com
-	 * MIT license
-	 */
-	
-	/*jshint browser: true, strict: true, undef: true, unused: true */
-	
-	( function( window, factory ) {
-	  // universal module definition
-	  /* jshint strict: false */ /*globals define, module, require */
-	  if ( true ) {
-	    // AMD
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(41),
-	        __webpack_require__(42)
-	      ], __WEBPACK_AMD_DEFINE_RESULT__ = function( getSize, Unidragger ) {
-	        return factory( window, getSize, Unidragger );
-	      }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if ( typeof module == 'object' && module.exports ) {
-	    // CommonJS
-	    module.exports = factory(
-	      window,
-	      require('get-size'),
-	      require('unidragger')
-	    );
-	  } else {
-	    // browser global
-	    window.Draggabilly = factory(
-	      window,
-	      window.getSize,
-	      window.Unidragger
-	    );
-	  }
-	
-	}( window, function factory( window, getSize, Unidragger ) {
-	
-	'use strict';
-	
-	// vars
-	var document = window.document;
-	
-	function noop() {}
-	
-	// -------------------------- helpers -------------------------- //
-	
-	// extend objects
-	function extend( a, b ) {
-	  for ( var prop in b ) {
-	    a[ prop ] = b[ prop ];
-	  }
-	  return a;
-	}
-	
-	function isElement( obj ) {
-	  return obj instanceof HTMLElement;
-	}
-	
-	// -------------------------- requestAnimationFrame -------------------------- //
-	
-	// get rAF, prefixed, if present
-	var requestAnimationFrame = window.requestAnimationFrame ||
-	  window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
-	
-	// fallback to setTimeout
-	var lastTime = 0;
-	if ( !requestAnimationFrame )  {
-	  requestAnimationFrame = function( callback ) {
-	    var currTime = new Date().getTime();
-	    var timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
-	    var id = setTimeout( callback, timeToCall );
-	    lastTime = currTime + timeToCall;
-	    return id;
-	  };
-	}
-	
-	// -------------------------- support -------------------------- //
-	
-	var docElem = document.documentElement;
-	var transformProperty = typeof docElem.style.transform == 'string' ?
-	  'transform' : 'WebkitTransform';
-	
-	var jQuery = window.jQuery;
-	
-	// --------------------------  -------------------------- //
-	
-	function Draggabilly( element, options ) {
-	  // querySelector if string
-	  this.element = typeof element == 'string' ?
-	    document.querySelector( element ) : element;
-	
-	  if ( jQuery ) {
-	    this.$element = jQuery( this.element );
-	  }
-	
-	  // options
-	  this.options = extend( {}, this.constructor.defaults );
-	  this.option( options );
-	
-	  this._create();
-	}
-	
-	// inherit Unidragger methods
-	var proto = Draggabilly.prototype = Object.create( Unidragger.prototype );
-	
-	Draggabilly.defaults = {
-	};
-	
-	/**
-	 * set options
-	 * @param {Object} opts
-	 */
-	proto.option = function( opts ) {
-	  extend( this.options, opts );
-	};
-	
-	// css position values that don't need to be set
-	var positionValues = {
-	  relative: true,
-	  absolute: true,
-	  fixed: true
-	};
-	
-	proto._create = function() {
-	
-	  // properties
-	  this.position = {};
-	  this._getPosition();
-	
-	  this.startPoint = { x: 0, y: 0 };
-	  this.dragPoint = { x: 0, y: 0 };
-	
-	  this.startPosition = extend( {}, this.position );
-	
-	  // set relative positioning
-	  var style = getComputedStyle( this.element );
-	  if ( !positionValues[ style.position ] ) {
-	    this.element.style.position = 'relative';
-	  }
-	
-	  this.enable();
-	  this.setHandles();
-	
-	};
-	
-	/**
-	 * set this.handles and bind start events to 'em
-	 */
-	proto.setHandles = function() {
-	  this.handles = this.options.handle ?
-	    this.element.querySelectorAll( this.options.handle ) : [ this.element ];
-	
-	  this.bindHandles();
-	};
-	
-	/**
-	 * emits events via EvEmitter and jQuery events
-	 * @param {String} type - name of event
-	 * @param {Event} event - original event
-	 * @param {Array} args - extra arguments
-	 */
-	proto.dispatchEvent = function( type, event, args ) {
-	  var emitArgs = [ event ].concat( args );
-	  this.emitEvent( type, emitArgs );
-	  var jQuery = window.jQuery;
-	  // trigger jQuery event
-	  if ( jQuery && this.$element ) {
-	    if ( event ) {
-	      // create jQuery event
-	      var $event = jQuery.Event( event );
-	      $event.type = type;
-	      this.$element.trigger( $event, args );
-	    } else {
-	      // just trigger with type if no event available
-	      this.$element.trigger( type, args );
-	    }
-	  }
-	};
-	
-	// -------------------------- position -------------------------- //
-	
-	// get x/y position from style
-	proto._getPosition = function() {
-	  var style = getComputedStyle( this.element );
-	  var x = this._getPositionCoord( style.left, 'width' );
-	  var y = this._getPositionCoord( style.top, 'height' );
-	  // clean up 'auto' or other non-integer values
-	  this.position.x = isNaN( x ) ? 0 : x;
-	  this.position.y = isNaN( y ) ? 0 : y;
-	
-	  this._addTransformPosition( style );
-	};
-	
-	proto._getPositionCoord = function( styleSide, measure ) {
-	  if ( styleSide.indexOf('%') != -1 ) {
-	    // convert percent into pixel for Safari, #75
-	    var parentSize = getSize( this.element.parentNode );
-	    // prevent not-in-DOM element throwing bug, #131
-	    return !parentSize ? 0 :
-	      ( parseFloat( styleSide ) / 100 ) * parentSize[ measure ];
-	  }
-	  return parseInt( styleSide, 10 );
-	};
-	
-	// add transform: translate( x, y ) to position
-	proto._addTransformPosition = function( style ) {
-	  var transform = style[ transformProperty ];
-	  // bail out if value is 'none'
-	  if ( transform.indexOf('matrix') !== 0 ) {
-	    return;
-	  }
-	  // split matrix(1, 0, 0, 1, x, y)
-	  var matrixValues = transform.split(',');
-	  // translate X value is in 12th or 4th position
-	  var xIndex = transform.indexOf('matrix3d') === 0 ? 12 : 4;
-	  var translateX = parseInt( matrixValues[ xIndex ], 10 );
-	  // translate Y value is in 13th or 5th position
-	  var translateY = parseInt( matrixValues[ xIndex + 1 ], 10 );
-	  this.position.x += translateX;
-	  this.position.y += translateY;
-	};
-	
-	// -------------------------- events -------------------------- //
-	
-	/**
-	 * pointer start
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto.pointerDown = function( event, pointer ) {
-	  this._dragPointerDown( event, pointer );
-	  // kludge to blur focused inputs in dragger
-	  var focused = document.activeElement;
-	  // do not blur body for IE10, metafizzy/flickity#117
-	  if ( focused && focused.blur && focused != document.body ) {
-	    focused.blur();
-	  }
-	  // bind move and end events
-	  this._bindPostStartEvents( event );
-	  this.element.classList.add('is-pointer-down');
-	  this.dispatchEvent( 'pointerDown', event, [ pointer ] );
-	};
-	
-	/**
-	 * drag move
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto.pointerMove = function( event, pointer ) {
-	  var moveVector = this._dragPointerMove( event, pointer );
-	  this.dispatchEvent( 'pointerMove', event, [ pointer, moveVector ] );
-	  this._dragMove( event, pointer, moveVector );
-	};
-	
-	/**
-	 * drag start
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto.dragStart = function( event, pointer ) {
-	  if ( !this.isEnabled ) {
-	    return;
-	  }
-	  this._getPosition();
-	  this.measureContainment();
-	  // position _when_ drag began
-	  this.startPosition.x = this.position.x;
-	  this.startPosition.y = this.position.y;
-	  // reset left/top style
-	  this.setLeftTop();
-	
-	  this.dragPoint.x = 0;
-	  this.dragPoint.y = 0;
-	
-	  this.element.classList.add('is-dragging');
-	  this.dispatchEvent( 'dragStart', event, [ pointer ] );
-	  // start animation
-	  this.animate();
-	};
-	
-	proto.measureContainment = function() {
-	  var containment = this.options.containment;
-	  if ( !containment ) {
-	    return;
-	  }
-	
-	  // use element if element
-	  var container = isElement( containment ) ? containment :
-	    // fallback to querySelector if string
-	    typeof containment == 'string' ? document.querySelector( containment ) :
-	    // otherwise just `true`, use the parent
-	    this.element.parentNode;
-	
-	  var elemSize = getSize( this.element );
-	  var containerSize = getSize( container );
-	  var elemRect = this.element.getBoundingClientRect();
-	  var containerRect = container.getBoundingClientRect();
-	
-	  var borderSizeX = containerSize.borderLeftWidth + containerSize.borderRightWidth;
-	  var borderSizeY = containerSize.borderTopWidth + containerSize.borderBottomWidth;
-	
-	  var position = this.relativeStartPosition = {
-	    x: elemRect.left - ( containerRect.left + containerSize.borderLeftWidth ),
-	    y: elemRect.top - ( containerRect.top + containerSize.borderTopWidth )
-	  };
-	
-	  this.containSize = {
-	    width: ( containerSize.width - borderSizeX ) - position.x - elemSize.width,
-	    height: ( containerSize.height - borderSizeY ) - position.y - elemSize.height
-	  };
-	};
-	
-	// ----- move event ----- //
-	
-	/**
-	 * drag move
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto.dragMove = function( event, pointer, moveVector ) {
-	  if ( !this.isEnabled ) {
-	    return;
-	  }
-	  var dragX = moveVector.x;
-	  var dragY = moveVector.y;
-	
-	  var grid = this.options.grid;
-	  var gridX = grid && grid[0];
-	  var gridY = grid && grid[1];
-	
-	  dragX = applyGrid( dragX, gridX );
-	  dragY = applyGrid( dragY, gridY );
-	
-	  dragX = this.containDrag( 'x', dragX, gridX );
-	  dragY = this.containDrag( 'y', dragY, gridY );
-	
-	  // constrain to axis
-	  dragX = this.options.axis == 'y' ? 0 : dragX;
-	  dragY = this.options.axis == 'x' ? 0 : dragY;
-	
-	  this.position.x = this.startPosition.x + dragX;
-	  this.position.y = this.startPosition.y + dragY;
-	  // set dragPoint properties
-	  this.dragPoint.x = dragX;
-	  this.dragPoint.y = dragY;
-	
-	  this.dispatchEvent( 'dragMove', event, [ pointer, moveVector ] );
-	};
-	
-	function applyGrid( value, grid, method ) {
-	  method = method || 'round';
-	  return grid ? Math[ method ]( value / grid ) * grid : value;
-	}
-	
-	proto.containDrag = function( axis, drag, grid ) {
-	  if ( !this.options.containment ) {
-	    return drag;
-	  }
-	  var measure = axis == 'x' ? 'width' : 'height';
-	
-	  var rel = this.relativeStartPosition[ axis ];
-	  var min = applyGrid( -rel, grid, 'ceil' );
-	  var max = this.containSize[ measure ];
-	  max = applyGrid( max, grid, 'floor' );
-	  return  Math.min( max, Math.max( min, drag ) );
-	};
-	
-	// ----- end event ----- //
-	
-	/**
-	 * pointer up
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto.pointerUp = function( event, pointer ) {
-	  this.element.classList.remove('is-pointer-down');
-	  this.dispatchEvent( 'pointerUp', event, [ pointer ] );
-	  this._dragPointerUp( event, pointer );
-	};
-	
-	/**
-	 * drag end
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto.dragEnd = function( event, pointer ) {
-	  if ( !this.isEnabled ) {
-	    return;
-	  }
-	  // use top left position when complete
-	  if ( transformProperty ) {
-	    this.element.style[ transformProperty ] = '';
-	    this.setLeftTop();
-	  }
-	  this.element.classList.remove('is-dragging');
-	  this.dispatchEvent( 'dragEnd', event, [ pointer ] );
-	};
-	
-	// -------------------------- animation -------------------------- //
-	
-	proto.animate = function() {
-	  // only render and animate if dragging
-	  if ( !this.isDragging ) {
-	    return;
-	  }
-	
-	  this.positionDrag();
-	
-	  var _this = this;
-	  requestAnimationFrame( function animateFrame() {
-	    _this.animate();
-	  });
-	
-	};
-	
-	// left/top positioning
-	proto.setLeftTop = function() {
-	  this.element.style.left = this.position.x + 'px';
-	  this.element.style.top  = this.position.y + 'px';
-	};
-	
-	proto.positionDrag = function() {
-	  this.element.style[ transformProperty ] = 'translate3d( ' + this.dragPoint.x +
-	    'px, ' + this.dragPoint.y + 'px, 0)';
-	};
-	
-	// ----- staticClick ----- //
-	
-	proto.staticClick = function( event, pointer ) {
-	  this.dispatchEvent( 'staticClick', event, [ pointer ] );
-	};
-	
-	// ----- methods ----- //
-	
-	proto.enable = function() {
-	  this.isEnabled = true;
-	};
-	
-	proto.disable = function() {
-	  this.isEnabled = false;
-	  if ( this.isDragging ) {
-	    this.dragEnd();
-	  }
-	};
-	
-	proto.destroy = function() {
-	  this.disable();
-	  // reset styles
-	  this.element.style[ transformProperty ] = '';
-	  this.element.style.left = '';
-	  this.element.style.top = '';
-	  this.element.style.position = '';
-	  // unbind handles
-	  this.unbindHandles();
-	  // remove jQuery data
-	  if ( this.$element ) {
-	    this.$element.removeData('draggabilly');
-	  }
-	};
-	
-	// ----- jQuery bridget ----- //
-	
-	// required for jQuery bridget
-	proto._init = noop;
-	
-	if ( jQuery && jQuery.bridget ) {
-	  jQuery.bridget( 'draggabilly', Draggabilly );
-	}
-	
-	// -----  ----- //
-	
-	return Draggabilly;
-	
-	}));
-
-
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	 * getSize v2.0.2
-	 * measure size of elements
-	 * MIT license
-	 */
-	
-	/*jshint browser: true, strict: true, undef: true, unused: true */
-	/*global define: false, module: false, console: false */
-	
-	( function( window, factory ) {
-	  'use strict';
-	
-	  if ( true ) {
-	    // AMD
-	    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
-	      return factory();
-	    }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if ( typeof module == 'object' && module.exports ) {
-	    // CommonJS
-	    module.exports = factory();
-	  } else {
-	    // browser global
-	    window.getSize = factory();
-	  }
-	
-	})( window, function factory() {
-	'use strict';
-	
-	// -------------------------- helpers -------------------------- //
-	
-	// get a number from a string, not a percentage
-	function getStyleSize( value ) {
-	  var num = parseFloat( value );
-	  // not a percent like '100%', and a number
-	  var isValid = value.indexOf('%') == -1 && !isNaN( num );
-	  return isValid && num;
-	}
-	
-	function noop() {}
-	
-	var logError = typeof console == 'undefined' ? noop :
-	  function( message ) {
-	    console.error( message );
-	  };
-	
-	// -------------------------- measurements -------------------------- //
-	
-	var measurements = [
-	  'paddingLeft',
-	  'paddingRight',
-	  'paddingTop',
-	  'paddingBottom',
-	  'marginLeft',
-	  'marginRight',
-	  'marginTop',
-	  'marginBottom',
-	  'borderLeftWidth',
-	  'borderRightWidth',
-	  'borderTopWidth',
-	  'borderBottomWidth'
-	];
-	
-	var measurementsLength = measurements.length;
-	
-	function getZeroSize() {
-	  var size = {
-	    width: 0,
-	    height: 0,
-	    innerWidth: 0,
-	    innerHeight: 0,
-	    outerWidth: 0,
-	    outerHeight: 0
-	  };
-	  for ( var i=0; i < measurementsLength; i++ ) {
-	    var measurement = measurements[i];
-	    size[ measurement ] = 0;
-	  }
-	  return size;
-	}
-	
-	// -------------------------- getStyle -------------------------- //
-	
-	/**
-	 * getStyle, get style of element, check for Firefox bug
-	 * https://bugzilla.mozilla.org/show_bug.cgi?id=548397
-	 */
-	function getStyle( elem ) {
-	  var style = getComputedStyle( elem );
-	  if ( !style ) {
-	    logError( 'Style returned ' + style +
-	      '. Are you running this code in a hidden iframe on Firefox? ' +
-	      'See http://bit.ly/getsizebug1' );
-	  }
-	  return style;
-	}
-	
-	// -------------------------- setup -------------------------- //
-	
-	var isSetup = false;
-	
-	var isBoxSizeOuter;
-	
-	/**
-	 * setup
-	 * check isBoxSizerOuter
-	 * do on first getSize() rather than on page load for Firefox bug
-	 */
-	function setup() {
-	  // setup once
-	  if ( isSetup ) {
-	    return;
-	  }
-	  isSetup = true;
-	
-	  // -------------------------- box sizing -------------------------- //
-	
-	  /**
-	   * WebKit measures the outer-width on style.width on border-box elems
-	   * IE & Firefox<29 measures the inner-width
-	   */
-	  var div = document.createElement('div');
-	  div.style.width = '200px';
-	  div.style.padding = '1px 2px 3px 4px';
-	  div.style.borderStyle = 'solid';
-	  div.style.borderWidth = '1px 2px 3px 4px';
-	  div.style.boxSizing = 'border-box';
-	
-	  var body = document.body || document.documentElement;
-	  body.appendChild( div );
-	  var style = getStyle( div );
-	
-	  getSize.isBoxSizeOuter = isBoxSizeOuter = getStyleSize( style.width ) == 200;
-	  body.removeChild( div );
-	
-	}
-	
-	// -------------------------- getSize -------------------------- //
-	
-	function getSize( elem ) {
-	  setup();
-	
-	  // use querySeletor if elem is string
-	  if ( typeof elem == 'string' ) {
-	    elem = document.querySelector( elem );
-	  }
-	
-	  // do not proceed on non-objects
-	  if ( !elem || typeof elem != 'object' || !elem.nodeType ) {
-	    return;
-	  }
-	
-	  var style = getStyle( elem );
-	
-	  // if hidden, everything is 0
-	  if ( style.display == 'none' ) {
-	    return getZeroSize();
-	  }
-	
-	  var size = {};
-	  size.width = elem.offsetWidth;
-	  size.height = elem.offsetHeight;
-	
-	  var isBorderBox = size.isBorderBox = style.boxSizing == 'border-box';
-	
-	  // get all measurements
-	  for ( var i=0; i < measurementsLength; i++ ) {
-	    var measurement = measurements[i];
-	    var value = style[ measurement ];
-	    var num = parseFloat( value );
-	    // any 'auto', 'medium' value will be 0
-	    size[ measurement ] = !isNaN( num ) ? num : 0;
-	  }
-	
-	  var paddingWidth = size.paddingLeft + size.paddingRight;
-	  var paddingHeight = size.paddingTop + size.paddingBottom;
-	  var marginWidth = size.marginLeft + size.marginRight;
-	  var marginHeight = size.marginTop + size.marginBottom;
-	  var borderWidth = size.borderLeftWidth + size.borderRightWidth;
-	  var borderHeight = size.borderTopWidth + size.borderBottomWidth;
-	
-	  var isBorderBoxSizeOuter = isBorderBox && isBoxSizeOuter;
-	
-	  // overwrite width and height if we can get it from style
-	  var styleWidth = getStyleSize( style.width );
-	  if ( styleWidth !== false ) {
-	    size.width = styleWidth +
-	      // add padding and border unless it's already including it
-	      ( isBorderBoxSizeOuter ? 0 : paddingWidth + borderWidth );
-	  }
-	
-	  var styleHeight = getStyleSize( style.height );
-	  if ( styleHeight !== false ) {
-	    size.height = styleHeight +
-	      // add padding and border unless it's already including it
-	      ( isBorderBoxSizeOuter ? 0 : paddingHeight + borderHeight );
-	  }
-	
-	  size.innerWidth = size.width - ( paddingWidth + borderWidth );
-	  size.innerHeight = size.height - ( paddingHeight + borderHeight );
-	
-	  size.outerWidth = size.width + marginWidth;
-	  size.outerHeight = size.height + marginHeight;
-	
-	  return size;
-	}
-	
-	return getSize;
-	
-	});
-
-
-/***/ },
-/* 42 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	 * Unidragger v2.1.0
-	 * Draggable base class
-	 * MIT license
-	 */
-	
-	/*jshint browser: true, unused: true, undef: true, strict: true */
-	
-	( function( window, factory ) {
-	  // universal module definition
-	  /*jshint strict: false */ /*globals define, module, require */
-	
-	  if ( true ) {
-	    // AMD
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	      __webpack_require__(43)
-	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function( Unipointer ) {
-	      return factory( window, Unipointer );
-	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if ( typeof module == 'object' && module.exports ) {
-	    // CommonJS
-	    module.exports = factory(
-	      window,
-	      require('unipointer')
-	    );
-	  } else {
-	    // browser global
-	    window.Unidragger = factory(
-	      window,
-	      window.Unipointer
-	    );
-	  }
-	
-	}( window, function factory( window, Unipointer ) {
-	
-	'use strict';
-	
-	// -----  ----- //
-	
-	function noop() {}
-	
-	// -------------------------- Unidragger -------------------------- //
-	
-	function Unidragger() {}
-	
-	// inherit Unipointer & EvEmitter
-	var proto = Unidragger.prototype = Object.create( Unipointer.prototype );
-	
-	// ----- bind start ----- //
-	
-	proto.bindHandles = function() {
-	  this._bindHandles( true );
-	};
-	
-	proto.unbindHandles = function() {
-	  this._bindHandles( false );
-	};
-	
-	var navigator = window.navigator;
-	/**
-	 * works as unbinder, as you can .bindHandles( false ) to unbind
-	 * @param {Boolean} isBind - will unbind if falsey
-	 */
-	proto._bindHandles = function( isBind ) {
-	  // munge isBind, default to true
-	  isBind = isBind === undefined ? true : !!isBind;
-	  // extra bind logic
-	  var binderExtra;
-	  if ( navigator.pointerEnabled ) {
-	    binderExtra = function( handle ) {
-	      // disable scrolling on the element
-	      handle.style.touchAction = isBind ? 'none' : '';
-	    };
-	  } else if ( navigator.msPointerEnabled ) {
-	    binderExtra = function( handle ) {
-	      // disable scrolling on the element
-	      handle.style.msTouchAction = isBind ? 'none' : '';
-	    };
-	  } else {
-	    binderExtra = noop;
-	  }
-	  // bind each handle
-	  var bindMethod = isBind ? 'addEventListener' : 'removeEventListener';
-	  for ( var i=0; i < this.handles.length; i++ ) {
-	    var handle = this.handles[i];
-	    this._bindStartEvent( handle, isBind );
-	    binderExtra( handle );
-	    handle[ bindMethod ]( 'click', this );
-	  }
-	};
-	
-	// ----- start event ----- //
-	
-	/**
-	 * pointer start
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto.pointerDown = function( event, pointer ) {
-	  // dismiss range sliders
-	  if ( event.target.nodeName == 'INPUT' && event.target.type == 'range' ) {
-	    // reset pointerDown logic
-	    this.isPointerDown = false;
-	    delete this.pointerIdentifier;
-	    return;
-	  }
-	
-	  this._dragPointerDown( event, pointer );
-	  // kludge to blur focused inputs in dragger
-	  var focused = document.activeElement;
-	  if ( focused && focused.blur ) {
-	    focused.blur();
-	  }
-	  // bind move and end events
-	  this._bindPostStartEvents( event );
-	  this.emitEvent( 'pointerDown', [ event, pointer ] );
-	};
-	
-	// base pointer down logic
-	proto._dragPointerDown = function( event, pointer ) {
-	  // track to see when dragging starts
-	  this.pointerDownPoint = Unipointer.getPointerPoint( pointer );
-	
-	  var canPreventDefault = this.canPreventDefaultOnPointerDown( event, pointer );
-	  if ( canPreventDefault ) {
-	    event.preventDefault();
-	  }
-	};
-	
-	// overwriteable method so Flickity can prevent for scrolling
-	proto.canPreventDefaultOnPointerDown = function( event ) {
-	  // prevent default, unless touchstart or <select>
-	  return event.target.nodeName != 'SELECT';
-	};
-	
-	// ----- move event ----- //
-	
-	/**
-	 * drag move
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto.pointerMove = function( event, pointer ) {
-	  var moveVector = this._dragPointerMove( event, pointer );
-	  this.emitEvent( 'pointerMove', [ event, pointer, moveVector ] );
-	  this._dragMove( event, pointer, moveVector );
-	};
-	
-	// base pointer move logic
-	proto._dragPointerMove = function( event, pointer ) {
-	  var movePoint = Unipointer.getPointerPoint( pointer );
-	  var moveVector = {
-	    x: movePoint.x - this.pointerDownPoint.x,
-	    y: movePoint.y - this.pointerDownPoint.y
-	  };
-	  // start drag if pointer has moved far enough to start drag
-	  if ( !this.isDragging && this.hasDragStarted( moveVector ) ) {
-	    this._dragStart( event, pointer );
-	  }
-	  return moveVector;
-	};
-	
-	// condition if pointer has moved far enough to start drag
-	proto.hasDragStarted = function( moveVector ) {
-	  return Math.abs( moveVector.x ) > 3 || Math.abs( moveVector.y ) > 3;
-	};
-	
-	
-	// ----- end event ----- //
-	
-	/**
-	 * pointer up
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto.pointerUp = function( event, pointer ) {
-	  this.emitEvent( 'pointerUp', [ event, pointer ] );
-	  this._dragPointerUp( event, pointer );
-	};
-	
-	proto._dragPointerUp = function( event, pointer ) {
-	  if ( this.isDragging ) {
-	    this._dragEnd( event, pointer );
-	  } else {
-	    // pointer didn't move enough for drag to start
-	    this._staticClick( event, pointer );
-	  }
-	};
-	
-	// -------------------------- drag -------------------------- //
-	
-	// dragStart
-	proto._dragStart = function( event, pointer ) {
-	  this.isDragging = true;
-	  this.dragStartPoint = Unipointer.getPointerPoint( pointer );
-	  // prevent clicks
-	  this.isPreventingClicks = true;
-	
-	  this.dragStart( event, pointer );
-	};
-	
-	proto.dragStart = function( event, pointer ) {
-	  this.emitEvent( 'dragStart', [ event, pointer ] );
-	};
-	
-	// dragMove
-	proto._dragMove = function( event, pointer, moveVector ) {
-	  // do not drag if not dragging yet
-	  if ( !this.isDragging ) {
-	    return;
-	  }
-	
-	  this.dragMove( event, pointer, moveVector );
-	};
-	
-	proto.dragMove = function( event, pointer, moveVector ) {
-	  event.preventDefault();
-	  this.emitEvent( 'dragMove', [ event, pointer, moveVector ] );
-	};
-	
-	// dragEnd
-	proto._dragEnd = function( event, pointer ) {
-	  // set flags
-	  this.isDragging = false;
-	  // re-enable clicking async
-	  setTimeout( function() {
-	    delete this.isPreventingClicks;
-	  }.bind( this ) );
-	
-	  this.dragEnd( event, pointer );
-	};
-	
-	proto.dragEnd = function( event, pointer ) {
-	  this.emitEvent( 'dragEnd', [ event, pointer ] );
-	};
-	
-	// ----- onclick ----- //
-	
-	// handle all clicks and prevent clicks when dragging
-	proto.onclick = function( event ) {
-	  if ( this.isPreventingClicks ) {
-	    event.preventDefault();
-	  }
-	};
-	
-	// ----- staticClick ----- //
-	
-	// triggered after pointer down & up with no/tiny movement
-	proto._staticClick = function( event, pointer ) {
-	  // ignore emulated mouse up clicks
-	  if ( this.isIgnoringMouseUp && event.type == 'mouseup' ) {
-	    return;
-	  }
-	
-	  // allow click in <input>s and <textarea>s
-	  var nodeName = event.target.nodeName;
-	  if ( nodeName == 'INPUT' || nodeName == 'TEXTAREA' ) {
-	    event.target.focus();
-	  }
-	  this.staticClick( event, pointer );
-	
-	  // set flag for emulated clicks 300ms after touchend
-	  if ( event.type != 'mouseup' ) {
-	    this.isIgnoringMouseUp = true;
-	    // reset flag after 300ms
-	    setTimeout( function() {
-	      delete this.isIgnoringMouseUp;
-	    }.bind( this ), 400 );
-	  }
-	};
-	
-	proto.staticClick = function( event, pointer ) {
-	  this.emitEvent( 'staticClick', [ event, pointer ] );
-	};
-	
-	// ----- utils ----- //
-	
-	Unidragger.getPointerPoint = Unipointer.getPointerPoint;
-	
-	// -----  ----- //
-	
-	return Unidragger;
-	
-	}));
-
-
-/***/ },
-/* 43 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	 * Unipointer v2.1.0
-	 * base class for doing one thing with pointer event
-	 * MIT license
-	 */
-	
-	/*jshint browser: true, undef: true, unused: true, strict: true */
-	
-	( function( window, factory ) {
-	  // universal module definition
-	  /* jshint strict: false */ /*global define, module, require */
-	  if ( true ) {
-	    // AMD
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	      __webpack_require__(44)
-	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function( EvEmitter ) {
-	      return factory( window, EvEmitter );
-	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if ( typeof module == 'object' && module.exports ) {
-	    // CommonJS
-	    module.exports = factory(
-	      window,
-	      require('ev-emitter')
-	    );
-	  } else {
-	    // browser global
-	    window.Unipointer = factory(
-	      window,
-	      window.EvEmitter
-	    );
-	  }
-	
-	}( window, function factory( window, EvEmitter ) {
-	
-	'use strict';
-	
-	function noop() {}
-	
-	function Unipointer() {}
-	
-	// inherit EvEmitter
-	var proto = Unipointer.prototype = Object.create( EvEmitter.prototype );
-	
-	proto.bindStartEvent = function( elem ) {
-	  this._bindStartEvent( elem, true );
-	};
-	
-	proto.unbindStartEvent = function( elem ) {
-	  this._bindStartEvent( elem, false );
-	};
-	
-	/**
-	 * works as unbinder, as you can ._bindStart( false ) to unbind
-	 * @param {Boolean} isBind - will unbind if falsey
-	 */
-	proto._bindStartEvent = function( elem, isBind ) {
-	  // munge isBind, default to true
-	  isBind = isBind === undefined ? true : !!isBind;
-	  var bindMethod = isBind ? 'addEventListener' : 'removeEventListener';
-	
-	  if ( window.navigator.pointerEnabled ) {
-	    // W3C Pointer Events, IE11. See https://coderwall.com/p/mfreca
-	    elem[ bindMethod ]( 'pointerdown', this );
-	  } else if ( window.navigator.msPointerEnabled ) {
-	    // IE10 Pointer Events
-	    elem[ bindMethod ]( 'MSPointerDown', this );
-	  } else {
-	    // listen for both, for devices like Chrome Pixel
-	    elem[ bindMethod ]( 'mousedown', this );
-	    elem[ bindMethod ]( 'touchstart', this );
-	  }
-	};
-	
-	// trigger handler methods for events
-	proto.handleEvent = function( event ) {
-	  var method = 'on' + event.type;
-	  if ( this[ method ] ) {
-	    this[ method ]( event );
-	  }
-	};
-	
-	// returns the touch that we're keeping track of
-	proto.getTouch = function( touches ) {
-	  for ( var i=0; i < touches.length; i++ ) {
-	    var touch = touches[i];
-	    if ( touch.identifier == this.pointerIdentifier ) {
-	      return touch;
-	    }
-	  }
-	};
-	
-	// ----- start event ----- //
-	
-	proto.onmousedown = function( event ) {
-	  // dismiss clicks from right or middle buttons
-	  var button = event.button;
-	  if ( button && ( button !== 0 && button !== 1 ) ) {
-	    return;
-	  }
-	  this._pointerDown( event, event );
-	};
-	
-	proto.ontouchstart = function( event ) {
-	  this._pointerDown( event, event.changedTouches[0] );
-	};
-	
-	proto.onMSPointerDown =
-	proto.onpointerdown = function( event ) {
-	  this._pointerDown( event, event );
-	};
-	
-	/**
-	 * pointer start
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 */
-	proto._pointerDown = function( event, pointer ) {
-	  // dismiss other pointers
-	  if ( this.isPointerDown ) {
-	    return;
-	  }
-	
-	  this.isPointerDown = true;
-	  // save pointer identifier to match up touch events
-	  this.pointerIdentifier = pointer.pointerId !== undefined ?
-	    // pointerId for pointer events, touch.indentifier for touch events
-	    pointer.pointerId : pointer.identifier;
-	
-	  this.pointerDown( event, pointer );
-	};
-	
-	proto.pointerDown = function( event, pointer ) {
-	  this._bindPostStartEvents( event );
-	  this.emitEvent( 'pointerDown', [ event, pointer ] );
-	};
-	
-	// hash of events to be bound after start event
-	var postStartEvents = {
-	  mousedown: [ 'mousemove', 'mouseup' ],
-	  touchstart: [ 'touchmove', 'touchend', 'touchcancel' ],
-	  pointerdown: [ 'pointermove', 'pointerup', 'pointercancel' ],
-	  MSPointerDown: [ 'MSPointerMove', 'MSPointerUp', 'MSPointerCancel' ]
-	};
-	
-	proto._bindPostStartEvents = function( event ) {
-	  if ( !event ) {
-	    return;
-	  }
-	  // get proper events to match start event
-	  var events = postStartEvents[ event.type ];
-	  // bind events to node
-	  events.forEach( function( eventName ) {
-	    window.addEventListener( eventName, this );
-	  }, this );
-	  // save these arguments
-	  this._boundPointerEvents = events;
-	};
-	
-	proto._unbindPostStartEvents = function() {
-	  // check for _boundEvents, in case dragEnd triggered twice (old IE8 bug)
-	  if ( !this._boundPointerEvents ) {
-	    return;
-	  }
-	  this._boundPointerEvents.forEach( function( eventName ) {
-	    window.removeEventListener( eventName, this );
-	  }, this );
-	
-	  delete this._boundPointerEvents;
-	};
-	
-	// ----- move event ----- //
-	
-	proto.onmousemove = function( event ) {
-	  this._pointerMove( event, event );
-	};
-	
-	proto.onMSPointerMove =
-	proto.onpointermove = function( event ) {
-	  if ( event.pointerId == this.pointerIdentifier ) {
-	    this._pointerMove( event, event );
-	  }
-	};
-	
-	proto.ontouchmove = function( event ) {
-	  var touch = this.getTouch( event.changedTouches );
-	  if ( touch ) {
-	    this._pointerMove( event, touch );
-	  }
-	};
-	
-	/**
-	 * pointer move
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 * @private
-	 */
-	proto._pointerMove = function( event, pointer ) {
-	  this.pointerMove( event, pointer );
-	};
-	
-	// public
-	proto.pointerMove = function( event, pointer ) {
-	  this.emitEvent( 'pointerMove', [ event, pointer ] );
-	};
-	
-	// ----- end event ----- //
-	
-	
-	proto.onmouseup = function( event ) {
-	  this._pointerUp( event, event );
-	};
-	
-	proto.onMSPointerUp =
-	proto.onpointerup = function( event ) {
-	  if ( event.pointerId == this.pointerIdentifier ) {
-	    this._pointerUp( event, event );
-	  }
-	};
-	
-	proto.ontouchend = function( event ) {
-	  var touch = this.getTouch( event.changedTouches );
-	  if ( touch ) {
-	    this._pointerUp( event, touch );
-	  }
-	};
-	
-	/**
-	 * pointer up
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 * @private
-	 */
-	proto._pointerUp = function( event, pointer ) {
-	  this._pointerDone();
-	  this.pointerUp( event, pointer );
-	};
-	
-	// public
-	proto.pointerUp = function( event, pointer ) {
-	  this.emitEvent( 'pointerUp', [ event, pointer ] );
-	};
-	
-	// ----- pointer done ----- //
-	
-	// triggered on pointer up & pointer cancel
-	proto._pointerDone = function() {
-	  // reset properties
-	  this.isPointerDown = false;
-	  delete this.pointerIdentifier;
-	  // remove events
-	  this._unbindPostStartEvents();
-	  this.pointerDone();
-	};
-	
-	proto.pointerDone = noop;
-	
-	// ----- pointer cancel ----- //
-	
-	proto.onMSPointerCancel =
-	proto.onpointercancel = function( event ) {
-	  if ( event.pointerId == this.pointerIdentifier ) {
-	    this._pointerCancel( event, event );
-	  }
-	};
-	
-	proto.ontouchcancel = function( event ) {
-	  var touch = this.getTouch( event.changedTouches );
-	  if ( touch ) {
-	    this._pointerCancel( event, touch );
-	  }
-	};
-	
-	/**
-	 * pointer cancel
-	 * @param {Event} event
-	 * @param {Event or Touch} pointer
-	 * @private
-	 */
-	proto._pointerCancel = function( event, pointer ) {
-	  this._pointerDone();
-	  this.pointerCancel( event, pointer );
-	};
-	
-	// public
-	proto.pointerCancel = function( event, pointer ) {
-	  this.emitEvent( 'pointerCancel', [ event, pointer ] );
-	};
-	
-	// -----  ----- //
-	
-	// utility function for getting x/y coords from event
-	Unipointer.getPointerPoint = function( pointer ) {
-	  return {
-	    x: pointer.pageX,
-	    y: pointer.pageY
-	  };
-	};
-	
-	// -----  ----- //
-	
-	return Unipointer;
-	
-	}));
-
-
-/***/ },
-/* 44 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * EvEmitter v1.0.3
-	 * Lil' event emitter
-	 * MIT License
-	 */
-	
-	/* jshint unused: true, undef: true, strict: true */
-	
-	( function( global, factory ) {
-	  // universal module definition
-	  /* jshint strict: false */ /* globals define, module, window */
-	  if ( true ) {
-	    // AMD - RequireJS
-	    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if ( typeof module == 'object' && module.exports ) {
-	    // CommonJS - Browserify, Webpack
-	    module.exports = factory();
-	  } else {
-	    // Browser globals
-	    global.EvEmitter = factory();
-	  }
-	
-	}( typeof window != 'undefined' ? window : this, function() {
-	
-	"use strict";
-	
-	function EvEmitter() {}
-	
-	var proto = EvEmitter.prototype;
-	
-	proto.on = function( eventName, listener ) {
-	  if ( !eventName || !listener ) {
-	    return;
-	  }
-	  // set events hash
-	  var events = this._events = this._events || {};
-	  // set listeners array
-	  var listeners = events[ eventName ] = events[ eventName ] || [];
-	  // only add once
-	  if ( listeners.indexOf( listener ) == -1 ) {
-	    listeners.push( listener );
-	  }
-	
-	  return this;
-	};
-	
-	proto.once = function( eventName, listener ) {
-	  if ( !eventName || !listener ) {
-	    return;
-	  }
-	  // add event
-	  this.on( eventName, listener );
-	  // set once flag
-	  // set onceEvents hash
-	  var onceEvents = this._onceEvents = this._onceEvents || {};
-	  // set onceListeners object
-	  var onceListeners = onceEvents[ eventName ] = onceEvents[ eventName ] || {};
-	  // set flag
-	  onceListeners[ listener ] = true;
-	
-	  return this;
-	};
-	
-	proto.off = function( eventName, listener ) {
-	  var listeners = this._events && this._events[ eventName ];
-	  if ( !listeners || !listeners.length ) {
-	    return;
-	  }
-	  var index = listeners.indexOf( listener );
-	  if ( index != -1 ) {
-	    listeners.splice( index, 1 );
-	  }
-	
-	  return this;
-	};
-	
-	proto.emitEvent = function( eventName, args ) {
-	  var listeners = this._events && this._events[ eventName ];
-	  if ( !listeners || !listeners.length ) {
-	    return;
-	  }
-	  var i = 0;
-	  var listener = listeners[i];
-	  args = args || [];
-	  // once stuff
-	  var onceListeners = this._onceEvents && this._onceEvents[ eventName ];
-	
-	  while ( listener ) {
-	    var isOnce = onceListeners && onceListeners[ listener ];
-	    if ( isOnce ) {
-	      // remove listener
-	      // remove before trigger to prevent recursion
-	      this.off( eventName, listener );
-	      // unset once flag
-	      delete onceListeners[ listener ];
-	    }
-	    // trigger listener
-	    listener.apply( this, args );
-	    // get next listener
-	    i += isOnce ? 0 : 1;
-	    listener = listeners[i];
-	  }
-	
-	  return this;
-	};
-	
-	return EvEmitter;
-	
-	}));
-
-
-/***/ },
-/* 45 */
-/***/ function(module, exports) {
-
-	module.exports = "\n<div :style=\"(workspace.version == 'pc') ? element.style : element.styleM\" class=\"element\" @click=\"showToolbar\">\n  <!-- Todo:这里要对输出的html进行过滤以防xss漏洞 -->\n  <div class=\"el-content\" id=\"element-{{elementId}}\" v-bind:class=\"{'outline':workspace.activeElementId === elementId}\">\n    <slot name=\"content\"></slot>\n  </div>\n  <div v-if=\"workspace.activeElementId === elementId\" transition=\"fade\" class=\"el-toolbar {{elToolbarPosition}}\">\n    <div v-show=\"buttonGroup == 'main'\" class=\"btn-group\" role=\"group\">\n      <slot name=\"main-buttons-extend\"></slot>\n      <button type=\"button\" class=\"btn btn-default\" title=\"复制一个\"><span class=\"glyphicon glyphicon-duplicate\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"移到顶层\"><span class=\"glyphicon glyphicon-circle-arrow-up\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"移到底层\"><span class=\"glyphicon glyphicon-circle-arrow-down\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"删除\" @click=\"removeElement(sectionId,elementId)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n    </div>\n    <div v-show=\"buttonGroup == 'position'\" class=\"btn-group\" role=\"group\">\n      <button type=\"button\" class=\"btn btn-success\">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</span></button>\n    </div>\n    <slot name=\"button-groups\"></slot>\n  </div>\n</div>\n";
-
-/***/ },
-/* 46 */
-/***/ function(module, exports) {
-
-	module.exports = "\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\">\n  <div slot=\"content\" @dblclick=\"edit\">\n    {{{element.content}}}\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <button type=\"button\" class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</button>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup == 'edit'\" class=\"btn-group\" role=\"group\">\n      <button type=\"button\" class=\"btn btn-default\" title=\"颜色\"><span class=\"glyphicon glyphicon-text-color\"></span> <span class=\"caret\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"字号\"><span class=\"glyphicon glyphicon-text-size\"></span> <span class=\"caret\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"行高\"><span class=\"glyphicon glyphicon-text-height\"></span> <span class=\"caret\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"对齐\"><span class=\"glyphicon glyphicon-align-left\"></span> <span class=\"caret\"></span></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"加粗\">B</button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"斜体\"><i>I</i></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"斜体\"><u>U</u></button>\n      <button type=\"button\" class=\"btn btn-default\" title=\"链接\"><span class=\"glyphicon glyphicon-link\"></span></button>\n      <button type=\"button\" class=\"btn btn-success\" title=\"完成编辑\">完成</button>\n    </div>\n  </template>\n</element-common>\n";
-
-/***/ },
-/* 47 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(48)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] resources/assets/js/components/element-image.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(49)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  var id = "./element-image.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 48 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _actions = __webpack_require__(6);
-	
-	var _getters = __webpack_require__(7);
-	
-	var _elementCommon = __webpack_require__(38);
-	
-	var _elementCommon2 = _interopRequireDefault(_elementCommon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  props: ['element', 'sectionId', 'elementId'],
-	  components: {
-	    "element-common": _elementCommon2.default
-	  },
-	  vuex: {
-	    actions: {},
-	    getters: {
-	      workspace: _getters.getWorkspaceData
-	    }
-	  },
-	  data: function data() {
-	    return {
-	      buttonGroup: 'main'
-	    };
-	  },
-	
-	  methods: {
-	    edit: function edit() {}
-	  },
-	  created: function created() {}
-	};
-
-/***/ },
-/* 49 */
-/***/ function(module, exports) {
-
-	module.exports = "\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\">\n  <div slot=\"content\" @dbclick=\"edit()\">\n    <img v-bind:src=\"element.src\" width=\"{{(workspace.version == 'pc') ? element.style.width : element.styleM.width}}\" height=\"auto\">\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <button type=\"button\" class=\"btn btn-primary\" title=\"更换图片\">更换图片</button>\n    <button type=\"button\" class=\"btn btn-default\" title=\"链接\"><span class=\"glyphicon glyphicon-link\"></span></button>\n  </template>\n  <template slot=\"button-groups\">\n    \n  </template>\n</element-common>\n";
-
-/***/ },
-/* 50 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__webpack_require__(51)
-	__vue_script__ = __webpack_require__(53)
+	__webpack_require__(39)
+	__vue_script__ = __webpack_require__(41)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/section-edit.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(65)
+	__vue_template__ = __webpack_require__(55)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -3105,16 +2999,16 @@
 	})()}
 
 /***/ },
-/* 51 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(52);
+	var content = __webpack_require__(40);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
+	var update = __webpack_require__(13)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -3131,21 +3025,21 @@
 	}
 
 /***/ },
-/* 52 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(11)();
+	exports = module.exports = __webpack_require__(12)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"section-edit.vue","sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n.border-width{\n  height: 30px;\n  border:2px solid #ddd;\n  text-align: center;\n  border-radius: 4px;\n  width:60px;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/section-edit.vue?734fdb6b"],"names":[],"mappings":";;AAEA;EACA,aAAA;EACA,sBAAA;EACA,mBAAA;EACA,mBAAA;EACA,WAAA;CACA","file":"section-edit.vue","sourcesContent":["<style>\n\n.border-width{\n  height: 30px;\n  border:2px solid #ddd;\n  text-align: center;\n  border-radius: 4px;\n  width:60px;\n}\n</style>\n\n<template>\n<div>\n  <sidebar :show.sync=\"show\">\n    \n    <div slot=\"header\">\n      <div class=\"btn btn-success\" @click=\"sectionEditDone\">&nbsp; 完成 &nbsp;</div>\n      <!-- <tooltip placement=\"left\" content=\"同时修改桌面版和移动版\">\n        <h5 class=\"fr\"><label><input type=\"checkbox\"> 同步</label></h5>\n      </tooltip> -->\n    </div>\n    <div slot=\"body\">\n      <div class=\"sidebar-block\">\n        <color-picker :color.sync=\"style['background-color']\"></color-picker> &nbsp; 背景颜色\n      </div>\n      <div class=\"sidebar-block\">\n        <div><color-picker :color.sync=\"style['border-color']\"></color-picker> &nbsp; 边框颜色</div>\n        <div class=\"sidebar-block-inside\"><input type=\"text\" class=\"border-width\" v-model=\"style['border-width']\"> &nbsp; 边框尺寸</div>\n      </div>\n    </div>\n      \n  </sidebar>\n</div>\n</template>\n\n<script>\nimport { setActiveSectionId,modifySection }  from '../store/actions'\nimport { getWorkspaceData,getSections } from '../store/getters'\nimport sidebar from './sidebar.vue'\nimport colorPicker from './color-picker.vue'\nimport colorMixin from '../mixins/colorMixin'\nimport eventHandler from '../utils/eventHandler'\nimport { merge } from 'lodash'\n// import { tooltip } from '../libs/vue-strap'\n\nexport default {\n  name:'sectionEdit',\n  mixins: [colorMixin],\n  components: {\n    sidebar,\n    colorPicker,\n    // tooltip\n  },\n  props: {\n    sectionId: {\n      required: true\n    },\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      backgroundColor:\"0\",\n      style:{}\n      // style:this.sections[this.sectionId]['style'][this.workspace.version]\n      //section: this.sections[this.workspace.activeSectionId]\n    }\n  },\n  // computed: {\n  //   style: function(){\n  //     if (this.sectionId){\n  //       return this.sections[this.sectionId]['style'][this.workspace.version]\n  //     } else {\n  //       return {}\n  //     }\n  //   }\n  // },\n  watch: {\n    'style': {\n      handler: function(newStyle,oldStyle){\n        if (oldStyle.height){\n          this.modifySection(this.sectionId,newStyle);\n        }\n      },\n      deep:true\n    }\n  },\n  methods: {\n    sectionEditDone: function(){\n      this.show = false;\n      this.setActiveSectionId(null);\n    }\n  },\n  vuex: {\n    actions: {\n      setActiveSectionId,\n      modifySection\n    },\n    getters: {\n      workspace: getWorkspaceData,\n      sections: getSections\n    }\n  },\n  created(){\n    this.style = merge({},this.sections[this.sectionId]['style'][this.workspace.version]);\n  },\n  ready (){\n    var el = this.$el;\n    this._closeEvent = eventHandler.listen(window, 'click', (e)=> {\n      if (!el.contains(e.target)){\n        this.sectionEditDone()\n      }\n    })\n  },\n  beforeDestroy() {\n    if (this._closeEvent) this._closeEvent.remove()\n  }\n}\n</script>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 53 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3154,21 +3048,27 @@
 	  value: true
 	});
 	
-	var _actions = __webpack_require__(6);
+	var _actions = __webpack_require__(7);
 	
-	var _getters = __webpack_require__(7);
+	var _getters = __webpack_require__(8);
 	
-	var _sidebar = __webpack_require__(54);
+	var _sidebar = __webpack_require__(42);
 	
 	var _sidebar2 = _interopRequireDefault(_sidebar);
 	
-	var _colorPicker = __webpack_require__(59);
+	var _colorPicker = __webpack_require__(47);
 	
 	var _colorPicker2 = _interopRequireDefault(_colorPicker);
 	
-	var _colorMixin = __webpack_require__(63);
+	var _colorMixin = __webpack_require__(51);
 	
 	var _colorMixin2 = _interopRequireDefault(_colorMixin);
+	
+	var _eventHandler = __webpack_require__(27);
+	
+	var _eventHandler2 = _interopRequireDefault(_eventHandler);
+	
+	var _lodash = __webpack_require__(53);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -3180,6 +3080,9 @@
 	    colorPicker: _colorPicker2.default
 	  },
 	  props: {
+	    sectionId: {
+	      required: true
+	    },
 	    show: {
 	      type: Boolean,
 	      required: true,
@@ -3188,38 +3091,67 @@
 	  },
 	  data: function data() {
 	    return {
-	      backgroundColor: "0"
+	      backgroundColor: "0",
+	      style: {}
 	    };
 	  },
 	
+	  watch: {
+	    'style': {
+	      handler: function handler(newStyle, oldStyle) {
+	        if (oldStyle.height) {
+	          this.modifySection(this.sectionId, newStyle);
+	        }
+	      },
+	      deep: true
+	    }
+	  },
 	  methods: {
-	    closeSidebar: function closeSidebar() {
+	    sectionEditDone: function sectionEditDone() {
 	      this.show = false;
 	      this.setActiveSectionId(null);
 	    }
 	  },
 	  vuex: {
 	    actions: {
-	      setActiveSectionId: _actions.setActiveSectionId
+	      setActiveSectionId: _actions.setActiveSectionId,
+	      modifySection: _actions.modifySection
 	    },
 	    getters: {
-	      workspace: _getters.getWorkspaceData
+	      workspace: _getters.getWorkspaceData,
+	      sections: _getters.getSections
 	    }
+	  },
+	  created: function created() {
+	    this.style = (0, _lodash.merge)({}, this.sections[this.sectionId]['style'][this.workspace.version]);
+	  },
+	  ready: function ready() {
+	    var _this = this;
+	
+	    var el = this.$el;
+	    this._closeEvent = _eventHandler2.default.listen(window, 'click', function (e) {
+	      if (!el.contains(e.target)) {
+	        _this.sectionEditDone();
+	      }
+	    });
+	  },
+	  beforeDestroy: function beforeDestroy() {
+	    if (this._closeEvent) this._closeEvent.remove();
 	  }
 	};
 
 /***/ },
-/* 54 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(55)
-	__vue_script__ = __webpack_require__(57)
+	__webpack_require__(43)
+	__vue_script__ = __webpack_require__(45)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/sidebar.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(58)
+	__vue_template__ = __webpack_require__(46)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -3238,16 +3170,16 @@
 	})()}
 
 /***/ },
-/* 55 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(56);
+	var content = __webpack_require__(44);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
+	var update = __webpack_require__(13)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -3264,24 +3196,24 @@
 	}
 
 /***/ },
-/* 56 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(11)();
+	exports = module.exports = __webpack_require__(12)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n}\n\n.sidebar-body {\n  background: #eee;\n  border-top:1px solid #ccc;\n  border-bottom:1px solid #ccc;\n  min-height:500px;\n  overflow-x: auto;\n  position: relative;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/sidebar.vue?02a0a0d8"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAuCA;EACA,eAAA;EACA,eAAA;EACA,YAAA;EACA,SAAA;EACA,SAAA;EACA,YAAA;EACA,uBAAA;EACA,yCAAA;CACA;;AAEA;EACA,aAAA;CACA;;AAEA;EACA,iBAAA;EACA,0BAAA;EACA,6BAAA;EACA,iBAAA;EACA,iBAAA;EACA,mBAAA;CACA","file":"sidebar.vue","sourcesContent":["<script>\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      \n    }\n  },\n  methods:{\n  \t\n  },\n  ready:function(){\n    \n  }\n}\n</script>\n\n<template>\n  <div class=\"sidebar\" transition=\"fade\" v-if=\"show\">\n    \n    <div class=\"sidebar-header\">\n      <slot name=\"header\">\n      </slot>\n    </div>\n    \n    <div class=\"sidebar-body\">\n      <slot name=\"body\">\n      </slot>\n    </div>\n  </div>\n</template>\n\n<style>\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n}\n\n.sidebar-body {\n  background: #eee;\n  border-top:1px solid #ccc;\n  border-bottom:1px solid #ccc;\n  min-height:500px;\n  overflow-x: auto;\n  position: relative;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n  height: 55px;\n  border-bottom: 1px solid #ddd;\n}\n\n.sidebar-body {\n  padding:12px;\n  height:100%;\n  overflow-x: auto;\n  position: relative;\n}\n\n.sidebar-block{\n  padding:15px 0;\n}\n\n.sidebar-block .text-input{\n  width: 100%;\n\n  padding: 4px 8px;\n  border:1px solid #ccc;\n  border-radius: 4px;\n}\n\n.sidebar-block-inside{\n  padding-top:10px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/sidebar.vue?9a96035a"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAsCA;EACA,eAAA;EACA,eAAA;EACA,YAAA;EACA,SAAA;EACA,SAAA;EACA,YAAA;EACA,uBAAA;EACA,yCAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;EACA,8BAAA;CACA;;AAEA;EACA,aAAA;EACA,YAAA;EACA,iBAAA;EACA,mBAAA;CACA;;AAEA;EACA,eAAA;CACA;;AAEA;EACA,YAAA;;EAEA,iBAAA;EACA,sBAAA;EACA,mBAAA;CACA;;AAEA;EACA,iBAAA;CACA","file":"sidebar.vue","sourcesContent":["<script>\n\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    }\n  },\n  data(){\n    return {\n      bodyHeight:'auto',\n    }\n  },\n  ready(){\n    var browserHeight = document.documentElement.clientHeight;\n    this.bodyHeight = (browserHeight - 100) + 'px';\n  }\n}\n</script>\n\n<template>\n  <div class=\"sidebar\" v-if=\"show\">\n    \n    <div class=\"sidebar-header\">\n      <slot name=\"header\">\n      </slot>\n    </div>\n    \n    <div class=\"sidebar-body\" :style=\"{height:bodyHeight}\">\n      <slot name=\"body\">\n      </slot>\n    </div>\n  </div>\n</template>\n\n<style>\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n  height: 55px;\n  border-bottom: 1px solid #ddd;\n}\n\n.sidebar-body {\n  padding:12px;\n  height:100%;\n  overflow-x: auto;\n  position: relative;\n}\n\n.sidebar-block{\n  padding:15px 0;\n}\n\n.sidebar-block .text-input{\n  width: 100%;\n\n  padding: 4px 8px;\n  border:1px solid #ccc;\n  border-radius: 4px;\n}\n\n.sidebar-block-inside{\n  padding-top:10px;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 57 */
+/* 45 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -3295,31 +3227,34 @@
 	    }
 	  },
 	  data: function data() {
-	    return {};
+	    return {
+	      bodyHeight: 'auto'
+	    };
 	  },
-	
-	  methods: {},
-	  ready: function ready() {}
+	  ready: function ready() {
+	    var browserHeight = document.documentElement.clientHeight;
+	    this.bodyHeight = browserHeight - 100 + 'px';
+	  }
 	};
 
 /***/ },
-/* 58 */
+/* 46 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"sidebar\" transition=\"fade\" v-if=\"show\">\n  \n  <div class=\"sidebar-header\">\n    <slot name=\"header\">\n    </slot>\n  </div>\n  \n  <div class=\"sidebar-body\">\n    <slot name=\"body\">\n    </slot>\n  </div>\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"sidebar\" v-if=\"show\">\n  \n  <div class=\"sidebar-header\">\n    <slot name=\"header\">\n    </slot>\n  </div>\n  \n  <div class=\"sidebar-body\" :style=\"{height:bodyHeight}\">\n    <slot name=\"body\">\n    </slot>\n  </div>\n</div>\n";
 
 /***/ },
-/* 59 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(60)
-	__vue_script__ = __webpack_require__(62)
+	__webpack_require__(48)
+	__vue_script__ = __webpack_require__(50)
 	if (__vue_script__ &&
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/color-picker.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(64)
+	__vue_template__ = __webpack_require__(52)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -3338,16 +3273,16 @@
 	})()}
 
 /***/ },
-/* 60 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(61);
+	var content = __webpack_require__(49);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(12)(content, {});
+	var update = __webpack_require__(13)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -3364,21 +3299,21 @@
 	}
 
 /***/ },
-/* 61 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(11)();
+	exports = module.exports = __webpack_require__(12)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "\n.color-block {\n  height: 30px;\n  margin: 6px;\n  border: 2px solid #eee;\n  cursor: pointer;\n  border-radius: 4px;\n  text-align: center;\n  line-height: 30px;\n}\n\n.color-block:hover, .color-button:hover{\n  border: 1px solid #ccc;\n}\n\n.color-button{\n  width:100%;\n  height:30px;\n  border-radius: 4px;\n  border: 2px solid #eee;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/color-picker.vue?8a6f64c6"],"names":[],"mappings":";AACA;EACA,aAAA;EACA,YAAA;EACA,uBAAA;EACA,gBAAA;EACA,mBAAA;EACA,mBAAA;EACA,kBAAA;CACA;;AAEA;EACA,uBAAA;CACA;;AAEA;EACA,WAAA;EACA,YAAA;EACA,mBAAA;EACA,uBAAA;CACA","file":"color-picker.vue","sourcesContent":["<style>\n.color-block {\n  height: 30px;\n  margin: 6px;\n  border: 2px solid #eee;\n  cursor: pointer;\n  border-radius: 4px;\n  text-align: center;\n  line-height: 30px;\n}\n\n.color-block:hover, .color-button:hover{\n  border: 1px solid #ccc;\n}\n\n.color-button{\n  width:100%;\n  height:30px;\n  border-radius: 4px;\n  border: 2px solid #eee;\n}\n</style>\n\n<template>\n  <dropdown :show.sync=\"show\">\n    <div slot=\"button\">\n      <div class=\"color-button\" :style=\"{background:getColor(color)}\"></div>\n    </div>\n    <div slot=\"content\">\n      <div v-for=\"colorItem in colorSet\" :style=\"{background: colorItem}\" class=\"color-block\"></div>\n      <div class=\"color-block\">自定义颜色</div>\n    </div>\n  </dropdown>\n</template>\n\n<script>\nimport colorMixin from '../mixins/colorMixin.js'\nimport dropdown from './dropdown.vue'\nimport { getColorSet } from '../store/getters'\n\nexport default {\n  name:'colorPicker',\n  mixins: [colorMixin],\n  components: {\n    dropdown\n  },\n  props: {\n    color: {\n      type: String,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      show: false\n    }\n  },\n  methods:{\n    \n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      colorSet: getColorSet\n    }\n  }\n}\n</script>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.color-block {\n  width:160px;\n  height: 30px;\n  margin: 6px;\n  border: 2px solid #ddd;\n  cursor: pointer;\n  border-radius: 4px;\n  text-align: center;\n  line-height: 26px;\n}\n\n.color-block.selected {\n  border:2px solid #666;\n}\n\n.color-block:hover, .color-button:hover{\n  border: 2px solid #ccc;\n}\n\n.common-color-block {\n  float:left;\n  width:35px;\n  margin-right:1px;\n}\n\n.color-button{\n  cursor:pointer;\n  width:100%;\n  min-width:60px;\n  height:30px;\n  border-radius: 4px;\n  border: 2px solid #ddd;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/color-picker.vue?33938674"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAyEA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,uBAAA;EACA,gBAAA;EACA,mBAAA;EACA,mBAAA;EACA,kBAAA;CACA;;AAEA;EACA,sBAAA;CACA;;AAEA;EACA,uBAAA;CACA;;AAEA;EACA,WAAA;EACA,WAAA;EACA,iBAAA;CACA;;AAEA;EACA,eAAA;EACA,WAAA;EACA,eAAA;EACA,YAAA;EACA,mBAAA;EACA,uBAAA;CACA","file":"color-picker.vue","sourcesContent":["<script>\nimport colorMixin from '../mixins/colorMixin.js'\nimport dropdown from './dropdown.vue'\nimport { getColorSet } from '../store/getters'\n\nexport default {\n  name:'colorPicker',\n  mixins: [colorMixin],\n  components: {\n    dropdown\n  },\n  props: {\n    color: {\n      // type: String,\n      required: true,\n      twoWay: true\n    },\n    position: {\n      type: String,\n      default: \"left\"\n    }\n  },\n  data (){\n    return {\n      show: false\n    }\n  },\n  methods:{\n    setColor: function(newColor){\n      this.color = newColor + '';\n      this.show = false;\n    },\n    inputColor: function(e){\n      let newColor = e.target.value;\n      if (newColor.toString().substr(0,1) != \"#\"){\n        newColor = \"#\" + newColor;\n      }\n      this.color = newColor;\n    }\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      colorSet: getColorSet\n    }\n  }\n}\n</script>\n\n<template>\n  <dropdown :show.sync=\"show\">\n    <slot><div data-toggle=\"dropdown\" class=\"color-button\" :style=\"{background:getColor(color)}\"></div></slot>\n    <div slot=\"dropdown-menu\" class=\"dropdown-menu\" :class=\"{'dropdown-menu-right':position === 'right'}\">\n      <div v-for=\"colorItem in colorSet\" :style=\"{background: colorItem}\" @click=\"setColor($index)\" class=\"color-block\" :class=\"{'selected':$index.toString() === color}\"></div>\n      <div class=\"common-color-blocks-wrapper\">\n        <div class=\"color-block common-color-block\" style=\"background:#000;color:#fff\" @click=\"setColor('#000000')\" :class=\"{'selected':color == '#000'}\">黑</div>\n        <div class=\"color-block common-color-block\" style=\"background:#fff\" @click=\"setColor('#ffffff')\" :class=\"{'selected':color == '#fff'}\">白</div>\n        <div class=\"color-block common-color-block\" style=\"background:#bbb\" @click=\"setColor('#cccccc')\" :class=\"{'selected':color == '#ccc'}\">灰</div>\n        <div class=\"color-block common-color-block\" @click=\"setColor('')\">透</div>\n        <div style=\"clear:both\"></div>\n      </div>\n      <div class=\"input-group color-block\">\n        <div class=\"input-group-addon\" :style=\"{background:getColor(color)}\"> &nbsp; </div>\n        <input type=\"text\" class=\"form-control input-text-shadow\" :value=\"getColor(color)\" @input=\"inputColor\" placeholder=\"自定义颜色\">\n        <div class=\"input-group-addon btn btn-primary\" @click=\"show=false\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n      </div>\n    </div>\n  </dropdown>\n</template>\n\n<style>\n.color-block {\n  width:160px;\n  height: 30px;\n  margin: 6px;\n  border: 2px solid #ddd;\n  cursor: pointer;\n  border-radius: 4px;\n  text-align: center;\n  line-height: 26px;\n}\n\n.color-block.selected {\n  border:2px solid #666;\n}\n\n.color-block:hover, .color-button:hover{\n  border: 2px solid #ccc;\n}\n\n.common-color-block {\n  float:left;\n  width:35px;\n  margin-right:1px;\n}\n\n.color-button{\n  cursor:pointer;\n  width:100%;\n  min-width:60px;\n  height:30px;\n  border-radius: 4px;\n  border: 2px solid #ddd;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 62 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3387,15 +3322,15 @@
 	  value: true
 	});
 	
-	var _colorMixin = __webpack_require__(63);
+	var _colorMixin = __webpack_require__(51);
 	
 	var _colorMixin2 = _interopRequireDefault(_colorMixin);
 	
-	var _dropdown = __webpack_require__(24);
+	var _dropdown = __webpack_require__(25);
 	
 	var _dropdown2 = _interopRequireDefault(_dropdown);
 	
-	var _getters = __webpack_require__(7);
+	var _getters = __webpack_require__(8);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -3407,9 +3342,12 @@
 	  },
 	  props: {
 	    color: {
-	      type: String,
 	      required: true,
 	      twoWay: true
+	    },
+	    position: {
+	      type: String,
+	      default: "left"
 	    }
 	  },
 	  data: function data() {
@@ -3418,7 +3356,19 @@
 	    };
 	  },
 	
-	  methods: {},
+	  methods: {
+	    setColor: function setColor(newColor) {
+	      this.color = newColor + '';
+	      this.show = false;
+	    },
+	    inputColor: function inputColor(e) {
+	      var newColor = e.target.value;
+	      if (newColor.toString().substr(0, 1) != "#") {
+	        newColor = "#" + newColor;
+	      }
+	      this.color = newColor;
+	    }
+	  },
 	  vuex: {
 	    actions: {},
 	    getters: {
@@ -3428,7 +3378,7 @@
 	};
 
 /***/ },
-/* 63 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3437,18 +3387,19 @@
 	  value: true
 	});
 	
-	var _getters = __webpack_require__(7);
+	var _getters = __webpack_require__(8);
 	
 	exports.default = {
 	  vuex: {
-	    actions: {},
 	    getters: {
 	      colorSet: _getters.getColorSet
 	    }
 	  },
 	  methods: {
 	    getColor: function getColor(color) {
-	      if (color.toString().substr(0, 1) == "#") {
+	      if (color === "" || color == null) {
+	        return "";
+	      } else if (color.toString().substr(0, 1) === "#") {
 	        return color;
 	      } else {
 	        return this.colorSet[color];
@@ -3458,19 +3409,13 @@
 	};
 
 /***/ },
-/* 64 */
+/* 52 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :show.sync=\"show\">\n  <div slot=\"button\">\n    <div class=\"color-button\" :style=\"{background:getColor(color)}\"></div>\n  </div>\n  <div slot=\"content\">\n    <div v-for=\"colorItem in colorSet\" :style=\"{background: colorItem}\" class=\"color-block\"></div>\n    <div class=\"color-block\">自定义颜色</div>\n  </div>\n</dropdown>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :show.sync=\"show\">\n  <slot><div data-toggle=\"dropdown\" class=\"color-button\" :style=\"{background:getColor(color)}\"></div></slot>\n  <div slot=\"dropdown-menu\" class=\"dropdown-menu\" :class=\"{'dropdown-menu-right':position === 'right'}\">\n    <div v-for=\"colorItem in colorSet\" :style=\"{background: colorItem}\" @click=\"setColor($index)\" class=\"color-block\" :class=\"{'selected':$index.toString() === color}\"></div>\n    <div class=\"common-color-blocks-wrapper\">\n      <div class=\"color-block common-color-block\" style=\"background:#000;color:#fff\" @click=\"setColor('#000000')\" :class=\"{'selected':color == '#000'}\">黑</div>\n      <div class=\"color-block common-color-block\" style=\"background:#fff\" @click=\"setColor('#ffffff')\" :class=\"{'selected':color == '#fff'}\">白</div>\n      <div class=\"color-block common-color-block\" style=\"background:#bbb\" @click=\"setColor('#cccccc')\" :class=\"{'selected':color == '#ccc'}\">灰</div>\n      <div class=\"color-block common-color-block\" @click=\"setColor('')\">透</div>\n      <div style=\"clear:both\"></div>\n    </div>\n    <div class=\"input-group color-block\">\n      <div class=\"input-group-addon\" :style=\"{background:getColor(color)}\"> &nbsp; </div>\n      <input type=\"text\" class=\"form-control input-text-shadow\" :value=\"getColor(color)\" @input=\"inputColor\" placeholder=\"自定义颜色\">\n      <div class=\"input-group-addon btn btn-primary\" @click=\"show=false\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n    </div>\n  </div>\n</dropdown>\n";
 
 /***/ },
-/* 65 */
-/***/ function(module, exports) {
-
-	module.exports = "\n\n\n\n\n<sidebar :show.sync=\"show\">\n  \n  <div slot=\"header\">\n    <button class=\"btn btn-success btn\" @click=\"closeSidebar\">&nbsp; 完成 &nbsp;</button>\n    <h5 class=\"fr\">修改板块背景</h5>\n  </div>\n  <div slot=\"body\" class=\"container-fluid\">\n    <div class=\"row\">\n      <div class=\"col-xs-5\"><color-picker :color.sync=\"backgroundColor\"></color-picker></div>\n      <div class=\"col-xs-7\">背景颜色</div>\n    </div>\n    <div class=\"row\">\n      <div class=\"col-xs-12\">背景图片</div>\n    </div>\n  </div>\n    \n</sidebar>\n";
-
-/***/ },
-/* 66 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -19716,10 +19661,10 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(67)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(54)(module), (function() { return this; }())))
 
 /***/ },
-/* 67 */
+/* 54 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -19735,13 +19680,41 @@
 
 
 /***/ },
-/* 68 */
+/* 55 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"workspace\">\n  <div id=\"content-area\" :style=\"{height: workspace.height + 'px', width: (workspace.width-2) + 'px', marginLeft:(-workspace.width/2 + 1) +'px'}\"></div>\n  <div v-for=\"(sectionId, section) in sections\" class=\"page-section\" :style=\"(workspace.version == 'pc') ? section.style : section.styleM\"  v-on:mouseover=\"setCurrentSectionId(sectionId)\">\n    <div class=\"editable-area\" :style=\"{width: workspace.width + 'px'}\">\n      <!-- 页面元素组件 -->\n      <component v-for=\"(elementId,element) in section.elements\" :is=\"'element-' + element.type\" :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\"></component>\n      <!-- 板块操作按钮组 -->\n      <div class=\"btn-group page-section-operation\" role=\"group\" v-show=\"workspace.currentSectionId==sectionId\" transition=\"fade\" :style=\"{left: workspace.width + 5 + 'px'}\">\n        <template v-if=\"sectionEditing\">\n          <button type=\"button\" class=\"btn btn-success\" title=\"完成\" @click=\"closeSidebar\"><span class=\"glyphicon glyphicon-ok\"></span></button>\n        </template>\n        <template v-if=\"(!sectionEditing)\">\n          <button type=\"button\" class=\"btn btn-primary\" title=\"修改\" @click=\"editSection\"><span class=\"glyphicon glyphicon-pencil\"></span></button>\n          <button type=\"button\" class=\"btn btn-default\" title=\"上移\" @click=\"moveSection('up',sectionId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></button>\n          <button type=\"button\" class=\"btn btn-default\" title=\"下移\" @click=\"moveSection('down',sectionId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></button>\n          <button type=\"button\" class=\"btn btn-default\" title=\"删除\" @click=\"removeSection(sectionId)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n        </template>\n      </div>\n    </div>\n    <div class=\"resize-line\"></div>\n    <div class=\"resize-line-wrap\"></div>\n  </div>\n  <div style=\"height:60px;\"></div>\n  <section-edit :show.sync=\"sectionEditing\"></section-edit>\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n<div>\n  <sidebar :show.sync=\"show\">\n    \n    <div slot=\"header\">\n      <div class=\"btn btn-success\" @click=\"sectionEditDone\">&nbsp; 完成 &nbsp;</div>\n      <!-- <tooltip placement=\"left\" content=\"同时修改桌面版和移动版\">\n        <h5 class=\"fr\"><label><input type=\"checkbox\"> 同步</label></h5>\n      </tooltip> -->\n    </div>\n    <div slot=\"body\">\n      <div class=\"sidebar-block\">\n        <color-picker :color.sync=\"style['background-color']\"></color-picker> &nbsp; 背景颜色\n      </div>\n      <div class=\"sidebar-block\">\n        <div><color-picker :color.sync=\"style['border-color']\"></color-picker> &nbsp; 边框颜色</div>\n        <div class=\"sidebar-block-inside\"><input type=\"text\" class=\"border-width\" v-model=\"style['border-width']\"> &nbsp; 边框尺寸</div>\n      </div>\n    </div>\n      \n  </sidebar>\n</div>\n";
 
 /***/ },
-/* 69 */
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(57)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/element-text.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(66)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./element-text.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19750,11 +19723,3278 @@
 	  value: true
 	});
 	
-	var _vuex = __webpack_require__(70);
+	var _actions = __webpack_require__(7);
+	
+	var _getters = __webpack_require__(8);
+	
+	var _elementCommon = __webpack_require__(58);
+	
+	var _elementCommon2 = _interopRequireDefault(_elementCommon);
+	
+	var _colorPicker = __webpack_require__(47);
+	
+	var _colorPicker2 = _interopRequireDefault(_colorPicker);
+	
+	var _colorMixin = __webpack_require__(51);
+	
+	var _colorMixin2 = _interopRequireDefault(_colorMixin);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: ['element', 'sectionId', 'elementId'],
+	  mixins: [_colorMixin2.default],
+	  components: {
+	    elementCommon: _elementCommon2.default,
+	    colorPicker: _colorPicker2.default
+	  },
+	  vuex: {
+	    actions: {},
+	    getters: {
+	      workspace: _getters.getWorkspaceData
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      buttonGroup: 'main',
+	      editing: false,
+	      fontColor: "3"
+	    };
+	  },
+	
+	  computed: {
+	    draggable: function draggable() {
+	      return !this.editing;
+	    }
+	  },
+	  methods: {
+	    edit: function edit() {
+	      if (this.editing === false) {
+	        this.editing = true;
+	        this.buttonGroup = 'edit';
+	        var contentBox = this.$els.content;
+	        contentBox.setAttribute("contenteditable", true);
+	        contentBox.focus();
+	        var range = window.getSelection();
+	        range.selectAllChildren(contentBox);
+	        range.collapseToEnd();
+	      }
+	    },
+	    editDone: function editDone() {
+	      this.editing = false;
+	      this.buttonGroup = 'main';
+	      this.$els.content.setAttribute("contenteditable", false);
+	    }
+	  },
+	  watch: {
+	    'workspace.activeElementId': function workspaceActiveElementId(val) {
+	      if (val !== this.elementId) this.editDone();
+	    }
+	  }
+	};
+
+/***/ },
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(59)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/element-common.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(65)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./element-common.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _draggabilly = __webpack_require__(60);
+	
+	var _draggabilly2 = _interopRequireDefault(_draggabilly);
+	
+	var _actions = __webpack_require__(7);
+	
+	var _getters = __webpack_require__(8);
+	
+	var _lodash = __webpack_require__(53);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: ['element', 'sectionId', 'elementId', 'buttonGroup', 'draggable'],
+	  vuex: {
+	    actions: {
+	      setActiveElementId: _actions.setActiveElementId,
+	      removeElement: _actions.removeElement,
+	      moveElement: _actions.moveElement
+	    },
+	    getters: {
+	      workspace: _getters.getWorkspaceData
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      toolbarPosition: 'top left',
+	      elPositionInPage: { left: 0, top: 0 },
+	      clickOnThisElement: false,
+	      draggie: null
+	    };
+	  },
+	
+	  computed: {
+	    elStyles: function elStyles() {
+	      var styles = (0, _lodash.merge)({}, this.element.style[this.workspace.version]);
+	      delete styles.zIndex;
+	      return styles;
+	    }
+	  },
+	  methods: {
+	    showToolbar: function showToolbar() {
+	      if (this.workspace.activeElementId !== this.elementId) {
+	        this.setActiveElementId(this.elementId);
+	        this.buttonGroup = 'main';
+	      }
+	
+	      var viewTop = getElementTop(this.$el) - document.documentElement.scrollTop;
+	      var toolbarPositionY = viewTop < 95 ? 'bottom' : 'top';
+	
+	      var viewRight = this.workspace.width - parseInt(this.elStyles.left);
+	      var toolbarPositionX = viewRight < 300 ? 'right' : 'left';
+	
+	      this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX;
+	    },
+	    dragEnable: function dragEnable() {
+	      this.draggie = new _draggabilly2.default(this.$el, {
+	        containment: '#content-area'
+	      });
+	      var startTop = 0;
+	      var that = this;
+	
+	      this.draggie.on('dragEnd', function (event) {
+	        that.buttonGroup = 'main';
+	        var position = $(this.element).position();
+	        that.elPositionInPage.left = position.left;
+	        that.elPositionInPage.top = startTop + position.top;
+	        that.moveElement(that.sectionId, that.elementId, that.elPositionInPage, that.$el.offsetHeight);
+	      });
+	
+	      this.draggie.on('dragStart', function (event) {
+	        that.showToolbar();
+	        that.$dispatch('drag-start');
+	        startTop = getElementTop(that.$el) - 45 - that.$el.offsetTop;
+	      });
+	
+	      this.draggie.on('dragMove', function (event) {
+	        that.buttonGroup = 'position';
+	        var position = $(this.element).position();
+	        that.elPositionInPage.left = position.left;
+	        that.elPositionInPage.top = startTop + position.top;
+	      });
+	    },
+	    dragDisable: function dragDisable() {
+	      var left = this.$el.style.left;
+	      var top = this.$el.style.top;
+	      this.draggie.destroy();
+	      this.$el.style.top = top;
+	      this.$el.style.left = left;
+	    }
+	  },
+	  watch: {
+	    'draggable': function draggable(status) {
+	      if (status) {
+	        this.dragEnable();
+	      } else {
+	        this.dragDisable();
+	      }
+	    }
+	  },
+	  ready: function ready() {
+	    this.dragEnable();
+	  }
+	};
+	
+	var getElementTop = function getElementTop(element) {
+	  var actualTop = element.offsetTop;
+	  var current = element.offsetParent;
+	
+	  while (current !== null) {
+	    actualTop += current.offsetTop;
+	    current = current.offsetParent;
+	  }
+	
+	  return actualTop;
+	};
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	 * Draggabilly v2.1.1
+	 * Make that shiz draggable
+	 * http://draggabilly.desandro.com
+	 * MIT license
+	 */
+	
+	/*jshint browser: true, strict: true, undef: true, unused: true */
+	
+	( function( window, factory ) {
+	  // universal module definition
+	  /* jshint strict: false */ /*globals define, module, require */
+	  if ( true ) {
+	    // AMD
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	        __webpack_require__(61),
+	        __webpack_require__(62)
+	      ], __WEBPACK_AMD_DEFINE_RESULT__ = function( getSize, Unidragger ) {
+	        return factory( window, getSize, Unidragger );
+	      }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if ( typeof module == 'object' && module.exports ) {
+	    // CommonJS
+	    module.exports = factory(
+	      window,
+	      require('get-size'),
+	      require('unidragger')
+	    );
+	  } else {
+	    // browser global
+	    window.Draggabilly = factory(
+	      window,
+	      window.getSize,
+	      window.Unidragger
+	    );
+	  }
+	
+	}( window, function factory( window, getSize, Unidragger ) {
+	
+	'use strict';
+	
+	// vars
+	var document = window.document;
+	
+	function noop() {}
+	
+	// -------------------------- helpers -------------------------- //
+	
+	// extend objects
+	function extend( a, b ) {
+	  for ( var prop in b ) {
+	    a[ prop ] = b[ prop ];
+	  }
+	  return a;
+	}
+	
+	function isElement( obj ) {
+	  return obj instanceof HTMLElement;
+	}
+	
+	// -------------------------- requestAnimationFrame -------------------------- //
+	
+	// get rAF, prefixed, if present
+	var requestAnimationFrame = window.requestAnimationFrame ||
+	  window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
+	
+	// fallback to setTimeout
+	var lastTime = 0;
+	if ( !requestAnimationFrame )  {
+	  requestAnimationFrame = function( callback ) {
+	    var currTime = new Date().getTime();
+	    var timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
+	    var id = setTimeout( callback, timeToCall );
+	    lastTime = currTime + timeToCall;
+	    return id;
+	  };
+	}
+	
+	// -------------------------- support -------------------------- //
+	
+	var docElem = document.documentElement;
+	var transformProperty = typeof docElem.style.transform == 'string' ?
+	  'transform' : 'WebkitTransform';
+	
+	var jQuery = window.jQuery;
+	
+	// --------------------------  -------------------------- //
+	
+	function Draggabilly( element, options ) {
+	  // querySelector if string
+	  this.element = typeof element == 'string' ?
+	    document.querySelector( element ) : element;
+	
+	  if ( jQuery ) {
+	    this.$element = jQuery( this.element );
+	  }
+	
+	  // options
+	  this.options = extend( {}, this.constructor.defaults );
+	  this.option( options );
+	
+	  this._create();
+	}
+	
+	// inherit Unidragger methods
+	var proto = Draggabilly.prototype = Object.create( Unidragger.prototype );
+	
+	Draggabilly.defaults = {
+	};
+	
+	/**
+	 * set options
+	 * @param {Object} opts
+	 */
+	proto.option = function( opts ) {
+	  extend( this.options, opts );
+	};
+	
+	// css position values that don't need to be set
+	var positionValues = {
+	  relative: true,
+	  absolute: true,
+	  fixed: true
+	};
+	
+	proto._create = function() {
+	
+	  // properties
+	  this.position = {};
+	  this._getPosition();
+	
+	  this.startPoint = { x: 0, y: 0 };
+	  this.dragPoint = { x: 0, y: 0 };
+	
+	  this.startPosition = extend( {}, this.position );
+	
+	  // set relative positioning
+	  var style = getComputedStyle( this.element );
+	  if ( !positionValues[ style.position ] ) {
+	    this.element.style.position = 'relative';
+	  }
+	
+	  this.enable();
+	  this.setHandles();
+	
+	};
+	
+	/**
+	 * set this.handles and bind start events to 'em
+	 */
+	proto.setHandles = function() {
+	  this.handles = this.options.handle ?
+	    this.element.querySelectorAll( this.options.handle ) : [ this.element ];
+	
+	  this.bindHandles();
+	};
+	
+	/**
+	 * emits events via EvEmitter and jQuery events
+	 * @param {String} type - name of event
+	 * @param {Event} event - original event
+	 * @param {Array} args - extra arguments
+	 */
+	proto.dispatchEvent = function( type, event, args ) {
+	  var emitArgs = [ event ].concat( args );
+	  this.emitEvent( type, emitArgs );
+	  var jQuery = window.jQuery;
+	  // trigger jQuery event
+	  if ( jQuery && this.$element ) {
+	    if ( event ) {
+	      // create jQuery event
+	      var $event = jQuery.Event( event );
+	      $event.type = type;
+	      this.$element.trigger( $event, args );
+	    } else {
+	      // just trigger with type if no event available
+	      this.$element.trigger( type, args );
+	    }
+	  }
+	};
+	
+	// -------------------------- position -------------------------- //
+	
+	// get x/y position from style
+	proto._getPosition = function() {
+	  var style = getComputedStyle( this.element );
+	  var x = this._getPositionCoord( style.left, 'width' );
+	  var y = this._getPositionCoord( style.top, 'height' );
+	  // clean up 'auto' or other non-integer values
+	  this.position.x = isNaN( x ) ? 0 : x;
+	  this.position.y = isNaN( y ) ? 0 : y;
+	
+	  this._addTransformPosition( style );
+	};
+	
+	proto._getPositionCoord = function( styleSide, measure ) {
+	  if ( styleSide.indexOf('%') != -1 ) {
+	    // convert percent into pixel for Safari, #75
+	    var parentSize = getSize( this.element.parentNode );
+	    // prevent not-in-DOM element throwing bug, #131
+	    return !parentSize ? 0 :
+	      ( parseFloat( styleSide ) / 100 ) * parentSize[ measure ];
+	  }
+	  return parseInt( styleSide, 10 );
+	};
+	
+	// add transform: translate( x, y ) to position
+	proto._addTransformPosition = function( style ) {
+	  var transform = style[ transformProperty ];
+	  // bail out if value is 'none'
+	  if ( transform.indexOf('matrix') !== 0 ) {
+	    return;
+	  }
+	  // split matrix(1, 0, 0, 1, x, y)
+	  var matrixValues = transform.split(',');
+	  // translate X value is in 12th or 4th position
+	  var xIndex = transform.indexOf('matrix3d') === 0 ? 12 : 4;
+	  var translateX = parseInt( matrixValues[ xIndex ], 10 );
+	  // translate Y value is in 13th or 5th position
+	  var translateY = parseInt( matrixValues[ xIndex + 1 ], 10 );
+	  this.position.x += translateX;
+	  this.position.y += translateY;
+	};
+	
+	// -------------------------- events -------------------------- //
+	
+	/**
+	 * pointer start
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto.pointerDown = function( event, pointer ) {
+	  this._dragPointerDown( event, pointer );
+	  // kludge to blur focused inputs in dragger
+	  var focused = document.activeElement;
+	  // do not blur body for IE10, metafizzy/flickity#117
+	  if ( focused && focused.blur && focused != document.body ) {
+	    focused.blur();
+	  }
+	  // bind move and end events
+	  this._bindPostStartEvents( event );
+	  this.element.classList.add('is-pointer-down');
+	  this.dispatchEvent( 'pointerDown', event, [ pointer ] );
+	};
+	
+	/**
+	 * drag move
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto.pointerMove = function( event, pointer ) {
+	  var moveVector = this._dragPointerMove( event, pointer );
+	  this.dispatchEvent( 'pointerMove', event, [ pointer, moveVector ] );
+	  this._dragMove( event, pointer, moveVector );
+	};
+	
+	/**
+	 * drag start
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto.dragStart = function( event, pointer ) {
+	  if ( !this.isEnabled ) {
+	    return;
+	  }
+	  this._getPosition();
+	  this.measureContainment();
+	  // position _when_ drag began
+	  this.startPosition.x = this.position.x;
+	  this.startPosition.y = this.position.y;
+	  // reset left/top style
+	  this.setLeftTop();
+	
+	  this.dragPoint.x = 0;
+	  this.dragPoint.y = 0;
+	
+	  this.element.classList.add('is-dragging');
+	  this.dispatchEvent( 'dragStart', event, [ pointer ] );
+	  // start animation
+	  this.animate();
+	};
+	
+	proto.measureContainment = function() {
+	  var containment = this.options.containment;
+	  if ( !containment ) {
+	    return;
+	  }
+	
+	  // use element if element
+	  var container = isElement( containment ) ? containment :
+	    // fallback to querySelector if string
+	    typeof containment == 'string' ? document.querySelector( containment ) :
+	    // otherwise just `true`, use the parent
+	    this.element.parentNode;
+	
+	  var elemSize = getSize( this.element );
+	  var containerSize = getSize( container );
+	  var elemRect = this.element.getBoundingClientRect();
+	  var containerRect = container.getBoundingClientRect();
+	
+	  var borderSizeX = containerSize.borderLeftWidth + containerSize.borderRightWidth;
+	  var borderSizeY = containerSize.borderTopWidth + containerSize.borderBottomWidth;
+	
+	  var position = this.relativeStartPosition = {
+	    x: elemRect.left - ( containerRect.left + containerSize.borderLeftWidth ),
+	    y: elemRect.top - ( containerRect.top + containerSize.borderTopWidth )
+	  };
+	
+	  this.containSize = {
+	    width: ( containerSize.width - borderSizeX ) - position.x - elemSize.width,
+	    height: ( containerSize.height - borderSizeY ) - position.y - elemSize.height
+	  };
+	};
+	
+	// ----- move event ----- //
+	
+	/**
+	 * drag move
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto.dragMove = function( event, pointer, moveVector ) {
+	  if ( !this.isEnabled ) {
+	    return;
+	  }
+	  var dragX = moveVector.x;
+	  var dragY = moveVector.y;
+	
+	  var grid = this.options.grid;
+	  var gridX = grid && grid[0];
+	  var gridY = grid && grid[1];
+	
+	  dragX = applyGrid( dragX, gridX );
+	  dragY = applyGrid( dragY, gridY );
+	
+	  dragX = this.containDrag( 'x', dragX, gridX );
+	  dragY = this.containDrag( 'y', dragY, gridY );
+	
+	  // constrain to axis
+	  dragX = this.options.axis == 'y' ? 0 : dragX;
+	  dragY = this.options.axis == 'x' ? 0 : dragY;
+	
+	  this.position.x = this.startPosition.x + dragX;
+	  this.position.y = this.startPosition.y + dragY;
+	  // set dragPoint properties
+	  this.dragPoint.x = dragX;
+	  this.dragPoint.y = dragY;
+	
+	  this.dispatchEvent( 'dragMove', event, [ pointer, moveVector ] );
+	};
+	
+	function applyGrid( value, grid, method ) {
+	  method = method || 'round';
+	  return grid ? Math[ method ]( value / grid ) * grid : value;
+	}
+	
+	proto.containDrag = function( axis, drag, grid ) {
+	  if ( !this.options.containment ) {
+	    return drag;
+	  }
+	  var measure = axis == 'x' ? 'width' : 'height';
+	
+	  var rel = this.relativeStartPosition[ axis ];
+	  var min = applyGrid( -rel, grid, 'ceil' );
+	  var max = this.containSize[ measure ];
+	  max = applyGrid( max, grid, 'floor' );
+	  return  Math.min( max, Math.max( min, drag ) );
+	};
+	
+	// ----- end event ----- //
+	
+	/**
+	 * pointer up
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto.pointerUp = function( event, pointer ) {
+	  this.element.classList.remove('is-pointer-down');
+	  this.dispatchEvent( 'pointerUp', event, [ pointer ] );
+	  this._dragPointerUp( event, pointer );
+	};
+	
+	/**
+	 * drag end
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto.dragEnd = function( event, pointer ) {
+	  if ( !this.isEnabled ) {
+	    return;
+	  }
+	  // use top left position when complete
+	  if ( transformProperty ) {
+	    this.element.style[ transformProperty ] = '';
+	    this.setLeftTop();
+	  }
+	  this.element.classList.remove('is-dragging');
+	  this.dispatchEvent( 'dragEnd', event, [ pointer ] );
+	};
+	
+	// -------------------------- animation -------------------------- //
+	
+	proto.animate = function() {
+	  // only render and animate if dragging
+	  if ( !this.isDragging ) {
+	    return;
+	  }
+	
+	  this.positionDrag();
+	
+	  var _this = this;
+	  requestAnimationFrame( function animateFrame() {
+	    _this.animate();
+	  });
+	
+	};
+	
+	// left/top positioning
+	proto.setLeftTop = function() {
+	  this.element.style.left = this.position.x + 'px';
+	  this.element.style.top  = this.position.y + 'px';
+	};
+	
+	proto.positionDrag = function() {
+	  this.element.style[ transformProperty ] = 'translate3d( ' + this.dragPoint.x +
+	    'px, ' + this.dragPoint.y + 'px, 0)';
+	};
+	
+	// ----- staticClick ----- //
+	
+	proto.staticClick = function( event, pointer ) {
+	  this.dispatchEvent( 'staticClick', event, [ pointer ] );
+	};
+	
+	// ----- methods ----- //
+	
+	proto.enable = function() {
+	  this.isEnabled = true;
+	};
+	
+	proto.disable = function() {
+	  this.isEnabled = false;
+	  if ( this.isDragging ) {
+	    this.dragEnd();
+	  }
+	};
+	
+	proto.destroy = function() {
+	  this.disable();
+	  // reset styles
+	  this.element.style[ transformProperty ] = '';
+	  this.element.style.left = '';
+	  this.element.style.top = '';
+	  this.element.style.position = '';
+	  // unbind handles
+	  this.unbindHandles();
+	  // remove jQuery data
+	  if ( this.$element ) {
+	    this.$element.removeData('draggabilly');
+	  }
+	};
+	
+	// ----- jQuery bridget ----- //
+	
+	// required for jQuery bridget
+	proto._init = noop;
+	
+	if ( jQuery && jQuery.bridget ) {
+	  jQuery.bridget( 'draggabilly', Draggabilly );
+	}
+	
+	// -----  ----- //
+	
+	return Draggabilly;
+	
+	}));
+
+
+/***/ },
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	 * getSize v2.0.2
+	 * measure size of elements
+	 * MIT license
+	 */
+	
+	/*jshint browser: true, strict: true, undef: true, unused: true */
+	/*global define: false, module: false, console: false */
+	
+	( function( window, factory ) {
+	  'use strict';
+	
+	  if ( true ) {
+	    // AMD
+	    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+	      return factory();
+	    }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if ( typeof module == 'object' && module.exports ) {
+	    // CommonJS
+	    module.exports = factory();
+	  } else {
+	    // browser global
+	    window.getSize = factory();
+	  }
+	
+	})( window, function factory() {
+	'use strict';
+	
+	// -------------------------- helpers -------------------------- //
+	
+	// get a number from a string, not a percentage
+	function getStyleSize( value ) {
+	  var num = parseFloat( value );
+	  // not a percent like '100%', and a number
+	  var isValid = value.indexOf('%') == -1 && !isNaN( num );
+	  return isValid && num;
+	}
+	
+	function noop() {}
+	
+	var logError = typeof console == 'undefined' ? noop :
+	  function( message ) {
+	    console.error( message );
+	  };
+	
+	// -------------------------- measurements -------------------------- //
+	
+	var measurements = [
+	  'paddingLeft',
+	  'paddingRight',
+	  'paddingTop',
+	  'paddingBottom',
+	  'marginLeft',
+	  'marginRight',
+	  'marginTop',
+	  'marginBottom',
+	  'borderLeftWidth',
+	  'borderRightWidth',
+	  'borderTopWidth',
+	  'borderBottomWidth'
+	];
+	
+	var measurementsLength = measurements.length;
+	
+	function getZeroSize() {
+	  var size = {
+	    width: 0,
+	    height: 0,
+	    innerWidth: 0,
+	    innerHeight: 0,
+	    outerWidth: 0,
+	    outerHeight: 0
+	  };
+	  for ( var i=0; i < measurementsLength; i++ ) {
+	    var measurement = measurements[i];
+	    size[ measurement ] = 0;
+	  }
+	  return size;
+	}
+	
+	// -------------------------- getStyle -------------------------- //
+	
+	/**
+	 * getStyle, get style of element, check for Firefox bug
+	 * https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+	 */
+	function getStyle( elem ) {
+	  var style = getComputedStyle( elem );
+	  if ( !style ) {
+	    logError( 'Style returned ' + style +
+	      '. Are you running this code in a hidden iframe on Firefox? ' +
+	      'See http://bit.ly/getsizebug1' );
+	  }
+	  return style;
+	}
+	
+	// -------------------------- setup -------------------------- //
+	
+	var isSetup = false;
+	
+	var isBoxSizeOuter;
+	
+	/**
+	 * setup
+	 * check isBoxSizerOuter
+	 * do on first getSize() rather than on page load for Firefox bug
+	 */
+	function setup() {
+	  // setup once
+	  if ( isSetup ) {
+	    return;
+	  }
+	  isSetup = true;
+	
+	  // -------------------------- box sizing -------------------------- //
+	
+	  /**
+	   * WebKit measures the outer-width on style.width on border-box elems
+	   * IE & Firefox<29 measures the inner-width
+	   */
+	  var div = document.createElement('div');
+	  div.style.width = '200px';
+	  div.style.padding = '1px 2px 3px 4px';
+	  div.style.borderStyle = 'solid';
+	  div.style.borderWidth = '1px 2px 3px 4px';
+	  div.style.boxSizing = 'border-box';
+	
+	  var body = document.body || document.documentElement;
+	  body.appendChild( div );
+	  var style = getStyle( div );
+	
+	  getSize.isBoxSizeOuter = isBoxSizeOuter = getStyleSize( style.width ) == 200;
+	  body.removeChild( div );
+	
+	}
+	
+	// -------------------------- getSize -------------------------- //
+	
+	function getSize( elem ) {
+	  setup();
+	
+	  // use querySeletor if elem is string
+	  if ( typeof elem == 'string' ) {
+	    elem = document.querySelector( elem );
+	  }
+	
+	  // do not proceed on non-objects
+	  if ( !elem || typeof elem != 'object' || !elem.nodeType ) {
+	    return;
+	  }
+	
+	  var style = getStyle( elem );
+	
+	  // if hidden, everything is 0
+	  if ( style.display == 'none' ) {
+	    return getZeroSize();
+	  }
+	
+	  var size = {};
+	  size.width = elem.offsetWidth;
+	  size.height = elem.offsetHeight;
+	
+	  var isBorderBox = size.isBorderBox = style.boxSizing == 'border-box';
+	
+	  // get all measurements
+	  for ( var i=0; i < measurementsLength; i++ ) {
+	    var measurement = measurements[i];
+	    var value = style[ measurement ];
+	    var num = parseFloat( value );
+	    // any 'auto', 'medium' value will be 0
+	    size[ measurement ] = !isNaN( num ) ? num : 0;
+	  }
+	
+	  var paddingWidth = size.paddingLeft + size.paddingRight;
+	  var paddingHeight = size.paddingTop + size.paddingBottom;
+	  var marginWidth = size.marginLeft + size.marginRight;
+	  var marginHeight = size.marginTop + size.marginBottom;
+	  var borderWidth = size.borderLeftWidth + size.borderRightWidth;
+	  var borderHeight = size.borderTopWidth + size.borderBottomWidth;
+	
+	  var isBorderBoxSizeOuter = isBorderBox && isBoxSizeOuter;
+	
+	  // overwrite width and height if we can get it from style
+	  var styleWidth = getStyleSize( style.width );
+	  if ( styleWidth !== false ) {
+	    size.width = styleWidth +
+	      // add padding and border unless it's already including it
+	      ( isBorderBoxSizeOuter ? 0 : paddingWidth + borderWidth );
+	  }
+	
+	  var styleHeight = getStyleSize( style.height );
+	  if ( styleHeight !== false ) {
+	    size.height = styleHeight +
+	      // add padding and border unless it's already including it
+	      ( isBorderBoxSizeOuter ? 0 : paddingHeight + borderHeight );
+	  }
+	
+	  size.innerWidth = size.width - ( paddingWidth + borderWidth );
+	  size.innerHeight = size.height - ( paddingHeight + borderHeight );
+	
+	  size.outerWidth = size.width + marginWidth;
+	  size.outerHeight = size.height + marginHeight;
+	
+	  return size;
+	}
+	
+	return getSize;
+	
+	});
+
+
+/***/ },
+/* 62 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	 * Unidragger v2.1.0
+	 * Draggable base class
+	 * MIT license
+	 */
+	
+	/*jshint browser: true, unused: true, undef: true, strict: true */
+	
+	( function( window, factory ) {
+	  // universal module definition
+	  /*jshint strict: false */ /*globals define, module, require */
+	
+	  if ( true ) {
+	    // AMD
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	      __webpack_require__(63)
+	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function( Unipointer ) {
+	      return factory( window, Unipointer );
+	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if ( typeof module == 'object' && module.exports ) {
+	    // CommonJS
+	    module.exports = factory(
+	      window,
+	      require('unipointer')
+	    );
+	  } else {
+	    // browser global
+	    window.Unidragger = factory(
+	      window,
+	      window.Unipointer
+	    );
+	  }
+	
+	}( window, function factory( window, Unipointer ) {
+	
+	'use strict';
+	
+	// -----  ----- //
+	
+	function noop() {}
+	
+	// -------------------------- Unidragger -------------------------- //
+	
+	function Unidragger() {}
+	
+	// inherit Unipointer & EvEmitter
+	var proto = Unidragger.prototype = Object.create( Unipointer.prototype );
+	
+	// ----- bind start ----- //
+	
+	proto.bindHandles = function() {
+	  this._bindHandles( true );
+	};
+	
+	proto.unbindHandles = function() {
+	  this._bindHandles( false );
+	};
+	
+	var navigator = window.navigator;
+	/**
+	 * works as unbinder, as you can .bindHandles( false ) to unbind
+	 * @param {Boolean} isBind - will unbind if falsey
+	 */
+	proto._bindHandles = function( isBind ) {
+	  // munge isBind, default to true
+	  isBind = isBind === undefined ? true : !!isBind;
+	  // extra bind logic
+	  var binderExtra;
+	  if ( navigator.pointerEnabled ) {
+	    binderExtra = function( handle ) {
+	      // disable scrolling on the element
+	      handle.style.touchAction = isBind ? 'none' : '';
+	    };
+	  } else if ( navigator.msPointerEnabled ) {
+	    binderExtra = function( handle ) {
+	      // disable scrolling on the element
+	      handle.style.msTouchAction = isBind ? 'none' : '';
+	    };
+	  } else {
+	    binderExtra = noop;
+	  }
+	  // bind each handle
+	  var bindMethod = isBind ? 'addEventListener' : 'removeEventListener';
+	  for ( var i=0; i < this.handles.length; i++ ) {
+	    var handle = this.handles[i];
+	    this._bindStartEvent( handle, isBind );
+	    binderExtra( handle );
+	    handle[ bindMethod ]( 'click', this );
+	  }
+	};
+	
+	// ----- start event ----- //
+	
+	/**
+	 * pointer start
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto.pointerDown = function( event, pointer ) {
+	  // dismiss range sliders
+	  if ( event.target.nodeName == 'INPUT' && event.target.type == 'range' ) {
+	    // reset pointerDown logic
+	    this.isPointerDown = false;
+	    delete this.pointerIdentifier;
+	    return;
+	  }
+	
+	  this._dragPointerDown( event, pointer );
+	  // kludge to blur focused inputs in dragger
+	  var focused = document.activeElement;
+	  if ( focused && focused.blur ) {
+	    focused.blur();
+	  }
+	  // bind move and end events
+	  this._bindPostStartEvents( event );
+	  this.emitEvent( 'pointerDown', [ event, pointer ] );
+	};
+	
+	// base pointer down logic
+	proto._dragPointerDown = function( event, pointer ) {
+	  // track to see when dragging starts
+	  this.pointerDownPoint = Unipointer.getPointerPoint( pointer );
+	
+	  var canPreventDefault = this.canPreventDefaultOnPointerDown( event, pointer );
+	  if ( canPreventDefault ) {
+	    event.preventDefault();
+	  }
+	};
+	
+	// overwriteable method so Flickity can prevent for scrolling
+	proto.canPreventDefaultOnPointerDown = function( event ) {
+	  // prevent default, unless touchstart or <select>
+	  return event.target.nodeName != 'SELECT';
+	};
+	
+	// ----- move event ----- //
+	
+	/**
+	 * drag move
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto.pointerMove = function( event, pointer ) {
+	  var moveVector = this._dragPointerMove( event, pointer );
+	  this.emitEvent( 'pointerMove', [ event, pointer, moveVector ] );
+	  this._dragMove( event, pointer, moveVector );
+	};
+	
+	// base pointer move logic
+	proto._dragPointerMove = function( event, pointer ) {
+	  var movePoint = Unipointer.getPointerPoint( pointer );
+	  var moveVector = {
+	    x: movePoint.x - this.pointerDownPoint.x,
+	    y: movePoint.y - this.pointerDownPoint.y
+	  };
+	  // start drag if pointer has moved far enough to start drag
+	  if ( !this.isDragging && this.hasDragStarted( moveVector ) ) {
+	    this._dragStart( event, pointer );
+	  }
+	  return moveVector;
+	};
+	
+	// condition if pointer has moved far enough to start drag
+	proto.hasDragStarted = function( moveVector ) {
+	  return Math.abs( moveVector.x ) > 3 || Math.abs( moveVector.y ) > 3;
+	};
+	
+	
+	// ----- end event ----- //
+	
+	/**
+	 * pointer up
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto.pointerUp = function( event, pointer ) {
+	  this.emitEvent( 'pointerUp', [ event, pointer ] );
+	  this._dragPointerUp( event, pointer );
+	};
+	
+	proto._dragPointerUp = function( event, pointer ) {
+	  if ( this.isDragging ) {
+	    this._dragEnd( event, pointer );
+	  } else {
+	    // pointer didn't move enough for drag to start
+	    this._staticClick( event, pointer );
+	  }
+	};
+	
+	// -------------------------- drag -------------------------- //
+	
+	// dragStart
+	proto._dragStart = function( event, pointer ) {
+	  this.isDragging = true;
+	  this.dragStartPoint = Unipointer.getPointerPoint( pointer );
+	  // prevent clicks
+	  this.isPreventingClicks = true;
+	
+	  this.dragStart( event, pointer );
+	};
+	
+	proto.dragStart = function( event, pointer ) {
+	  this.emitEvent( 'dragStart', [ event, pointer ] );
+	};
+	
+	// dragMove
+	proto._dragMove = function( event, pointer, moveVector ) {
+	  // do not drag if not dragging yet
+	  if ( !this.isDragging ) {
+	    return;
+	  }
+	
+	  this.dragMove( event, pointer, moveVector );
+	};
+	
+	proto.dragMove = function( event, pointer, moveVector ) {
+	  event.preventDefault();
+	  this.emitEvent( 'dragMove', [ event, pointer, moveVector ] );
+	};
+	
+	// dragEnd
+	proto._dragEnd = function( event, pointer ) {
+	  // set flags
+	  this.isDragging = false;
+	  // re-enable clicking async
+	  setTimeout( function() {
+	    delete this.isPreventingClicks;
+	  }.bind( this ) );
+	
+	  this.dragEnd( event, pointer );
+	};
+	
+	proto.dragEnd = function( event, pointer ) {
+	  this.emitEvent( 'dragEnd', [ event, pointer ] );
+	};
+	
+	// ----- onclick ----- //
+	
+	// handle all clicks and prevent clicks when dragging
+	proto.onclick = function( event ) {
+	  if ( this.isPreventingClicks ) {
+	    event.preventDefault();
+	  }
+	};
+	
+	// ----- staticClick ----- //
+	
+	// triggered after pointer down & up with no/tiny movement
+	proto._staticClick = function( event, pointer ) {
+	  // ignore emulated mouse up clicks
+	  if ( this.isIgnoringMouseUp && event.type == 'mouseup' ) {
+	    return;
+	  }
+	
+	  // allow click in <input>s and <textarea>s
+	  var nodeName = event.target.nodeName;
+	  if ( nodeName == 'INPUT' || nodeName == 'TEXTAREA' ) {
+	    event.target.focus();
+	  }
+	  this.staticClick( event, pointer );
+	
+	  // set flag for emulated clicks 300ms after touchend
+	  if ( event.type != 'mouseup' ) {
+	    this.isIgnoringMouseUp = true;
+	    // reset flag after 300ms
+	    setTimeout( function() {
+	      delete this.isIgnoringMouseUp;
+	    }.bind( this ), 400 );
+	  }
+	};
+	
+	proto.staticClick = function( event, pointer ) {
+	  this.emitEvent( 'staticClick', [ event, pointer ] );
+	};
+	
+	// ----- utils ----- //
+	
+	Unidragger.getPointerPoint = Unipointer.getPointerPoint;
+	
+	// -----  ----- //
+	
+	return Unidragger;
+	
+	}));
+
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	 * Unipointer v2.1.0
+	 * base class for doing one thing with pointer event
+	 * MIT license
+	 */
+	
+	/*jshint browser: true, undef: true, unused: true, strict: true */
+	
+	( function( window, factory ) {
+	  // universal module definition
+	  /* jshint strict: false */ /*global define, module, require */
+	  if ( true ) {
+	    // AMD
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	      __webpack_require__(64)
+	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function( EvEmitter ) {
+	      return factory( window, EvEmitter );
+	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if ( typeof module == 'object' && module.exports ) {
+	    // CommonJS
+	    module.exports = factory(
+	      window,
+	      require('ev-emitter')
+	    );
+	  } else {
+	    // browser global
+	    window.Unipointer = factory(
+	      window,
+	      window.EvEmitter
+	    );
+	  }
+	
+	}( window, function factory( window, EvEmitter ) {
+	
+	'use strict';
+	
+	function noop() {}
+	
+	function Unipointer() {}
+	
+	// inherit EvEmitter
+	var proto = Unipointer.prototype = Object.create( EvEmitter.prototype );
+	
+	proto.bindStartEvent = function( elem ) {
+	  this._bindStartEvent( elem, true );
+	};
+	
+	proto.unbindStartEvent = function( elem ) {
+	  this._bindStartEvent( elem, false );
+	};
+	
+	/**
+	 * works as unbinder, as you can ._bindStart( false ) to unbind
+	 * @param {Boolean} isBind - will unbind if falsey
+	 */
+	proto._bindStartEvent = function( elem, isBind ) {
+	  // munge isBind, default to true
+	  isBind = isBind === undefined ? true : !!isBind;
+	  var bindMethod = isBind ? 'addEventListener' : 'removeEventListener';
+	
+	  if ( window.navigator.pointerEnabled ) {
+	    // W3C Pointer Events, IE11. See https://coderwall.com/p/mfreca
+	    elem[ bindMethod ]( 'pointerdown', this );
+	  } else if ( window.navigator.msPointerEnabled ) {
+	    // IE10 Pointer Events
+	    elem[ bindMethod ]( 'MSPointerDown', this );
+	  } else {
+	    // listen for both, for devices like Chrome Pixel
+	    elem[ bindMethod ]( 'mousedown', this );
+	    elem[ bindMethod ]( 'touchstart', this );
+	  }
+	};
+	
+	// trigger handler methods for events
+	proto.handleEvent = function( event ) {
+	  var method = 'on' + event.type;
+	  if ( this[ method ] ) {
+	    this[ method ]( event );
+	  }
+	};
+	
+	// returns the touch that we're keeping track of
+	proto.getTouch = function( touches ) {
+	  for ( var i=0; i < touches.length; i++ ) {
+	    var touch = touches[i];
+	    if ( touch.identifier == this.pointerIdentifier ) {
+	      return touch;
+	    }
+	  }
+	};
+	
+	// ----- start event ----- //
+	
+	proto.onmousedown = function( event ) {
+	  // dismiss clicks from right or middle buttons
+	  var button = event.button;
+	  if ( button && ( button !== 0 && button !== 1 ) ) {
+	    return;
+	  }
+	  this._pointerDown( event, event );
+	};
+	
+	proto.ontouchstart = function( event ) {
+	  this._pointerDown( event, event.changedTouches[0] );
+	};
+	
+	proto.onMSPointerDown =
+	proto.onpointerdown = function( event ) {
+	  this._pointerDown( event, event );
+	};
+	
+	/**
+	 * pointer start
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 */
+	proto._pointerDown = function( event, pointer ) {
+	  // dismiss other pointers
+	  if ( this.isPointerDown ) {
+	    return;
+	  }
+	
+	  this.isPointerDown = true;
+	  // save pointer identifier to match up touch events
+	  this.pointerIdentifier = pointer.pointerId !== undefined ?
+	    // pointerId for pointer events, touch.indentifier for touch events
+	    pointer.pointerId : pointer.identifier;
+	
+	  this.pointerDown( event, pointer );
+	};
+	
+	proto.pointerDown = function( event, pointer ) {
+	  this._bindPostStartEvents( event );
+	  this.emitEvent( 'pointerDown', [ event, pointer ] );
+	};
+	
+	// hash of events to be bound after start event
+	var postStartEvents = {
+	  mousedown: [ 'mousemove', 'mouseup' ],
+	  touchstart: [ 'touchmove', 'touchend', 'touchcancel' ],
+	  pointerdown: [ 'pointermove', 'pointerup', 'pointercancel' ],
+	  MSPointerDown: [ 'MSPointerMove', 'MSPointerUp', 'MSPointerCancel' ]
+	};
+	
+	proto._bindPostStartEvents = function( event ) {
+	  if ( !event ) {
+	    return;
+	  }
+	  // get proper events to match start event
+	  var events = postStartEvents[ event.type ];
+	  // bind events to node
+	  events.forEach( function( eventName ) {
+	    window.addEventListener( eventName, this );
+	  }, this );
+	  // save these arguments
+	  this._boundPointerEvents = events;
+	};
+	
+	proto._unbindPostStartEvents = function() {
+	  // check for _boundEvents, in case dragEnd triggered twice (old IE8 bug)
+	  if ( !this._boundPointerEvents ) {
+	    return;
+	  }
+	  this._boundPointerEvents.forEach( function( eventName ) {
+	    window.removeEventListener( eventName, this );
+	  }, this );
+	
+	  delete this._boundPointerEvents;
+	};
+	
+	// ----- move event ----- //
+	
+	proto.onmousemove = function( event ) {
+	  this._pointerMove( event, event );
+	};
+	
+	proto.onMSPointerMove =
+	proto.onpointermove = function( event ) {
+	  if ( event.pointerId == this.pointerIdentifier ) {
+	    this._pointerMove( event, event );
+	  }
+	};
+	
+	proto.ontouchmove = function( event ) {
+	  var touch = this.getTouch( event.changedTouches );
+	  if ( touch ) {
+	    this._pointerMove( event, touch );
+	  }
+	};
+	
+	/**
+	 * pointer move
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 * @private
+	 */
+	proto._pointerMove = function( event, pointer ) {
+	  this.pointerMove( event, pointer );
+	};
+	
+	// public
+	proto.pointerMove = function( event, pointer ) {
+	  this.emitEvent( 'pointerMove', [ event, pointer ] );
+	};
+	
+	// ----- end event ----- //
+	
+	
+	proto.onmouseup = function( event ) {
+	  this._pointerUp( event, event );
+	};
+	
+	proto.onMSPointerUp =
+	proto.onpointerup = function( event ) {
+	  if ( event.pointerId == this.pointerIdentifier ) {
+	    this._pointerUp( event, event );
+	  }
+	};
+	
+	proto.ontouchend = function( event ) {
+	  var touch = this.getTouch( event.changedTouches );
+	  if ( touch ) {
+	    this._pointerUp( event, touch );
+	  }
+	};
+	
+	/**
+	 * pointer up
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 * @private
+	 */
+	proto._pointerUp = function( event, pointer ) {
+	  this._pointerDone();
+	  this.pointerUp( event, pointer );
+	};
+	
+	// public
+	proto.pointerUp = function( event, pointer ) {
+	  this.emitEvent( 'pointerUp', [ event, pointer ] );
+	};
+	
+	// ----- pointer done ----- //
+	
+	// triggered on pointer up & pointer cancel
+	proto._pointerDone = function() {
+	  // reset properties
+	  this.isPointerDown = false;
+	  delete this.pointerIdentifier;
+	  // remove events
+	  this._unbindPostStartEvents();
+	  this.pointerDone();
+	};
+	
+	proto.pointerDone = noop;
+	
+	// ----- pointer cancel ----- //
+	
+	proto.onMSPointerCancel =
+	proto.onpointercancel = function( event ) {
+	  if ( event.pointerId == this.pointerIdentifier ) {
+	    this._pointerCancel( event, event );
+	  }
+	};
+	
+	proto.ontouchcancel = function( event ) {
+	  var touch = this.getTouch( event.changedTouches );
+	  if ( touch ) {
+	    this._pointerCancel( event, touch );
+	  }
+	};
+	
+	/**
+	 * pointer cancel
+	 * @param {Event} event
+	 * @param {Event or Touch} pointer
+	 * @private
+	 */
+	proto._pointerCancel = function( event, pointer ) {
+	  this._pointerDone();
+	  this.pointerCancel( event, pointer );
+	};
+	
+	// public
+	proto.pointerCancel = function( event, pointer ) {
+	  this.emitEvent( 'pointerCancel', [ event, pointer ] );
+	};
+	
+	// -----  ----- //
+	
+	// utility function for getting x/y coords from event
+	Unipointer.getPointerPoint = function( pointer ) {
+	  return {
+	    x: pointer.pageX,
+	    y: pointer.pageY
+	  };
+	};
+	
+	// -----  ----- //
+	
+	return Unipointer;
+	
+	}));
+
+
+/***/ },
+/* 64 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * EvEmitter v1.0.3
+	 * Lil' event emitter
+	 * MIT License
+	 */
+	
+	/* jshint unused: true, undef: true, strict: true */
+	
+	( function( global, factory ) {
+	  // universal module definition
+	  /* jshint strict: false */ /* globals define, module, window */
+	  if ( true ) {
+	    // AMD - RequireJS
+	    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if ( typeof module == 'object' && module.exports ) {
+	    // CommonJS - Browserify, Webpack
+	    module.exports = factory();
+	  } else {
+	    // Browser globals
+	    global.EvEmitter = factory();
+	  }
+	
+	}( typeof window != 'undefined' ? window : this, function() {
+	
+	"use strict";
+	
+	function EvEmitter() {}
+	
+	var proto = EvEmitter.prototype;
+	
+	proto.on = function( eventName, listener ) {
+	  if ( !eventName || !listener ) {
+	    return;
+	  }
+	  // set events hash
+	  var events = this._events = this._events || {};
+	  // set listeners array
+	  var listeners = events[ eventName ] = events[ eventName ] || [];
+	  // only add once
+	  if ( listeners.indexOf( listener ) == -1 ) {
+	    listeners.push( listener );
+	  }
+	
+	  return this;
+	};
+	
+	proto.once = function( eventName, listener ) {
+	  if ( !eventName || !listener ) {
+	    return;
+	  }
+	  // add event
+	  this.on( eventName, listener );
+	  // set once flag
+	  // set onceEvents hash
+	  var onceEvents = this._onceEvents = this._onceEvents || {};
+	  // set onceListeners object
+	  var onceListeners = onceEvents[ eventName ] = onceEvents[ eventName ] || {};
+	  // set flag
+	  onceListeners[ listener ] = true;
+	
+	  return this;
+	};
+	
+	proto.off = function( eventName, listener ) {
+	  var listeners = this._events && this._events[ eventName ];
+	  if ( !listeners || !listeners.length ) {
+	    return;
+	  }
+	  var index = listeners.indexOf( listener );
+	  if ( index != -1 ) {
+	    listeners.splice( index, 1 );
+	  }
+	
+	  return this;
+	};
+	
+	proto.emitEvent = function( eventName, args ) {
+	  var listeners = this._events && this._events[ eventName ];
+	  if ( !listeners || !listeners.length ) {
+	    return;
+	  }
+	  var i = 0;
+	  var listener = listeners[i];
+	  args = args || [];
+	  // once stuff
+	  var onceListeners = this._onceEvents && this._onceEvents[ eventName ];
+	
+	  while ( listener ) {
+	    var isOnce = onceListeners && onceListeners[ listener ];
+	    if ( isOnce ) {
+	      // remove listener
+	      // remove before trigger to prevent recursion
+	      this.off( eventName, listener );
+	      // unset once flag
+	      delete onceListeners[ listener ];
+	    }
+	    // trigger listener
+	    listener.apply( this, args );
+	    // get next listener
+	    i += isOnce ? 0 : 1;
+	    listener = listeners[i];
+	  }
+	
+	  return this;
+	};
+	
+	return EvEmitter;
+	
+	}));
+
+
+/***/ },
+/* 65 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div :style=\"elStyles\" class=\"element\" @click=\"showToolbar\" @mousedown.stop>\n  <div class=\"el-content\" id=\"element-{{elementId}}\" :style=\"{zIndex:element.style[this.workspace.version].zIndex}\" v-bind:class=\"{'outline':workspace.activeElementId === elementId}\">\n    <slot name=\"content\"></slot>\n  </div>\n  <div v-if=\"workspace.activeElementId === elementId\" class=\"el-toolbar {{toolbarPosition}}\" @mousedown.stop>\n    <div v-show=\"buttonGroup === 'main'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <slot name=\"main-buttons-extend\"></slot>\n      <div class=\"btn btn-default\" title=\"复制一个\"><span class=\"glyphicon glyphicon-duplicate\"></span></div>\n      <div class=\"btn btn-default\" title=\"移到顶层\"><span class=\"glyphicon glyphicon-circle-arrow-up\"></span></div>\n      <div class=\"btn btn-default\" title=\"移到底层\"><span class=\"glyphicon glyphicon-circle-arrow-down\"></span></div>\n      <div class=\"btn btn-default\" title=\"删除\" @click=\"removeElement(sectionId,elementId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n    </div>\n    <div v-show=\"buttonGroup === 'position'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-success\">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</span></div>\n    </div>\n    <slot name=\"button-groups\"></slot>\n  </div>\n  <slot name=\"tools\"></slot>\n</div>\n";
+
+/***/ },
+/* 66 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n  <div v-el:content slot=\"content\" @dblclick=\"edit\" contenteditable=\"false\" style=\"outline:none\" :style=\"{cursor:editing ? 'text' : 'default'}\">\n    {{{element.content}}}\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <color-picker :color.sync=\"fontColor\">\n        <div class=\"btn btn-default\" data-toggle=\"dropdown\" title=\"颜色\"><span class=\"glyphicon glyphicon-text-color\"></span> <span class=\"caret\"></span></div>\n      </color-picker>\n      <div class=\"btn btn-default\" title=\"字号\"><span class=\"glyphicon glyphicon-text-size\"></span> <span class=\"caret\"></span></div>\n      <div class=\"btn btn-default\" title=\"行高\"><span class=\"glyphicon glyphicon-text-height\"></span> <span class=\"caret\"></span></div>\n      <div class=\"btn btn-default\" title=\"对齐\"><span class=\"glyphicon glyphicon-align-left\"></span> <span class=\"caret\"></span></div>\n      <div class=\"btn btn-default\" title=\"加粗\">B</div>\n      <div class=\"btn btn-default\" title=\"斜体\"><i>I</i></div>\n      <div class=\"btn btn-default\" title=\"斜体\"><u>U</u></div>\n      <div class=\"btn btn-default\" title=\"链接\"><span class=\"glyphicon glyphicon-link\"></span></div>\n      <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n    </div>\n  </template>\n</element-common>\n";
+
+/***/ },
+/* 67 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(68)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/element-image.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(79)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./element-image.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 68 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _actions = __webpack_require__(7);
+	
+	var _getters = __webpack_require__(8);
+	
+	var _elementCommon = __webpack_require__(58);
+	
+	var _elementCommon2 = _interopRequireDefault(_elementCommon);
+	
+	var _imageLibrary = __webpack_require__(69);
+	
+	var _imageLibrary2 = _interopRequireDefault(_imageLibrary);
+	
+	var _linkEdit = __webpack_require__(74);
+	
+	var _linkEdit2 = _interopRequireDefault(_linkEdit);
+	
+	var _lodash = __webpack_require__(53);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: ['element', 'sectionId', 'elementId'],
+	  components: {
+	    elementCommon: _elementCommon2.default,
+	    imageLibrary: _imageLibrary2.default,
+	    linkEdit: _linkEdit2.default
+	  },
+	  vuex: {
+	    actions: {
+	      modifyElement: _actions.modifyElement
+	    },
+	    getters: {
+	      workspace: _getters.getWorkspaceData
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      buttonGroup: 'main',
+	      showImageLibary: false,
+	      imageObj: {},
+	      linkObj: (0, _lodash.merge)({}, this.element.link)
+	    };
+	  },
+	
+	  methods: {
+	    edit: function edit() {
+	      this.showImageLibary = true;
+	    }
+	  },
+	  computed: {
+	    draggable: function draggable() {
+	      return this.buttonGroup !== 'link';
+	    }
+	  },
+	  events: {
+	    'link-edit-done': function linkEditDone(changed, linkObj) {
+	      if (changed) {
+	        this.linkObj = (0, _lodash.merge)({}, linkObj);
+	        var newPropsObj = { link: linkObj };
+	        this.modifyElement(this.sectionId, this.elementId, newPropsObj);
+	      }
+	      this.buttonGroup = 'main';
+	    }
+	  },
+	  watch: {
+	    'imageObj': function imageObj(newImage) {
+	      var newPropsObj = new Object();
+	      newPropsObj.src = newImage.url;
+	
+	      if (!this.element.style.pc.width) {
+	        var pcWidth = newImage.width > 960 ? 960 : newImage.width;
+	        var mobileWidth = newImage.width > 400 ? 400 : newImage.width;
+	        var pcLeft = (960 - pcWidth) / 2;
+	        var mobileLeft = (400 - mobileWidth) / 2;
+	
+	        newPropsObj.style = {
+	          'pc': {
+	            width: pcWidth + 'px',
+	            left: pcLeft + 'px'
+	          },
+	          'mobile': {
+	            width: mobileWidth + 'px',
+	            left: mobileLeft + 'px'
+	          }
+	        };
+	      }
+	      this.modifyElement(this.sectionId, this.elementId, newPropsObj);
+	    }
+	  }
+	};
+
+/***/ },
+/* 69 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(70)
+	__vue_script__ = __webpack_require__(72)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/image-library.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(73)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./image-library.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 70 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(71);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./image-library.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./image-library.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 71 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(12)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n\n.image-item{\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/image-library.vue?7c7b988b"],"names":[],"mappings":";;AAEA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,aAAA;EACA,mBAAA;EACA,gBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA","file":"image-library.vue","sourcesContent":["<style>\n\n.image-item{\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n</style>\n\n<template>\n  <modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'400px'\" >\n    <div slot=\"header\">\n      <ul class=\"nav nav-pills\">\n        <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n        <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n      </ul>\n    </div>\n    \n    <div slot=\"body\">\n      <div v-show=\"loading\" class=\"loading\"></div>\n      <div v-else>\n        <div v-for=\"(imageId,image) in images\" class=\"image-item\" v-bind:class=\"{selected: imageId === currentImageId}\" @click=\"currentImageId = imageId\" @dblclick=\"pickImage(imageId)\">\n          <img :src=\"image.thumb\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n        </div>\n      </div>\n    </div>\n    <div slot=\"footer\">\n      <!-- <button class=\"btn btn-default btn-sm\" @click=\"show = false\">关闭</button> -->\n      <button class=\"btn btn-primary btn-sm fl\" @click=\"\">上传图片</button>\n      <span v-if=\"currentImageId !== null\">\n        名称:{{images[currentImageId].name}} &nbsp;\n        Alt:{{images[currentImageId].alt}} &nbsp;\n        尺寸:{{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n        <span class=\"btn btn-default btn-sm\">查看 <span class=\"glyphicon glyphicon-zoom-in\"></span></span>\n      </span> &nbsp; \n      <div class=\"btn btn-success btn-sm\" v-bind:class=\"{disabled:currentImageId === null}\" @click=\"pickImage(currentImageId)\">选定这张图片</div>\n    </div>\n  </modal>\n</template>\n\n<script>\nimport {  } from '../store/actions'\nimport {  } from '../store/getters'\nimport modal from './modal.vue'\n\nexport default {\n  components: {\n    modal\n  },\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true    \n    },\n    imageObj:{\n      type: Object,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      currentTab: 'my',\n      loading: true,\n      currentImageId: null,\n      images: {}\n    }\n  },\n  methods:{\n    pickImage: function(imageId){\n      if (imageId != null){\n        this.imageObj = this.images[imageId];\n        this.show = false;\n      }\n    },\n    loadImages: function(){\n      this.images = {\n        1567: {\n          name:\"test\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          width:\"913\", \n          height:\"571\"},\n        2522: {\n          name:\"test2\", \n          alt:\"\",\n          url:  \"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          thumb:\"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          width:\"750\", \n          height:\"1344\"},\n        3455: {\n          name:\"test3\", \n          alt:\"\",\n          url:  \"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          thumb:\"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          width:\"2048\", \n          height:\"2048\"},\n        5532: {\n          name:\"test4\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          width:\"3000\", \n          height:\"1916\"},\n        1527: {\n          name:\"test\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          width:\"913\", \n          height:\"571\"},\n        6689: {\n          name:\"test2\", \n          alt:\"\",\n          url:  \"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          thumb:\"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          width:\"750\", \n          height:\"1344\"},\n        9535: {\n          name:\"test3\", \n          alt:\"\",\n          url:  \"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          thumb:\"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          width:\"2048\", \n          height:\"2048\"},\n        7363: {\n          name:\"test4\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          width:\"3000\", \n          height:\"1916\"},\n        6256: {\n          name:\"test\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          width:\"913\", \n          height:\"571\"},\n        8902: {\n          name:\"test2\", \n          alt:\"\",\n          url:  \"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          thumb:\"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          width:\"750\", \n          height:\"1344\"},\n        9455: {\n          name:\"test3\", \n          alt:\"\",\n          url:  \"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          thumb:\"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          width:\"2048\", \n          height:\"2048\"},\n        2864: {\n          name:\"test4\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          width:\"3000\", \n          height:\"1916\"},\n      }\n      this.loading = false;\n    }\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      \n    }\n  },\n  ready (){\n    this.loadImages();\n  }\n}\n</script>"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 72 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	__webpack_require__(7);
+	
+	__webpack_require__(8);
+	
+	var _modal = __webpack_require__(15);
+	
+	var _modal2 = _interopRequireDefault(_modal);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  components: {
+	    modal: _modal2.default
+	  },
+	  props: {
+	    show: {
+	      type: Boolean,
+	      required: true,
+	      twoWay: true
+	    },
+	    imageObj: {
+	      type: Object,
+	      required: true,
+	      twoWay: true
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      currentTab: 'my',
+	      loading: true,
+	      currentImageId: null,
+	      images: {}
+	    };
+	  },
+	
+	  methods: {
+	    pickImage: function pickImage(imageId) {
+	      if (imageId != null) {
+	        this.imageObj = this.images[imageId];
+	        this.show = false;
+	      }
+	    },
+	    loadImages: function loadImages() {
+	      this.images = {
+	        1567: {
+	          name: "test",
+	          alt: "",
+	          url: "http://img9.dzdwl.com/img/234114120527677151.jpg",
+	          thumb: "http://img9.dzdwl.com/img/234114120527677151.jpg",
+	          width: "913",
+	          height: "571" },
+	        2522: {
+	          name: "test2",
+	          alt: "",
+	          url: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
+	          thumb: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
+	          width: "750",
+	          height: "1344" },
+	        3455: {
+	          name: "test3",
+	          alt: "",
+	          url: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
+	          thumb: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
+	          width: "2048",
+	          height: "2048" },
+	        5532: {
+	          name: "test4",
+	          alt: "",
+	          url: "http://img9.dzdwl.com/img/2012081210373.jpg",
+	          thumb: "http://img9.dzdwl.com/img/2012081210373.jpg",
+	          width: "3000",
+	          height: "1916" },
+	        1527: {
+	          name: "test",
+	          alt: "",
+	          url: "http://img9.dzdwl.com/img/234114120527677151.jpg",
+	          thumb: "http://img9.dzdwl.com/img/234114120527677151.jpg",
+	          width: "913",
+	          height: "571" },
+	        6689: {
+	          name: "test2",
+	          alt: "",
+	          url: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
+	          thumb: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
+	          width: "750",
+	          height: "1344" },
+	        9535: {
+	          name: "test3",
+	          alt: "",
+	          url: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
+	          thumb: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
+	          width: "2048",
+	          height: "2048" },
+	        7363: {
+	          name: "test4",
+	          alt: "",
+	          url: "http://img9.dzdwl.com/img/2012081210373.jpg",
+	          thumb: "http://img9.dzdwl.com/img/2012081210373.jpg",
+	          width: "3000",
+	          height: "1916" },
+	        6256: {
+	          name: "test",
+	          alt: "",
+	          url: "http://img9.dzdwl.com/img/234114120527677151.jpg",
+	          thumb: "http://img9.dzdwl.com/img/234114120527677151.jpg",
+	          width: "913",
+	          height: "571" },
+	        8902: {
+	          name: "test2",
+	          alt: "",
+	          url: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
+	          thumb: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
+	          width: "750",
+	          height: "1344" },
+	        9455: {
+	          name: "test3",
+	          alt: "",
+	          url: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
+	          thumb: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
+	          width: "2048",
+	          height: "2048" },
+	        2864: {
+	          name: "test4",
+	          alt: "",
+	          url: "http://img9.dzdwl.com/img/2012081210373.jpg",
+	          thumb: "http://img9.dzdwl.com/img/2012081210373.jpg",
+	          width: "3000",
+	          height: "1916" }
+	      };
+	      this.loading = false;
+	    }
+	  },
+	  vuex: {
+	    actions: {},
+	    getters: {}
+	  },
+	  ready: function ready() {
+	    this.loadImages();
+	  }
+	};
+
+/***/ },
+/* 73 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'400px'\" >\n  <div slot=\"header\">\n    <ul class=\"nav nav-pills\">\n      <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n      <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n    </ul>\n  </div>\n  \n  <div slot=\"body\">\n    <div v-show=\"loading\" class=\"loading\"></div>\n    <div v-else>\n      <div v-for=\"(imageId,image) in images\" class=\"image-item\" v-bind:class=\"{selected: imageId === currentImageId}\" @click=\"currentImageId = imageId\" @dblclick=\"pickImage(imageId)\">\n        <img :src=\"image.thumb\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n      </div>\n    </div>\n  </div>\n  <div slot=\"footer\">\n    <!-- <button class=\"btn btn-default btn-sm\" @click=\"show = false\">关闭</button> -->\n    <button class=\"btn btn-primary btn-sm fl\" @click=\"\">上传图片</button>\n    <span v-if=\"currentImageId !== null\">\n      名称:{{images[currentImageId].name}} &nbsp;\n      Alt:{{images[currentImageId].alt}} &nbsp;\n      尺寸:{{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n      <span class=\"btn btn-default btn-sm\">查看 <span class=\"glyphicon glyphicon-zoom-in\"></span></span>\n    </span> &nbsp; \n    <div class=\"btn btn-success btn-sm\" v-bind:class=\"{disabled:currentImageId === null}\" @click=\"pickImage(currentImageId)\">选定这张图片</div>\n  </div>\n</modal>\n";
+
+/***/ },
+/* 74 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(75)
+	__vue_script__ = __webpack_require__(77)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/link-edit.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(78)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./link-edit.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 75 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(76);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./link-edit.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./link-edit.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 76 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(12)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.link-input{\n  min-width:250px;\n}\n\n.link-input-option{\n  border-left:0!important;\n}\n\n.link-input-option label{\n  margin:0;\n  cursor: pointer;\n  font-weight: normal;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/link-edit.vue?470b8f8a"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAiEA;EACA,gBAAA;CACA;;AAEA;EACA,wBAAA;CACA;;AAEA;EACA,SAAA;EACA,gBAAA;EACA,oBAAA;CACA","file":"link-edit.vue","sourcesContent":["<script>\nimport { merge } from 'lodash'\n\nexport default {\n  props: {\n    linkObj:{\n      type: Object,\n      required: true\n    },\n    linkEditing:{\n      type: Boolean,\n      required: true\n    }\n  },\n  data(){\n    return {\n      changed: false,\n      link: {\n        type:     (this.linkObj.type) || '',\n        url:      (this.linkObj.url)  || '',\n        isNewTab: (this.linkObj.isNewTab) || false,\n        isTrack:  (this.linkObj.isTrack)  || false\n      }\n    }\n  },\n  methods:{\n    editDone: function(){\n      if (this.linkEditing) {\n        this.$dispatch('link-edit-done',this.changed, this.link);\n        this.changed = false;\n      }\n    },\n    removeLink: function(){\n      this.link.type = '';\n      this.link.url  = '';\n      this.changed = true;\n      this.editDone();\n    }\n  },\n  watch:{\n    'link': {\n      deep: true,\n      handler: function(newLink){\n        this.link.type = (this.link.url) ? 'outlink' : ''; \n        this.changed = true;\n      }\n    }\n  },\n  beforeDestroy(){\n    this.editDone();\n  }\n}\n</script>\n\n<template>\n<div class=\"input-group shadow\">\n  <input type=\"text\" class=\"form-control input-text-shadow link-input\" placeholder=\"输入您的链接\" v-model=\"link.url\">\n  <div class=\"input-group-addon link-input-option\"><label><input type=\"checkbox\" v-model=\"link.isNewTab\"> 新窗口</label></div>\n  <div class=\"input-group-addon link-input-option\"><label><input type=\"checkbox\" v-model=\"link.isTrack\"> 追踪</label></div>\n  <div class=\"input-group-addon link-input-option btn btn-danger\" v-show=\"linkObj.url\" @click=\"removeLink\">取消链接</div>\n  <div class=\"input-group-btn\"><div class=\"btn btn-success\" title=\"完成\" @click=\"editDone\">完成</div></div>\n</div>\n</template>\n\n<style>\n.link-input{\n  min-width:250px;\n}\n\n.link-input-option{\n  border-left:0!important;\n}\n\n.link-input-option label{\n  margin:0;\n  cursor: pointer;\n  font-weight: normal;\n}\n</style>"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 77 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _lodash = __webpack_require__(53);
+	
+	exports.default = {
+	  props: {
+	    linkObj: {
+	      type: Object,
+	      required: true
+	    },
+	    linkEditing: {
+	      type: Boolean,
+	      required: true
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      changed: false,
+	      link: {
+	        type: this.linkObj.type || '',
+	        url: this.linkObj.url || '',
+	        isNewTab: this.linkObj.isNewTab || false,
+	        isTrack: this.linkObj.isTrack || false
+	      }
+	    };
+	  },
+	
+	  methods: {
+	    editDone: function editDone() {
+	      if (this.linkEditing) {
+	        this.$dispatch('link-edit-done', this.changed, this.link);
+	        this.changed = false;
+	      }
+	    },
+	    removeLink: function removeLink() {
+	      this.link.type = '';
+	      this.link.url = '';
+	      this.changed = true;
+	      this.editDone();
+	    }
+	  },
+	  watch: {
+	    'link': {
+	      deep: true,
+	      handler: function handler(newLink) {
+	        this.link.type = this.link.url ? 'outlink' : '';
+	        this.changed = true;
+	      }
+	    }
+	  },
+	  beforeDestroy: function beforeDestroy() {
+	    this.editDone();
+	  }
+	};
+
+/***/ },
+/* 78 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"input-group shadow\">\n  <input type=\"text\" class=\"form-control input-text-shadow link-input\" placeholder=\"输入您的链接\" v-model=\"link.url\">\n  <div class=\"input-group-addon link-input-option\"><label><input type=\"checkbox\" v-model=\"link.isNewTab\"> 新窗口</label></div>\n  <div class=\"input-group-addon link-input-option\"><label><input type=\"checkbox\" v-model=\"link.isTrack\"> 追踪</label></div>\n  <div class=\"input-group-addon link-input-option btn btn-danger\" v-show=\"linkObj.url\" @click=\"removeLink\">取消链接</div>\n  <div class=\"input-group-btn\"><div class=\"btn btn-success\" title=\"完成\" @click=\"editDone\">完成</div></div>\n</div>\n";
+
+/***/ },
+/* 79 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n  <div slot=\"content\" @dblclick=\"edit\">\n    <img v-bind:src=\"element.src\" :style=\"{width:element.style[workspace.version].width,height:'auto'}\">\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"更换图片\" @click=\"edit\">更换图片</div>\n    <div class=\"btn btn-default\" title=\"链接\" @click=\"buttonGroup='link'\"><span class=\"glyphicon glyphicon-link\"></span></div>\n  </template>\n  <template slot=\"button-groups\">\n    <link-edit v-show=\"buttonGroup === 'link'\" :link-editing=\"buttonGroup === 'link'\" :link-obj=\"linkObj\"></link-edit>\n  </template>\n</element-common>\n<image-library v-if=\"showImageLibary\" :show.sync=\"showImageLibary\" :image-obj.sync=\"imageObj\"></image-library>\n";
+
+/***/ },
+/* 80 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(81)
+	__vue_script__ = __webpack_require__(83)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/element-button.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(97)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./element-button.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 81 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(82);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./element-button.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./element-button.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 82 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(12)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.element-button{\n  text-align: center;\n  cursor:pointer;\n  padding:6px;\n  border-width: 2px;\n}\n\n.element-button-border {\n  border-style: solid;\n}\n\n.element-button-bold {\n  font-weight: bold;\n}\n\n.element-button-shadow{\n  box-shadow:1px 3px 6px #888;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/element-button.vue?326e44ec"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAqIA;EACA,mBAAA;EACA,eAAA;EACA,YAAA;EACA,kBAAA;CACA;;AAEA;EACA,oBAAA;CACA;;AAEA;EACA,kBAAA;CACA;;AAEA;EACA,4BAAA;CACA","file":"element-button.vue","sourcesContent":["<script>\nimport { modifyElement }  from '../store/actions'\nimport { getWorkspaceData } from '../store/getters'\nimport elementCommon from './element-common.vue'\nimport buttonEdit from './button-edit.vue'\nimport { merge } from 'lodash'\nimport colorMixin from '../mixins/colorMixin.js'\nimport linkEdit from './link-edit.vue'\n\nexport default {\n  //接受父组件传参，element元素属性，sid:板块ID sectionId，eid:元素ID elementId\n  props:['element','sectionId','elementId'],\n  mixins: [colorMixin],\n  components: {\n    elementCommon,\n    buttonEdit,\n    linkEdit\n  },\n  vuex: {\n    actions: {\n      modifyElement\n    },\n    getters: {\n      workspace: getWorkspaceData,\n    }\n  },\n  data (){\n    return {\n      //初始加载主按钮组\n      buttonGroup: 'main',\n      //是否处于编辑状态\n      editing: false,\n      //是否被修改\n      changed: false,\n      //组件实例化时将传入的element参数复制到button中，以避免直接修改store中的状态\n      button: {\n        text: this.element.text,\n        props: merge({}, this.element.props),\n      },\n      //js模拟css hover伪类效果\n      hover: false\n    }\n  },\n  computed:{\n    // 编辑状态不允许拖动\n    draggable: function(){\n      return !this.editing && this.buttonGroup !== 'link';\n    }\n  },\n  methods: {\n    edit: function(){\n      this.editing = true;\n      this.buttonGroup = 'edit';\n    },\n    editLink: function(){\n      this.buttonGroup = 'link';\n    },\n    editDone: function(){\n      this.editing = false;\n      this.buttonGroup = 'main';\n      if (this.changed){\n        this.modifyElement(this.sectionId, this.elementId, this.button);\n        this.changed = false;\n      }\n    }\n  },\n  events:{\n    'link-edit-done':function(changed, linkObj){\n      if (changed){\n        const newPropsObj = {link:linkObj};\n        this.modifyElement(this.sectionId, this.elementId, newPropsObj); \n      }\n      this.buttonGroup = 'main';\n    },\n    'button-edit-done': function(){\n      this.editDone();\n    }\n  },\n  watch: {\n    'workspace.activeElementId': function(val){\n      if (val !== this.elementId) this.editDone();\n    },\n    'button':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    }\n  }\n}\n</script>\n\n<template>\n  <element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n    <div slot=\"content\" class=\"element-button\"\n      @dblclick=\"edit\" \n      @mouseenter = \"hover = true\"\n      @mouseleave = \"hover = false\"\n      :style=\"[\n        {\n          borderRadius: button.props.borderRadius,\n          fontSize: button.props.fontSize,\n          backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n          borderColor:getColor(button.props.borderColor),\n          color:getColor(button.props.fontColor)\n        }\n      ]\" \n      :class=\"{\n        'element-button-shadow':button.props.shadow,\n        'element-button-border':button.props.border,\n        'element-button-bold':button.props.bold\n      }\">\n      {{button.text}}\n    </div>\n    \n    <template slot=\"main-buttons-extend\">\n      <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n      <div class=\"btn btn-default\" title=\"链接\" @click=\"editLink\"><span class=\"glyphicon glyphicon-link\"></span></div>\n    </template>\n    <template slot=\"button-groups\">\n      <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n        <div class=\"btn btn-success\" @click=\"editDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n      </div>\n      <link-edit v-show=\"buttonGroup === 'link'\" :link-editing=\"buttonGroup === 'link'\" :link-obj=\"element.link\"></link-edit>\n    </template>\n    <template slot=\"tools\">\n      <button-edit :show.sync=\"editing\" :button.sync=\"button\"></button-edit>\n    </template>\n  </element-common>\n</template>\n\n<style>\n\n.element-button{\n  text-align: center;\n  cursor:pointer;\n  padding:6px;\n  border-width: 2px;\n}\n\n.element-button-border {\n  border-style: solid;\n}\n\n.element-button-bold {\n  font-weight: bold;\n}\n\n.element-button-shadow{\n  box-shadow:1px 3px 6px #888;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 83 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _actions = __webpack_require__(7);
+	
+	var _getters = __webpack_require__(8);
+	
+	var _elementCommon = __webpack_require__(58);
+	
+	var _elementCommon2 = _interopRequireDefault(_elementCommon);
+	
+	var _buttonEdit = __webpack_require__(84);
+	
+	var _buttonEdit2 = _interopRequireDefault(_buttonEdit);
+	
+	var _lodash = __webpack_require__(53);
+	
+	var _colorMixin = __webpack_require__(51);
+	
+	var _colorMixin2 = _interopRequireDefault(_colorMixin);
+	
+	var _linkEdit = __webpack_require__(74);
+	
+	var _linkEdit2 = _interopRequireDefault(_linkEdit);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: ['element', 'sectionId', 'elementId'],
+	  mixins: [_colorMixin2.default],
+	  components: {
+	    elementCommon: _elementCommon2.default,
+	    buttonEdit: _buttonEdit2.default,
+	    linkEdit: _linkEdit2.default
+	  },
+	  vuex: {
+	    actions: {
+	      modifyElement: _actions.modifyElement
+	    },
+	    getters: {
+	      workspace: _getters.getWorkspaceData
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      buttonGroup: 'main',
+	
+	      editing: false,
+	
+	      changed: false,
+	
+	      button: {
+	        text: this.element.text,
+	        props: (0, _lodash.merge)({}, this.element.props)
+	      },
+	
+	      hover: false
+	    };
+	  },
+	
+	  computed: {
+	    draggable: function draggable() {
+	      return !this.editing && this.buttonGroup !== 'link';
+	    }
+	  },
+	  methods: {
+	    edit: function edit() {
+	      this.editing = true;
+	      this.buttonGroup = 'edit';
+	    },
+	    editLink: function editLink() {
+	      this.buttonGroup = 'link';
+	    },
+	    editDone: function editDone() {
+	      this.editing = false;
+	      this.buttonGroup = 'main';
+	      if (this.changed) {
+	        this.modifyElement(this.sectionId, this.elementId, this.button);
+	        this.changed = false;
+	      }
+	    }
+	  },
+	  events: {
+	    'link-edit-done': function linkEditDone(changed, linkObj) {
+	      if (changed) {
+	        var newPropsObj = { link: linkObj };
+	        this.modifyElement(this.sectionId, this.elementId, newPropsObj);
+	      }
+	      this.buttonGroup = 'main';
+	    },
+	    'button-edit-done': function buttonEditDone() {
+	      this.editDone();
+	    }
+	  },
+	  watch: {
+	    'workspace.activeElementId': function workspaceActiveElementId(val) {
+	      if (val !== this.elementId) this.editDone();
+	    },
+	    'button': {
+	      deep: true,
+	      handler: function handler(val) {
+	        this.changed = true;
+	      }
+	    }
+	  }
+	};
+
+/***/ },
+/* 84 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(85)
+	__vue_script__ = __webpack_require__(87)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/button-edit.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(96)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./button-edit.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 85 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(86);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./button-edit.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./button-edit.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 86 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(12)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.float-color-picker{\n  float:left;\n  width:48px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.color-groups .btn-group{\n  margin-left:4px;\n}\n\n.color-groups .btn-group:first-child{\n  margin:0;\n}\n\n.float-color-block{\n  height:30px;\n  width:100%;\n  border:2px solid #ccc;\n  border-radius: 4px;\n}\n\n.font-size-input{\n  float:left;\n  width:100px;\n}\n\n.corner-radius-input{\n  float:right;\n  width:100px;\n}\n\n.float-color-block-text{\n  margin-top:4px;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/button-edit.vue?96099ea4"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAmHA;EACA,WAAA;EACA,WAAA;EACA,mBAAA;EACA,gBAAA;CACA;;AAEA;EACA,gBAAA;CACA;;AAEA;EACA,SAAA;CACA;;AAEA;EACA,YAAA;EACA,WAAA;EACA,sBAAA;EACA,mBAAA;CACA;;AAEA;EACA,WAAA;EACA,YAAA;CACA;;AAEA;EACA,YAAA;EACA,YAAA;CACA;;AAEA;EACA,eAAA;CACA","file":"button-edit.vue","sourcesContent":["<script>\nimport sidebar from './sidebar.vue'\nimport colorPicker from './color-picker.vue'\nimport fontSize from './font-size.vue'\nimport checkboxButton from './checkbox-button.vue'\nimport colorMixin from '../mixins/colorMixin.js'\n\nexport default {\n  props:{\n    button: {\n      type: Object,\n      require: true\n    },\n    show:{\n      type: Boolean,\n      require: true\n    }\n  },\n  mixins: [colorMixin],\n  components: {\n    sidebar,\n    colorPicker,\n    fontSize,\n    checkboxButton\n  },\n  computed:{\n    borderRadius:{\n      set: function(newValue){\n        this.button.props.borderRadius = newValue + 'px';\n      },\n      get: function(){\n        return parseInt(this.button.props.borderRadius);\n      }\n    }\n  },\n  methods:{\n    editDone: function(){\n      this.$dispatch('button-edit-done');\n    }\n  }\n}\n</script>\n\n<template>\n  <sidebar :show.sync=\"show\" slot=\"tools\">\n    <div slot=\"header\">\n      <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n    </div>\n    <div slot=\"body\">\n    \n      <div class=\"sidebar-block\">\n        <div class=\"input-group shadow\">\n          <div class=\"input-group-addon\"> 按钮文字 </div>\n          <input type=\"text\" class=\"form-control input-text-shadow\" v-model=\"button.text\">\n        </div>\n      </div>\n\n      <div class=\"sidebar-block color-groups\">\n\n        <color-picker :color.sync=\"button.props.backgroundColor\">\n          <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n            <div class=\"float-color-block shadow\" :style=\"{background:getColor(button.props.backgroundColor)}\"></div>\n            <div class=\"float-color-block-text\">按钮</div>\n          </div>\n        </color-picker>\n\n        <color-picker :color.sync=\"button.props.hoverColor\">\n          <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n            <div class=\"float-color-block shadow\" :style=\"{background:getColor(button.props.hoverColor)}\"></div>\n            <div class=\"float-color-block-text\">悬停</div>\n          </div>\n        </color-picker>\n        \n        <color-picker :color.sync=\"button.props.fontColor\" :position=\"'right'\">\n          <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n            <div class=\"float-color-block shadow\" :style=\"{background:getColor(button.props.fontColor)}\"></div>\n            <div class=\"float-color-block-text\">文字</div>\n          </div>\n        </color-picker>\n\n        <color-picker :color.sync=\"button.props.borderColor\" :position=\"'right'\">\n          <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n            <div class=\"float-color-block shadow\" :style=\"{background:getColor(button.props.borderColor)}\"></div>\n            <div class=\"float-color-block-text\">边框</div>\n          </div>\n        </color-picker>\n\n      </div>\n\n      <div class=\"sidebar-block\">\n        <div class=\"input-group font-size-input\">\n          <div class=\"input-group-addon\">字号</div>\n          <div class=\"input-group-btn\">\n            <font-size :font-size.sync=\"button.props.fontSize\"></font-size>\n          </div>\n        </div>\n        <div class=\"input-group corner-radius-input shadow\">\n          <div class=\"input-group-addon\"> 圆角 </div>\n          <input type=\"text\" class=\"form-control input-text-shadow\" style=\"text-align:center\" v-model=\"borderRadius\">\n        </div>\n        <div style=\"clear:both\"></div>\n      </div>\n\n      <div class=\"sidebar-block\" style=\"text-align:center;\">\n        <checkbox-button :value.sync=\"button.props.bold\">加粗</checkbox-button> &nbsp; \n        <checkbox-button :value.sync=\"button.props.shadow\">阴影</checkbox-button> &nbsp; \n        <checkbox-button :value.sync=\"button.props.border\">边框</checkbox-button>\n      </div>\n      \n    </div>\n  </sidebar>\n</template>\n\n<style>\n\n.float-color-picker{\n  float:left;\n  width:48px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.color-groups .btn-group{\n  margin-left:4px;\n}\n\n.color-groups .btn-group:first-child{\n  margin:0;\n}\n\n.float-color-block{\n  height:30px;\n  width:100%;\n  border:2px solid #ccc;\n  border-radius: 4px;\n}\n\n.font-size-input{\n  float:left;\n  width:100px;\n}\n\n.corner-radius-input{\n  float:right;\n  width:100px;\n}\n\n.float-color-block-text{\n  margin-top:4px;\n}\n</style>\n\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 87 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _sidebar = __webpack_require__(42);
+	
+	var _sidebar2 = _interopRequireDefault(_sidebar);
+	
+	var _colorPicker = __webpack_require__(47);
+	
+	var _colorPicker2 = _interopRequireDefault(_colorPicker);
+	
+	var _fontSize = __webpack_require__(88);
+	
+	var _fontSize2 = _interopRequireDefault(_fontSize);
+	
+	var _checkboxButton = __webpack_require__(93);
+	
+	var _checkboxButton2 = _interopRequireDefault(_checkboxButton);
+	
+	var _colorMixin = __webpack_require__(51);
+	
+	var _colorMixin2 = _interopRequireDefault(_colorMixin);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: {
+	    button: {
+	      type: Object,
+	      require: true
+	    },
+	    show: {
+	      type: Boolean,
+	      require: true
+	    }
+	  },
+	  mixins: [_colorMixin2.default],
+	  components: {
+	    sidebar: _sidebar2.default,
+	    colorPicker: _colorPicker2.default,
+	    fontSize: _fontSize2.default,
+	    checkboxButton: _checkboxButton2.default
+	  },
+	  computed: {
+	    borderRadius: {
+	      set: function set(newValue) {
+	        this.button.props.borderRadius = newValue + 'px';
+	      },
+	      get: function get() {
+	        return parseInt(this.button.props.borderRadius);
+	      }
+	    }
+	  },
+	  methods: {
+	    editDone: function editDone() {
+	      this.$dispatch('button-edit-done');
+	    }
+	  }
+	};
+
+/***/ },
+/* 88 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(89)
+	__vue_script__ = __webpack_require__(91)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/font-size.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(92)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./font-size.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 89 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(90);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./font-size.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./font-size.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 90 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(12)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n.font-size-item{\n  float:left;\n  width:56px;\n  line-height:35px;\n  text-align: center;\n  vertical-align: middle;\n  border-top: 1px solid #eee;\n  border-left: 1px solid #eee;\n  cursor: pointer;\n}\n\n.font-size-item:hover{\n  background-color: #eee;\n}\n\n.font-size-wrapper .selected{\n  background-color: #eee;\n}\n\n.font-size-wrapper{\n  width:168px;\n}\n\n.font-size-wrapper div:nth-child(-n+3){\n  border-top:0;\n}\n\n.font-size-wrapper div:nth-child(3n+1){\n  border-left:0;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/font-size.vue?3ae3c3be"],"names":[],"mappings":";AACA;EACA,WAAA;EACA,WAAA;EACA,iBAAA;EACA,mBAAA;EACA,uBAAA;EACA,2BAAA;EACA,4BAAA;EACA,gBAAA;CACA;;AAEA;EACA,uBAAA;CACA;;AAEA;EACA,uBAAA;CACA;;AAEA;EACA,YAAA;CACA;;AAEA;EACA,aAAA;CACA;;AAEA;EACA,cAAA;CACA","file":"font-size.vue","sourcesContent":["<style>\n.font-size-item{\n  float:left;\n  width:56px;\n  line-height:35px;\n  text-align: center;\n  vertical-align: middle;\n  border-top: 1px solid #eee;\n  border-left: 1px solid #eee;\n  cursor: pointer;\n}\n\n.font-size-item:hover{\n  background-color: #eee;\n}\n\n.font-size-wrapper .selected{\n  background-color: #eee;\n}\n\n.font-size-wrapper{\n  width:168px;\n}\n\n.font-size-wrapper div:nth-child(-n+3){\n  border-top:0;\n}\n\n.font-size-wrapper div:nth-child(3n+1){\n  border-left:0;\n}\n\n</style>\n\n<template>\n  <dropdown :show.sync=\"show\">\n      \n    <div class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\">{{fontSizeInt}} <span class=\"caret\"></span></div>\n    <div slot=\"dropdown-menu\" class=\"dropdown-menu\" :class=\"{'dropdown-menu-right':position === 'right'}\">\n      <div class=\"font-size-wrapper\">\n        <div v-for=\"size in fontSizes\" @click=\"setSize(size)\" class=\"font-size-item\" :class=\"{'selected':fontSizeInt === size}\">{{size}}</div>\n        <!-- <div class=\"font-size-item\">自订</div>    -->\n      </div>\n    </div>\n  </dropdown>\n</template>\n\n<script>\nimport dropdown from './dropdown.vue'\n\nexport default {\n  components: {\n    dropdown\n  },\n  props: {\n    fontSize: {\n      // type: String,\n      required: true,\n      twoWay: true\n    },\n    position: {\n      type: String,\n      default: \"left\"\n    }\n  },\n  computed:{\n    fontSizeInt:{\n      get: function(){\n        return parseInt(this.fontSize);\n      },\n      set: function(newValue){\n        this.fontSize = newValue + 'px';\n      }\n    }\n  },\n  data (){\n    return {\n      show: false,\n      fontSizes: [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 40, 44, 48, 56, 64, 72]\n    }\n  },\n  methods:{\n    setSize: function(size){\n      this.fontSizeInt = size;\n      this.show = false;\n    }\n  }\n}\n</script>"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 91 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _dropdown = __webpack_require__(25);
+	
+	var _dropdown2 = _interopRequireDefault(_dropdown);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  components: {
+	    dropdown: _dropdown2.default
+	  },
+	  props: {
+	    fontSize: {
+	      required: true,
+	      twoWay: true
+	    },
+	    position: {
+	      type: String,
+	      default: "left"
+	    }
+	  },
+	  computed: {
+	    fontSizeInt: {
+	      get: function get() {
+	        return parseInt(this.fontSize);
+	      },
+	      set: function set(newValue) {
+	        this.fontSize = newValue + 'px';
+	      }
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      show: false,
+	      fontSizes: [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 40, 44, 48, 56, 64, 72]
+	    };
+	  },
+	
+	  methods: {
+	    setSize: function setSize(size) {
+	      this.fontSizeInt = size;
+	      this.show = false;
+	    }
+	  }
+	};
+
+/***/ },
+/* 92 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :show.sync=\"show\">\n    \n  <div class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\">{{fontSizeInt}} <span class=\"caret\"></span></div>\n  <div slot=\"dropdown-menu\" class=\"dropdown-menu\" :class=\"{'dropdown-menu-right':position === 'right'}\">\n    <div class=\"font-size-wrapper\">\n      <div v-for=\"size in fontSizes\" @click=\"setSize(size)\" class=\"font-size-item\" :class=\"{'selected':fontSizeInt === size}\">{{size}}</div>\n      <!-- <div class=\"font-size-item\">自订</div>    -->\n    </div>\n  </div>\n</dropdown>\n";
+
+/***/ },
+/* 93 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(94)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/checkbox-button.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(95)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./checkbox-button.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 94 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
+	  props: {
+	    value: {
+	      type: Boolean,
+	      twoWay: true
+	    },
+	    type: {
+	      type: String,
+	      default: 'default'
+	    }
+	  },
+	  methods: {
+	    toggleValue: function toggleValue() {
+	      this.value = !this.value;
+	    }
+	  }
+	};
+
+/***/ },
+/* 95 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div @click=\"toggleValue\"\nclass=\"btn\"\nv-bind:class=\"{\n  'active':value,\n  'btn-success':type == 'success',\n  'btn-warning':type == 'warning',\n  'btn-info':type == 'info',\n  'btn-danger':type == 'danger',\n  'btn-default':type == 'default',\n  'btn-primary':type == 'primary'\n}\">\n\n  <slot></slot>\n</div>\n";
+
+/***/ },
+/* 96 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<sidebar :show.sync=\"show\" slot=\"tools\">\n  <div slot=\"header\">\n    <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n  </div>\n  <div slot=\"body\">\n  \n    <div class=\"sidebar-block\">\n      <div class=\"input-group shadow\">\n        <div class=\"input-group-addon\"> 按钮文字 </div>\n        <input type=\"text\" class=\"form-control input-text-shadow\" v-model=\"button.text\">\n      </div>\n    </div>\n\n    <div class=\"sidebar-block color-groups\">\n\n      <color-picker :color.sync=\"button.props.backgroundColor\">\n        <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n          <div class=\"float-color-block shadow\" :style=\"{background:getColor(button.props.backgroundColor)}\"></div>\n          <div class=\"float-color-block-text\">按钮</div>\n        </div>\n      </color-picker>\n\n      <color-picker :color.sync=\"button.props.hoverColor\">\n        <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n          <div class=\"float-color-block shadow\" :style=\"{background:getColor(button.props.hoverColor)}\"></div>\n          <div class=\"float-color-block-text\">悬停</div>\n        </div>\n      </color-picker>\n      \n      <color-picker :color.sync=\"button.props.fontColor\" :position=\"'right'\">\n        <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n          <div class=\"float-color-block shadow\" :style=\"{background:getColor(button.props.fontColor)}\"></div>\n          <div class=\"float-color-block-text\">文字</div>\n        </div>\n      </color-picker>\n\n      <color-picker :color.sync=\"button.props.borderColor\" :position=\"'right'\">\n        <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n          <div class=\"float-color-block shadow\" :style=\"{background:getColor(button.props.borderColor)}\"></div>\n          <div class=\"float-color-block-text\">边框</div>\n        </div>\n      </color-picker>\n\n    </div>\n\n    <div class=\"sidebar-block\">\n      <div class=\"input-group font-size-input\">\n        <div class=\"input-group-addon\">字号</div>\n        <div class=\"input-group-btn\">\n          <font-size :font-size.sync=\"button.props.fontSize\"></font-size>\n        </div>\n      </div>\n      <div class=\"input-group corner-radius-input shadow\">\n        <div class=\"input-group-addon\"> 圆角 </div>\n        <input type=\"text\" class=\"form-control input-text-shadow\" style=\"text-align:center\" v-model=\"borderRadius\">\n      </div>\n      <div style=\"clear:both\"></div>\n    </div>\n\n    <div class=\"sidebar-block\" style=\"text-align:center;\">\n      <checkbox-button :value.sync=\"button.props.bold\">加粗</checkbox-button> &nbsp; \n      <checkbox-button :value.sync=\"button.props.shadow\">阴影</checkbox-button> &nbsp; \n      <checkbox-button :value.sync=\"button.props.border\">边框</checkbox-button>\n    </div>\n    \n  </div>\n</sidebar>\n";
+
+/***/ },
+/* 97 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n  <div slot=\"content\" class=\"element-button\"\n    @dblclick=\"edit\" \n    @mouseenter = \"hover = true\"\n    @mouseleave = \"hover = false\"\n    :style=\"[\n      {\n        borderRadius: button.props.borderRadius,\n        fontSize: button.props.fontSize,\n        backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n        borderColor:getColor(button.props.borderColor),\n        color:getColor(button.props.fontColor)\n      }\n    ]\" \n    :class=\"{\n      'element-button-shadow':button.props.shadow,\n      'element-button-border':button.props.border,\n      'element-button-bold':button.props.bold\n    }\">\n    {{button.text}}\n  </div>\n  \n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n    <div class=\"btn btn-default\" title=\"链接\" @click=\"editLink\"><span class=\"glyphicon glyphicon-link\"></span></div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-success\" @click=\"editDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n    </div>\n    <link-edit v-show=\"buttonGroup === 'link'\" :link-editing=\"buttonGroup === 'link'\" :link-obj=\"element.link\"></link-edit>\n  </template>\n  <template slot=\"tools\">\n    <button-edit :show.sync=\"editing\" :button.sync=\"button\"></button-edit>\n  </template>\n</element-common>\n";
+
+/***/ },
+/* 98 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(99)
+	__vue_script__ = __webpack_require__(101)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/element-form.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(112)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./element-form.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 99 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(100);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./element-form.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./element-form.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 100 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(12)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.form-field-wrapper{\n  padding:5px 0;\n}\n\n.form-field-input{\n  line-height: 30px;\n  width: 100%;\n  border-radius: 5px;\n  border-width: 1px;\n  border-style: solid;\n  padding: 2px 8px;\n}\n\n.form-field-input .caret{\n  float:right;\n  margin-top:12px;\n  margin-right:2px;\n}\n\n.form-field-dropdown{\n  float:left;\n  width:auto;\n}\n\n.options-in-line{\n  display: inline-block;\n  margin-right:10px;\n}\n\n.shadow-inside{\n  box-shadow: inset 0 1px 6px #ccc;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/element-form.vue?d411b4cc"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAuOA;EACA,cAAA;CACA;;AAEA;EACA,kBAAA;EACA,YAAA;EACA,mBAAA;EACA,kBAAA;EACA,oBAAA;EACA,iBAAA;CACA;;AAEA;EACA,YAAA;EACA,gBAAA;EACA,iBAAA;CACA;;AAEA;EACA,WAAA;EACA,WAAA;CACA;;AAEA;EACA,sBAAA;EACA,kBAAA;CACA;;AAEA;EACA,iCAAA;CACA","file":"element-form.vue","sourcesContent":["<script>\nimport { replaceElement }  from '../store/actions'\nimport { getWorkspaceData } from '../store/getters'\nimport elementCommon from './element-common.vue'\nimport buttonEdit from './button-edit.vue'\nimport formProps from './form-props.vue'\nimport formFields from './form-fields.vue'\nimport { merge } from 'lodash'\nimport colorMixin from '../mixins/colorMixin.js'\n\nexport default {\n  //接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID\n  props:['element','sectionId','elementId'],\n  mixins: [colorMixin],\n  components: {\n    elementCommon,\n    buttonEdit,\n    formProps,\n    formFields\n  },\n  vuex: {\n    actions: {\n      replaceElement\n    },\n    getters: {\n      workspace: getWorkspaceData,\n    }\n  },\n  methods:{\n    edit: function(){\n      this.buttonGroup = 'edit';\n    },\n    editButton: function(){\n      this.editDone();\n      this.edit();\n      this.buttonEditing = true;\n    },\n    editButtonDone: function(){\n      this.buttonEditing = false;\n      this.saveForm();\n    },\n    editFields: function(){\n      this.editDone();\n      this.edit();\n      this.fieldsEditing = true;\n    },\n    editFieldsDone: function(){\n      this.fieldsEditing = false;\n      this.saveForm();\n    },\n    editProps: function(){\n      this.editDone();\n      this.edit();\n      this.propsEditing = true;\n    },\n    editPropsDone: function(){\n      this.propsEditing = false;\n      this.saveForm();\n    },\n    editDone: function(){\n      if (this.buttonEditing) this.editButtonDone();\n      if (this.fieldsEditing) this.editFieldsDone();\n      if (this.propsEditing)  this.editPropsDone();\n      this.buttonGroup = 'main';\n    },\n    saveForm: function(){\n      if (this.changed){\n        let formObj = {\n          type:\"form\",\n          style:this.element.style,\n          button:this.button,\n          props:this.formProps,\n          fields:this.formFields\n        };\n        this.replaceElement(this.sectionId, this.elementId, formObj);\n        this.changed = false;\n      }\n    }\n  },\n  data (){\n    return {\n      buttonGroup:'main',\n      buttonEditing: false,\n      changed: false,\n      propsEditing:  false,\n      fieldsEditing: false,\n      button: {\n        text: this.element.button.text,\n        props: merge({}, this.element.button.props),\n      },\n      formProps: merge({}, this.element.props),\n      formFields: merge([], this.element.fields)\n    }\n  },\n  computed:{\n    fieldStyles: function(){\n      return {\n        backgroundColor:this.getColor(this.formProps.fieldColor),\n        borderColor:this.getColor(this.formProps.borderColor),\n        color:this.getColor(this.formProps.labelColor),\n        boxShadow:(this.formProps.innerShadow) ? \"inset 0 1px 6px #ccc\" : \"\"\n      }\n    },\n    // 编辑状态不允许拖动\n    draggable: function(){\n      return !this.editing;\n    },\n    editing: function(){\n      return (this.buttonEditing || this.propsEditing || this.fieldsEditing);\n    }\n  },\n  events:{\n    'button-edit-done': function(){\n      this.editButtonDone();\n    },\n    'form-props-done': function(){\n      this.editPropsDone()\n    },\n    'form-fields-done': function(){\n      this.editFieldsDone();\n    }\n  },\n  watch: {\n    'workspace.activeElementId': function(val){\n      if (val !== this.elementId) this.editDone();\n    },\n    'button':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    },\n    'formFields':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    },\n    'formProps':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    }\n  }\n}\n</script>\n\n<template>\n  <element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n    <div slot=\"content\" @dblclick=\"edit\">\n      <div class=\"el-overlay\"></div>\n      <div v-for=\"(index,field) in formFields\" class=\"form-field-wrapper\">\n        <template v-if=\"field.type === 'text'\">\n          <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <input type=\"text\" class=\"form-field-input\" :style=\"fieldStyles\" value=\"{{formProps.labelInside ? field.label : ''}}\">\n        </template>\n\n        <template v-if=\"field.type === 'textarea'\">\n          <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <textarea class=\"form-field-input\" :style=\"fieldStyles\" rows=\"3\">{{formProps.labelInside ? field.label : ''}}</textarea>\n        </template>\n\n        <template v-if=\"field.type === 'radio'\">\n          <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"radio\"> {{option}}</label></div>\n        </template>\n\n        <template v-if=\"field.type === 'checkbox'\">\n          <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"checkbox\"> {{option}}</label></div>\n        </template>\n\n        <template v-if=\"field.type === 'dropdown'\">\n          <div class=\"form-field-input\" :style=\"fieldStyles\">{{field.label}} <span class=\"caret\"></span></div>\n          <div style=\"clear:both;\"></div>\n        </template>\n\n        <template v-if=\"field.type === 'china-state'\">\n          <div>\n            <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          </div>\n          <div>\n            <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">省份 <span class=\"caret\"></span></div>\n            <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">城市 <span class=\"caret\"></span></div>\n            <div class=\"form-field-input form-field-dropdown\" style=\"width:32%\" :style=\"fieldStyles\">区县 <span class=\"caret\"></span></div>\n            <div style=\"clear:both;\"></div>\n          </div>\n        </template>\n\n      </div> <!-- End fields for -->\n      <div class=\"element-button\"\n        @mouseenter = \"hover = true\"\n        @mouseleave = \"hover = false\"\n        :style=\"[\n          {\n            borderRadius: button.props.borderRadius,\n            fontSize: button.props.fontSize,\n            backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n            borderColor:getColor(button.props.borderColor),\n            color:getColor(button.props.fontColor)\n          }\n        ]\" \n        :class=\"{\n          'element-button-shadow':button.props.shadow,\n          'element-button-border':button.props.border,\n          'element-button-bold':button.props.bold\n        }\">\n        {{button.text}}\n      </div>\n    </div>\n    <template slot=\"main-buttons-extend\">\n      <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n    </template>\n    <template slot=\"button-groups\">\n      <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n        <div class=\"btn btn-default\" title=\"表单字段\" :class=\"{active:fieldsEditing}\" @click=\"editFields\">表单字段</div>\n        <div class=\"btn btn-default\" title=\"表单设置\" :class=\"{active:propsEditing}\" @click=\"editProps\">表单设置</div>\n        <div class=\"btn btn-default\" title=\"表单按钮\" :class=\"{active:buttonEditing}\" @click=\"editButton\">按钮</div>\n        <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n      </div>\n    </template>\n    <template slot=\"tools\">\n      <button-edit :show.sync=\"buttonEditing\" :button.sync=\"button\"></button-edit>\n      <form-fields :show.sync=\"fieldsEditing\" :form-fields.sync=\"formFields\"></form-fields>\n      <form-props :show.sync=\"propsEditing\" :form-props.sync=\"formProps\"></form-props>\n    </template>\n  </element-common>\n</template>\n\n<style>\n.form-field-wrapper{\n  padding:5px 0;\n}\n\n.form-field-input{\n  line-height: 30px;\n  width: 100%;\n  border-radius: 5px;\n  border-width: 1px;\n  border-style: solid;\n  padding: 2px 8px;\n}\n\n.form-field-input .caret{\n  float:right;\n  margin-top:12px;\n  margin-right:2px;\n}\n\n.form-field-dropdown{\n  float:left;\n  width:auto;\n}\n\n.options-in-line{\n  display: inline-block;\n  margin-right:10px;\n}\n\n.shadow-inside{\n  box-shadow: inset 0 1px 6px #ccc;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 101 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _actions = __webpack_require__(7);
+	
+	var _getters = __webpack_require__(8);
+	
+	var _elementCommon = __webpack_require__(58);
+	
+	var _elementCommon2 = _interopRequireDefault(_elementCommon);
+	
+	var _buttonEdit = __webpack_require__(84);
+	
+	var _buttonEdit2 = _interopRequireDefault(_buttonEdit);
+	
+	var _formProps = __webpack_require__(102);
+	
+	var _formProps2 = _interopRequireDefault(_formProps);
+	
+	var _formFields = __webpack_require__(107);
+	
+	var _formFields2 = _interopRequireDefault(_formFields);
+	
+	var _lodash = __webpack_require__(53);
+	
+	var _colorMixin = __webpack_require__(51);
+	
+	var _colorMixin2 = _interopRequireDefault(_colorMixin);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: ['element', 'sectionId', 'elementId'],
+	  mixins: [_colorMixin2.default],
+	  components: {
+	    elementCommon: _elementCommon2.default,
+	    buttonEdit: _buttonEdit2.default,
+	    formProps: _formProps2.default,
+	    formFields: _formFields2.default
+	  },
+	  vuex: {
+	    actions: {
+	      replaceElement: _actions.replaceElement
+	    },
+	    getters: {
+	      workspace: _getters.getWorkspaceData
+	    }
+	  },
+	  methods: {
+	    edit: function edit() {
+	      this.buttonGroup = 'edit';
+	    },
+	    editButton: function editButton() {
+	      this.editDone();
+	      this.edit();
+	      this.buttonEditing = true;
+	    },
+	    editButtonDone: function editButtonDone() {
+	      this.buttonEditing = false;
+	      this.saveForm();
+	    },
+	    editFields: function editFields() {
+	      this.editDone();
+	      this.edit();
+	      this.fieldsEditing = true;
+	    },
+	    editFieldsDone: function editFieldsDone() {
+	      this.fieldsEditing = false;
+	      this.saveForm();
+	    },
+	    editProps: function editProps() {
+	      this.editDone();
+	      this.edit();
+	      this.propsEditing = true;
+	    },
+	    editPropsDone: function editPropsDone() {
+	      this.propsEditing = false;
+	      this.saveForm();
+	    },
+	    editDone: function editDone() {
+	      if (this.buttonEditing) this.editButtonDone();
+	      if (this.fieldsEditing) this.editFieldsDone();
+	      if (this.propsEditing) this.editPropsDone();
+	      this.buttonGroup = 'main';
+	    },
+	    saveForm: function saveForm() {
+	      if (this.changed) {
+	        var formObj = {
+	          type: "form",
+	          style: this.element.style,
+	          button: this.button,
+	          props: this.formProps,
+	          fields: this.formFields
+	        };
+	        this.replaceElement(this.sectionId, this.elementId, formObj);
+	        this.changed = false;
+	      }
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      buttonGroup: 'main',
+	      buttonEditing: false,
+	      changed: false,
+	      propsEditing: false,
+	      fieldsEditing: false,
+	      button: {
+	        text: this.element.button.text,
+	        props: (0, _lodash.merge)({}, this.element.button.props)
+	      },
+	      formProps: (0, _lodash.merge)({}, this.element.props),
+	      formFields: (0, _lodash.merge)([], this.element.fields)
+	    };
+	  },
+	
+	  computed: {
+	    fieldStyles: function fieldStyles() {
+	      return {
+	        backgroundColor: this.getColor(this.formProps.fieldColor),
+	        borderColor: this.getColor(this.formProps.borderColor),
+	        color: this.getColor(this.formProps.labelColor),
+	        boxShadow: this.formProps.innerShadow ? "inset 0 1px 6px #ccc" : ""
+	      };
+	    },
+	
+	    draggable: function draggable() {
+	      return !this.editing;
+	    },
+	    editing: function editing() {
+	      return this.buttonEditing || this.propsEditing || this.fieldsEditing;
+	    }
+	  },
+	  events: {
+	    'button-edit-done': function buttonEditDone() {
+	      this.editButtonDone();
+	    },
+	    'form-props-done': function formPropsDone() {
+	      this.editPropsDone();
+	    },
+	    'form-fields-done': function formFieldsDone() {
+	      this.editFieldsDone();
+	    }
+	  },
+	  watch: {
+	    'workspace.activeElementId': function workspaceActiveElementId(val) {
+	      if (val !== this.elementId) this.editDone();
+	    },
+	    'button': {
+	      deep: true,
+	      handler: function handler(val) {
+	        this.changed = true;
+	      }
+	    },
+	    'formFields': {
+	      deep: true,
+	      handler: function handler(val) {
+	        this.changed = true;
+	      }
+	    },
+	    'formProps': {
+	      deep: true,
+	      handler: function handler(val) {
+	        this.changed = true;
+	      }
+	    }
+	  }
+	};
+
+/***/ },
+/* 102 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(103)
+	__vue_script__ = __webpack_require__(105)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/form-props.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(106)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./form-props.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 103 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(104);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./form-props.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./form-props.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 104 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(12)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/**/\n", "", {"version":3,"sources":["/./resources/assets/js/components/form-props.vue?b2dc0f0e"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAwFA,IAAA","file":"form-props.vue","sourcesContent":["<script>\nimport sidebar from './sidebar.vue'\nimport colorPicker from './color-picker.vue'\nimport checkboxButton from './checkbox-button.vue'\nimport colorMixin from '../mixins/colorMixin.js'\n\nexport default {\n  props:{\n    formProps: {\n      type: Object,\n      require: true\n    },\n    show:{\n      type: Boolean,\n      require: true\n    }\n  },\n  mixins: [colorMixin],\n  components: {\n    sidebar,\n    colorPicker,\n    checkboxButton\n  },\n  methods:{\n    editDone: function(){\n      this.$dispatch('form-props-done');\n    }\n  }\n}\n</script>\n\n<template>\n  <sidebar :show.sync=\"show\" slot=\"tools\">\n    <div slot=\"header\">\n      <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n    </div>\n    <div slot=\"body\">\n      <div class=\"sidebar-block color-groups\">\n\n        <color-picker :color.sync=\"formProps.fieldColor\">\n          <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n            <div class=\"float-color-block shadow\" :style=\"{background:getColor(formProps.fieldColor)}\"></div>\n            <div class=\"float-color-block-text\">背景</div>\n          </div>\n        </color-picker>\n\n        <color-picker :color.sync=\"formProps.inputColor\">\n          <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n            <div class=\"float-color-block shadow\" :style=\"{background:getColor(formProps.inputColor)}\"></div>\n            <div class=\"float-color-block-text\">文字</div>\n          </div>\n        </color-picker>\n        \n        <color-picker :color.sync=\"formProps.labelColor\" :position=\"'right'\">\n          <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n            <div class=\"float-color-block shadow\" :style=\"{background:getColor(formProps.labelColor)}\"></div>\n            <div class=\"float-color-block-text\">标签</div>\n          </div>\n        </color-picker>\n\n        <color-picker :color.sync=\"formProps.borderColor\" :position=\"'right'\">\n          <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n            <div class=\"float-color-block shadow\" :style=\"{background:getColor(formProps.borderColor)}\"></div>\n            <div class=\"float-color-block-text\">边框</div>\n          </div>\n        </color-picker>\n\n      </div>\n\n      <div class=\"sidebar-block\" style=\"text-align:center;\">\n        <checkbox-button :value.sync=\"formProps.labelInside\">标签内置</checkbox-button> &nbsp; \n        <checkbox-button :value.sync=\"formProps.innerShadow\">内阴影</checkbox-button> &nbsp; \n      </div>\n\n      <div class=\"sidebar-block\">\n        <p>跳转至：</p>\n        <input type=\"text\" class=\"form-control input-text-shadow shadow\" placeholder=\"表单提交成功后的跳转URL\" v-model=\"formProps.redirect\">\n      </div>\n\n      <div class=\"sidebar-block\">\n        <p>感谢语：</p>\n        <textarea class=\"form-control shadow\" rows=\"3\" v-model=\"formProps.thankyou\"></textarea>\n      </div>\n    </div>\n  </sidebar>\n</template>\n\n<style>\n/**/\n</style>\n\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 105 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _sidebar = __webpack_require__(42);
+	
+	var _sidebar2 = _interopRequireDefault(_sidebar);
+	
+	var _colorPicker = __webpack_require__(47);
+	
+	var _colorPicker2 = _interopRequireDefault(_colorPicker);
+	
+	var _checkboxButton = __webpack_require__(93);
+	
+	var _checkboxButton2 = _interopRequireDefault(_checkboxButton);
+	
+	var _colorMixin = __webpack_require__(51);
+	
+	var _colorMixin2 = _interopRequireDefault(_colorMixin);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: {
+	    formProps: {
+	      type: Object,
+	      require: true
+	    },
+	    show: {
+	      type: Boolean,
+	      require: true
+	    }
+	  },
+	  mixins: [_colorMixin2.default],
+	  components: {
+	    sidebar: _sidebar2.default,
+	    colorPicker: _colorPicker2.default,
+	    checkboxButton: _checkboxButton2.default
+	  },
+	  methods: {
+	    editDone: function editDone() {
+	      this.$dispatch('form-props-done');
+	    }
+	  }
+	};
+
+/***/ },
+/* 106 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<sidebar :show.sync=\"show\" slot=\"tools\">\n  <div slot=\"header\">\n    <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n  </div>\n  <div slot=\"body\">\n    <div class=\"sidebar-block color-groups\">\n\n      <color-picker :color.sync=\"formProps.fieldColor\">\n        <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n          <div class=\"float-color-block shadow\" :style=\"{background:getColor(formProps.fieldColor)}\"></div>\n          <div class=\"float-color-block-text\">背景</div>\n        </div>\n      </color-picker>\n\n      <color-picker :color.sync=\"formProps.inputColor\">\n        <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n          <div class=\"float-color-block shadow\" :style=\"{background:getColor(formProps.inputColor)}\"></div>\n          <div class=\"float-color-block-text\">文字</div>\n        </div>\n      </color-picker>\n      \n      <color-picker :color.sync=\"formProps.labelColor\" :position=\"'right'\">\n        <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n          <div class=\"float-color-block shadow\" :style=\"{background:getColor(formProps.labelColor)}\"></div>\n          <div class=\"float-color-block-text\">标签</div>\n        </div>\n      </color-picker>\n\n      <color-picker :color.sync=\"formProps.borderColor\" :position=\"'right'\">\n        <div  data-toggle=\"dropdown\" class=\"float-color-picker\">\n          <div class=\"float-color-block shadow\" :style=\"{background:getColor(formProps.borderColor)}\"></div>\n          <div class=\"float-color-block-text\">边框</div>\n        </div>\n      </color-picker>\n\n    </div>\n\n    <div class=\"sidebar-block\" style=\"text-align:center;\">\n      <checkbox-button :value.sync=\"formProps.labelInside\">标签内置</checkbox-button> &nbsp; \n      <checkbox-button :value.sync=\"formProps.innerShadow\">内阴影</checkbox-button> &nbsp; \n    </div>\n\n    <div class=\"sidebar-block\">\n      <p>跳转至：</p>\n      <input type=\"text\" class=\"form-control input-text-shadow shadow\" placeholder=\"表单提交成功后的跳转URL\" v-model=\"formProps.redirect\">\n    </div>\n\n    <div class=\"sidebar-block\">\n      <p>感谢语：</p>\n      <textarea class=\"form-control shadow\" rows=\"3\" v-model=\"formProps.thankyou\"></textarea>\n    </div>\n  </div>\n</sidebar>\n";
+
+/***/ },
+/* 107 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(108)
+	__vue_script__ = __webpack_require__(110)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/form-fields.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(111)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./form-fields.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 108 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(109);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./form-fields.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./form-fields.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 109 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(12)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.form-field-label-wrapper{\n  position: relative;\n  border: 1px solid #ccc;\n  background: #eee;\n  border-radius: 4px;\n  padding: 6px;\n  margin-bottom: 8px;\n  \n}\n\n.form-field-label{\n  float:left;\n  max-width: 100px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.form-field-type{\n  float: right;\n  color: #ccc;\n}\n\n.dropdown-field-type-wrapper{\n  width:200px;\n}\n\n.dropdown-field-type{\n  float: left;\n  width: 82px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  margin: 8px;\n  padding: 6px;\n  text-align: center;\n  background: #eee;\n  cursor: pointer;;\n}\n\n.field-edit-form{\n  margin-top: 15px;\n}\n\n.dropdown-field-type-preset{\n  clear: both;\n  margin: 8px;\n  padding:10px 0 5px 0;\n  border-bottom:1px solid #ccc;\n}\n\n.form-field-operation{\n  position:absolute;\n  right:1px;\n  top:1px;\n}\n\n.form-field-configs{\n  margin: 8px 2px;\n}\n\n.form-field-configs label{\n  font-weight: normal;\n  cursor: pointer;\n}\n\n.form-field-options{\n  max-height:150px;\n  overflow: auto;\n}\n\n.form-field-option{\n  position: relative;\n  margin: 3px 0;\n}\n\n.form-field-option-remove{\n  position: absolute;\n  right:5px;\n  top:9px;\n  color:#999;\n  cursor: pointer;\n}\n\n.form-field-addoption{\n  text-align: center;\n  margin: 8px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/form-fields.vue?083074ef"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAyLA;EACA,mBAAA;EACA,uBAAA;EACA,iBAAA;EACA,mBAAA;EACA,aAAA;EACA,mBAAA;;CAEA;;AAEA;EACA,WAAA;EACA,iBAAA;EACA,iBAAA;EACA,wBAAA;EACA,oBAAA;CACA;;AAEA;EACA,aAAA;EACA,YAAA;CACA;;AAEA;EACA,YAAA;CACA;;AAEA;EACA,YAAA;EACA,YAAA;EACA,uBAAA;EACA,mBAAA;EACA,YAAA;EACA,aAAA;EACA,mBAAA;EACA,iBAAA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;CACA;;AAEA;EACA,YAAA;EACA,YAAA;EACA,qBAAA;EACA,6BAAA;CACA;;AAEA;EACA,kBAAA;EACA,UAAA;EACA,QAAA;CACA;;AAEA;EACA,gBAAA;CACA;;AAEA;EACA,oBAAA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;EACA,eAAA;CACA;;AAEA;EACA,mBAAA;EACA,cAAA;CACA;;AAEA;EACA,mBAAA;EACA,UAAA;EACA,QAAA;EACA,WAAA;EACA,gBAAA;CACA;;AAEA;EACA,mBAAA;EACA,YAAA;CACA","file":"form-fields.vue","sourcesContent":["<script>\nimport sidebar from './sidebar.vue'\nimport colorPicker from './color-picker.vue'\nimport checkboxButton from './checkbox-button.vue'\nimport colorMixin from '../mixins/colorMixin.js'\nimport dropdown from './dropdown.vue'\n\nexport default {\n  props:{\n    formFields: {\n      type: Array,\n      require: true\n    },\n    show:{\n      type: Boolean,\n      require: true\n    }\n  },\n  mixins: [colorMixin],\n  components: {\n    sidebar,\n    colorPicker,\n    checkboxButton,\n    dropdown\n  },\n  data(){\n    return {\n      fieldTypes: {\n        'text':'单行文本',\n        'textarea':'多行文本',\n        'radio':'单选框',\n        'checkbox':'复选框',\n        'dropdown':'下拉菜单',\n        'china-state':'省市县(中国)'\n      },\n      showFieldsType:false,\n      currentField:null,\n      editingField:null,\n    }\n  },\n  methods:{\n    editDone: function(){\n      this.$dispatch('form-fields-done');\n    },\n    addField: function(type, label = '', validator = []){\n      let newField = {\n        type:type,\n        label:label,\n        validator:validator\n      };\n      if (type === 'radio' || type === 'checkbox' || type === 'dropdown'){\n        newField.options = ['选项1','选项2'];\n      }\n      const newFieldId = this.formFields.length;\n      this.formFields.push(newField); \n      this.editingField = newFieldId;\n      this.showFieldsType = false;\n    },\n    removeField: function(fieldId){\n      this.formFields.splice(fieldId, 1);\n    },\n    moveField: function(dir, fieldId){\n      let target = fieldId;\n      if (dir === 'down' && fieldId < this.formFields.length -1) target++;\n      if (dir === 'up' && fieldId > 0) target--;\n      if (target !== fieldId){\n        this.formFields[fieldId] = this.formFields.splice(target, 1, this.formFields[fieldId])[0];\n      }\n    },\n    addOption: function(fieldId){\n      let newOptionId = this.formFields[fieldId].options.length;\n      this.formFields[fieldId].options.push(\"\");\n      \n      setTimeout(function(){\n        var el = document.getElementById('form-field-options');\n        el.scrollTop = el.scrollHeight;\n        var input = document.getElementById('field-option-' + fieldId + '-' + newOptionId);\n        input.focus();\n      },10);\n    },\n    removeOption: function(fieldId,optionId){\n      this.formFields[fieldId].options.splice(optionId, 1);\n    }\n  },\n  watch:{\n    'editingField': function(newVal){\n      if (newVal !== null){\n        let input = document.getElementById('field-label-' + newVal);\n        input.focus();\n      } else {\n        this.currentField = null;\n      }\n    }\n  }\n}\n</script>\n\n<template>\n  <sidebar :show.sync=\"show\" slot=\"tools\">\n    <div slot=\"header\">\n      <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n      <div class=\"fr\">\n        <dropdown :show.sync=\"showFieldsType\">\n          <slot><div><div class=\"btn btn-primary\" data-toggle=\"dropdown\">+ 字段</div></div></slot>\n          <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right dropdown-field-type-wrapper\">\n            <div class=\"dropdown-field-type\" @click=\"addField('text')\">单行文本</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('textarea')\">多行文本</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('radio')\">单选框</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('checkbox')\">复选框</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('dropdown')\">下拉菜单</div>\n            <!-- <div class=\"dropdown-field-type\">日期</div> -->\n\n            <h5 class=\"dropdown-field-type-preset\">预设字段</h5>\n            <div class=\"dropdown-field-type\" @click=\"addField('text','姓名',['required'])\">姓名</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('text','电子邮件',['required','email'])\">电子邮件</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('text','手机号码',['required','mobile'])\">手机号码</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('china-state')\">省/市/县</div>\n          </div>\n        </dropdown>\n      </div>\n    </div>\n    <div slot=\"body\" @click=\"editingField = null\">\n\n      <div class=\"sidebar-block\">\n        <div v-for=\"(fieldId,field) in formFields\" class=\"form-field-label-wrapper\" @mouseenter=\"currentField = fieldId\" @mouseleave=\"currentField = null\" @click.stop @dblclick=\"editingField = fieldId\" :style=\"{background:(editingField === fieldId)?'#fff':''}\">\n          <div class=\"form-field-label\">\n            {{field.label}}\n          </div>\n          <span class=\"form-field-type\">{{fieldTypes[field.type]}}</span>\n          <div style=\"clear:both\"></div>\n          <div v-show=\"currentField === fieldId\" class=\"btn-group btn-group-sm form-field-operation\" role=\"group\" transition=\"fade\" >\n            <div class=\"btn btn-primary\" title=\"修改\" @click=\"editingField = fieldId\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n            <div class=\"btn btn-default\" title=\"上移\" @click=\"moveField('up',fieldId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n            <div class=\"btn btn-default\" title=\"下移\" @click=\"moveField('down',fieldId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n            <div class=\"btn btn-default\" title=\"删除\" @click=\"removeField(fieldId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n          </div>\n          <div v-if=\"editingField === fieldId\" class=\"field-edit-form\">\n            <div class=\"input-group shadow\">\n              <div class=\"input-group-addon\"> 标签 </div>\n              <input type=\"text\" class=\"form-control input-text-shadow\" placeholder=\"新建表单字段\" id=\"field-label-{{fieldId}}\" v-model=\"field.label\">\n            </div>\n            <!-- 单行、多行文本选项 -->\n            <div v-if=\"field.type === 'text' || field.type === 'textarea'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"mobile\"> 校验为手机号码</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"email\"> 校验为Email</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"number\"> 校验为数字</label></div>\n            </div>\n            <!-- 单选、多选框选项 -->\n            <div v-if=\"field.type === 'radio' || field.type === 'checkbox'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.optionsInLine\"> 单行排列选项</label></div>\n            </div>\n            <!-- 下拉菜单选项 -->\n            <div v-if=\"field.type === 'dropdown'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            </div>\n            <!-- 省/市/县 选项 -->\n            <div v-if=\"field.type === 'china-state'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n            </div>\n            <div v-if=\"field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown'\">\n              <div class=\"form-field-options\" id=\"form-field-options\">\n                <div v-for=\"(optionId, option) in field.options\" track-by=\"$index\" class=\"form-field-option\">\n                  <input class=\"form-control\" type=\"text\" id=\"field-option-{{fieldId}}-{{optionId}}\" placeholder=\"新选项\" v-model=\"option\" />\n                  <span class=\"glyphicon glyphicon-remove form-field-option-remove\" @click=\"removeOption(fieldId, optionId)\"></span>\n                </div>\n              </div>\n              <div class=\"form-field-addoption\">\n                <div class=\"btn btn-primary btn-sm\" @click=\"addOption(fieldId)\">+ 添加选项</div>\n              </div>\n            </div>\n            <div class=\"btn btn-success btn-sm fr\" @click=\"editingField = null\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n            <div style=\"clear:both\"></div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </sidebar>\n</template>\n\n<style>\n\n.form-field-label-wrapper{\n  position: relative;\n  border: 1px solid #ccc;\n  background: #eee;\n  border-radius: 4px;\n  padding: 6px;\n  margin-bottom: 8px;\n  \n}\n\n.form-field-label{\n  float:left;\n  max-width: 100px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.form-field-type{\n  float: right;\n  color: #ccc;\n}\n\n.dropdown-field-type-wrapper{\n  width:200px;\n}\n\n.dropdown-field-type{\n  float: left;\n  width: 82px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  margin: 8px;\n  padding: 6px;\n  text-align: center;\n  background: #eee;\n  cursor: pointer;;\n}\n\n.field-edit-form{\n  margin-top: 15px;\n}\n\n.dropdown-field-type-preset{\n  clear: both;\n  margin: 8px;\n  padding:10px 0 5px 0;\n  border-bottom:1px solid #ccc;\n}\n\n.form-field-operation{\n  position:absolute;\n  right:1px;\n  top:1px;\n}\n\n.form-field-configs{\n  margin: 8px 2px;\n}\n\n.form-field-configs label{\n  font-weight: normal;\n  cursor: pointer;\n}\n\n.form-field-options{\n  max-height:150px;\n  overflow: auto;\n}\n\n.form-field-option{\n  position: relative;\n  margin: 3px 0;\n}\n\n.form-field-option-remove{\n  position: absolute;\n  right:5px;\n  top:9px;\n  color:#999;\n  cursor: pointer;\n}\n\n.form-field-addoption{\n  text-align: center;\n  margin: 8px;\n}\n\n</style>\n\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 110 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _sidebar = __webpack_require__(42);
+	
+	var _sidebar2 = _interopRequireDefault(_sidebar);
+	
+	var _colorPicker = __webpack_require__(47);
+	
+	var _colorPicker2 = _interopRequireDefault(_colorPicker);
+	
+	var _checkboxButton = __webpack_require__(93);
+	
+	var _checkboxButton2 = _interopRequireDefault(_checkboxButton);
+	
+	var _colorMixin = __webpack_require__(51);
+	
+	var _colorMixin2 = _interopRequireDefault(_colorMixin);
+	
+	var _dropdown = __webpack_require__(25);
+	
+	var _dropdown2 = _interopRequireDefault(_dropdown);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: {
+	    formFields: {
+	      type: Array,
+	      require: true
+	    },
+	    show: {
+	      type: Boolean,
+	      require: true
+	    }
+	  },
+	  mixins: [_colorMixin2.default],
+	  components: {
+	    sidebar: _sidebar2.default,
+	    colorPicker: _colorPicker2.default,
+	    checkboxButton: _checkboxButton2.default,
+	    dropdown: _dropdown2.default
+	  },
+	  data: function data() {
+	    return {
+	      fieldTypes: {
+	        'text': '单行文本',
+	        'textarea': '多行文本',
+	        'radio': '单选框',
+	        'checkbox': '复选框',
+	        'dropdown': '下拉菜单',
+	        'china-state': '省市县(中国)'
+	      },
+	      showFieldsType: false,
+	      currentField: null,
+	      editingField: null
+	    };
+	  },
+	
+	  methods: {
+	    editDone: function editDone() {
+	      this.$dispatch('form-fields-done');
+	    },
+	    addField: function addField(type) {
+	      var label = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+	      var validator = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
+	
+	      var newField = {
+	        type: type,
+	        label: label,
+	        validator: validator
+	      };
+	      if (type === 'radio' || type === 'checkbox' || type === 'dropdown') {
+	        newField.options = ['选项1', '选项2'];
+	      }
+	      var newFieldId = this.formFields.length;
+	      this.formFields.push(newField);
+	      this.editingField = newFieldId;
+	      this.showFieldsType = false;
+	    },
+	    removeField: function removeField(fieldId) {
+	      this.formFields.splice(fieldId, 1);
+	    },
+	    moveField: function moveField(dir, fieldId) {
+	      var target = fieldId;
+	      if (dir === 'down' && fieldId < this.formFields.length - 1) target++;
+	      if (dir === 'up' && fieldId > 0) target--;
+	      if (target !== fieldId) {
+	        this.formFields[fieldId] = this.formFields.splice(target, 1, this.formFields[fieldId])[0];
+	      }
+	    },
+	    addOption: function addOption(fieldId) {
+	      var newOptionId = this.formFields[fieldId].options.length;
+	      this.formFields[fieldId].options.push("");
+	
+	      setTimeout(function () {
+	        var el = document.getElementById('form-field-options');
+	        el.scrollTop = el.scrollHeight;
+	        var input = document.getElementById('field-option-' + fieldId + '-' + newOptionId);
+	        input.focus();
+	      }, 10);
+	    },
+	    removeOption: function removeOption(fieldId, optionId) {
+	      this.formFields[fieldId].options.splice(optionId, 1);
+	    }
+	  },
+	  watch: {
+	    'editingField': function editingField(newVal) {
+	      if (newVal !== null) {
+	        var input = document.getElementById('field-label-' + newVal);
+	        input.focus();
+	      } else {
+	        this.currentField = null;
+	      }
+	    }
+	  }
+	};
+
+/***/ },
+/* 111 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<sidebar :show.sync=\"show\" slot=\"tools\">\n  <div slot=\"header\">\n    <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n    <div class=\"fr\">\n      <dropdown :show.sync=\"showFieldsType\">\n        <slot><div><div class=\"btn btn-primary\" data-toggle=\"dropdown\">+ 字段</div></div></slot>\n        <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right dropdown-field-type-wrapper\">\n          <div class=\"dropdown-field-type\" @click=\"addField('text')\">单行文本</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('textarea')\">多行文本</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('radio')\">单选框</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('checkbox')\">复选框</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('dropdown')\">下拉菜单</div>\n          <!-- <div class=\"dropdown-field-type\">日期</div> -->\n\n          <h5 class=\"dropdown-field-type-preset\">预设字段</h5>\n          <div class=\"dropdown-field-type\" @click=\"addField('text','姓名',['required'])\">姓名</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('text','电子邮件',['required','email'])\">电子邮件</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('text','手机号码',['required','mobile'])\">手机号码</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('china-state')\">省/市/县</div>\n        </div>\n      </dropdown>\n    </div>\n  </div>\n  <div slot=\"body\" @click=\"editingField = null\">\n\n    <div class=\"sidebar-block\">\n      <div v-for=\"(fieldId,field) in formFields\" class=\"form-field-label-wrapper\" @mouseenter=\"currentField = fieldId\" @mouseleave=\"currentField = null\" @click.stop @dblclick=\"editingField = fieldId\" :style=\"{background:(editingField === fieldId)?'#fff':''}\">\n        <div class=\"form-field-label\">\n          {{field.label}}\n        </div>\n        <span class=\"form-field-type\">{{fieldTypes[field.type]}}</span>\n        <div style=\"clear:both\"></div>\n        <div v-show=\"currentField === fieldId\" class=\"btn-group btn-group-sm form-field-operation\" role=\"group\" transition=\"fade\" >\n          <div class=\"btn btn-primary\" title=\"修改\" @click=\"editingField = fieldId\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n          <div class=\"btn btn-default\" title=\"上移\" @click=\"moveField('up',fieldId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n          <div class=\"btn btn-default\" title=\"下移\" @click=\"moveField('down',fieldId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n          <div class=\"btn btn-default\" title=\"删除\" @click=\"removeField(fieldId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n        </div>\n        <div v-if=\"editingField === fieldId\" class=\"field-edit-form\">\n          <div class=\"input-group shadow\">\n            <div class=\"input-group-addon\"> 标签 </div>\n            <input type=\"text\" class=\"form-control input-text-shadow\" placeholder=\"新建表单字段\" id=\"field-label-{{fieldId}}\" v-model=\"field.label\">\n          </div>\n          <!-- 单行、多行文本选项 -->\n          <div v-if=\"field.type === 'text' || field.type === 'textarea'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"mobile\"> 校验为手机号码</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"email\"> 校验为Email</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"number\"> 校验为数字</label></div>\n          </div>\n          <!-- 单选、多选框选项 -->\n          <div v-if=\"field.type === 'radio' || field.type === 'checkbox'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.optionsInLine\"> 单行排列选项</label></div>\n          </div>\n          <!-- 下拉菜单选项 -->\n          <div v-if=\"field.type === 'dropdown'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n          </div>\n          <!-- 省/市/县 选项 -->\n          <div v-if=\"field.type === 'china-state'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n          </div>\n          <div v-if=\"field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown'\">\n            <div class=\"form-field-options\" id=\"form-field-options\">\n              <div v-for=\"(optionId, option) in field.options\" track-by=\"$index\" class=\"form-field-option\">\n                <input class=\"form-control\" type=\"text\" id=\"field-option-{{fieldId}}-{{optionId}}\" placeholder=\"新选项\" v-model=\"option\" />\n                <span class=\"glyphicon glyphicon-remove form-field-option-remove\" @click=\"removeOption(fieldId, optionId)\"></span>\n              </div>\n            </div>\n            <div class=\"form-field-addoption\">\n              <div class=\"btn btn-primary btn-sm\" @click=\"addOption(fieldId)\">+ 添加选项</div>\n            </div>\n          </div>\n          <div class=\"btn btn-success btn-sm fr\" @click=\"editingField = null\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n          <div style=\"clear:both\"></div>\n        </div>\n      </div>\n    </div>\n  </div>\n</sidebar>\n";
+
+/***/ },
+/* 112 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n  <div slot=\"content\" @dblclick=\"edit\">\n    <div class=\"el-overlay\"></div>\n    <div v-for=\"(index,field) in formFields\" class=\"form-field-wrapper\">\n      <template v-if=\"field.type === 'text'\">\n        <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <input type=\"text\" class=\"form-field-input\" :style=\"fieldStyles\" value=\"{{formProps.labelInside ? field.label : ''}}\">\n      </template>\n\n      <template v-if=\"field.type === 'textarea'\">\n        <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <textarea class=\"form-field-input\" :style=\"fieldStyles\" rows=\"3\">{{formProps.labelInside ? field.label : ''}}</textarea>\n      </template>\n\n      <template v-if=\"field.type === 'radio'\">\n        <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"radio\"> {{option}}</label></div>\n      </template>\n\n      <template v-if=\"field.type === 'checkbox'\">\n        <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"checkbox\"> {{option}}</label></div>\n      </template>\n\n      <template v-if=\"field.type === 'dropdown'\">\n        <div class=\"form-field-input\" :style=\"fieldStyles\">{{field.label}} <span class=\"caret\"></span></div>\n        <div style=\"clear:both;\"></div>\n      </template>\n\n      <template v-if=\"field.type === 'china-state'\">\n        <div>\n          <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        </div>\n        <div>\n          <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">省份 <span class=\"caret\"></span></div>\n          <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">城市 <span class=\"caret\"></span></div>\n          <div class=\"form-field-input form-field-dropdown\" style=\"width:32%\" :style=\"fieldStyles\">区县 <span class=\"caret\"></span></div>\n          <div style=\"clear:both;\"></div>\n        </div>\n      </template>\n\n    </div> <!-- End fields for -->\n    <div class=\"element-button\"\n      @mouseenter = \"hover = true\"\n      @mouseleave = \"hover = false\"\n      :style=\"[\n        {\n          borderRadius: button.props.borderRadius,\n          fontSize: button.props.fontSize,\n          backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n          borderColor:getColor(button.props.borderColor),\n          color:getColor(button.props.fontColor)\n        }\n      ]\" \n      :class=\"{\n        'element-button-shadow':button.props.shadow,\n        'element-button-border':button.props.border,\n        'element-button-bold':button.props.bold\n      }\">\n      {{button.text}}\n    </div>\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-default\" title=\"表单字段\" :class=\"{active:fieldsEditing}\" @click=\"editFields\">表单字段</div>\n      <div class=\"btn btn-default\" title=\"表单设置\" :class=\"{active:propsEditing}\" @click=\"editProps\">表单设置</div>\n      <div class=\"btn btn-default\" title=\"表单按钮\" :class=\"{active:buttonEditing}\" @click=\"editButton\">按钮</div>\n      <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n    </div>\n  </template>\n  <template slot=\"tools\">\n    <button-edit :show.sync=\"buttonEditing\" :button.sync=\"button\"></button-edit>\n    <form-fields :show.sync=\"fieldsEditing\" :form-fields.sync=\"formFields\"></form-fields>\n    <form-props :show.sync=\"propsEditing\" :form-props.sync=\"formProps\"></form-props>\n  </template>\n</element-common>\n";
+
+/***/ },
+/* 113 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div  \n  class=\"page-section\" \n  :style=\"{\n    height:section.style[workspace.version]['height'],\n    backgroundColor:getColor(section.style[workspace.version]['background-color']),\n    borderColor:getColor(section.style[workspace.version]['border-color']),\n    borderWidth:'0',\n    borderTopWidth:section.style[workspace.version]['border-width'] + 'px',\n    borderBottomWidth:section.style[workspace.version]['border-width'] + 'px',\n    borderStyle:'solid'\n  }\"  \n  v-on:mouseover=\"setCurrentSectionId(sectionId)\"\n>\n  <div class=\"editable-area\" :style=\"{width: workspace.width + 'px'}\">\n    <!-- 页面元素组件 -->\n    <component v-for=\"(elementId,element) in section.elements\" :is=\"'element-' + element.type\" :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\"></component>\n    <!-- 板块操作按钮组 -->\n    <div class=\"btn-group-vertical page-section-operation\" role=\"group\" v-show=\"workspace.currentSectionId==sectionId\" transition=\"fade\" :style=\"{left: workspace.width + 5 + 'px'}\">\n      <template v-if=\"workspace.activeSectionId === sectionId\">\n        <div class=\"btn btn-success\" title=\"完成\" @click=\"sectionEditDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n      </template>\n      <template v-if=\"(workspace.activeSectionId !== sectionId)\">\n        <div class=\"btn btn-primary\" title=\"修改\" @click.stop=\"editSection\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n        <div class=\"btn btn-default\" title=\"上移\" @click=\"moveSection('up',sectionId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n        <div class=\"btn btn-default\" title=\"下移\" @click=\"moveSection('down',sectionId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n        <div class=\"btn btn-default\" title=\"删除\" @click=\"removeSection(sectionId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n      </template>\n    </div>\n  </div>\n  <section-edit :show.sync=\"sectionEditing\" :section-id=\"sectionId\" ></section-edit>\n  <div class=\"resize-line\"></div>\n  <div class=\"resize-line-wrap\"></div>\n</div>\n";
+
+/***/ },
+/* 114 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div class=\"workspace\">\n  <div id=\"content-area\" :style=\"{height: workspace.height + 'px', width: (workspace.width-2) + 'px', marginLeft:(-workspace.width/2 + 1) +'px'}\"></div>\n  <page-section v-for=\"(sectionId, section) in sections\" :section-id=\"sectionId\", :section=\"section\"></page-section>\n</div>\n";
+
+/***/ },
+/* 115 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _vuex = __webpack_require__(116);
 	
 	var _vuex2 = _interopRequireDefault(_vuex);
 	
-	var _lodash = __webpack_require__(66);
+	var _lodash = __webpack_require__(53);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -19764,11 +23004,11 @@
 	    //页面宽度，桌面960，移动400
 	    width: 400,
 	    //
-	    height: 1600,
+	    height: 0,
 	    //PC版页面高度，需计算
-	    heightPC: 1400,
+	    heightPC: 0,
 	    //移动版页面高度，需计算
-	    heightM: 1600,
+	    heightM: 0,
 	    //pc为桌面版，mobile为移动版
 	    version: 'mobile',
 	    //当前页面激活的板块，将显示该板块的操作按钮，在添加页面元素时，将添加到此板块中
@@ -19792,121 +23032,32 @@
 	    'conversion': {}
 	  },
 	
-	  colorSet: ['#E6E2AF', "#A7A37E", "#EFECCA", "#046380", "#002F2F"],
-	
-	  sections: [{
-	    style: { background: "#333", height: "300px" },
-	    styleM: { background: "#333", height: "300px" },
-	    elements: {}
-	  }, {
-	    style: { background: "#900", height: "200px" },
-	    styleM: { background: "#ccc", height: "300px" },
-	    elements: {
-	      "bifsdc": {
-	        type: "text",
-	        content: "wdfsdf<br>dksjlfjslkd jksdfs ksdfksd",
-	        style: {
-	          left: "200px",
-	          top: "100px",
-	          width: "500px",
-	          zIndex: 100
-	        },
-	        styleM: {
-	          left: "100px",
-	          top: "100px",
-	          width: "200px",
-	          zIndex: 100
-	        }
-	      }
-	    }
-	  }, // "fgh24g":{
-	  //   type:"button",
-	  // },
-	  // "nrgs13":{
-	  //   type:"video",
-	  // },
-	  // "bwdkfk":{
-	  //   type:"form",
-	  // }
-	  {
-	    style: { background: "", height: "300px" },
-	    styleM: { background: "", height: "500px" },
-	    elements: {
-	      "123ghfdv": {
-	        type: "text",
-	        content: "Hello, World!",
-	        style: {
-	          left: "500px",
-	          top: "100px",
-	          width: "458px",
-	          zIndex: 1000
-	        },
-	        styleM: {
-	          left: "150px",
-	          top: "100px",
-	          width: "200px",
-	          zIndex: 100
-	        }
-	      },
-	      "testurltesturl": {
-	        type: "image",
-	        src: "http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
-	        style: {
-	          left: "200px",
-	          top: "100px",
-	          width: "333px",
-	          zIndex: 101
-	        },
-	        styleM: {
-	          left: "50px",
-	          top: "150px",
-	          width: "120px",
-	          zIndex: 101
-	        }
-	      }
-	    }
-	  }, {
-	    style: { background: "#909", height: "300px" },
-	    styleM: { background: "#909", height: "200px" },
-	    elements: {
-	      "bvsdfg23": {
-	        type: "text",
-	        content: "Hello, World!",
-	        style: {
-	          left: "500px",
-	          top: "100px",
-	          width: "458px",
-	          zIndex: 1000
-	        },
-	        styleM: {
-	          left: "150px",
-	          top: "100px",
-	          width: "200px",
-	          zIndex: 2000
-	        }
-	      }
-	    }
-	  }, {
-	    style: { background: "#4b6fc1", height: "300px" },
-	    styleM: { background: "#4b6fc1", height: "300px" },
-	    elements: {}
-	  }]
+	  page: {}
 	};
 	
-	var initstate = (0, _lodash.merge)([], state.sections);
+	var initPage = (0, _lodash.merge)({}, state.page);
 	
 	/* 页面初始状态 */
-	var sectionStates = [initstate];
-	var sectionHistoryIndex = 0;
+	var pageStates = [initPage];
+	var pageHistoryIndex = 0;
 	
 	var mutations = {
 	
-	  //对sections进行操作过保存其状态，供撤销重做
+	  //页面初始加载
 	
-	  SAVE_SECTIONS_STATE: function SAVE_SECTIONS_STATE(state) {
-	    sectionHistoryIndex += 1;
-	    sectionStates = sectionStates.slice(0, sectionHistoryIndex);
-	    sectionStates.push((0, _lodash.merge)([], state.sections));
+	  PAGE_INIT: function PAGE_INIT(state, data) {
+	    state.page = data.page;
+	    pageStates = [(0, _lodash.merge)({}, state.page)];
+	    pageHistoryIndex = 0;
+	    mutations.SUM_PAGE_HEIGHT(state);
+	  },
+	
+	
+	  //对sections进行操作过后保存其状态，供撤销重做
+	  SAVE_PAGE_STATE: function SAVE_PAGE_STATE(state) {
+	    pageHistoryIndex += 1;
+	    pageStates = pageStates.slice(0, pageHistoryIndex);
+	    pageStates.push((0, _lodash.merge)({}, state.page));
 	    state.workspace.undo = true;
 	    state.workspace.redo = false;
 	  },
@@ -19916,9 +23067,9 @@
 	  SUM_PAGE_HEIGHT: function SUM_PAGE_HEIGHT(state) {
 	    var heightPC = 0;
 	    var heightM = 0;
-	    for (var sectionId in state.sections) {
-	      heightPC += parseInt(state.sections[sectionId].style.height);
-	      heightM += parseInt(state.sections[sectionId].styleM.height);
+	    for (var sectionId in state.page.sections) {
+	      heightPC += parseInt(state.page.sections[sectionId].style.pc.height);
+	      heightM += parseInt(state.page.sections[sectionId].style.mobile.height);
 	    }
 	    state.workspace.heightPC = heightPC;
 	    state.workspace.heightM = heightM;
@@ -19929,7 +23080,7 @@
 	  //移动板块
 	  MOVE_SECTION: function MOVE_SECTION(state, dir, sectionId) {
 	    var target = sectionId;
-	    if (dir === 'down' && sectionId < state.sections.length - 1) {
+	    if (dir === 'down' && sectionId < state.page.sections.length - 1) {
 	      target++;
 	    }
 	    if (dir === 'up' && sectionId > 0) {
@@ -19937,42 +23088,44 @@
 	    }
 	
 	    if (sectionId != target) {
-	      state.sections[sectionId] = state.sections.splice(target, 1, state.sections[sectionId])[0];
-	      mutations.SAVE_SECTIONS_STATE(state);
+	      state.page.sections[sectionId] = state.page.sections.splice(target, 1, state.page.sections[sectionId])[0];
+	      mutations.SAVE_PAGE_STATE(state);
 	    }
 	  },
 	
 	
 	  //添加板块
 	  ADD_SECTION: function ADD_SECTION(state) {
-	    state.sections.push({
-	      style: { background: "", height: "200px" },
-	      styleM: { background: "", height: "200px" },
+	    state.page.sections.push({
+	      style: {
+	        "pc": { "background-color": "", height: "200px" },
+	        "mobile": { "background-color": "", height: "200px" }
+	      },
 	      elements: {}
 	    });
 	    state.workspace.height += 200;
-	    mutations.SAVE_SECTIONS_STATE(state);
+	    mutations.SAVE_PAGE_STATE(state);
 	  },
 	
 	
 	  //删除板块
 	  REMOVE_SECTION: function REMOVE_SECTION(state, sectionId) {
-	    state.workspace.height -= parseInt(state.sections[sectionId].style.height);
-	    state.sections.splice(sectionId, 1);
-	    mutations.SAVE_SECTIONS_STATE(state);
+	    state.workspace.height -= parseInt(state.page.sections[sectionId].style.height);
+	    state.page.sections.splice(sectionId, 1);
+	    mutations.SAVE_PAGE_STATE(state);
 	  },
 	
 	
 	  //修改板块
 	  MODIFY_SECTION: function MODIFY_SECTION(state, sectionId, style) {
-	    var stateSection = state.sections[sectionId];
-	    if (state.workspace.version === 'pc') {
-	      state.sections[sectionId].style = (0, _lodash.extend)({}, stateSection.style, style);
-	    } else {
-	      state.sections[sectionId].styleM = (0, _lodash.extend)({}, stateSection.styleM, style);
-	    }
-	
-	    mutations.SAVE_SECTIONS_STATE(state);
+	    var stateSection = state.page.sections[sectionId];
+	    // if (state.workspace.version === 'pc'){
+	    //   state.page.sections[sectionId].style = extend({}, stateSection.style, style);
+	    // } else {
+	    //   state.page.sections[sectionId].styleM = extend({}, stateSection.styleM, style);
+	    // }
+	    state.page.sections[sectionId].style[state.workspace.version] = (0, _lodash.extend)({}, stateSection.style[state.workspace.version], style);
+	    mutations.SAVE_PAGE_STATE(state);
 	  },
 	
 	
@@ -19994,31 +23147,17 @@
 	  SET_ACTIVE_ELEMENT_ID: function SET_ACTIVE_ELEMENT_ID(state, elementId) {
 	    state.workspace.activeElementId = elementId;
 	  },
-	  REMOVE_ELEMENT: function REMOVE_ELEMENT(state, sectionId, elementId) {
-	    //旧方案会引起sections整体刷新
-	    //delete state.sections[sectionId]['elements'][elementId];
-	    //state.sections = merge([],state.sections);
-	
-	    //此方案只刷新单个section
-	    //let section = state.sections[sectionId];
-	    //delete section['elements'][elementId];
-	    //state.sections.$set(sectionId, merge({},section));
-	
-	    //原来这才是正确的姿势
-	    Vue.delete(state.sections[sectionId]['elements'], elementId);
-	    mutations.SAVE_SECTIONS_STATE(state);
-	  },
 	
 	
 	  //重做
 	  REDO: function REDO(state) {
-	    if (sectionStates.length > sectionHistoryIndex + 1) {
-	      sectionHistoryIndex += 1;
-	      state.sections = (0, _lodash.merge)([], sectionStates[sectionHistoryIndex]);
+	    if (pageStates.length > pageHistoryIndex + 1) {
+	      pageHistoryIndex += 1;
+	      state.page = (0, _lodash.merge)({}, pageStates[pageHistoryIndex]);
 	
 	      //控制按钮是否可点击
 	      state.workspace.undo = true;
-	      if (sectionStates.length == sectionHistoryIndex + 1) {
+	      if (pageStates.length == pageHistoryIndex + 1) {
 	        state.workspace.redo = false;
 	      }
 	
@@ -20030,13 +23169,13 @@
 	
 	  //撤销
 	  UNDO: function UNDO(state) {
-	    if (sectionHistoryIndex >= 1) {
-	      sectionHistoryIndex -= 1;
-	      state.sections = (0, _lodash.merge)([], sectionStates[sectionHistoryIndex]);
+	    if (pageHistoryIndex >= 1) {
+	      pageHistoryIndex -= 1;
+	      state.page = (0, _lodash.merge)({}, pageStates[pageHistoryIndex]);
 	
 	      //控制按钮是否可点击
 	      state.workspace.redo = true;
-	      if (sectionHistoryIndex == 0) {
+	      if (pageHistoryIndex == 0) {
 	        state.workspace.undo = false;
 	      }
 	
@@ -20046,9 +23185,9 @@
 	  },
 	
 	
-	  //版本切换
+	  // 版本切换
 	  VERSION: function VERSION(state) {
-	    if (state.workspace.version == 'mobile') {
+	    if (state.workspace.version === 'mobile') {
 	      state.workspace.version = 'pc';
 	      state.workspace.width = 960;
 	    } else {
@@ -20058,6 +23197,17 @@
 	    //重新计算页面高度
 	    mutations.SUM_PAGE_HEIGHT(state);
 	  },
+	
+	
+	  //删除元素
+	  REMOVE_ELEMENT: function REMOVE_ELEMENT(state, sectionId, elementId) {
+	    Vue.delete(state.page.sections[sectionId]['elements'], elementId);
+	    mutations.SAVE_PAGE_STATE(state);
+	  },
+	
+	
+	  // 移动元素
+	  // 逻辑写得太复杂了，以后得重构
 	  MOVE_ELEMENT: function MOVE_ELEMENT(state, sectionId, elementId, positionInPage, elementHeight) {
 	    var sumSectionsHeight = 0;
 	    var sectionHeight = 0;
@@ -20069,7 +23219,8 @@
 	    var newSectionId = -1;
 	    while (elementLine >= sumSectionsHeight) {
 	      newSectionId++;
-	      sectionHeight = parseInt(state.workspace.version == 'pc' ? state.sections[newSectionId].style.height : state.sections[newSectionId].styleM.height);
+	      sectionHeight = parseInt(state.page.sections[newSectionId].style[state.workspace.version].height);
+	      // parseInt((state.workspace.version == 'pc') ? state.page.sections[newSectionId].style.height : state.page.sections[newSectionId].styleM.height);
 	      sumSectionsHeight += sectionHeight;
 	    }
 	
@@ -20079,34 +23230,39 @@
 	    };
 	
 	    //旧元素
-	    var elState = state.sections[sectionId].elements[elementId];
-	    //更新元素坐标，如果移到了新的section，则把另一版本的坐标重置
-	    if (state.workspace.version == 'pc') {
-	      elState.style = (0, _lodash.extend)({}, elState.style, style);
-	      if (newSectionId !== sectionId) {
-	        //elState.styleM = extend({}, elState.styleM, {top:'0px'});
-	      }
-	    } else {
-	        elState.styleM = (0, _lodash.extend)({}, elState.styleM, style);
-	        if (newSectionId !== sectionId) {
-	          //elState.style = extend({}, elState.style, {top:'0px'});
-	        }
-	      }
+	    var elState = state.page.sections[sectionId].elements[elementId];
+	    elState.style[state.workspace.version] = (0, _lodash.extend)({}, elState.style[state.workspace.version], style);
 	
-	    Vue.delete(state.sections[sectionId]['elements'], elementId);
-	    Vue.set(state.sections[newSectionId]['elements'], elementId, elState);
+	    // if (newSectionId !== sectionId){
+	    Vue.delete(state.page.sections[sectionId]['elements'], elementId);
+	    Vue.set(state.page.sections[newSectionId]['elements'], elementId, elState);
+	    // }
 	
-	    mutations.SAVE_SECTIONS_STATE(state);
+	    mutations.SAVE_PAGE_STATE(state);
+	  },
+	  MODIFY_ELEMENT: function MODIFY_ELEMENT(state, sectionId, elementId, newPropsObj) {
+	    var newElement = (0, _lodash.merge)({}, state.page.sections[sectionId]['elements'][elementId], newPropsObj);
+	    Vue.set(state.page.sections[sectionId]['elements'], elementId, newElement);
+	    mutations.SAVE_PAGE_STATE(state);
+	  },
+	  REPLACE_ELEMENT: function REPLACE_ELEMENT(state, sectionId, elementId, newElement) {
+	    Vue.set(state.page.sections[sectionId]['elements'], elementId, newElement);
+	    mutations.SAVE_PAGE_STATE(state);
+	  },
+	  SET_COLOR_SET: function SET_COLOR_SET(state, colorSet) {
+	    state.page.colorSet = colorSet;
+	    mutations.SAVE_PAGE_STATE(state);
 	  }
 	};
 	
 	exports.default = new _vuex2.default.Store({
 	  state: state,
-	  mutations: mutations
+	  mutations: mutations,
+	  strict: true
 	});
 
 /***/ },
-/* 70 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*!
@@ -20745,10 +23901,10 @@
 	}));
 
 /***/ },
-/* 71 */
+/* 117 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<editor-header></editor-header>\n<div class=\"main\">\n  <editor-toolbar></editor-toolbar>\n  <editor-workspace></editor-workspace>\n</div> \n";
+	module.exports = "\n<div @mousedown=\"setActiveElementId('')\">\n  <editor-header></editor-header>\n  <div class=\"main\">\n    <editor-toolbar></editor-toolbar>\n    <editor-workspace></editor-workspace>\n  </div> \n</div>\n";
 
 /***/ }
 /******/ ]);

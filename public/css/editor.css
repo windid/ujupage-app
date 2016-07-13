@@ -1,13 +1,13 @@
 @charset "UTF-8";
-body {
-  font-family: "Lantinghei SC","Open Sans",Arial,"Hiragino Sans GB","Microsoft YaHei",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif; }
-
 html, body {
   height: 100%;
   overflow: hidden; }
 
-input, button {
+input, button, textarea {
   outline: none; }
+
+textarea {
+  resize: none; }
 
 .fr {
   float: right; }
@@ -30,6 +30,13 @@ input, button {
 
 .fade-enter, .fade-leave {
   opacity: 0; }
+
+.collapse-transition {
+  transition: max-height .3s ease;
+  overflow: hidden; }
+
+.collapse-enter, .collapse-leave {
+  max-height: 0 !important; }
 
 .section-transition {
   transition: all .5s ease;
@@ -203,8 +210,19 @@ input, button {
   height: auto;
   padding: 0;
   z-index: 90000;
-  margin-bottom: 0;
+  margin-bottom: 0; }
+
+.el-toolbar.top {
+  top: -43px; }
+
+.el-toolbar.bottom {
+  bottom: -43px; }
+
+.el-toolbar.left {
   left: -1px; }
+
+.el-toolbar.right {
+  right: -1px; }
 
 .el-btn-group {
   white-space: nowrap;
@@ -213,11 +231,11 @@ input, button {
 .el-btn-group .btn {
   float: none; }
 
-.el-toolbar.top {
-  top: -43px; }
-
-.el-toolbar.bottom {
-  bottom: -43px; }
+.el-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 101000; }
 
 .is-dragging {
   z-index: 100000;
