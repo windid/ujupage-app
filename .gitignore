@@ -5,9 +5,3 @@ Homestead.json
 .env
 
 *.map
-
-public/css/bootstrap.css
-
-public/css/editor.css
-
-public/js/editor.js
