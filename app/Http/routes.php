@@ -46,6 +46,9 @@ Route::group(['prefix'=> $zone, 'as' => $zone], function(){
 
 $zone = 'editor';
 Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'middleware' => 'auth'], function(){   
+    
+    Route::get('v1', ['as' => '.v1', 'uses' => 'EditorController@v1']);
+    
     Route::group(['prefix'=>'image', 'as' => '.image'], function(){        
         // 图片列表        
         Route::get('list/{dirname?}/{page?}/{page_size?}', ['as' => '.list', 'uses' => 'ImageController@getIndex']);
