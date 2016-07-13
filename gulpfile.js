@@ -13,13 +13,6 @@ require('laravel-elixir-webpack');
  |
  */
 
-//watch状态下页面自动刷新
-require('laravel-elixir-livereload');
-
-elixir(function(mix) {
-    mix.livereload();
-});
-
 elixir(function(mix) {
     //bootstrap sass单独打包
     mix.sass('bootstrap.scss');
@@ -28,22 +21,26 @@ elixir(function(mix) {
 });
 
 elixir(function(mix) {
-    mix.webpack('editor/index.js', {
+    mix.webpack('pages/editor/index.js', {
         module: {
             loaders: [
                 {test: /\.css$/, loader: 'style-loader!css-loader'},
-                {test: /\.html$/, loader: 'text-loader'},
-                {test: /\.vue$/,loader: 'vue'},
-                {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: {compact: false,presets:['es2015',"stage-0"],plugins:['transform-runtime']}}
-            ]
+                {test: /\.html$/, loader: 'text-loader'}
+            ],
+            //preLoaders: [
+            //    {test: /\.js$/, loader: "amdcss-loader"}
+            //]
         },
 
         resolve: {
             extensions: ['', '.js', '.css'],
+            //alias: {
+            //    "../avalon": "avalon"
+            //}
         },
 
         externals: {
-            "vue" : "Vue",
+            "avalon" : true,
             "jquery" : "jQuery"
         },
     },'./public/js/editor.js');
