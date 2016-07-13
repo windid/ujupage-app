@@ -4,7 +4,7 @@
     </head>
     <body>
         
-        <form action="[[route('auth.password.reset.post')]]" method="post">
+        <form action="[[route('oauth.password.reset.post')]]" method="post">
             [[csrf_field()]]
             <input type="hidden" name="token" value="[[$token]]" />
             <input type="text" name="email" value="[[old('email')]]" placeholder="邮箱"/>
