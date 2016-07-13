@@ -57,15 +57,15 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         // 创建文件夹
         Route::get('mkdir/{dirname}', ['as' => '.mkdir', 'uses' => 'ImageController@mkdir']);
         // 修改文件夹
-        Route::get('moddir/{dirname}', ['as' => '.moddir', 'uses' => 'ImageController@moddir']);
+        Route::get('moddir/{dirname}/{mod_dirname}', ['as' => '.moddir', 'uses' => 'ImageController@moddir']);
         // 删除文件夹
         Route::get('deldir/{dirname}', ['as' => '.deldir', 'uses' => 'ImageController@deldir']);
         // 上传图片
-        Route::post('upload', ['as' => '.mkdir', 'uses' => 'ImageController@upload']);
+        Route::post('upload', ['as' => '.upload', 'uses' => 'ImageController@upload']);
         // 修改图片信息
-        Route::post('modimage', ['as' => '.moddir', 'uses' => 'ImageController@modimage']);
+        Route::post('modimage', ['as' => '.modimage', 'uses' => 'ImageController@modimage']);
         // 删除图片
-        Route::get('delimage/{id}', ['as' => '.deldir', 'uses' => 'ImageController@delimage']);
+        Route::get('delimage/{id}', ['as' => '.delimage', 'uses' => 'ImageController@delimage']);
     });
 });
 

@@ -209,8 +209,8 @@ return [
     /*************************************
      *          阿里云OSS
      **************************************/
-    'ossServer' => 'http://oss-editor.ujupage.com', //青岛为 http://oss-cn-qingdao.aliyuncs.com
-    'ossServerInternal' => 'http://ujupage-editor.oss-cn-hangzhou-internal.aliyuncs.com', //青岛为 http://oss-cn-qingdao-internal.aliyuncs.com
+    'ossServer' => 'http://ujupage.com', //青岛为 http://oss-cn-qingdao.aliyuncs.com
+    'ossServerInternal' => 'http://oss-cn-hangzhou-internal.aliyuncs.com', //青岛为 http://oss-cn-qingdao-internal.aliyuncs.com
     'AccessKeyId' => '47JncEvhoM2SJTFj',
     'AccessKeySecret' => 'lILHNy53L97LlaqSixwG7Nm1HFRNj1',
     
