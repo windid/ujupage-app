@@ -65,8 +65,6 @@
 	
 	Vue.use(_vueResource2.default);
 	
-	Vue.http.options.root = '/root';
-	
 	// import tooltip from '../libs/vue-strap/src/tooltip.vue'
 	
 	// // import eventHandler from '../utils/eventHandler.js'
@@ -1500,6 +1498,24 @@
 	              "mobile": { "background-color": "0", height: "500px" }
 	            },
 	            elements: {
+	              "dfgs234f": {
+	                type: "image",
+	                src: "http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+	                style: {
+	                  'pc': {
+	                    left: "200px",
+	                    top: "100px",
+	                    width: "",
+	                    zIndex: 101
+	                  },
+	                  'mobile': {
+	                    left: "50px",
+	                    top: "150px",
+	                    width: "",
+	                    zIndex: 101
+	                  }
+	                }
+	              },
 	              "fgh24g": {
 	                type: "button",
 	                text: "点击下载",
@@ -1535,13 +1551,13 @@
 	                style: {
 	                  'pc': {
 	                    left: "200px",
-	                    top: "150px",
+	                    top: "250px",
 	                    width: "300px",
 	                    zIndex: 3000
 	                  },
 	                  'mobile': {
 	                    left: "50px",
-	                    top: "150px",
+	                    top: "250px",
 	                    width: "300px",
 	                    zIndex: 1342
 	                  }
@@ -1754,7 +1770,7 @@
 	
 	var _editorSettings2 = _interopRequireDefault(_editorSettings);
 	
-	var _colorSchemes = __webpack_require__(21);
+	var _colorSchemes = __webpack_require__(22);
 	
 	var _colorSchemes2 = _interopRequireDefault(_colorSchemes);
 	
@@ -1961,7 +1977,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/editor-settings.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(20)
+	__vue_template__ = __webpack_require__(21)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2359,7 +2375,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/modal.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(19)
+	__vue_template__ = __webpack_require__(20)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2412,20 +2428,27 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/modal.vue?168f012e"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAsEA;EACA,gBAAA;EACA,gBAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,qCAAA;EAAA,6BAAA;CACA;;AAEA;EACA,oBAAA;EACA,aAAA;CACA;;AAEA;EACA,mBAAA;EACA,eAAA;EACA,gBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,iCAAA;EAAA,yBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;CACA;;AAEA;EACA,aAAA;EACA,iBAAA;EACA,sBAAA;EACA,iBAAA;EACA,mBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;EACA,kBAAA;CACA;;AAEA;;;;;;;GAOA;;AAEA;EACA,WAAA;CACA;;AAEA;;EAEA,eAAA;CACA","file":"modal.vue","sourcesContent":["<script>\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    },\n    width: {\n      type: String,\n    \tdefault: \"500px\"\n    },\n    height: {\n      type: String,\n    \tdefault: \"auto\"\n    }\n  },\n  data (){\n    return {\n      bodyHeight:\"auto\"\n    }\n  },\n  ready:function(){\n    //如果传入的高度是百分比，根据用户浏览器高度转化为像素\n    var heightUnit = this.height.substr(this.height.length-1)\n    if (heightUnit === '%'){\n      var browserHeight = document.documentElement.clientHeight;\n      var modalHeight = parseInt( browserHeight * parseInt(this.height) / 100 );\n      this.bodyHeight = (modalHeight - 107) + 'px'\n    } else {\n      this.bodyHeight = this.height;\n    }\n  // \tdocument.body.style.overflow = 'hidden';\n  //  document.body.style['margin-right'] = '15px';\n  },\n  // destroyed:function(){\n  //   document.body.style.overflow = 'auto';\n  //   document.body.style['margin-right'] = '0';\n  // }\n}\n</script>\n\n<template>\n  <div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n    <div class=\"modal-wrapper\">\n      <div class=\"modal-container\" :style=\"{width:width}\" @click.stop>\n        \n\n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n          <slot name=\"header\">\n          </slot>\n        </div>\n        \n        <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n          <slot name=\"body\">\n          </slot>\n        </div>\n\n        <div class=\"modal-footer\">\n          <slot name=\"footer\">\n            <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n          </slot>\n        </div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<style>\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  -webkit-transition: all .3s ease;\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/modal.vue?5e78e7b0"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA0EA;EACA,gBAAA;EACA,gBAAA;EACA,OAAA;EACA,QAAA;EACA,YAAA;EACA,aAAA;EACA,oCAAA;EACA,eAAA;EACA,qCAAA;EAAA,6BAAA;CACA;;AAEA;EACA,oBAAA;EACA,aAAA;CACA;;AAEA;EACA,mBAAA;EACA,eAAA;EACA,gBAAA;EACA,uBAAA;EACA,mBAAA;EACA,yCAAA;EACA,iCAAA;EAAA,yBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;CACA;;AAEA;EACA,aAAA;EACA,iBAAA;EACA,sBAAA;EACA,iBAAA;EACA,mBAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;EACA,kBAAA;CACA;;AAEA;;;;;;;GAOA;;AAEA;EACA,WAAA;CACA;;AAEA;;EAEA,eAAA;CACA","file":"modal.vue","sourcesContent":["<script>\nimport eventHandler from '../utils/eventHandler'\n\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    },\n    width: {\n      type: String,\n    \tdefault: \"500px\"\n    },\n    height: {\n      type: String,\n    \tdefault: \"auto\"\n    }\n  },\n  data (){\n    return {\n      bodyHeight:\"auto\"\n    }\n  },\n  attached:function(){\n    //如果传入的高度是百分比，根据用户浏览器高度转化为像素\n    var heightUnit = this.height.substr(this.height.length-1)\n    if (heightUnit === '%'){\n      var browserHeight = document.documentElement.clientHeight;\n      var modalHeight = parseInt( browserHeight * parseInt(this.height) / 100 );\n      this.bodyHeight = (modalHeight - 107) + 'px'\n    } else {\n      this.bodyHeight = this.height;\n    }\n\n    var el = this.$els.container;\n\n    this._closeEvent = eventHandler.listen(window, 'click', (e)=> {\n      if (!el.contains(e.target)) this.show = false;\n    })\n  },\n  beforeDestroy:function(){\n    if (this._closeEvent) this._closeEvent.remove()\n  }\n}\n</script>\n\n<template>\n  <div class=\"modal-mask\" transition=\"modal\">\n    <div class=\"modal-wrapper\">\n      <div v-el:container class=\"modal-container\" :style=\"{width:width}\">\n        \n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n          <slot name=\"header\">\n          </slot>\n        </div>\n        \n        <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n          <slot name=\"body\">\n          </slot>\n        </div>\n\n        <div class=\"modal-footer\">\n          <slot name=\"footer\">\n            <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n          </slot>\n        </div>\n      </div>\n    </div>\n  </div>\n</template>\n\n<style>\n.modal-mask {\n  position: fixed;\n  z-index: 820000;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, .5);\n  display: table;\n  transition: opacity .3s ease;\n}\n\n.modal-wrapper {\n  display: table-cell;\n  height: 100%;\n}\n\n.modal-container {\n  position: relative;\n  margin: 0 auto;\n  margin-top:45px;\n  background-color: #fff;\n  border-radius: 6px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n  transition: all .3s ease;\n}\n\n.modal-header {\n  height: 65px;\n  padding:12px;\n}\n\n.modal-body {\n  padding:12px;\n  background: #eee;\n  border:1px solid #ccc;\n  overflow-x: auto;\n  position: relative;\n}\n\n.modal-footer{\n  padding:12px;\n  height: 54px;\n  text-align: right;\n}\n\n/*\n * the following styles are auto-applied to elements with\n * v-transition=\"modal\" when their visiblity is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n\n.modal-enter, .modal-leave {\n  opacity: 0;\n}\n\n.modal-enter .modal-container,\n.modal-leave .modal-container {\n  margin-top:0px;\n}\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
 /* 18 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	
+	var _eventHandler = __webpack_require__(19);
+	
+	var _eventHandler2 = _interopRequireDefault(_eventHandler);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	exports.default = {
 	  props: {
 	    show: {
@@ -2448,7 +2471,9 @@
 	    };
 	  },
 	
-	  ready: function ready() {
+	  attached: function attached() {
+	    var _this = this;
+	
 	    var heightUnit = this.height.substr(this.height.length - 1);
 	    if (heightUnit === '%') {
 	      var browserHeight = document.documentElement.clientHeight;
@@ -2457,198 +2482,11 @@
 	    } else {
 	      this.bodyHeight = this.height;
 	    }
-	  }
-	};
-
-/***/ },
-/* 19 */
-/***/ function(module, exports) {
-
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"modal-mask\" transition=\"modal\" @click=\"show=false\">\n  <div class=\"modal-wrapper\">\n    <div class=\"modal-container\" :style=\"{width:width}\" @click.stop>\n      \n\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n        <slot name=\"header\">\n        </slot>\n      </div>\n      \n      <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n        <slot name=\"body\">\n        </slot>\n      </div>\n\n      <div class=\"modal-footer\">\n        <slot name=\"footer\">\n          <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n        </slot>\n      </div>\n    </div>\n  </div>\n</div>\n";
-
-/***/ },
-/* 20 */
-/***/ function(module, exports) {
-
-	module.exports = "\n\n\n\n\n\n\n\n\n<modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'80%'\" >\n  <div slot=\"header\">\n    <ul class=\"nav nav-pills\">\n      <li role=\"presentation\" :class=\"{active: currentTab === 'seo'}\"><a href=\"#\" @click=\"currentTab = 'seo'\">SEO设置</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'goal'}\"><a href=\"#\" @click=\"currentTab = 'goal'\">转化目标</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'color'}\"><a href=\"#\" @click=\"currentTab = 'color'\">配色方案</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'background'}\"><a href=\"#\" @click=\"currentTab = 'background'\">页面背景</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'font'}\"><a href=\"#\" @click=\"currentTab = 'font'\">字体字号</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'data'}\"><a href=\"#\" @click=\"currentTab = 'data'\">数据跟踪</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'editor'}\"><a href=\"#\" @click=\"currentTab = 'editor'\">编辑器设置</a></li>\n    </ul>\n  </div>\n  \n  <div slot=\"body\" class=\"settings-body\">\n    <div v-show=\"currentTab === 'seo'\">\n      <form class=\"form-horizontal\">\n        <div class=\"form-group\">\n          <label for=\"settings-page-title\" class=\"col-sm-2 control-label\">网页标题</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-page-title\" v-model=\"settings.seo.pageTitle\" placeholder=\"网页标题\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-keywords\" class=\"col-sm-2 control-label\">网页关键词</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-keywords\" v-model=\"settings.seo.keywords\" placeholder=\"多个关键词用英文逗号隔开\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-description\" class=\"col-sm-2 control-label\">页面描述</label>\n          <div class=\"col-sm-10\">\n            <textarea class=\"form-control\" id=\"settings-description\" rows=\"3\"  v-model=\"settings.seo.description\"></textarea>\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-favicon\" class=\"col-sm-2 control-label\">页面图标</label>\n          <div class=\"col-sm-10\">\n             <button class=\"btn btn-default btn-sm\" id=\"settings-favicon\">上传</button> 扩展名为ico的Favicon图标\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <div class=\"col-sm-offset-2 col-sm-10\">\n            <div class=\"checkbox\">\n              <label>\n                <input type=\"checkbox\"> 禁止搜索引擎索引此页面\n              </label>\n            </div>\n          </div>\n        </div>\n      </form>\n    </div>\n    <div v-show=\"currentTab === 'goal'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'color'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'background'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'font'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'data'\">\n      <form class=\"form-horizontal\">\n        <div class=\"form-group\">\n          <div class=\"col-sm-offset-2 col-sm-10\">\n            <div class=\"checkbox\">\n              <label>\n                <input type=\"checkbox\"> 开启外链和下载跟踪\n              </label>\n            </div>\n          </div>\n        </div>\n        <hr style=\"border-bottom:1px doshed #ccc\">\n        <h4>第三方数据跟踪API</h4>\n        <div class=\"form-group\">\n          <label for=\"settings-ga-id\" class=\"col-sm-2 control-label\">GA跟踪ID</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-ga-id\" placeholder=\"如：UA-88888888-8\">\n          </div>\n        </div>\n      </form>\n    </div>\n    <div v-show=\"currentTab === 'editor'\">\n      {{currentTab}}\n    </div>\n  </div>\n  <div slot=\"footer\">\n    <button class=\"btn btn-success btn-sm\" @click=\"saveSettings\">保存更改</button>\n  </div>\n</modal>\n";
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__webpack_require__(22)
-	__vue_script__ = __webpack_require__(24)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] resources/assets/js/components/color-schemes.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(29)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  var id = "./color-schemes.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
-	// load the styles
-	var content = __webpack_require__(23);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(13)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./color-schemes.vue", function() {
-				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./color-schemes.vue");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(12)();
-	// imports
+	    var el = this.$els.container;
 	
-	
-	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.color-schemes-content{\n  cursor:default;\n  height:420px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/color-schemes.vue?59123528"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA8DA;EACA,eAAA;EACA,aAAA;EACA,iBAAA;EACA,aAAA;CACA;;AAEA;EACA,sBAAA;EACA,UAAA;EACA,aAAA;EACA,YAAA;EACA,WAAA;CACA;;AAEA;EACA,mBAAA;CACA;;AAEA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;CACA;;AAEA;EACA,eAAA;EACA,kBAAA;CACA","file":"color-schemes.vue","sourcesContent":["<script>\nimport dropdown from './dropdown.vue'\nimport { setColorSet }  from '../store/actions'\nimport { getColorSet } from '../store/getters'\n\nexport default {\n  components: {\n    dropdown\n  },\n  vuex: {\n    actions: {\n      setColorSet\n    },\n    getters: {\n      colorSet: getColorSet\n    }\n  },\n  data () {\n    return {\n      colorSchemes:[\n        {name:\"海滩\",         colors:['#E6E2AF',\"#A7A37E\",\"#EFECCA\",\"#046380\",\"#002F2F\"]},\n        {name:\"佛罗伦萨\",      colors:['#468966',\"#FFF0A5\",\"#FFB03B\",\"#B64926\",\"#8E2800\"]},\n        {name:\"淡蓝\",         colors:['#FCFFF5',\"#D1DBBD\",\"#91AA9D\",\"#3E606F\",\"#193441\"]},\n        {name:\"菲德拉\",       colors:['#FF6138',\"#FFFF9D\",\"#BEEB9F\",\"#79BD8F\",\"#00A388\"]},\n        {name:\"蜜罐\",         colors:['#105B63',\"#FFFAD5\",\"#FFD34E\",\"#DB9E36\",\"#BD4932\"]},\n        {name:\"阿司匹林C\",    colors:['#225378',\"#1695A3\",\"#ACF0F2\",\"#F3FFE2\",\"#EB7F00\"]},\n      ],\n      show: false\n    }\n  }\n}\n</script>\n\n<template>\n  <dropdown :show.sync=\"show\">\n    <slot></slot>\n    <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right\">\n      <div class=\"color-schemes-content\">\n        <div v-for=\"colorScheme in colorSchemes\" @click=\"setColorSet(colorScheme.colors)\">\n          <!-- <div>{{colorScheme.name}}</div> -->\n          <ul class=\"list-inline color-schemes-group\">\n            <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\" title=\"{{color}}\"></li>\n          </ul>\n        </div>\n        <div>\n          <div style=\"text-align:center\">当前选择</div>\n          <ul class=\"list-inline color-schemes-group\">\n            <li v-for=\"color in colorSet\" :style=\"{background:color}\" title=\"{{color}}\"></li>\n          </ul>\n        </div>\n      </div>\n      <div class=\"color-schemes-footer\">\n        <span class=\"fl\">自定义</span>\n        <button class=\"btn btn-success btn-sm\" @click=\"show=false\">&nbsp; 完成 &nbsp;</button>\n      </div>\n    </div>\n  </dropdown>\n\n</template>\n\n<style>\n\n.color-schemes-content{\n  cursor:default;\n  height:420px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
-	
-	// exports
-
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _dropdown = __webpack_require__(25);
-	
-	var _dropdown2 = _interopRequireDefault(_dropdown);
-	
-	var _actions = __webpack_require__(7);
-	
-	var _getters = __webpack_require__(8);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  components: {
-	    dropdown: _dropdown2.default
-	  },
-	  vuex: {
-	    actions: {
-	      setColorSet: _actions.setColorSet
-	    },
-	    getters: {
-	      colorSet: _getters.getColorSet
-	    }
-	  },
-	  data: function data() {
-	    return {
-	      colorSchemes: [{ name: "海滩", colors: ['#E6E2AF', "#A7A37E", "#EFECCA", "#046380", "#002F2F"] }, { name: "佛罗伦萨", colors: ['#468966', "#FFF0A5", "#FFB03B", "#B64926", "#8E2800"] }, { name: "淡蓝", colors: ['#FCFFF5', "#D1DBBD", "#91AA9D", "#3E606F", "#193441"] }, { name: "菲德拉", colors: ['#FF6138', "#FFFF9D", "#BEEB9F", "#79BD8F", "#00A388"] }, { name: "蜜罐", colors: ['#105B63', "#FFFAD5", "#FFD34E", "#DB9E36", "#BD4932"] }, { name: "阿司匹林C", colors: ['#225378', "#1695A3", "#ACF0F2", "#F3FFE2", "#EB7F00"] }],
-	      show: false
-	    };
-	  }
-	};
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(26)
-	if (__vue_script__ &&
-	    __vue_script__.__esModule &&
-	    Object.keys(__vue_script__).length > 1) {
-	  console.warn("[vue-loader] resources/assets/js/components/dropdown.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(28)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) {
-	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
-	}
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), false)
-	  if (!hotAPI.compatible) return
-	  var id = "./dropdown.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _eventHandler = __webpack_require__(27);
-	
-	var _eventHandler2 = _interopRequireDefault(_eventHandler);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  props: {
-	    show: {
-	      type: Boolean,
-	      required: true,
-	      twoWay: true
-	    }
-	  },
-	  methods: {
-	    toggleDropdown: function toggleDropdown(e) {
-	      e.preventDefault();
-	      this.show = !this.show;
-	    }
-	  },
-	  ready: function ready() {
-	    var _this = this;
-	
-	    var el = this.$el;
-	    var toggle = el.querySelector('[data-toggle="dropdown"]');
-	    if (toggle) {
-	      toggle.addEventListener('click', this.toggleDropdown);
-	    }
 	    this._closeEvent = _eventHandler2.default.listen(window, 'click', function (e) {
-	      if (!el.contains(e.target) || e.target.nodeName.toLowerCase() == 'a') _this.show = false;
+	      if (!el.contains(e.target)) _this.show = false;
 	    });
 	  },
 	  beforeDestroy: function beforeDestroy() {
@@ -2657,7 +2495,7 @@
 	};
 
 /***/ },
-/* 27 */
+/* 19 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2697,10 +2535,211 @@
 	exports.default = eventHandler;
 
 /***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"modal-mask\" transition=\"modal\">\n  <div class=\"modal-wrapper\">\n    <div v-el:container class=\"modal-container\" :style=\"{width:width}\">\n      \n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close fr\" aria-label=\"Close\" @click=\"show = false\"><span aria-hidden=\"true\">&times;</span></button>\n        <slot name=\"header\">\n        </slot>\n      </div>\n      \n      <div class=\"modal-body container-fluid\" :style=\"{height:bodyHeight}\">\n        <slot name=\"body\">\n        </slot>\n      </div>\n\n      <div class=\"modal-footer\">\n        <slot name=\"footer\">\n          <button class=\"btn btn-primary btn-sm\" @click=\"show = false\">确定</button>\n        </slot>\n      </div>\n    </div>\n  </div>\n</div>\n";
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n<modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'80%'\" >\n  <div slot=\"header\">\n    <ul class=\"nav nav-pills\">\n      <li role=\"presentation\" :class=\"{active: currentTab === 'seo'}\"><a href=\"#\" @click=\"currentTab = 'seo'\">SEO设置</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'goal'}\"><a href=\"#\" @click=\"currentTab = 'goal'\">转化目标</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'color'}\"><a href=\"#\" @click=\"currentTab = 'color'\">配色方案</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'background'}\"><a href=\"#\" @click=\"currentTab = 'background'\">页面背景</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'font'}\"><a href=\"#\" @click=\"currentTab = 'font'\">字体字号</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'data'}\"><a href=\"#\" @click=\"currentTab = 'data'\">数据跟踪</a></li>\n      <li role=\"presentation\" :class=\"{active: currentTab === 'editor'}\"><a href=\"#\" @click=\"currentTab = 'editor'\">编辑器设置</a></li>\n    </ul>\n  </div>\n  \n  <div slot=\"body\" class=\"settings-body\">\n    <div v-show=\"currentTab === 'seo'\">\n      <form class=\"form-horizontal\">\n        <div class=\"form-group\">\n          <label for=\"settings-page-title\" class=\"col-sm-2 control-label\">网页标题</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-page-title\" v-model=\"settings.seo.pageTitle\" placeholder=\"网页标题\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-keywords\" class=\"col-sm-2 control-label\">网页关键词</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-keywords\" v-model=\"settings.seo.keywords\" placeholder=\"多个关键词用英文逗号隔开\">\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-description\" class=\"col-sm-2 control-label\">页面描述</label>\n          <div class=\"col-sm-10\">\n            <textarea class=\"form-control\" id=\"settings-description\" rows=\"3\"  v-model=\"settings.seo.description\"></textarea>\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"settings-favicon\" class=\"col-sm-2 control-label\">页面图标</label>\n          <div class=\"col-sm-10\">\n             <button class=\"btn btn-default btn-sm\" id=\"settings-favicon\">上传</button> 扩展名为ico的Favicon图标\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <div class=\"col-sm-offset-2 col-sm-10\">\n            <div class=\"checkbox\">\n              <label>\n                <input type=\"checkbox\"> 禁止搜索引擎索引此页面\n              </label>\n            </div>\n          </div>\n        </div>\n      </form>\n    </div>\n    <div v-show=\"currentTab === 'goal'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'color'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'background'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'font'\">\n      {{currentTab}}\n    </div>\n    <div v-show=\"currentTab === 'data'\">\n      <form class=\"form-horizontal\">\n        <div class=\"form-group\">\n          <div class=\"col-sm-offset-2 col-sm-10\">\n            <div class=\"checkbox\">\n              <label>\n                <input type=\"checkbox\"> 开启外链和下载跟踪\n              </label>\n            </div>\n          </div>\n        </div>\n        <hr style=\"border-bottom:1px doshed #ccc\">\n        <h4>第三方数据跟踪API</h4>\n        <div class=\"form-group\">\n          <label for=\"settings-ga-id\" class=\"col-sm-2 control-label\">GA跟踪ID</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" class=\"form-control\" id=\"settings-ga-id\" placeholder=\"如：UA-88888888-8\">\n          </div>\n        </div>\n      </form>\n    </div>\n    <div v-show=\"currentTab === 'editor'\">\n      {{currentTab}}\n    </div>\n  </div>\n  <div slot=\"footer\">\n    <button class=\"btn btn-success btn-sm\" @click=\"saveSettings\">保存更改</button>\n  </div>\n</modal>\n";
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(23)
+	__vue_script__ = __webpack_require__(25)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/color-schemes.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(29)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./color-schemes.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(24);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(13)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./color-schemes.vue", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/vue-loader/lib/style-rewriter.js!./../../../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./color-schemes.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(12)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.color-schemes-content{\n  cursor:default;\n  height:420px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/color-schemes.vue?59123528"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA8DA;EACA,eAAA;EACA,aAAA;EACA,iBAAA;EACA,aAAA;CACA;;AAEA;EACA,sBAAA;EACA,UAAA;EACA,aAAA;EACA,YAAA;EACA,WAAA;CACA;;AAEA;EACA,mBAAA;CACA;;AAEA;EACA,SAAA;EACA,UAAA;EACA,WAAA;EACA,YAAA;CACA;;AAEA;EACA,eAAA;EACA,kBAAA;CACA","file":"color-schemes.vue","sourcesContent":["<script>\nimport dropdown from './dropdown.vue'\nimport { setColorSet }  from '../store/actions'\nimport { getColorSet } from '../store/getters'\n\nexport default {\n  components: {\n    dropdown\n  },\n  vuex: {\n    actions: {\n      setColorSet\n    },\n    getters: {\n      colorSet: getColorSet\n    }\n  },\n  data () {\n    return {\n      colorSchemes:[\n        {name:\"海滩\",         colors:['#E6E2AF',\"#A7A37E\",\"#EFECCA\",\"#046380\",\"#002F2F\"]},\n        {name:\"佛罗伦萨\",      colors:['#468966',\"#FFF0A5\",\"#FFB03B\",\"#B64926\",\"#8E2800\"]},\n        {name:\"淡蓝\",         colors:['#FCFFF5',\"#D1DBBD\",\"#91AA9D\",\"#3E606F\",\"#193441\"]},\n        {name:\"菲德拉\",       colors:['#FF6138',\"#FFFF9D\",\"#BEEB9F\",\"#79BD8F\",\"#00A388\"]},\n        {name:\"蜜罐\",         colors:['#105B63',\"#FFFAD5\",\"#FFD34E\",\"#DB9E36\",\"#BD4932\"]},\n        {name:\"阿司匹林C\",    colors:['#225378',\"#1695A3\",\"#ACF0F2\",\"#F3FFE2\",\"#EB7F00\"]},\n      ],\n      show: false\n    }\n  }\n}\n</script>\n\n<template>\n  <dropdown :show.sync=\"show\">\n    <slot></slot>\n    <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right\">\n      <div class=\"color-schemes-content\">\n        <div v-for=\"colorScheme in colorSchemes\" @click=\"setColorSet(colorScheme.colors)\">\n          <!-- <div>{{colorScheme.name}}</div> -->\n          <ul class=\"list-inline color-schemes-group\">\n            <li v-for=\"color in colorScheme.colors\" :style=\"{background:color}\" title=\"{{color}}\"></li>\n          </ul>\n        </div>\n        <div>\n          <div style=\"text-align:center\">当前选择</div>\n          <ul class=\"list-inline color-schemes-group\">\n            <li v-for=\"color in colorSet\" :style=\"{background:color}\" title=\"{{color}}\"></li>\n          </ul>\n        </div>\n      </div>\n      <div class=\"color-schemes-footer\">\n        <span class=\"fl\">自定义</span>\n        <button class=\"btn btn-success btn-sm\" @click=\"show=false\">&nbsp; 完成 &nbsp;</button>\n      </div>\n    </div>\n  </dropdown>\n\n</template>\n\n<style>\n\n.color-schemes-content{\n  cursor:default;\n  height:420px;\n  overflow-x: auto;\n  padding:12px;\n}\n\n.color-schemes-group{\n  border:3px solid #eee;\n  padding:0;\n  width: 256px;\n  height:46px;\n  margin:5px;\n}\n\n.color-schemes-group:hover{\n  border-color: #ccc;\n}\n\n.color-schemes-group li{\n  border:0;\n  padding:0;\n  width:50px;\n  height:40px;\n}\n\n.color-schemes-footer{\n  padding:0 12px;\n  text-align: right;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _dropdown = __webpack_require__(26);
+	
+	var _dropdown2 = _interopRequireDefault(_dropdown);
+	
+	var _actions = __webpack_require__(7);
+	
+	var _getters = __webpack_require__(8);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  components: {
+	    dropdown: _dropdown2.default
+	  },
+	  vuex: {
+	    actions: {
+	      setColorSet: _actions.setColorSet
+	    },
+	    getters: {
+	      colorSet: _getters.getColorSet
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      colorSchemes: [{ name: "海滩", colors: ['#E6E2AF', "#A7A37E", "#EFECCA", "#046380", "#002F2F"] }, { name: "佛罗伦萨", colors: ['#468966', "#FFF0A5", "#FFB03B", "#B64926", "#8E2800"] }, { name: "淡蓝", colors: ['#FCFFF5', "#D1DBBD", "#91AA9D", "#3E606F", "#193441"] }, { name: "菲德拉", colors: ['#FF6138', "#FFFF9D", "#BEEB9F", "#79BD8F", "#00A388"] }, { name: "蜜罐", colors: ['#105B63', "#FFFAD5", "#FFD34E", "#DB9E36", "#BD4932"] }, { name: "阿司匹林C", colors: ['#225378', "#1695A3", "#ACF0F2", "#F3FFE2", "#EB7F00"] }],
+	      show: false
+	    };
+	  }
+	};
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(27)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/dropdown.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(28)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./dropdown.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _eventHandler = __webpack_require__(19);
+	
+	var _eventHandler2 = _interopRequireDefault(_eventHandler);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: {
+	    show: {
+	      type: Boolean,
+	      required: true,
+	      twoWay: true
+	    },
+	
+	    dir: {
+	      type: String,
+	      default: 'down'
+	    }
+	  },
+	  methods: {
+	    toggleDropdown: function toggleDropdown(e) {
+	      e.preventDefault();
+	      this.show = !this.show;
+	    }
+	  },
+	  ready: function ready() {
+	    var _this = this;
+	
+	    var el = this.$el;
+	    var toggle = el.querySelector('[data-toggle="dropdown"]');
+	    if (toggle) {
+	      toggle.addEventListener('click', this.toggleDropdown);
+	    }
+	    this._closeEvent = _eventHandler2.default.listen(window, 'click', function (e) {
+	      if (!el.contains(e.target) || e.target.nodeName.toLowerCase() == 'a') _this.show = false;
+	    });
+	  },
+	  beforeDestroy: function beforeDestroy() {
+	    if (this._closeEvent) this._closeEvent.remove();
+	  }
+	};
+
+/***/ },
 /* 28 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"btn-group\" v-bind:class=\"{open:show}\">\n  <slot></slot>\n  <slot name=\"dropdown-menu\"></slot>\n</div>\n";
+	module.exports = "\n<div class=\"btn-group\" v-bind:class=\"{open:show,dropup:(dir === 'up')}\">\n  <slot></slot>\n  <slot name=\"dropdown-menu\"></slot>\n</div>\n";
 
 /***/ },
 /* 29 */
@@ -2712,7 +2751,7 @@
 /* 30 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"header\">\n  <ul class=\"header-holder list-inline fl\">\n    <li class=\"go-to-dashboard\"><a href=\"./dashboard\"><span class=\"glyphicon glyphicon-home\"></span></a></li>\n    <li><a>创建一个A/B测试</a></li>\n  </ul>\n  <div class=\"btn-group btn-group-sm version-switch\" role=\"group\" aria-label=\"...\">\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='pc'}\" @click=\"toggleVersion\">桌面版 <span class=\"glyphicon glyphicon-blackboard\"></span></div>\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='mobile'}\" @click=\"toggleVersion\">移动版 <span class=\"glyphicon glyphicon-phone\"></span></div>\n  </div>\n\n  <ul class=\"header-holder list-inline fr\">\n    <li><span class=\"glyphicon glyphicon-question-sign\"></span></li>\n    <!-- <tooltip placement=\"bottom\" content=\"撤销\"> -->\n      <li @click=\"undo\" v-bind:class=\"{'do-disabled':workspace.undo === false}\"><span class=\"glyphicon glyphicon-share-alt flipx\"></span></li>\n    <!-- </tooltip> -->\n    <!-- <tooltip placement=\"bottom\" content=\"重做\"> -->\n      <li @click=\"redo\" v-bind:class=\"{'do-disabled':workspace.redo === false}\"><span class=\"glyphicon glyphicon-share-alt\"></span></li>\n    <!-- </tooltip> -->\n    <color-schemes><li data-toggle=\"dropdown\">配色 <span class=\"glyphicon glyphicon-th-large\"></span></li></color-schemes>\n    <li @click=\"showSettings=true\">设置 <span class=\"glyphicon glyphicon-cog\"></span></li>\n    <li>保存 <span class=\"glyphicon glyphicon-floppy-disk\"></span></li>\n    <li>预览 <span class=\"glyphicon glyphicon-eye-open\"></span></li>\n    <li class=\"publish\">发布 <span class=\"glyphicon glyphicon-send\"></span></li>\n  </ul>\n</div>\n<editor-settings v-if=\"showSettings\" :show.sync=\"showSettings\"></editor-settings>\n";
+	module.exports = "\n<div class=\"header\">\n  <ul class=\"header-holder list-inline fl\">\n    <li class=\"go-to-dashboard\"><a href=\"./dashboard\"><span class=\"glyphicon glyphicon-home\"></span></a></li>\n    <li><a>创建一个A/B测试</a></li>\n  </ul>\n  <div class=\"btn-group btn-group-sm version-switch\" role=\"group\" aria-label=\"...\">\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='pc'}\" @click=\"toggleVersion\">桌面版 <span class=\"glyphicon glyphicon-blackboard\"></span></div>\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='mobile'}\" @click=\"toggleVersion\">移动版 <span class=\"glyphicon glyphicon-phone\"></span></div>\n  </div>\n\n  <ul class=\"header-holder list-inline fr\">\n    <li><span class=\"glyphicon glyphicon-question-sign\"></span></li>\n    <!-- <tooltip placement=\"bottom\" content=\"撤销\"> -->\n      <li @click=\"undo\" v-bind:class=\"{'do-disabled':workspace.undo === false}\"><span class=\"glyphicon glyphicon-share-alt flipx\"></span></li>\n    <!-- </tooltip> -->\n    <!-- <tooltip placement=\"bottom\" content=\"重做\"> -->\n      <li @click=\"redo\" v-bind:class=\"{'do-disabled':workspace.redo === false}\"><span class=\"glyphicon glyphicon-share-alt\"></span></li>\n    <!-- </tooltip> -->\n    <color-schemes><li data-toggle=\"dropdown\">配色 <span class=\"glyphicon glyphicon-th-large\"></span></li></color-schemes>\n    <li @click.stop=\"showSettings=true\">设置 <span class=\"glyphicon glyphicon-cog\"></span></li>\n    <li>保存 <span class=\"glyphicon glyphicon-floppy-disk\"></span></li>\n    <li>预览 <span class=\"glyphicon glyphicon-eye-open\"></span></li>\n    <li class=\"publish\">发布 <span class=\"glyphicon glyphicon-send\"></span></li>\n  </ul>\n  <editor-settings v-if=\"showSettings\" :show.sync=\"showSettings\"></editor-settings>\n</div>\n";
 
 /***/ },
 /* 31 */
@@ -3064,7 +3103,7 @@
 	
 	var _colorMixin2 = _interopRequireDefault(_colorMixin);
 	
-	var _eventHandler = __webpack_require__(27);
+	var _eventHandler = __webpack_require__(19);
 	
 	var _eventHandler2 = _interopRequireDefault(_eventHandler);
 	
@@ -3326,7 +3365,7 @@
 	
 	var _colorMixin2 = _interopRequireDefault(_colorMixin);
 	
-	var _dropdown = __webpack_require__(25);
+	var _dropdown = __webpack_require__(26);
 	
 	var _dropdown2 = _interopRequireDefault(_dropdown);
 	
@@ -21563,7 +21602,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n.image-item{\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/image-library.vue?7c7b988b"],"names":[],"mappings":";;AAEA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,aAAA;EACA,mBAAA;EACA,gBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA","file":"image-library.vue","sourcesContent":["<style>\n\n.image-item{\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n</style>\n\n<template>\n  <modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'400px'\" >\n    <div slot=\"header\">\n      <ul class=\"nav nav-pills\">\n        <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n        <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n      </ul>\n    </div>\n    \n    <div slot=\"body\">\n      <div v-show=\"loading\" class=\"loading\"></div>\n      <div v-else>\n        <div v-for=\"(imageId,image) in images\" class=\"image-item\" v-bind:class=\"{selected: imageId === currentImageId}\" @click=\"currentImageId = imageId\" @dblclick=\"pickImage(imageId)\">\n          <img :src=\"image.thumb\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n        </div>\n      </div>\n    </div>\n    <div slot=\"footer\">\n      <!-- <button class=\"btn btn-default btn-sm\" @click=\"show = false\">关闭</button> -->\n      <button class=\"btn btn-primary btn-sm fl\" @click=\"\">上传图片</button>\n      <span v-if=\"currentImageId !== null\">\n        名称:{{images[currentImageId].name}} &nbsp;\n        Alt:{{images[currentImageId].alt}} &nbsp;\n        尺寸:{{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n        <span class=\"btn btn-default btn-sm\">查看 <span class=\"glyphicon glyphicon-zoom-in\"></span></span>\n      </span> &nbsp; \n      <div class=\"btn btn-success btn-sm\" v-bind:class=\"{disabled:currentImageId === null}\" @click=\"pickImage(currentImageId)\">选定这张图片</div>\n    </div>\n  </modal>\n</template>\n\n<script>\nimport {  } from '../store/actions'\nimport {  } from '../store/getters'\nimport modal from './modal.vue'\n\nexport default {\n  components: {\n    modal\n  },\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true    \n    },\n    imageObj:{\n      type: Object,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      currentTab: 'my',\n      loading: true,\n      currentImageId: null,\n      images: {}\n    }\n  },\n  methods:{\n    pickImage: function(imageId){\n      if (imageId != null){\n        this.imageObj = this.images[imageId];\n        this.show = false;\n      }\n    },\n    loadImages: function(){\n      this.images = {\n        1567: {\n          name:\"test\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          width:\"913\", \n          height:\"571\"},\n        2522: {\n          name:\"test2\", \n          alt:\"\",\n          url:  \"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          thumb:\"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          width:\"750\", \n          height:\"1344\"},\n        3455: {\n          name:\"test3\", \n          alt:\"\",\n          url:  \"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          thumb:\"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          width:\"2048\", \n          height:\"2048\"},\n        5532: {\n          name:\"test4\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          width:\"3000\", \n          height:\"1916\"},\n        1527: {\n          name:\"test\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          width:\"913\", \n          height:\"571\"},\n        6689: {\n          name:\"test2\", \n          alt:\"\",\n          url:  \"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          thumb:\"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          width:\"750\", \n          height:\"1344\"},\n        9535: {\n          name:\"test3\", \n          alt:\"\",\n          url:  \"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          thumb:\"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          width:\"2048\", \n          height:\"2048\"},\n        7363: {\n          name:\"test4\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          width:\"3000\", \n          height:\"1916\"},\n        6256: {\n          name:\"test\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          width:\"913\", \n          height:\"571\"},\n        8902: {\n          name:\"test2\", \n          alt:\"\",\n          url:  \"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          thumb:\"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          width:\"750\", \n          height:\"1344\"},\n        9455: {\n          name:\"test3\", \n          alt:\"\",\n          url:  \"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          thumb:\"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          width:\"2048\", \n          height:\"2048\"},\n        2864: {\n          name:\"test4\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          width:\"3000\", \n          height:\"1916\"},\n      }\n      this.loading = false;\n    }\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      \n    }\n  },\n  ready (){\n    this.loadImages();\n  }\n}\n</script>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.images-wrapper{\n  height:400px;\n  overflow-y: auto;\n}\n\n.image-item{\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n.image-upload-button{\n  position: relative;\n  float:left;\n  margin-right: 8px;\n}\n\n.image-upload-input{\n  position: absolute;\n  left: 0;\n  top: 0;\n  font-size: 0;\n  opacity: 0;\n  width: 100%;\n  height: 100%;\n  cursor: pointer;\n}\n\n.image-url-input{\n  width:400px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/image-library.vue?37e58763"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAuLA;EACA,aAAA;EACA,iBAAA;CACA;;AAEA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,aAAA;EACA,mBAAA;EACA,gBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA;;AAEA;EACA,mBAAA;EACA,WAAA;EACA,kBAAA;CACA;;AAEA;EACA,mBAAA;EACA,QAAA;EACA,OAAA;EACA,aAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,gBAAA;CACA;;AAEA;EACA,YAAA;CACA","file":"image-library.vue","sourcesContent":["<script>\nimport {  } from '../store/actions'\nimport {  } from '../store/getters'\nimport modal from './modal.vue'\nimport dropdown from './dropdown.vue'\nimport eventHandler from '../utils/eventHandler'\n\nexport default {\n  components: {\n    modal,\n    dropdown\n  },\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true    \n    },\n    imageObj:{\n      type: Object,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      currentTab: 'my',\n      loading: true,\n      currentImageId: null,\n      imageUrlEditing: false,\n      images: {}\n    }\n  },\n  methods:{\n    pickImage: function(imageId){\n      if (imageId != null){\n        this.imageObj = this.images[imageId];\n        this.show = false;\n      }\n    },\n    uploadImage: function(e){\n      let files = e.target.files;\n      let data = new FormData();\n      let folder = '默认文件夹';\n      data.append('image', files[0]);\n      data.append('folder',folder);\n      this.$http.post('/editor/image/upload', data).then(function(response){\n        console.log('success');\n      },function(response){\n        console.log(response);\n      });\n    },\n    editImageUrl: function(){\n      this.currentImageId = null;\n      const el = this.$els.imageUrlEditor;\n      this._closeEvent = eventHandler.listen(window, 'click', (e)=> {\n        if (!el.contains(e.target)) this.editImageUrlDone();\n      })\n      this.imageUrlEditing = true;\n      var vm = this;\n      Vue.nextTick(function(){\n        vm.$els.imageUrlInput.focus();\n      });\n    },\n    editImageUrlDone: function(){\n      this.imageUrlEditing = false;\n      if (this._closeEvent) this._closeEvent.remove();\n    },\n    loadImages: function(folder){\n      this.$http\n      this.images = {\n        1567: {\n          name:\"test\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/234114120527677151.jpg\", \n          width:\"913\", \n          height:\"571\"},\n        2522: {\n          name:\"test2\", \n          alt:\"\",\n          url:  \"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          thumb:\"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg\", \n          width:\"750\", \n          height:\"1344\"},\n        3455: {\n          name:\"test3\", \n          alt:\"\",\n          url:  \"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          thumb:\"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg\", \n          width:\"2048\", \n          height:\"2048\"},\n        5532: {\n          name:\"test4\", \n          alt:\"\",\n          url:  \"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          thumb:\"http://img9.dzdwl.com/img/2012081210373.jpg\", \n          width:\"3000\", \n          height:\"1916\"},\n      }\n      this.loading = false;\n    }\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      \n    }\n  },\n  ready (){\n    this.loadImages('默认文件夹');\n  }\n}\n</script>\n\n<template>\n  <modal :show.sync=\"show\" :width=\"'800px'\">\n    <div slot=\"header\">\n      <ul class=\"nav nav-pills\">\n        <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n        <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n      </ul>\n    </div>\n    \n    <div slot=\"body\" class=\"images-wrapper\">\n      <div v-show=\"loading\" class=\"loading\"></div>\n      <div v-else>\n        <div v-for=\"(imageId,image) in images\" class=\"image-item\" v-bind:class=\"{selected: imageId === currentImageId}\" @click=\"currentImageId = imageId\" @dblclick=\"pickImage(imageId)\">\n          <img :src=\"image.thumb\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n        </div>\n      </div>\n    </div>\n    <div slot=\"footer\">\n      <div class=\"btn btn-primary btn-sm image-upload-button\">\n        <span class=\"glyphicon glyphicon-cloud-upload\"></span>\n        上传图片\n        <input type=\"file\" name=\"files[]\" class=\"image-upload-input\" accept=\"image/*\" v-on:change=\"uploadImage\">\n      </div>\n      <div v-el:image-url-editor class=\"fl\">\n        <div v-show=\"!imageUrlEditing\" class=\"btn btn-default btn-sm\" @click=\"editImageUrl\">\n          <span class=\"glyphicon glyphicon-link\"></span>\n          粘贴网址\n        </div>\n        <div v-show=\"imageUrlEditing\" class=\"input-group input-group-sm shadow image-url-input\">\n          <div class=\"input-group-addon\"> 图片网址 </div>\n          <input v-el:image-url-input type=\"text\" class=\"form-control input-text-shadow\">\n          <div class=\"input-group-btn\" @click=\"editImageUrlDone\">\n            <div class=\"btn btn-success\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n          </div>\n        </div>\n      </div>\n      <!-- <div class=\"fl\" @click.stop>\n        <dropdown :show.sync=\"showUploadMenu\" :dir=\"'up'\">\n          <slot><div data-toggle=\"dropdown\" class=\"btn btn-primary btn-sm dropdown-toggle\">上传图片</div></slot>\n          <ul slot=\"dropdown-menu\" class=\"dropdown-menu\" style=\"min-width:120px;\">\n            <li class=\"image-upload-option\">\n              <span class=\"glyphicon glyphicon-cloud-upload\"></span>\n              <span>从电脑上传</span>\n              \n            </li>\n            <li class=\"image-upload-option\" style=\"border-top:1px solid #ccc\">\n              <span class=\"glyphicon glyphicon-link\"></span>\n              <span>从网址上传</span>\n            </li>\n          </ul>\n        </dropdown> \n      </div>-->\n      <span v-if=\"currentImageId !== null\">\n        名称:{{images[currentImageId].name}} &nbsp;\n        Alt:{{images[currentImageId].alt}} &nbsp;\n        尺寸:{{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n      </span> \n      <span class=\"btn btn-default btn-sm\">查看 <span class=\"glyphicon glyphicon-zoom-in\"></span></span>\n      &nbsp; \n      <div class=\"btn btn-success btn-sm\" v-bind:class=\"{disabled:currentImageId === null}\" @click=\"pickImage(currentImageId)\">选定这张图片</div>\n    </div>\n  </modal>\n</template>\n\n<style>\n\n.images-wrapper{\n  height:400px;\n  overflow-y: auto;\n}\n\n.image-item{\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n.image-upload-button{\n  position: relative;\n  float:left;\n  margin-right: 8px;\n}\n\n.image-upload-input{\n  position: absolute;\n  left: 0;\n  top: 0;\n  font-size: 0;\n  opacity: 0;\n  width: 100%;\n  height: 100%;\n  cursor: pointer;\n}\n\n.image-url-input{\n  width:400px;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -21586,11 +21625,20 @@
 	
 	var _modal2 = _interopRequireDefault(_modal);
 	
+	var _dropdown = __webpack_require__(26);
+	
+	var _dropdown2 = _interopRequireDefault(_dropdown);
+	
+	var _eventHandler = __webpack_require__(19);
+	
+	var _eventHandler2 = _interopRequireDefault(_eventHandler);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
 	  components: {
-	    modal: _modal2.default
+	    modal: _modal2.default,
+	    dropdown: _dropdown2.default
 	  },
 	  props: {
 	    show: {
@@ -21609,6 +21657,7 @@
 	      currentTab: 'my',
 	      loading: true,
 	      currentImageId: null,
+	      imageUrlEditing: false,
 	      images: {}
 	    };
 	  },
@@ -21620,7 +21669,38 @@
 	        this.show = false;
 	      }
 	    },
-	    loadImages: function loadImages() {
+	    uploadImage: function uploadImage(e) {
+	      var files = e.target.files;
+	      var data = new FormData();
+	      var folder = '默认文件夹';
+	      data.append('image', files[0]);
+	      data.append('folder', folder);
+	      this.$http.post('/editor/image/upload', data).then(function (response) {
+	        console.log('success');
+	      }, function (response) {
+	        console.log(response);
+	      });
+	    },
+	    editImageUrl: function editImageUrl() {
+	      var _this = this;
+	
+	      this.currentImageId = null;
+	      var el = this.$els.imageUrlEditor;
+	      this._closeEvent = _eventHandler2.default.listen(window, 'click', function (e) {
+	        if (!el.contains(e.target)) _this.editImageUrlDone();
+	      });
+	      this.imageUrlEditing = true;
+	      var vm = this;
+	      Vue.nextTick(function () {
+	        vm.$els.imageUrlInput.focus();
+	      });
+	    },
+	    editImageUrlDone: function editImageUrlDone() {
+	      this.imageUrlEditing = false;
+	      if (this._closeEvent) this._closeEvent.remove();
+	    },
+	    loadImages: function loadImages(folder) {
+	      this.$http;
 	      this.images = {
 	        1567: {
 	          name: "test",
@@ -21649,62 +21729,6 @@
 	          url: "http://img9.dzdwl.com/img/2012081210373.jpg",
 	          thumb: "http://img9.dzdwl.com/img/2012081210373.jpg",
 	          width: "3000",
-	          height: "1916" },
-	        1527: {
-	          name: "test",
-	          alt: "",
-	          url: "http://img9.dzdwl.com/img/234114120527677151.jpg",
-	          thumb: "http://img9.dzdwl.com/img/234114120527677151.jpg",
-	          width: "913",
-	          height: "571" },
-	        6689: {
-	          name: "test2",
-	          alt: "",
-	          url: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
-	          thumb: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
-	          width: "750",
-	          height: "1344" },
-	        9535: {
-	          name: "test3",
-	          alt: "",
-	          url: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
-	          thumb: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
-	          width: "2048",
-	          height: "2048" },
-	        7363: {
-	          name: "test4",
-	          alt: "",
-	          url: "http://img9.dzdwl.com/img/2012081210373.jpg",
-	          thumb: "http://img9.dzdwl.com/img/2012081210373.jpg",
-	          width: "3000",
-	          height: "1916" },
-	        6256: {
-	          name: "test",
-	          alt: "",
-	          url: "http://img9.dzdwl.com/img/234114120527677151.jpg",
-	          thumb: "http://img9.dzdwl.com/img/234114120527677151.jpg",
-	          width: "913",
-	          height: "571" },
-	        8902: {
-	          name: "test2",
-	          alt: "",
-	          url: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
-	          thumb: "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg",
-	          width: "750",
-	          height: "1344" },
-	        9455: {
-	          name: "test3",
-	          alt: "",
-	          url: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
-	          thumb: "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg",
-	          width: "2048",
-	          height: "2048" },
-	        2864: {
-	          name: "test4",
-	          alt: "",
-	          url: "http://img9.dzdwl.com/img/2012081210373.jpg",
-	          thumb: "http://img9.dzdwl.com/img/2012081210373.jpg",
-	          width: "3000",
 	          height: "1916" }
 	      };
 	      this.loading = false;
@@ -21715,7 +21739,7 @@
 	    getters: {}
 	  },
 	  ready: function ready() {
-	    this.loadImages();
+	    this.loadImages('默认文件夹');
 	  }
 	};
 
@@ -21723,7 +21747,7 @@
 /* 73 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<modal :show.sync=\"show\" :width=\"'800px'\" :height=\"'400px'\" >\n  <div slot=\"header\">\n    <ul class=\"nav nav-pills\">\n      <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n      <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n    </ul>\n  </div>\n  \n  <div slot=\"body\">\n    <div v-show=\"loading\" class=\"loading\"></div>\n    <div v-else>\n      <div v-for=\"(imageId,image) in images\" class=\"image-item\" v-bind:class=\"{selected: imageId === currentImageId}\" @click=\"currentImageId = imageId\" @dblclick=\"pickImage(imageId)\">\n        <img :src=\"image.thumb\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n      </div>\n    </div>\n  </div>\n  <div slot=\"footer\">\n    <!-- <button class=\"btn btn-default btn-sm\" @click=\"show = false\">关闭</button> -->\n    <button class=\"btn btn-primary btn-sm fl\" @click=\"\">上传图片</button>\n    <span v-if=\"currentImageId !== null\">\n      名称:{{images[currentImageId].name}} &nbsp;\n      Alt:{{images[currentImageId].alt}} &nbsp;\n      尺寸:{{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n      <span class=\"btn btn-default btn-sm\">查看 <span class=\"glyphicon glyphicon-zoom-in\"></span></span>\n    </span> &nbsp; \n    <div class=\"btn btn-success btn-sm\" v-bind:class=\"{disabled:currentImageId === null}\" @click=\"pickImage(currentImageId)\">选定这张图片</div>\n  </div>\n</modal>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<modal :show.sync=\"show\" :width=\"'800px'\">\n  <div slot=\"header\">\n    <ul class=\"nav nav-pills\">\n      <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n      <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n    </ul>\n  </div>\n  \n  <div slot=\"body\" class=\"images-wrapper\">\n    <div v-show=\"loading\" class=\"loading\"></div>\n    <div v-else>\n      <div v-for=\"(imageId,image) in images\" class=\"image-item\" v-bind:class=\"{selected: imageId === currentImageId}\" @click=\"currentImageId = imageId\" @dblclick=\"pickImage(imageId)\">\n        <img :src=\"image.thumb\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n      </div>\n    </div>\n  </div>\n  <div slot=\"footer\">\n    <div class=\"btn btn-primary btn-sm image-upload-button\">\n      <span class=\"glyphicon glyphicon-cloud-upload\"></span>\n      上传图片\n      <input type=\"file\" name=\"files[]\" class=\"image-upload-input\" accept=\"image/*\" v-on:change=\"uploadImage\">\n    </div>\n    <div v-el:image-url-editor class=\"fl\">\n      <div v-show=\"!imageUrlEditing\" class=\"btn btn-default btn-sm\" @click=\"editImageUrl\">\n        <span class=\"glyphicon glyphicon-link\"></span>\n        粘贴网址\n      </div>\n      <div v-show=\"imageUrlEditing\" class=\"input-group input-group-sm shadow image-url-input\">\n        <div class=\"input-group-addon\"> 图片网址 </div>\n        <input v-el:image-url-input type=\"text\" class=\"form-control input-text-shadow\">\n        <div class=\"input-group-btn\" @click=\"editImageUrlDone\">\n          <div class=\"btn btn-success\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n        </div>\n      </div>\n    </div>\n    <!-- <div class=\"fl\" @click.stop>\n      <dropdown :show.sync=\"showUploadMenu\" :dir=\"'up'\">\n        <slot><div data-toggle=\"dropdown\" class=\"btn btn-primary btn-sm dropdown-toggle\">上传图片</div></slot>\n        <ul slot=\"dropdown-menu\" class=\"dropdown-menu\" style=\"min-width:120px;\">\n          <li class=\"image-upload-option\">\n            <span class=\"glyphicon glyphicon-cloud-upload\"></span>\n            <span>从电脑上传</span>\n            \n          </li>\n          <li class=\"image-upload-option\" style=\"border-top:1px solid #ccc\">\n            <span class=\"glyphicon glyphicon-link\"></span>\n            <span>从网址上传</span>\n          </li>\n        </ul>\n      </dropdown> \n    </div>-->\n    <span v-if=\"currentImageId !== null\">\n      名称:{{images[currentImageId].name}} &nbsp;\n      Alt:{{images[currentImageId].alt}} &nbsp;\n      尺寸:{{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n    </span> \n    <span class=\"btn btn-default btn-sm\">查看 <span class=\"glyphicon glyphicon-zoom-in\"></span></span>\n    &nbsp; \n    <div class=\"btn btn-success btn-sm\" v-bind:class=\"{disabled:currentImageId === null}\" @click=\"pickImage(currentImageId)\">选定这张图片</div>\n  </div>\n</modal>\n";
 
 /***/ },
 /* 74 */
@@ -22267,7 +22291,7 @@
 	  value: true
 	});
 	
-	var _dropdown = __webpack_require__(25);
+	var _dropdown = __webpack_require__(26);
 	
 	var _dropdown2 = _interopRequireDefault(_dropdown);
 	
@@ -22826,7 +22850,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.form-field-label-wrapper{\n  position: relative;\n  border: 1px solid #ccc;\n  background: #eee;\n  border-radius: 4px;\n  padding: 6px;\n  margin-bottom: 8px;\n  \n}\n\n.form-field-label{\n  float:left;\n  max-width: 100px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.form-field-type{\n  float: right;\n  color: #ccc;\n}\n\n.dropdown-field-type-wrapper{\n  width:200px;\n}\n\n.dropdown-field-type{\n  float: left;\n  width: 82px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  margin: 8px;\n  padding: 6px;\n  text-align: center;\n  background: #eee;\n  cursor: pointer;;\n}\n\n.field-edit-form{\n  margin-top: 15px;\n}\n\n.dropdown-field-type-preset{\n  clear: both;\n  margin: 8px;\n  padding:10px 0 5px 0;\n  border-bottom:1px solid #ccc;\n}\n\n.form-field-operation{\n  position:absolute;\n  right:1px;\n  top:1px;\n}\n\n.form-field-configs{\n  margin: 8px 2px;\n}\n\n.form-field-configs label{\n  font-weight: normal;\n  cursor: pointer;\n}\n\n.form-field-options{\n  max-height:150px;\n  overflow: auto;\n}\n\n.form-field-option{\n  position: relative;\n  margin: 3px 0;\n}\n\n.form-field-option-remove{\n  position: absolute;\n  right:5px;\n  top:9px;\n  color:#999;\n  cursor: pointer;\n}\n\n.form-field-addoption{\n  text-align: center;\n  margin: 8px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/form-fields.vue?083074ef"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAyLA;EACA,mBAAA;EACA,uBAAA;EACA,iBAAA;EACA,mBAAA;EACA,aAAA;EACA,mBAAA;;CAEA;;AAEA;EACA,WAAA;EACA,iBAAA;EACA,iBAAA;EACA,wBAAA;EACA,oBAAA;CACA;;AAEA;EACA,aAAA;EACA,YAAA;CACA;;AAEA;EACA,YAAA;CACA;;AAEA;EACA,YAAA;EACA,YAAA;EACA,uBAAA;EACA,mBAAA;EACA,YAAA;EACA,aAAA;EACA,mBAAA;EACA,iBAAA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;CACA;;AAEA;EACA,YAAA;EACA,YAAA;EACA,qBAAA;EACA,6BAAA;CACA;;AAEA;EACA,kBAAA;EACA,UAAA;EACA,QAAA;CACA;;AAEA;EACA,gBAAA;CACA;;AAEA;EACA,oBAAA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;EACA,eAAA;CACA;;AAEA;EACA,mBAAA;EACA,cAAA;CACA;;AAEA;EACA,mBAAA;EACA,UAAA;EACA,QAAA;EACA,WAAA;EACA,gBAAA;CACA;;AAEA;EACA,mBAAA;EACA,YAAA;CACA","file":"form-fields.vue","sourcesContent":["<script>\nimport sidebar from './sidebar.vue'\nimport colorPicker from './color-picker.vue'\nimport checkboxButton from './checkbox-button.vue'\nimport colorMixin from '../mixins/colorMixin.js'\nimport dropdown from './dropdown.vue'\n\nexport default {\n  props:{\n    formFields: {\n      type: Array,\n      require: true\n    },\n    show:{\n      type: Boolean,\n      require: true\n    }\n  },\n  mixins: [colorMixin],\n  components: {\n    sidebar,\n    colorPicker,\n    checkboxButton,\n    dropdown\n  },\n  data(){\n    return {\n      fieldTypes: {\n        'text':'单行文本',\n        'textarea':'多行文本',\n        'radio':'单选框',\n        'checkbox':'复选框',\n        'dropdown':'下拉菜单',\n        'china-state':'省市县(中国)'\n      },\n      showFieldsType:false,\n      currentField:null,\n      editingField:null,\n    }\n  },\n  methods:{\n    editDone: function(){\n      this.$dispatch('form-fields-done');\n    },\n    addField: function(type, label = '', validator = []){\n      let newField = {\n        type:type,\n        label:label,\n        validator:validator\n      };\n      if (type === 'radio' || type === 'checkbox' || type === 'dropdown'){\n        newField.options = ['选项1','选项2'];\n      }\n      const newFieldId = this.formFields.length;\n      this.formFields.push(newField); \n      this.editingField = newFieldId;\n      this.showFieldsType = false;\n    },\n    removeField: function(fieldId){\n      this.formFields.splice(fieldId, 1);\n    },\n    moveField: function(dir, fieldId){\n      let target = fieldId;\n      if (dir === 'down' && fieldId < this.formFields.length -1) target++;\n      if (dir === 'up' && fieldId > 0) target--;\n      if (target !== fieldId){\n        this.formFields[fieldId] = this.formFields.splice(target, 1, this.formFields[fieldId])[0];\n      }\n    },\n    addOption: function(fieldId){\n      let newOptionId = this.formFields[fieldId].options.length;\n      this.formFields[fieldId].options.push(\"\");\n      \n      setTimeout(function(){\n        var el = document.getElementById('form-field-options');\n        el.scrollTop = el.scrollHeight;\n        var input = document.getElementById('field-option-' + fieldId + '-' + newOptionId);\n        input.focus();\n      },10);\n    },\n    removeOption: function(fieldId,optionId){\n      this.formFields[fieldId].options.splice(optionId, 1);\n    }\n  },\n  watch:{\n    'editingField': function(newVal){\n      if (newVal !== null){\n        let input = document.getElementById('field-label-' + newVal);\n        input.focus();\n      } else {\n        this.currentField = null;\n      }\n    }\n  }\n}\n</script>\n\n<template>\n  <sidebar :show.sync=\"show\" slot=\"tools\">\n    <div slot=\"header\">\n      <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n      <div class=\"fr\">\n        <dropdown :show.sync=\"showFieldsType\">\n          <slot><div><div class=\"btn btn-primary\" data-toggle=\"dropdown\">+ 字段</div></div></slot>\n          <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right dropdown-field-type-wrapper\">\n            <div class=\"dropdown-field-type\" @click=\"addField('text')\">单行文本</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('textarea')\">多行文本</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('radio')\">单选框</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('checkbox')\">复选框</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('dropdown')\">下拉菜单</div>\n            <!-- <div class=\"dropdown-field-type\">日期</div> -->\n\n            <h5 class=\"dropdown-field-type-preset\">预设字段</h5>\n            <div class=\"dropdown-field-type\" @click=\"addField('text','姓名',['required'])\">姓名</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('text','电子邮件',['required','email'])\">电子邮件</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('text','手机号码',['required','mobile'])\">手机号码</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('china-state')\">省/市/县</div>\n          </div>\n        </dropdown>\n      </div>\n    </div>\n    <div slot=\"body\" @click=\"editingField = null\">\n\n      <div class=\"sidebar-block\">\n        <div v-for=\"(fieldId,field) in formFields\" class=\"form-field-label-wrapper\" @mouseenter=\"currentField = fieldId\" @mouseleave=\"currentField = null\" @click.stop @dblclick=\"editingField = fieldId\" :style=\"{background:(editingField === fieldId)?'#fff':''}\">\n          <div class=\"form-field-label\">\n            {{field.label}}\n          </div>\n          <span class=\"form-field-type\">{{fieldTypes[field.type]}}</span>\n          <div style=\"clear:both\"></div>\n          <div v-show=\"currentField === fieldId\" class=\"btn-group btn-group-sm form-field-operation\" role=\"group\" transition=\"fade\" >\n            <div class=\"btn btn-primary\" title=\"修改\" @click=\"editingField = fieldId\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n            <div class=\"btn btn-default\" title=\"上移\" @click=\"moveField('up',fieldId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n            <div class=\"btn btn-default\" title=\"下移\" @click=\"moveField('down',fieldId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n            <div class=\"btn btn-default\" title=\"删除\" @click=\"removeField(fieldId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n          </div>\n          <div v-if=\"editingField === fieldId\" class=\"field-edit-form\">\n            <div class=\"input-group shadow\">\n              <div class=\"input-group-addon\"> 标签 </div>\n              <input type=\"text\" class=\"form-control input-text-shadow\" placeholder=\"新建表单字段\" id=\"field-label-{{fieldId}}\" v-model=\"field.label\">\n            </div>\n            <!-- 单行、多行文本选项 -->\n            <div v-if=\"field.type === 'text' || field.type === 'textarea'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"mobile\"> 校验为手机号码</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"email\"> 校验为Email</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"number\"> 校验为数字</label></div>\n            </div>\n            <!-- 单选、多选框选项 -->\n            <div v-if=\"field.type === 'radio' || field.type === 'checkbox'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.optionsInLine\"> 单行排列选项</label></div>\n            </div>\n            <!-- 下拉菜单选项 -->\n            <div v-if=\"field.type === 'dropdown'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            </div>\n            <!-- 省/市/县 选项 -->\n            <div v-if=\"field.type === 'china-state'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n            </div>\n            <div v-if=\"field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown'\">\n              <div class=\"form-field-options\" id=\"form-field-options\">\n                <div v-for=\"(optionId, option) in field.options\" track-by=\"$index\" class=\"form-field-option\">\n                  <input class=\"form-control\" type=\"text\" id=\"field-option-{{fieldId}}-{{optionId}}\" placeholder=\"新选项\" v-model=\"option\" />\n                  <span class=\"glyphicon glyphicon-remove form-field-option-remove\" @click=\"removeOption(fieldId, optionId)\"></span>\n                </div>\n              </div>\n              <div class=\"form-field-addoption\">\n                <div class=\"btn btn-primary btn-sm\" @click=\"addOption(fieldId)\">+ 添加选项</div>\n              </div>\n            </div>\n            <div class=\"btn btn-success btn-sm fr\" @click=\"editingField = null\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n            <div style=\"clear:both\"></div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </sidebar>\n</template>\n\n<style>\n\n.form-field-label-wrapper{\n  position: relative;\n  border: 1px solid #ccc;\n  background: #eee;\n  border-radius: 4px;\n  padding: 6px;\n  margin-bottom: 8px;\n  \n}\n\n.form-field-label{\n  float:left;\n  max-width: 100px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.form-field-type{\n  float: right;\n  color: #ccc;\n}\n\n.dropdown-field-type-wrapper{\n  width:200px;\n}\n\n.dropdown-field-type{\n  float: left;\n  width: 82px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  margin: 8px;\n  padding: 6px;\n  text-align: center;\n  background: #eee;\n  cursor: pointer;;\n}\n\n.field-edit-form{\n  margin-top: 15px;\n}\n\n.dropdown-field-type-preset{\n  clear: both;\n  margin: 8px;\n  padding:10px 0 5px 0;\n  border-bottom:1px solid #ccc;\n}\n\n.form-field-operation{\n  position:absolute;\n  right:1px;\n  top:1px;\n}\n\n.form-field-configs{\n  margin: 8px 2px;\n}\n\n.form-field-configs label{\n  font-weight: normal;\n  cursor: pointer;\n}\n\n.form-field-options{\n  max-height:150px;\n  overflow: auto;\n}\n\n.form-field-option{\n  position: relative;\n  margin: 3px 0;\n}\n\n.form-field-option-remove{\n  position: absolute;\n  right:5px;\n  top:9px;\n  color:#999;\n  cursor: pointer;\n}\n\n.form-field-addoption{\n  text-align: center;\n  margin: 8px;\n}\n\n</style>\n\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.form-field-label-wrapper{\n  position: relative;\n  border: 1px solid #ccc;\n  background: #eee;\n  border-radius: 4px;\n  padding: 6px;\n  margin-bottom: 8px;\n  \n}\n\n.form-field-label{\n  float:left;\n  max-width: 100px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.form-field-type{\n  float: right;\n  color: #ccc;\n}\n\n.dropdown-field-type-wrapper{\n  width:200px;\n}\n\n.dropdown-field-type{\n  float: left;\n  width: 82px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  margin: 8px;\n  padding: 6px;\n  text-align: center;\n  background: #eee;\n  cursor: pointer;;\n}\n\n.field-edit-form{\n  margin-top: 15px;\n}\n\n.dropdown-field-type-preset{\n  clear: both;\n  margin: 8px;\n  padding:10px 0 5px 0;\n  border-bottom:1px solid #ccc;\n}\n\n.form-field-operation{\n  position:absolute;\n  right:1px;\n  top:1px;\n}\n\n.form-field-configs{\n  margin: 8px 2px;\n}\n\n.form-field-configs label{\n  font-weight: normal;\n  cursor: pointer;\n}\n\n.form-field-options{\n  max-height:150px;\n  overflow: auto;\n}\n\n.form-field-option{\n  position: relative;\n  margin: 3px 0;\n}\n\n.form-field-option-remove{\n  position: absolute;\n  right:5px;\n  top:9px;\n  color:#999;\n  cursor: pointer;\n}\n\n.form-field-addoption{\n  text-align: center;\n  margin: 8px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/form-fields.vue?1391a517"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAwLA;EACA,mBAAA;EACA,uBAAA;EACA,iBAAA;EACA,mBAAA;EACA,aAAA;EACA,mBAAA;;CAEA;;AAEA;EACA,WAAA;EACA,iBAAA;EACA,iBAAA;EACA,wBAAA;EACA,oBAAA;CACA;;AAEA;EACA,aAAA;EACA,YAAA;CACA;;AAEA;EACA,YAAA;CACA;;AAEA;EACA,YAAA;EACA,YAAA;EACA,uBAAA;EACA,mBAAA;EACA,YAAA;EACA,aAAA;EACA,mBAAA;EACA,iBAAA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;CACA;;AAEA;EACA,YAAA;EACA,YAAA;EACA,qBAAA;EACA,6BAAA;CACA;;AAEA;EACA,kBAAA;EACA,UAAA;EACA,QAAA;CACA;;AAEA;EACA,gBAAA;CACA;;AAEA;EACA,oBAAA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;EACA,eAAA;CACA;;AAEA;EACA,mBAAA;EACA,cAAA;CACA;;AAEA;EACA,mBAAA;EACA,UAAA;EACA,QAAA;EACA,WAAA;EACA,gBAAA;CACA;;AAEA;EACA,mBAAA;EACA,YAAA;CACA","file":"form-fields.vue","sourcesContent":["<script>\nimport sidebar from './sidebar.vue'\nimport colorPicker from './color-picker.vue'\nimport checkboxButton from './checkbox-button.vue'\nimport colorMixin from '../mixins/colorMixin.js'\nimport dropdown from './dropdown.vue'\n\nexport default {\n  props:{\n    formFields: {\n      type: Array,\n      require: true\n    },\n    show:{\n      type: Boolean,\n      require: true\n    }\n  },\n  mixins: [colorMixin],\n  components: {\n    sidebar,\n    colorPicker,\n    checkboxButton,\n    dropdown\n  },\n  data(){\n    return {\n      fieldTypes: {\n        'text':'单行文本',\n        'textarea':'多行文本',\n        'radio':'单选框',\n        'checkbox':'复选框',\n        'dropdown':'下拉菜单',\n        'china-state':'省市县(中国)'\n      },\n      showFieldsType:false,\n      currentField:null,\n      editingField:null,\n    }\n  },\n  methods:{\n    editDone: function(){\n      this.$dispatch('form-fields-done');\n    },\n    addField: function(type, label = '', validator = []){\n      let newField = {\n        type:type,\n        label:label,\n        validator:validator\n      };\n      if (type === 'radio' || type === 'checkbox' || type === 'dropdown'){\n        newField.options = ['选项1','选项2'];\n      }\n      const newFieldId = this.formFields.length;\n      this.formFields.push(newField); \n      this.editingField = newFieldId;\n      this.showFieldsType = false;\n    },\n    removeField: function(fieldId){\n      this.formFields.splice(fieldId, 1);\n    },\n    moveField: function(dir, fieldId){\n      let target = fieldId;\n      if (dir === 'down' && fieldId < this.formFields.length -1) target++;\n      if (dir === 'up' && fieldId > 0) target--;\n      if (target !== fieldId){\n        this.formFields[fieldId] = this.formFields.splice(target, 1, this.formFields[fieldId])[0];\n      }\n    },\n    addOption: function(fieldId){\n      let newOptionId = this.formFields[fieldId].options.length;\n      this.formFields[fieldId].options.push(\"\");\n      Vue.nextTick(function(){\n        var el = document.getElementById('form-field-options');\n        el.scrollTop = el.scrollHeight;\n        var input = document.getElementById('field-option-' + fieldId + '-' + newOptionId);\n        input.focus();\n      });\n    },\n    removeOption: function(fieldId,optionId){\n      this.formFields[fieldId].options.splice(optionId, 1);\n    }\n  },\n  watch:{\n    'editingField': function(newVal){\n      if (newVal !== null){\n        let input = document.getElementById('field-label-' + newVal);\n        input.focus();\n      } else {\n        this.currentField = null;\n      }\n    }\n  }\n}\n</script>\n\n<template>\n  <sidebar :show.sync=\"show\" slot=\"tools\">\n    <div slot=\"header\">\n      <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n      <div class=\"fr\">\n        <dropdown :show.sync=\"showFieldsType\">\n          <slot><div><div class=\"btn btn-primary\" data-toggle=\"dropdown\">+ 字段</div></div></slot>\n          <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right dropdown-field-type-wrapper\">\n            <div class=\"dropdown-field-type\" @click=\"addField('text')\">单行文本</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('textarea')\">多行文本</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('radio')\">单选框</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('checkbox')\">复选框</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('dropdown')\">下拉菜单</div>\n            <!-- <div class=\"dropdown-field-type\">日期</div> -->\n\n            <h5 class=\"dropdown-field-type-preset\">预设字段</h5>\n            <div class=\"dropdown-field-type\" @click=\"addField('text','姓名',['required'])\">姓名</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('text','电子邮件',['required','email'])\">电子邮件</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('text','手机号码',['required','mobile'])\">手机号码</div>\n            <div class=\"dropdown-field-type\" @click=\"addField('china-state')\">省/市/县</div>\n          </div>\n        </dropdown>\n      </div>\n    </div>\n    <div slot=\"body\" @click=\"editingField = null\">\n\n      <div class=\"sidebar-block\">\n        <div v-for=\"(fieldId,field) in formFields\" class=\"form-field-label-wrapper\" @mouseenter=\"currentField = fieldId\" @mouseleave=\"currentField = null\" @click.stop @dblclick=\"editingField = fieldId\" :style=\"{background:(editingField === fieldId)?'#fff':''}\">\n          <div class=\"form-field-label\">\n            {{field.label}}\n          </div>\n          <span class=\"form-field-type\">{{fieldTypes[field.type]}}</span>\n          <div style=\"clear:both\"></div>\n          <div v-show=\"currentField === fieldId\" class=\"btn-group btn-group-sm form-field-operation\" role=\"group\" transition=\"fade\" >\n            <div class=\"btn btn-primary\" title=\"修改\" @click=\"editingField = fieldId\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n            <div class=\"btn btn-default\" title=\"上移\" @click=\"moveField('up',fieldId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n            <div class=\"btn btn-default\" title=\"下移\" @click=\"moveField('down',fieldId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n            <div class=\"btn btn-default\" title=\"删除\" @click=\"removeField(fieldId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n          </div>\n          <div v-if=\"editingField === fieldId\" class=\"field-edit-form\">\n            <div class=\"input-group shadow\">\n              <div class=\"input-group-addon\"> 标签 </div>\n              <input type=\"text\" class=\"form-control input-text-shadow\" placeholder=\"新建表单字段\" id=\"field-label-{{fieldId}}\" v-model=\"field.label\">\n            </div>\n            <!-- 单行、多行文本选项 -->\n            <div v-if=\"field.type === 'text' || field.type === 'textarea'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"mobile\"> 校验为手机号码</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"email\"> 校验为Email</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"number\"> 校验为数字</label></div>\n            </div>\n            <!-- 单选、多选框选项 -->\n            <div v-if=\"field.type === 'radio' || field.type === 'checkbox'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.optionsInLine\"> 单行排列选项</label></div>\n            </div>\n            <!-- 下拉菜单选项 -->\n            <div v-if=\"field.type === 'dropdown'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            </div>\n            <!-- 省/市/县 选项 -->\n            <div v-if=\"field.type === 'china-state'\" class=\"form-field-configs\">\n              <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n              <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n            </div>\n            <div v-if=\"field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown'\">\n              <div class=\"form-field-options\" id=\"form-field-options\">\n                <div v-for=\"(optionId, option) in field.options\" track-by=\"$index\" class=\"form-field-option\">\n                  <input class=\"form-control\" type=\"text\" id=\"field-option-{{fieldId}}-{{optionId}}\" placeholder=\"新选项\" v-model=\"option\" />\n                  <span class=\"glyphicon glyphicon-remove form-field-option-remove\" @click=\"removeOption(fieldId, optionId)\"></span>\n                </div>\n              </div>\n              <div class=\"form-field-addoption\">\n                <div class=\"btn btn-primary btn-sm\" @click=\"addOption(fieldId)\">+ 添加选项</div>\n              </div>\n            </div>\n            <div class=\"btn btn-success btn-sm fr\" @click=\"editingField = null\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n            <div style=\"clear:both\"></div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </sidebar>\n</template>\n\n<style>\n\n.form-field-label-wrapper{\n  position: relative;\n  border: 1px solid #ccc;\n  background: #eee;\n  border-radius: 4px;\n  padding: 6px;\n  margin-bottom: 8px;\n  \n}\n\n.form-field-label{\n  float:left;\n  max-width: 100px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.form-field-type{\n  float: right;\n  color: #ccc;\n}\n\n.dropdown-field-type-wrapper{\n  width:200px;\n}\n\n.dropdown-field-type{\n  float: left;\n  width: 82px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  margin: 8px;\n  padding: 6px;\n  text-align: center;\n  background: #eee;\n  cursor: pointer;;\n}\n\n.field-edit-form{\n  margin-top: 15px;\n}\n\n.dropdown-field-type-preset{\n  clear: both;\n  margin: 8px;\n  padding:10px 0 5px 0;\n  border-bottom:1px solid #ccc;\n}\n\n.form-field-operation{\n  position:absolute;\n  right:1px;\n  top:1px;\n}\n\n.form-field-configs{\n  margin: 8px 2px;\n}\n\n.form-field-configs label{\n  font-weight: normal;\n  cursor: pointer;\n}\n\n.form-field-options{\n  max-height:150px;\n  overflow: auto;\n}\n\n.form-field-option{\n  position: relative;\n  margin: 3px 0;\n}\n\n.form-field-option-remove{\n  position: absolute;\n  right:5px;\n  top:9px;\n  color:#999;\n  cursor: pointer;\n}\n\n.form-field-addoption{\n  text-align: center;\n  margin: 8px;\n}\n\n</style>\n\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -22857,7 +22881,7 @@
 	
 	var _colorMixin2 = _interopRequireDefault(_colorMixin);
 	
-	var _dropdown = __webpack_require__(25);
+	var _dropdown = __webpack_require__(26);
 	
 	var _dropdown2 = _interopRequireDefault(_dropdown);
 	
@@ -22932,13 +22956,12 @@
 	    addOption: function addOption(fieldId) {
 	      var newOptionId = this.formFields[fieldId].options.length;
 	      this.formFields[fieldId].options.push("");
-	
-	      setTimeout(function () {
+	      Vue.nextTick(function () {
 	        var el = document.getElementById('form-field-options');
 	        el.scrollTop = el.scrollHeight;
 	        var input = document.getElementById('field-option-' + fieldId + '-' + newOptionId);
 	        input.focus();
-	      }, 10);
+	      });
 	    },
 	    removeOption: function removeOption(fieldId, optionId) {
 	      this.formFields[fieldId].options.splice(optionId, 1);
@@ -22960,7 +22983,7 @@
 /* 111 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<sidebar :show.sync=\"show\" slot=\"tools\">\n  <div slot=\"header\">\n    <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n    <div class=\"fr\">\n      <dropdown :show.sync=\"showFieldsType\">\n        <slot><div><div class=\"btn btn-primary\" data-toggle=\"dropdown\">+ 字段</div></div></slot>\n        <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right dropdown-field-type-wrapper\">\n          <div class=\"dropdown-field-type\" @click=\"addField('text')\">单行文本</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('textarea')\">多行文本</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('radio')\">单选框</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('checkbox')\">复选框</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('dropdown')\">下拉菜单</div>\n          <!-- <div class=\"dropdown-field-type\">日期</div> -->\n\n          <h5 class=\"dropdown-field-type-preset\">预设字段</h5>\n          <div class=\"dropdown-field-type\" @click=\"addField('text','姓名',['required'])\">姓名</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('text','电子邮件',['required','email'])\">电子邮件</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('text','手机号码',['required','mobile'])\">手机号码</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('china-state')\">省/市/县</div>\n        </div>\n      </dropdown>\n    </div>\n  </div>\n  <div slot=\"body\" @click=\"editingField = null\">\n\n    <div class=\"sidebar-block\">\n      <div v-for=\"(fieldId,field) in formFields\" class=\"form-field-label-wrapper\" @mouseenter=\"currentField = fieldId\" @mouseleave=\"currentField = null\" @click.stop @dblclick=\"editingField = fieldId\" :style=\"{background:(editingField === fieldId)?'#fff':''}\">\n        <div class=\"form-field-label\">\n          {{field.label}}\n        </div>\n        <span class=\"form-field-type\">{{fieldTypes[field.type]}}</span>\n        <div style=\"clear:both\"></div>\n        <div v-show=\"currentField === fieldId\" class=\"btn-group btn-group-sm form-field-operation\" role=\"group\" transition=\"fade\" >\n          <div class=\"btn btn-primary\" title=\"修改\" @click=\"editingField = fieldId\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n          <div class=\"btn btn-default\" title=\"上移\" @click=\"moveField('up',fieldId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n          <div class=\"btn btn-default\" title=\"下移\" @click=\"moveField('down',fieldId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n          <div class=\"btn btn-default\" title=\"删除\" @click=\"removeField(fieldId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n        </div>\n        <div v-if=\"editingField === fieldId\" class=\"field-edit-form\">\n          <div class=\"input-group shadow\">\n            <div class=\"input-group-addon\"> 标签 </div>\n            <input type=\"text\" class=\"form-control input-text-shadow\" placeholder=\"新建表单字段\" id=\"field-label-{{fieldId}}\" v-model=\"field.label\">\n          </div>\n          <!-- 单行、多行文本选项 -->\n          <div v-if=\"field.type === 'text' || field.type === 'textarea'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"mobile\"> 校验为手机号码</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"email\"> 校验为Email</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"number\"> 校验为数字</label></div>\n          </div>\n          <!-- 单选、多选框选项 -->\n          <div v-if=\"field.type === 'radio' || field.type === 'checkbox'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.optionsInLine\"> 单行排列选项</label></div>\n          </div>\n          <!-- 下拉菜单选项 -->\n          <div v-if=\"field.type === 'dropdown'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n          </div>\n          <!-- 省/市/县 选项 -->\n          <div v-if=\"field.type === 'china-state'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n          </div>\n          <div v-if=\"field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown'\">\n            <div class=\"form-field-options\" id=\"form-field-options\">\n              <div v-for=\"(optionId, option) in field.options\" track-by=\"$index\" class=\"form-field-option\">\n                <input class=\"form-control\" type=\"text\" id=\"field-option-{{fieldId}}-{{optionId}}\" placeholder=\"新选项\" v-model=\"option\" />\n                <span class=\"glyphicon glyphicon-remove form-field-option-remove\" @click=\"removeOption(fieldId, optionId)\"></span>\n              </div>\n            </div>\n            <div class=\"form-field-addoption\">\n              <div class=\"btn btn-primary btn-sm\" @click=\"addOption(fieldId)\">+ 添加选项</div>\n            </div>\n          </div>\n          <div class=\"btn btn-success btn-sm fr\" @click=\"editingField = null\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n          <div style=\"clear:both\"></div>\n        </div>\n      </div>\n    </div>\n  </div>\n</sidebar>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<sidebar :show.sync=\"show\" slot=\"tools\">\n  <div slot=\"header\">\n    <div class=\"btn btn-success\" @click=\"editDone\">&nbsp; 完成 &nbsp;</div>\n    <div class=\"fr\">\n      <dropdown :show.sync=\"showFieldsType\">\n        <slot><div><div class=\"btn btn-primary\" data-toggle=\"dropdown\">+ 字段</div></div></slot>\n        <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right dropdown-field-type-wrapper\">\n          <div class=\"dropdown-field-type\" @click=\"addField('text')\">单行文本</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('textarea')\">多行文本</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('radio')\">单选框</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('checkbox')\">复选框</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('dropdown')\">下拉菜单</div>\n          <!-- <div class=\"dropdown-field-type\">日期</div> -->\n\n          <h5 class=\"dropdown-field-type-preset\">预设字段</h5>\n          <div class=\"dropdown-field-type\" @click=\"addField('text','姓名',['required'])\">姓名</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('text','电子邮件',['required','email'])\">电子邮件</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('text','手机号码',['required','mobile'])\">手机号码</div>\n          <div class=\"dropdown-field-type\" @click=\"addField('china-state')\">省/市/县</div>\n        </div>\n      </dropdown>\n    </div>\n  </div>\n  <div slot=\"body\" @click=\"editingField = null\">\n\n    <div class=\"sidebar-block\">\n      <div v-for=\"(fieldId,field) in formFields\" class=\"form-field-label-wrapper\" @mouseenter=\"currentField = fieldId\" @mouseleave=\"currentField = null\" @click.stop @dblclick=\"editingField = fieldId\" :style=\"{background:(editingField === fieldId)?'#fff':''}\">\n        <div class=\"form-field-label\">\n          {{field.label}}\n        </div>\n        <span class=\"form-field-type\">{{fieldTypes[field.type]}}</span>\n        <div style=\"clear:both\"></div>\n        <div v-show=\"currentField === fieldId\" class=\"btn-group btn-group-sm form-field-operation\" role=\"group\" transition=\"fade\" >\n          <div class=\"btn btn-primary\" title=\"修改\" @click=\"editingField = fieldId\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n          <div class=\"btn btn-default\" title=\"上移\" @click=\"moveField('up',fieldId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n          <div class=\"btn btn-default\" title=\"下移\" @click=\"moveField('down',fieldId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n          <div class=\"btn btn-default\" title=\"删除\" @click=\"removeField(fieldId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n        </div>\n        <div v-if=\"editingField === fieldId\" class=\"field-edit-form\">\n          <div class=\"input-group shadow\">\n            <div class=\"input-group-addon\"> 标签 </div>\n            <input type=\"text\" class=\"form-control input-text-shadow\" placeholder=\"新建表单字段\" id=\"field-label-{{fieldId}}\" v-model=\"field.label\">\n          </div>\n          <!-- 单行、多行文本选项 -->\n          <div v-if=\"field.type === 'text' || field.type === 'textarea'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"mobile\"> 校验为手机号码</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"email\"> 校验为Email</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"number\"> 校验为数字</label></div>\n          </div>\n          <!-- 单选、多选框选项 -->\n          <div v-if=\"field.type === 'radio' || field.type === 'checkbox'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.optionsInLine\"> 单行排列选项</label></div>\n          </div>\n          <!-- 下拉菜单选项 -->\n          <div v-if=\"field.type === 'dropdown'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n          </div>\n          <!-- 省/市/县 选项 -->\n          <div v-if=\"field.type === 'china-state'\" class=\"form-field-configs\">\n            <div><label><input type=\"checkbox\" v-model=\"field.validator\" value=\"required\"> 必填项</label></div>\n            <div><label><input type=\"checkbox\" v-model=\"field.hideLabel\"> 隐藏标签</label></div>\n          </div>\n          <div v-if=\"field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown'\">\n            <div class=\"form-field-options\" id=\"form-field-options\">\n              <div v-for=\"(optionId, option) in field.options\" track-by=\"$index\" class=\"form-field-option\">\n                <input class=\"form-control\" type=\"text\" id=\"field-option-{{fieldId}}-{{optionId}}\" placeholder=\"新选项\" v-model=\"option\" />\n                <span class=\"glyphicon glyphicon-remove form-field-option-remove\" @click=\"removeOption(fieldId, optionId)\"></span>\n              </div>\n            </div>\n            <div class=\"form-field-addoption\">\n              <div class=\"btn btn-primary btn-sm\" @click=\"addOption(fieldId)\">+ 添加选项</div>\n            </div>\n          </div>\n          <div class=\"btn btn-success btn-sm fr\" @click=\"editingField = null\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n          <div style=\"clear:both\"></div>\n        </div>\n      </div>\n    </div>\n  </div>\n</sidebar>\n";
 
 /***/ },
 /* 112 */

@@ -70,13 +70,12 @@ export default {
     addOption: function(fieldId){
       let newOptionId = this.formFields[fieldId].options.length;
       this.formFields[fieldId].options.push("");
-      
-      setTimeout(function(){
+      Vue.nextTick(function(){
         var el = document.getElementById('form-field-options');
         el.scrollTop = el.scrollHeight;
         var input = document.getElementById('field-option-' + fieldId + '-' + newOptionId);
         input.focus();
-      },10);
+      });
     },
     removeOption: function(fieldId,optionId){
       this.formFields[fieldId].options.splice(optionId, 1);

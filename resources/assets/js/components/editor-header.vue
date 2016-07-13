@@ -18,13 +18,13 @@
         <li @click="redo" v-bind:class="{'do-disabled':workspace.redo === false}"><span class="glyphicon glyphicon-share-alt"></span></li>
       <!-- </tooltip> -->
       <color-schemes><li data-toggle="dropdown">配色 <span class="glyphicon glyphicon-th-large"></span></li></color-schemes>
-      <li @click="showSettings=true">设置 <span class="glyphicon glyphicon-cog"></span></li>
+      <li @click.stop="showSettings=true">设置 <span class="glyphicon glyphicon-cog"></span></li>
       <li>保存 <span class="glyphicon glyphicon-floppy-disk"></span></li>
       <li>预览 <span class="glyphicon glyphicon-eye-open"></span></li>
       <li class="publish">发布 <span class="glyphicon glyphicon-send"></span></li>
     </ul>
+    <editor-settings v-if="showSettings" :show.sync="showSettings"></editor-settings>
   </div>
-  <editor-settings v-if="showSettings" :show.sync="showSettings"></editor-settings>
 </template>
 
 <script>

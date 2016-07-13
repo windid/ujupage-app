@@ -41,24 +41,24 @@ export default {
                 "mobile":{"background-color":"0",height:"500px"}
               },
               elements:{
-                // "dfgs234f":{
-                //   type:"image",
-                //   src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
-                //   style:{
-                //     'pc':{
-                //       left:"200px",
-                //       top:"100px",
-                //       width:"",
-                //       zIndex:101
-                //     },
-                //     'mobile':{
-                //       left:"50px",
-                //       top:"150px",
-                //       width:"",
-                //       zIndex:101
-                //     }
-                //   }
-                // },
+                "dfgs234f":{
+                  type:"image",
+                  src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+                  style:{
+                    'pc':{
+                      left:"200px",
+                      top:"100px",
+                      width:"",
+                      zIndex:101
+                    },
+                    'mobile':{
+                      left:"50px",
+                      top:"150px",
+                      width:"",
+                      zIndex:101
+                    }
+                  }
+                },
                 "fgh24g":{
                   type:"button",
                   text:"点击下载",
@@ -94,13 +94,13 @@ export default {
                   style:{
                     'pc':{
                       left:"200px",
-                      top:"150px",
+                      top:"250px",
                       width:"300px",
                       zIndex:3000
                     },
                     'mobile':{
                       left:"50px",
-                      top:"150px",
+                      top:"250px",
                       width:"300px",
                       zIndex:1342
                     }
