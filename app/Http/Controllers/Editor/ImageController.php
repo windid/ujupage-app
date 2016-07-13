@@ -232,8 +232,7 @@ class ImageController extends Controller {
                 .$filepathOSS;
         
         OSS::upload($filepathOSS, $file->getRealPath());   
-        $this->image->image = OSS::getUrl($filepathOSS);
-        $this->image->image = substr($this->image->image, 0, strpos($this->image->image, '?'));
+        $this->image->image = OSS::getUrlCdn($filepathOSS);
         $this->image->save();
         
         return $this->dump(['image' => $this->image->toArray()]);

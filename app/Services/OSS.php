@@ -89,6 +89,11 @@ class OSS {
     $oss->ossClient->setBucket('oss-editor');
     return $oss->ossClient->getUrl($ossKey, new \DateTime("+1 day"));
   }
+  
+  public static function getUrlCdn($osskey)
+  {      
+      return Config::get('app.imgCdnServer') . '/' . $osskey;
+  }
 
   public static function createBucket($bucketName)
   {
