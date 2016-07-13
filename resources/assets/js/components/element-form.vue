@@ -261,5 +261,4 @@ export default {
 .shadow-inside{
   box-shadow: inset 0 1px 6px #ccc;
 }
-
 </style>
