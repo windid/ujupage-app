@@ -10,4 +10,12 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    
+    public function err(string $msg = '错误') {
+        return response()->json(array_merge(['err' => $msg], ['result' => 'false']), 500);
+    }
+    
+    public function dump(array $merge = []) {
+        return response()->json(array_merge($merge, ['result' => 'true']));
+    }
 }

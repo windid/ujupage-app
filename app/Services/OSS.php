@@ -6,7 +6,7 @@ use JohnLui\AliyunOSS\AliyunOSS;
 
 use Config;
 
-class AliyunOSS {
+class OSS {
 
   private $ossClient;
 
@@ -22,8 +22,8 @@ class AliyunOSS {
 
   public static function upload($ossKey, $filePath)
   {
-    $oss = new OSS(true); // 上传文件使用内网，免流量费
-    $oss->ossClient->setBucket('你的 bucket 名称');
+    $oss = new OSS(false); // 上传文件使用内网，免流量费
+    $oss->ossClient->setBucket('oss-editor');
     $oss->ossClient->uploadFile($ossKey, $filePath);
   }
   /**
@@ -34,7 +34,7 @@ class AliyunOSS {
   public static function uploadContent($osskey,$content)
   {
     $oss = new OSS(true); // 上传文件使用内网，免流量费
-    $oss->ossClient->setBucket('你的 bucket 名称');
+    $oss->ossClient->setBucket('oss-editor');
     $oss->ossClient->uploadContent($osskey,$content);
   }
 
@@ -48,7 +48,7 @@ class AliyunOSS {
   {
       $oss = new OSS(true); // 上传文件使用内网，免流量费
 
-      return $oss->ossClient->deleteObject('你的 bucket 名称', $ossKey);
+      return $oss->ossClient->deleteObject('oss-editor', $ossKey);
   }
 
   /**
@@ -86,8 +86,13 @@ class AliyunOSS {
   public static function getUrl($ossKey)
   {
     $oss = new OSS();
-    $oss->ossClient->setBucket('你的 bucket 名称');
+    $oss->ossClient->setBucket('oss-editor');
     return $oss->ossClient->getUrl($ossKey, new \DateTime("+1 day"));
+  }
+  
+  public static function getUrlCdn($osskey)
+  {      
+      return Config::get('app.imgCdnServer') . '/' . $osskey;
   }
 
   public static function createBucket($bucketName)
