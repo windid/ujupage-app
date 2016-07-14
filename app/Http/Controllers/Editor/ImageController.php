@@ -217,6 +217,8 @@ class ImageController extends Controller {
         
         $this->image->user_id = $this->user->id;
         $this->image->name = $file->getClientOriginalName();
+
+        $this->image->alt = "";
                 
         $size = getimagesize($file->getRealPath());
         $this->image->width = $size[0];
