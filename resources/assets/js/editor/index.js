@@ -3,6 +3,7 @@ import editor from '../components/editor.vue'
 
 Vue.use(VueResource);
 
+Vue.http.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 // import tooltip from '../libs/vue-strap/src/tooltip.vue'
 
 // // import eventHandler from '../utils/eventHandler.js'

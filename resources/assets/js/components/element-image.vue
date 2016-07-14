@@ -84,7 +84,7 @@ export default {
       <img v-bind:src="element.src" :style="{width:element.style[workspace.version].width,height:'auto'}">
     </div>
     <template slot="main-buttons-extend">
-      <div class="btn btn-primary" title="更换图片" @click="edit">更换图片</div>
+      <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>
       <div class="btn btn-default" title="链接" @click="buttonGroup='link'"><span class="glyphicon glyphicon-link"></span></div>
     </template>
     <template slot="button-groups">

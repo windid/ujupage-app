@@ -42,10 +42,10 @@ export default {
       let files = e.target.files;
       let data = new FormData();
       let folder = '默认文件夹';
-      data.append('image', files[0]);
+      data.append('file', files[0]);
       data.append('folder',folder);
       this.$http.post('/editor/image/upload', data).then(function(response){
-        console.log('success');
+        console.log(response.data);
       },function(response){
         console.log(response);
       });
@@ -67,37 +67,42 @@ export default {
       if (this._closeEvent) this._closeEvent.remove();
     },
     loadImages: function(folder){
-      this.$http
-      this.images = {
-        1567: {
-          name:"test", 
-          alt:"",
-          url:  "http://img9.dzdwl.com/img/234114120527677151.jpg", 
-          thumb:"http://img9.dzdwl.com/img/234114120527677151.jpg", 
-          width:"913", 
-          height:"571"},
-        2522: {
-          name:"test2", 
-          alt:"",
-          url:  "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg", 
-          thumb:"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg", 
-          width:"750", 
-          height:"1344"},
-        3455: {
-          name:"test3", 
-          alt:"",
-          url:  "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg", 
-          thumb:"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg", 
-          width:"2048", 
-          height:"2048"},
-        5532: {
-          name:"test4", 
-          alt:"",
-          url:  "http://img9.dzdwl.com/img/2012081210373.jpg", 
-          thumb:"http://img9.dzdwl.com/img/2012081210373.jpg", 
-          width:"3000", 
-          height:"1916"},
-      }
+      this.$http.get('/editor/image/list/'+folder+'/1/99999').then(function(response){
+        let data = response.json();
+        this.images = data.images;
+      },function(){
+        //handling error
+      });
+      // this.images = {
+      //   1567: {
+      //     name:"test", 
+      //     alt:"",
+      //     url:  "http://img9.dzdwl.com/img/234114120527677151.jpg", 
+      //     thumb:"http://img9.dzdwl.com/img/234114120527677151.jpg", 
+      //     width:"913", 
+      //     height:"571"},
+      //   2522: {
+      //     name:"test2", 
+      //     alt:"",
+      //     url:  "http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg", 
+      //     thumb:"http://i.donglimall.com/news/UpFiles/bizhi/201505/16/20140527032929367.jpg", 
+      //     width:"750", 
+      //     height:"1344"},
+      //   3455: {
+      //     name:"test3", 
+      //     alt:"",
+      //     url:  "http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg", 
+      //     thumb:"http://bcs.kuaiapk.com/rbpiczy/Wallpaper/2013/2/17/907466d282b1431f915b62b861abc026-3.jpg", 
+      //     width:"2048", 
+      //     height:"2048"},
+      //   5532: {
+      //     name:"test4", 
+      //     alt:"",
+      //     url:  "http://img9.dzdwl.com/img/2012081210373.jpg", 
+      //     thumb:"http://img9.dzdwl.com/img/2012081210373.jpg", 
+      //     width:"3000", 
+      //     height:"1916"},
+      // }
       this.loading = false;
     }
   },
@@ -110,7 +115,7 @@ export default {
     }
   },
   ready (){
-    this.loadImages('默认文件夹');
+    this.loadImages('default');
   }
 }
 </script>
@@ -127,8 +132,8 @@ export default {
     <div slot="body" class="images-wrapper">
       <div v-show="loading" class="loading"></div>
       <div v-else>
-        <div v-for="(imageId,image) in images" class="image-item" v-bind:class="{selected: imageId === currentImageId}" @click="currentImageId = imageId" @dblclick="pickImage(imageId)">
-          <img :src="image.thumb" alt="{{image.alt}}" style="max-width:140px;max-height:140px">
+        <div v-for="(index,image) in images" class="image-item" v-bind:class="{selected: index === currentImageId}" @click="currentImageId = index" @dblclick="pickImage(index)">
+          <img :src="image.url+'@140w_140h'" alt="{{image.alt}}" style="max-width:140px;max-height:140px">
         </div>
       </div>
     </div>
@@ -151,26 +156,9 @@ export default {
           </div>
         </div>
       </div>
-      <!-- <div class="fl" @click.stop>
-        <dropdown :show.sync="showUploadMenu" :dir="'up'">
-          <slot><div data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">上传图片</div></slot>
-          <ul slot="dropdown-menu" class="dropdown-menu" style="min-width:120px;">
-            <li class="image-upload-option">
-              <span class="glyphicon glyphicon-cloud-upload"></span>
-              <span>从电脑上传</span>
-              
-            </li>
-            <li class="image-upload-option" style="border-top:1px solid #ccc">
-              <span class="glyphicon glyphicon-link"></span>
-              <span>从网址上传</span>
-            </li>
-          </ul>
-        </dropdown> 
-      </div>-->
       <span v-if="currentImageId !== null">
-        名称:{{images[currentImageId].name}} &nbsp;
-        Alt:{{images[currentImageId].alt}} &nbsp;
-        尺寸:{{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;
+        名称: {{images[currentImageId].name}} &nbsp;
+        尺寸: {{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;
       </span> 
       <span class="btn btn-default btn-sm">查看 <span class="glyphicon glyphicon-zoom-in"></span></span>
       &nbsp; 
