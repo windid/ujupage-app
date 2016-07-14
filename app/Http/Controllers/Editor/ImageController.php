@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Editor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Image\Image;
 use App\Models\Image\ImageDir;
@@ -48,6 +50,7 @@ class ImageController extends Controller {
     public function getIndex(string $dirname = "default" 
                                     , int $page = 1 
                                     , int $page_size = 30)  {
+        
         if ($dirname != 'default') {
             $dir = $this->imageDir->where('dirname', $dirname)
                 ->where('user_id', $this->user->id)
@@ -172,7 +175,8 @@ class ImageController extends Controller {
     
     /**
      * 上传图片
-     * @param file $file 图片
+     * @param file $file 图片(2选1)
+     * @param string $url 图片地址(2选1)
      * @param string $folder 文件夹名称
      * @return string json {
      *  image : {
@@ -188,10 +192,10 @@ class ImageController extends Controller {
      * }
      */
     public function upload(Request $request) {
-        if (!$request->hasFile('file')) {
+        if (!$request->hasFile('file') && !$request->has('url')) {
             return $this->err('请上传文件');
         }
-
+        
         if ($request->has('folder')) {
             $dir = $this->imageDir->where('dirname', $request->folder)
                     ->where('user_id', $this->user->id)
@@ -205,14 +209,37 @@ class ImageController extends Controller {
             $this->image->dir_id = 0;
         }
         
-        $file = $request->file('file');
-        if (!$file->isValid()) {
-            return $this->err('上传文件失败');
-        }
-        
-        $validate = validator($request->all(), ['file' => 'image']);
-        if ($validate->fails()) {
-            return $this->err('请上传jpeg/jpg, png, gif的图片');
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            if (!$file->isValid()) {
+                return $this->err('上传文件失败');
+            }
+
+            $validate = validator($request->all(), ['file' => 'image']);
+            if ($validate->fails()) {
+                return $this->err('请上传jpeg/jpg, png, gif的图片');
+            }
+        } else {
+            $url = $request->get('url');           
+            
+            try {
+                // 获取文件信息
+                $pathinfo = pathinfo(parse_url($url)['path']);
+                $filename = $pathinfo['basename']; // 文件名                
+                $filepath = storage_path('app')  // 文件路径
+                        . '/' 
+                        . uniqid();               // 文件名
+                // 保存本地
+                $image = \Intervention\Image\ImageManagerStatic::make($url)->save($filepath);
+                
+                // 生成UploadedFile类                
+                $file = new UploadedFile($filepath, $filename, $image->mime(), null, null, true);
+                $image->destroy();
+                
+            } catch (\Intervention\Image\Exception\NotReadableException $e) {
+                return $this->err('请粘贴有效的图片网址');
+            }
+            
         }
         
         $this->image->user_id = $this->user->id;
@@ -235,6 +262,9 @@ class ImageController extends Controller {
         OSS::upload($filepathOSS, $file->getRealPath());   
         $this->image->url = OSS::getUrlCdn($filepathOSS);
         $this->image->save();
+        
+        // 删除临时文件
+        Storage::delete($file->getBasename());
         
         return $this->dump(['image' => $this->image->toArray()]);
     }
