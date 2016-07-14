@@ -216,7 +216,8 @@ class ImageController extends Controller {
         }
         
         $this->image->user_id = $this->user->id;
-        $this->image->name = $this->image->alt = $file->getClientOriginalName();
+        $this->image->name = $file->getClientOriginalName();
+        $this->image->alt = "";
                 
         $size = getimagesize($file->getRealPath());
         $this->image->width = $size[0];
@@ -232,7 +233,7 @@ class ImageController extends Controller {
                 .$filepathOSS;
         
         OSS::upload($filepathOSS, $file->getRealPath());   
-        $this->image->image = OSS::getUrlCdn($filepathOSS);
+        $this->image->url = OSS::getUrlCdn($filepathOSS);
         $this->image->save();
         
         return $this->dump(['image' => $this->image->toArray()]);
