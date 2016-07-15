@@ -47,6 +47,8 @@ $zone = 'editor';
 Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'middleware' => 'auth'], function(){   
     
     Route::get('v1', ['as' => '.v1', 'uses' => 'EditorController@v1']);
+    // 预览        
+    Route::get('preview/{id}', ['as' => '.preview', 'uses' => 'EditorController@preview']);
     
     // API接口分配
     // m=editor_images@editor_upload
@@ -75,6 +77,15 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         Route::post('modimage', ['as' => '.modimage', 'uses' => 'ImageController@modimage']);
         // 删除图片
         Route::get('delimage/{id}', ['as' => '.delimage', 'uses' => 'ImageController@delimage']);
+    });
+    
+    Route::group(['prefix'=>'page', 'as' => '.page'], function(){        
+        // 加载        
+        Route::get('initpage/{id}', ['as' => '.initpage', 'uses' => 'PageController@initpage']);
+        // 保存版本        
+        Route::post('save', ['as' => '.save', 'uses' => 'PageController@save']);
+        // 保存设置        
+        Route::post('savesetting', ['as' => '.savesetting', 'uses' => 'PageController@savesetting']);
     });
 });
 
