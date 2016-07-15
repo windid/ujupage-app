@@ -1,31 +1,33 @@
 <?php
 
-namespace App\Http\Controllers\Editor;
+namespace App\Http\Json;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
+use App\User;
 use App\Models\Image\Image;
 use App\Models\Image\ImageDir;
 
 use App\Services\OSS;
 
-class ImageController extends Controller {
+class EditorJson extends Jsons{
     
     public $user;
+    public $request;
     public $image;
     public $imageDir;
     
-    public function __construct() {
-        $this->user = auth()->user();
-        
-        $this->image = new Image();
-        $this->imageDir = new ImageDir();
+    public function __construct(User $user, Request $request) {
+        $this->user = $user;
+        $this->request = $request;
+        $this->image = new Image;
+        $this->imageDir = new ImageDir;
     }
     
     /**
+     * editor_images
      * 图片列表
      * @param string $dirname 文件夹名称
      * @param int $page 当前页数
@@ -47,10 +49,9 @@ class ImageController extends Controller {
      *  }
      * }
      */
-    public function getIndex(string $dirname = "default" 
+    public function images(string $dirname = "default" 
                                     , int $page = 1 
-                                    , int $page_size = 30)  {
-        
+                                    , int $page_size = 30) {
         if ($dirname != 'default') {
             $dir = $this->imageDir->where('dirname', $dirname)
                 ->where('user_id', $this->user->id)
@@ -77,10 +78,11 @@ class ImageController extends Controller {
             'page_size' => $page_size,
             'images' => $images->toArray()
         ];
-        return $this->dump($result);        
+        return $this->dump($result);  
     }
     
     /**
+     * editor_dir
      * 文件夹列表
      * @return string json {
      *  dir : {dir1, dir2, dir3}
@@ -95,6 +97,7 @@ class ImageController extends Controller {
     }
     
     /**
+     * editor_mkdir
      * 增加文件夹
      * @param  string $dirname 文件夹名称
      * @return string json {
@@ -115,6 +118,7 @@ class ImageController extends Controller {
     }
     
     /**
+     * editor_moddir
      * 修改文件夹
      * @param  string $dirname 文件夹名称
      * @return string json {
@@ -149,6 +153,7 @@ class ImageController extends Controller {
     }
     
     /**
+     * editor_deldir
      * 删除文件夹
      * @param  string $dirname 文件夹名称
      * @return string json {
@@ -168,12 +173,13 @@ class ImageController extends Controller {
         $this->image->where('dir_id', $dir->id)->delete();
         $dir->delete();
         
-        return $this->dump();        
+        return $this->dir();        
     }
     
     
     
     /**
+     * editor_upload
      * 上传图片
      * @param file $file 图片(2选1)
      * @param string $url 图片地址(2选1)
@@ -191,13 +197,13 @@ class ImageController extends Controller {
      *  , 'result' : 'true'
      * }
      */
-    public function upload(Request $request) {
-        if (!$request->hasFile('file') && !$request->has('url')) {
+    public function upload() {
+        if (!$this->request->hasFile('file') && !$this->request->has('url')) {
             return $this->err('请上传文件');
         }
         
-        if ($request->has('folder')) {
-            $dir = $this->imageDir->where('dirname', $request->folder)
+        if ($this->request->has('folder')) {
+            $dir = $this->imageDir->where('dirname', $this->request->folder)
                     ->where('user_id', $this->user->id)
                     ->first();            
             if ($dir) {
@@ -209,18 +215,18 @@ class ImageController extends Controller {
             $this->image->dir_id = 0;
         }
         
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
+        if ($this->request->hasFile('file')) {
+            $file = $this->request->file('file');
             if (!$file->isValid()) {
                 return $this->err('上传文件失败');
             }
 
-            $validate = validator($request->all(), ['file' => 'image']);
+            $validate = validator($this->request->all(), ['file' => 'image']);
             if ($validate->fails()) {
                 return $this->err('请上传jpeg/jpg, png, gif的图片');
             }
         } else {
-            $url = $request->get('url');           
+            $url = $this->request->get('url');           
             
             try {
                 // 获取文件信息
@@ -244,7 +250,6 @@ class ImageController extends Controller {
         
         $this->image->user_id = $this->user->id;
         $this->image->name = $file->getClientOriginalName();
-
         $this->image->alt = "";
                 
         $size = getimagesize($file->getRealPath());
@@ -271,6 +276,7 @@ class ImageController extends Controller {
     }
     
     /**
+     * editor_modimage
      * 修改图片信息
      * @param int    $id  图片ID
      * @param string $name 图片名称
@@ -290,8 +296,8 @@ class ImageController extends Controller {
      * }
      * 
      */
-    public function modimage(Request $request)  {
-        $dir = $this->imageDir->where('dirname', $request->folder)
+    public function modimage()  {
+        $dir = $this->imageDir->where('dirname', $this->request->folder)
                 ->where('user_id', $this->user->id)
                 ->first();
         if (!$dir) {
@@ -301,21 +307,22 @@ class ImageController extends Controller {
         }
         
         $image = $this->image->where('user_id', $this->user->id)
-                ->find($request->id);
+                ->find($this->request->id);
         
         if (!$image) {
             return $this->err('图片不存在');
         }
         
         $image->dir_id = $dir_id;
-        $image->name = $request->name;
-        $image->alt = $request->alt;
+        $image->name = $this->request->name;
+        $image->alt = $this->request->alt;
         $image->save();
         
         return $this->dump(['image' => $image->toArray()]);
     }
     
     /**
+     * editor_delimage
      * 隐藏图片
      * @param int    $id  图片ID
      * @return string json {
@@ -331,5 +338,4 @@ class ImageController extends Controller {
         
         return $this->dump();
     }
-    
 }
