@@ -27,6 +27,7 @@ class EditorJson extends Jsons{
     }
     
     /**
+     * editor_images
      * 图片列表
      * @param string $dirname 文件夹名称
      * @param int $page 当前页数
@@ -81,6 +82,7 @@ class EditorJson extends Jsons{
     }
     
     /**
+     * editor_dir
      * 文件夹列表
      * @return string json {
      *  dir : {dir1, dir2, dir3}
@@ -95,6 +97,7 @@ class EditorJson extends Jsons{
     }
     
     /**
+     * editor_mkdir
      * 增加文件夹
      * @param  string $dirname 文件夹名称
      * @return string json {
@@ -115,6 +118,7 @@ class EditorJson extends Jsons{
     }
     
     /**
+     * editor_moddir
      * 修改文件夹
      * @param  string $dirname 文件夹名称
      * @return string json {
@@ -149,6 +153,7 @@ class EditorJson extends Jsons{
     }
     
     /**
+     * editor_deldir
      * 删除文件夹
      * @param  string $dirname 文件夹名称
      * @return string json {
@@ -174,6 +179,7 @@ class EditorJson extends Jsons{
     
     
     /**
+     * editor_upload
      * 上传图片
      * @param file $file 图片(2选1)
      * @param string $url 图片地址(2选1)
@@ -270,6 +276,7 @@ class EditorJson extends Jsons{
     }
     
     /**
+     * editor_modimage
      * 修改图片信息
      * @param int    $id  图片ID
      * @param string $name 图片名称
@@ -315,6 +322,7 @@ class EditorJson extends Jsons{
     }
     
     /**
+     * editor_delimage
      * 隐藏图片
      * @param int    $id  图片ID
      * @return string json {

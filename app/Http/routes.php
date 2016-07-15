@@ -49,6 +49,13 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
     Route::get('v1', ['as' => '.v1', 'uses' => 'EditorController@v1']);
     
     // API接口分配
+    // m=editor_images@editor_upload
+    // p=urlencode(base64_encode(param1))_urlencode(base64_encode(param2))_urlencode(base64_encode(param3))@
+    /**
+     * @param string $m {Editor}Json类的{images}的方法和{Editor}Json类的{upload}的方法，以“@”分隔
+     * @param string $p 用“@”分隔对应“m”参数的类方法， 每个参数都以base64+url进行编码并且以“_”分隔（如无参数也可以忽略该“p”参数）
+     * 
+     */
     Route::any('api', ['as' => '.api', 'uses' => 'EditorController@api']);
     /*
     Route::group(['prefix'=>'image', 'as' => '.image'], function(){        
