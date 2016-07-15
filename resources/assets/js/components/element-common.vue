@@ -44,7 +44,7 @@ export default {
       const toolbarPositionY = (viewTop < 95) ? 'bottom' : 'top';
 
       const viewRight = this.workspace.width - parseInt(this.elStyles.left);
-      const toolbarPositionX = (viewRight < 300) ? 'right' : 'left';
+      const toolbarPositionX = (viewRight < 0) ? 'right' : 'left';
 
       this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX;
     },

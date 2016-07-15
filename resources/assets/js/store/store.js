@@ -238,7 +238,7 @@ const mutations = {
   },
 
   REPLACE_ELEMENT(state, sectionId, elementId, newElement){
-    Vue.set(state.page.sections[sectionId]['elements'], elementId, newElement);
+    Vue.set(state.page.sections[sectionId]['elements'], elementId, merge({},newElement));
     mutations.SAVE_PAGE_STATE(state);
   },
 

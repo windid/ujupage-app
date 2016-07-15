@@ -7,7 +7,7 @@
 </style>
 
 <template>
-  <modal :show.sync="show" :width="'800px'" :height="'80%'" >
+  <modal :show.sync="show" :width="'800px'" :height="'300px'" >
     <div slot="header">
       <ul class="nav nav-pills">
         <li role="presentation" :class="{active: currentTab === 'seo'}"><a href="#" @click="currentTab = 'seo'">SEO设置</a></li>

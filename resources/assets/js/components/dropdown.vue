@@ -42,3 +42,25 @@
     }
   }
 </script>
+
+
+<style>
+.dropdown-menu-narrow{
+  min-width:52px;
+}
+
+.dropdown-menu-narrow li{
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  line-height: 32px;
+  cursor: pointer;
+}
+
+.dropdown-menu-narrow li:last-child{
+  border: 0;
+}
+
+.dropdown-menu-narrow li.selected, .dropdown-menu-narrow li:hover{
+  background-color:#eee;
+}
+</style>

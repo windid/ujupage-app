@@ -139,7 +139,8 @@ export default {
                     {
                       label: "testDropdown",
                       type: "dropdown",
-                      options: ["wawawa","hahaha","hehehe"]
+                      options: ["wawawa","hahaha","hehehe"],
+                      validator: []
                     },
                     {
                       label: "性别",
@@ -175,7 +176,7 @@ export default {
               elements:{
                 "bifsdc":{
                   type:"text",
-                  content:"<p>wdfsdf<br>dksjlfjslkd jksdfs ksdfksd</p>",
+                  content:"<p>wdfsdf<br>dksjlfjslkd jksdfs ksdfksd</p><p><br></p>",
                   style:{
                     'pc':{
                       left:"200px",
@@ -189,6 +190,12 @@ export default {
                       width:"200px",
                       zIndex:100
                     }
+                  },
+                  fontStyle:{
+                    color:"3",
+                    fontSize:"14px",
+                    lineHeight:"1.4",
+                    textAlign:"left"
                   }
                 },
               },
@@ -215,26 +222,32 @@ export default {
                       width:"200px",
                       zIndex:100
                     }
+                  },
+                  fontStyle:{
+                    color:"3",
+                    fontSize:"14px",
+                    lineHeight:"1.6",
+                    textAlign:"left"
                   }
                 },
-                "testurltesturl":{
-                  type:"image",
-                  src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
-                  style:{
-                    'pc':{
-                      left:"200px",
-                      top:"100px",
-                      width:"333px",
-                      zIndex:101
-                    },
-                    'mobile':{
-                      left:"50px",
-                      top:"150px",
-                      width:"120px",
-                      zIndex:101
-                    }
-                  }
-                },
+                // "testurltesturl":{
+                //   type:"image",
+                //   src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+                //   style:{
+                //     'pc':{
+                //       left:"200px",
+                //       top:"100px",
+                //       width:"333px",
+                //       zIndex:101
+                //     },
+                //     'mobile':{
+                //       left:"50px",
+                //       top:"150px",
+                //       width:"120px",
+                //       zIndex:101
+                //     }
+                //   }
+                // },
               }
             },
             {
@@ -245,7 +258,7 @@ export default {
               elements:{
                 "bvsdfg23":{
                   type:"text",
-                  content:"Hello, World!",
+                  content:"<p>Hello, World!</p>",
                   style: {
                     'pc':{
                       left:"500px",
@@ -259,6 +272,12 @@ export default {
                       width:"200px",
                       zIndex:2000
                     }
+                  },
+                  fontStyle:{
+                    color:"3",
+                    fontSize:"14px",
+                    lineHeight:"1.6",
+                    textAlign:"center"
                   }
                 },
               }

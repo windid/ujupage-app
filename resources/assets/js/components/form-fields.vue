@@ -66,6 +66,7 @@ export default {
       if (target !== fieldId){
         this.formFields[fieldId] = this.formFields.splice(target, 1, this.formFields[fieldId])[0];
       }
+      this.editingField = null;
     },
     addOption: function(fieldId){
       let newOptionId = this.formFields[fieldId].options.length;
@@ -121,7 +122,7 @@ export default {
     <div slot="body" @click="editingField = null">
 
       <div class="sidebar-block">
-        <div v-for="(fieldId,field) in formFields" class="form-field-label-wrapper" @mouseenter="currentField = fieldId" @mouseleave="currentField = null" @click.stop @dblclick="editingField = fieldId" :style="{background:(editingField === fieldId)?'#fff':''}">
+        <div v-for="(fieldId,field) in formFields" class="form-field-label-wrapper" @mouseenter="currentField = fieldId" @mouseleave="currentField = null" @click.stop :style="{background:(editingField === fieldId)?'#fff':''}">
           <div class="form-field-label">
             {{field.label}}
           </div>
