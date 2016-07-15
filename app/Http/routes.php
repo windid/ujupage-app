@@ -47,6 +47,7 @@ $zone = 'editor';
 Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'middleware' => 'auth'], function(){   
     
     Route::get('v1', ['as' => '.v1', 'uses' => 'EditorController@v1']);
+    Route::any('api', ['as' => '.api', 'uses' => 'ApiController@dispatch']);
     
     Route::group(['prefix'=>'image', 'as' => '.image'], function(){        
         // 图片列表        

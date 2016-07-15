@@ -294,7 +294,9 @@ class ImageController extends Controller {
                 ->where('user_id', $this->user->id)
                 ->first();
         if (!$dir) {
-            return $this->err('目录不存在');
+            $dir_id = $dir->id;
+        } else {
+            $dir_id = 0;
         }
         
         $image = $this->image->where('user_id', $this->user->id)
@@ -304,7 +306,7 @@ class ImageController extends Controller {
             return $this->err('图片不存在');
         }
         
-        $image->dir_id = $dir->id;
+        $image->dir_id = $dir_id;
         $image->name = $request->name;
         $image->alt = $request->alt;
         $image->save();
