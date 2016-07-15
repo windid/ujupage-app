@@ -12,7 +12,8 @@ class EditorController extends Controller {
     public function __construct() {
         $this->user = auth()->user();
     }
-
+    
+    // editor 页面
     public function v1() {
         return view('editor');
     }

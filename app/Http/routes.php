@@ -56,8 +56,8 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
      * @param string $p 用“@”分隔对应“m”参数的类方法， 每个参数都以base64+url进行编码并且以“_”分隔（如无参数也可以忽略该“p”参数）
      * 
      */
-    Route::any('api', ['as' => '.api', 'uses' => 'EditorController@api']);
-    /*
+    //Route::any('api', ['as' => '.api', 'uses' => 'EditorController@api']);
+    
     Route::group(['prefix'=>'image', 'as' => '.image'], function(){        
         // 图片列表        
         Route::get('list/{dirname?}/{page?}/{page_size?}', ['as' => '.list', 'uses' => 'ImageController@getIndex']);
@@ -76,7 +76,6 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         // 删除图片
         Route::get('delimage/{id}', ['as' => '.delimage', 'uses' => 'ImageController@delimage']);
     });
-     */
 });
 
 

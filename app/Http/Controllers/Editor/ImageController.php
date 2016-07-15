@@ -294,9 +294,9 @@ class ImageController extends Controller {
                 ->where('user_id', $this->user->id)
                 ->first();
         if (!$dir) {
-            $dir_id = $dir->id;
-        } else {
             $dir_id = 0;
+        } else {
+            $dir_id = $dir->id;
         }
         
         $image = $this->image->where('user_id', $this->user->id)
