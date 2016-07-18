@@ -35,7 +35,6 @@ import colorSchemes from './color-schemes.vue'
 // import tooltip from '../libs/vue-strap/src/tooltip.vue'
 
 export default {
-  name:'editorHeader',
   components: {
     editorSettings,
     colorSchemes,

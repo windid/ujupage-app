@@ -49,13 +49,13 @@ export default {
                       left:"200px",
                       top:"100px",
                       width:"",
-                      zIndex:101
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"50px",
                       top:"150px",
                       width:"",
-                      zIndex:101
+                      zIndex:50000
                     }
                   }
                 },
@@ -78,13 +78,13 @@ export default {
                       left:"100px",
                       top:"20px",
                       width:"160px",
-                      zIndex:300
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"50px",
                       top:"20px",
                       width:"100px",
-                      zIndex:300
+                      zIndex:50000
                     }
                   },
                   link:{}
@@ -96,13 +96,13 @@ export default {
                       left:"200px",
                       top:"250px",
                       width:"300px",
-                      zIndex:3000
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"50px",
                       top:"250px",
                       width:"300px",
-                      zIndex:1342
+                      zIndex:50000
                     }
                   },
                   props:{
@@ -182,13 +182,13 @@ export default {
                       left:"200px",
                       top:"100px",
                       width:"500px",
-                      zIndex:100
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"100px",
                       top:"100px",
                       width:"200px",
-                      zIndex:100
+                      zIndex:50000
                     }
                   },
                   fontStyle:{
@@ -208,19 +208,19 @@ export default {
               elements:{
                 "123ghfdv":{
                   type:"text",
-                  content:"Hello, World!",
+                  content:"<p>Hello, World!</p>",
                   style:{
                     'pc': {
                       left:"500px",
                       top:"100px",
                       width:"458px",
-                      zIndex:1000
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"150px",
                       top:"100px",
                       width:"200px",
-                      zIndex:100
+                      zIndex:50000
                     }
                   },
                   fontStyle:{
@@ -230,24 +230,24 @@ export default {
                     textAlign:"left"
                   }
                 },
-                // "testurltesturl":{
-                //   type:"image",
-                //   src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
-                //   style:{
-                //     'pc':{
-                //       left:"200px",
-                //       top:"100px",
-                //       width:"333px",
-                //       zIndex:101
-                //     },
-                //     'mobile':{
-                //       left:"50px",
-                //       top:"150px",
-                //       width:"120px",
-                //       zIndex:101
-                //     }
-                //   }
-                // },
+                "testurltesturl":{
+                  type:"image",
+                  src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+                  style:{
+                    'pc':{
+                      left:"200px",
+                      top:"100px",
+                      width:"333px",
+                      zIndex:50000
+                    },
+                    'mobile':{
+                      left:"50px",
+                      top:"150px",
+                      width:"120px",
+                      zIndex:50000
+                    }
+                  }
+                },
               }
             },
             {
@@ -264,13 +264,13 @@ export default {
                       left:"500px",
                       top:"100px",
                       width:"125px",
-                      zIndex:1000
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"150px",
                       top:"100px",
                       width:"200px",
-                      zIndex:2000
+                      zIndex:50000
                     }
                   },
                   fontStyle:{

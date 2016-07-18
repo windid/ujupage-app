@@ -8,6 +8,7 @@
   <title>Editor</title>
   <link href="[[asset('css/bootstrap.css')]]" rel="stylesheet">
   <link href="[[asset('css/editor.css')]]" rel="stylesheet">
+  <link href="[[asset('js/libs/jquery-ui/jquery-ui.min.css')]]" rel="stylesheet">
   <style>
     .loading{
       width:128px;
@@ -21,7 +22,7 @@
     }
   </style>
 </head>
-<body @click="bodyClick">
+<body>
 <editor>
   <div class="loading"></div>
 </editor>
@@ -31,6 +32,7 @@
   <script src="[[asset('js/libs/vue.min.js')]]"></script>
 @endif
   <script src="[[asset('js/libs/jquery-1.12.3.min.js')]]"></script>
+  <script src="[[asset('js/libs/jquery-ui/jquery-ui.min.js')]]"></script>
   <script src="[[asset('js/editor.js')]]"></script>
 </body>
 </html>

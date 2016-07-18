@@ -157,7 +157,7 @@ export default {
       <div v-show="loadStatus === 'view'" style="height:100%">
         <div class="images-sidebar">
           <div @click="loadStatus = 'loaded'" class="btn btn-default btn-sm">返回</div>
-          <form action="" @submit.prevent="modifyImage">
+          <form action="" method="post" @submit.prevent="modifyImage">
             <div class="modify-image-input">
               <p>名称</p>
               <p><input type="text" class="form-control" name="name" v-model="viewingImage.name"></p>

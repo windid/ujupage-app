@@ -1,5 +1,7 @@
 import Vuex from 'vuex'
 import {extend,merge} from 'lodash'
+import randomChar from '../utils/randomChar'
+
 // Vue.use(Vuex)
 const state = {
   workspace: {
@@ -22,7 +24,12 @@ const state = {
     //是否可以执行重做操作
     redo: false,
     //编辑状态中的页面元素id
-    activeElementId:""
+    activeElementId:"",
+    //元素最大最小zindex,
+    zIndex: {
+      'pc':{max:50000, min:50000},
+      'mobile':{max:50000, min:50000}
+    }
   },
 
   settings: {
@@ -53,6 +60,7 @@ const mutations = {
     pageStates = [merge({},state.page)];
     pageHistoryIndex = 0;
     mutations.SUM_PAGE_HEIGHT(state);
+    mutations.COUNT_PAGE_LAYER(state);
   },
 
   //对sections进行操作过后保存其状态，供撤销重做
@@ -62,6 +70,22 @@ const mutations = {
     pageStates.push(merge({},state.page));
     state.workspace.undo = true;
     state.workspace.redo = false;
+  },
+
+  COUNT_PAGE_LAYER(state){
+    let zIndex = {
+      'pc':{max:50000, min:50000},
+      'mobile':{max:50000, min:50000}
+    };
+    state.page.sections.forEach(function(section){
+      for (let elementId in section.elements){
+        zIndex.pc.max = (section.elements[elementId].style.pc.zIndex > zIndex.pc.max) ? section.elements[elementId].style.pc.zIndex : zIndex.pc.max;
+        zIndex.pc.min = (section.elements[elementId].style.pc.zIndex < zIndex.pc.min) ? section.elements[elementId].style.pc.zIndex : zIndex.pc.min;
+        zIndex.mobile.max = (section.elements[elementId].style.mobile.zIndex > zIndex.mobile.max) ? section.elements[elementId].style.mobile.zIndex : zIndex.mobile.max;
+        zIndex.mobile.min = (section.elements[elementId].style.mobile.zIndex < zIndex.mobile.min) ? section.elements[elementId].style.mobile.zIndex : zIndex.mobile.min;
+      }
+    });
+    state.workspace.zIndex = zIndex;
   },
 
   //计算页面高度，在初始加载以及进行了撤销重做动作之后执行
@@ -108,7 +132,7 @@ const mutations = {
 
   //删除板块
   REMOVE_SECTION(state, sectionId){
-    state.workspace.height  -= parseInt(state.page.sections[sectionId].style.height);
+    state.workspace.height  -= parseInt(state.page.sections[sectionId].style[state.workspace.version].height);
     state.page.sections.splice(sectionId,1);
     mutations.SAVE_PAGE_STATE(state);
   },
@@ -189,6 +213,15 @@ const mutations = {
     mutations.SUM_PAGE_HEIGHT(state);
   },
 
+  //添加元素
+  ADD_ELEMENT(state, sectionId, element){
+    const elementId = randomChar(8);
+    Vue.set(state.page.sections[sectionId]['elements'], elementId, element);
+    state.workspace.zIndex.pc.max     = element.style.pc.zIndex;
+    state.workspace.zIndex.mobile.max = element.style.mobile.zIndex;
+    state.workspace.activeElementId = elementId;
+    mutations.SAVE_PAGE_STATE(state);
+  },
 
   //删除元素
   REMOVE_ELEMENT(state, sectionId, elementId){
@@ -231,17 +264,39 @@ const mutations = {
     mutations.SAVE_PAGE_STATE(state);
   },
 
+  //缩放元素
+  RESIZE_ELEMENT(state, sectionId, elementId, newSize){
+    state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['width'] = newSize.width + "px";
+    state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['height'] = newSize.height + "px";
+    mutations.SAVE_PAGE_STATE(state);
+  },
+
+  //修改元素
   MODIFY_ELEMENT(state, sectionId, elementId, newPropsObj){
     let newElement = merge({}, state.page.sections[sectionId]['elements'][elementId], newPropsObj);
     Vue.set(state.page.sections[sectionId]['elements'], elementId, newElement);
     mutations.SAVE_PAGE_STATE(state);
   },
 
+  //修改元素的另一种方式，整体替换
   REPLACE_ELEMENT(state, sectionId, elementId, newElement){
     Vue.set(state.page.sections[sectionId]['elements'], elementId, merge({},newElement));
     mutations.SAVE_PAGE_STATE(state);
   },
 
+  //修改元素层次
+  INDEX_ELEMENT(state, sectionId, elementId, dir){
+    let zIndex = 0;
+    if (dir === 'top'){
+      zIndex = ++state.workspace.zIndex[state.workspace.version].max;
+    } else {
+      zIndex = --state.workspace.zIndex[state.workspace.version].min;      
+    }
+    state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['zIndex'] = zIndex;
+    mutations.SAVE_PAGE_STATE(state);    
+  },
+
+  //修改配色方案
   SET_COLOR_SET(state,colorSet){
     state.page.colorSet = colorSet;
     mutations.SAVE_PAGE_STATE(state);

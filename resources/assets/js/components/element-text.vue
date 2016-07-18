@@ -32,8 +32,14 @@ export default {
     return {
       buttonGroup:'main',
       editing: false,
-      textElement: merge({},this.element),
+      textElement: {
+        content: this.element.content,
+        fontStyle: merge({}, this.element.fontStyle)
+      },
       changed: false,
+      resize: {
+        handles: 'e'
+      }
     }
   },
   computed:{
@@ -57,7 +63,6 @@ export default {
     editDone: function(){
       this.editing = false;
       this.buttonGroup = 'main';
-      this.$els.content.setAttribute("contenteditable" ,false);
       
       if (this.changed){
         this.modifyElement(this.sectionId, this.elementId, this.textElement);
@@ -80,8 +85,8 @@ export default {
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable">
-    <div v-el:content slot="content" @dblclick="edit" contenteditable="false" style="outline:none" :style="[textElement.fontStyle,{cursor:editing ? 'text' : 'pointer',color:getColor(textElement.fontStyle.color)}]" v-content="textElement.content">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize">
+    <div v-el:content slot="content" @dblclick="edit" contenteditable="{{editing}}" spellcheck="false" style="outline:none" :style="[textElement.fontStyle,{cursor:editing ? 'text' : 'pointer',color:getColor(textElement.fontStyle.color)}]" v-content="textElement.content">
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click="edit">编辑</div>

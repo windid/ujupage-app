@@ -85,12 +85,7 @@
 	
 	var vm = new Vue({
 	  el: 'body',
-	  components: { editor: _editor2.default },
-	  methods: {
-	    bodyClick: function bodyClick(event) {
-	      this.$broadcast('body-click', event);
-	    }
-	  }
+	  components: { editor: _editor2.default }
 	});
 
 /***/ },
@@ -1420,7 +1415,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/editor.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(129)
+	__vue_template__ = __webpack_require__(133)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -1460,7 +1455,7 @@
 	
 	var _editorWorkspace2 = _interopRequireDefault(_editorWorkspace);
 	
-	var _store = __webpack_require__(127);
+	var _store = __webpack_require__(130);
 	
 	var _store2 = _interopRequireDefault(_store);
 	
@@ -1502,13 +1497,13 @@
 	                    left: "200px",
 	                    top: "100px",
 	                    width: "",
-	                    zIndex: 101
+	                    zIndex: 50000
 	                  },
 	                  'mobile': {
 	                    left: "50px",
 	                    top: "150px",
 	                    width: "",
-	                    zIndex: 101
+	                    zIndex: 50000
 	                  }
 	                }
 	              },
@@ -1531,13 +1526,13 @@
 	                    left: "100px",
 	                    top: "20px",
 	                    width: "160px",
-	                    zIndex: 300
+	                    zIndex: 50000
 	                  },
 	                  'mobile': {
 	                    left: "50px",
 	                    top: "20px",
 	                    width: "100px",
-	                    zIndex: 300
+	                    zIndex: 50000
 	                  }
 	                },
 	                link: {}
@@ -1549,13 +1544,13 @@
 	                    left: "200px",
 	                    top: "250px",
 	                    width: "300px",
-	                    zIndex: 3000
+	                    zIndex: 50000
 	                  },
 	                  'mobile': {
 	                    left: "50px",
 	                    top: "250px",
 	                    width: "300px",
-	                    zIndex: 1342
+	                    zIndex: 50000
 	                  }
 	                },
 	                props: {
@@ -1627,13 +1622,13 @@
 	                    left: "200px",
 	                    top: "100px",
 	                    width: "500px",
-	                    zIndex: 100
+	                    zIndex: 50000
 	                  },
 	                  'mobile': {
 	                    left: "100px",
 	                    top: "100px",
 	                    width: "200px",
-	                    zIndex: 100
+	                    zIndex: 50000
 	                  }
 	                },
 	                fontStyle: {
@@ -1652,19 +1647,19 @@
 	            elements: {
 	              "123ghfdv": {
 	                type: "text",
-	                content: "Hello, World!",
+	                content: "<p>Hello, World!</p>",
 	                style: {
 	                  'pc': {
 	                    left: "500px",
 	                    top: "100px",
 	                    width: "458px",
-	                    zIndex: 1000
+	                    zIndex: 50000
 	                  },
 	                  'mobile': {
 	                    left: "150px",
 	                    top: "100px",
 	                    width: "200px",
-	                    zIndex: 100
+	                    zIndex: 50000
 	                  }
 	                },
 	                fontStyle: {
@@ -1672,6 +1667,24 @@
 	                  fontSize: "14px",
 	                  lineHeight: "1.6",
 	                  textAlign: "left"
+	                }
+	              },
+	              "testurltesturl": {
+	                type: "image",
+	                src: "http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+	                style: {
+	                  'pc': {
+	                    left: "200px",
+	                    top: "100px",
+	                    width: "333px",
+	                    zIndex: 50000
+	                  },
+	                  'mobile': {
+	                    left: "50px",
+	                    top: "150px",
+	                    width: "120px",
+	                    zIndex: 50000
+	                  }
 	                }
 	              }
 	            }
@@ -1689,13 +1702,13 @@
 	                    left: "500px",
 	                    top: "100px",
 	                    width: "125px",
-	                    zIndex: 1000
+	                    zIndex: 50000
 	                  },
 	                  'mobile': {
 	                    left: "150px",
 	                    top: "100px",
 	                    width: "200px",
-	                    zIndex: 2000
+	                    zIndex: 50000
 	                  }
 	                },
 	                fontStyle: {
@@ -1774,7 +1787,6 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  name: 'editorHeader',
 	  components: {
 	    editorSettings: _editorSettings2.default,
 	    colorSchemes: _colorSchemes2.default
@@ -1830,106 +1842,130 @@
 	  dispatch('SET_ACTIVE_ELEMENT_ID', elementId);
 	};
 	
-	//删除元素
-	var removeElement = exports.removeElement = function removeElement(_ref4, sectionId, elementId) {
+	//新增元素
+	var addElement = exports.addElement = function addElement(_ref4, sectionId, element) {
 	  var dispatch = _ref4.dispatch;
 	  var state = _ref4.state;
+	
+	  dispatch('ADD_ELEMENT', sectionId, element);
+	};
+	
+	//删除元素
+	var removeElement = exports.removeElement = function removeElement(_ref5, sectionId, elementId) {
+	  var dispatch = _ref5.dispatch;
+	  var state = _ref5.state;
 	
 	  dispatch('REMOVE_ELEMENT', sectionId, elementId);
 	};
 	
 	//移动元素
-	var moveElement = exports.moveElement = function moveElement(_ref5, sectionId, elementId, positionInPage, elementHeight) {
-	  var dispatch = _ref5.dispatch;
-	  var state = _ref5.state;
+	var moveElement = exports.moveElement = function moveElement(_ref6, sectionId, elementId, positionInPage, elementHeight) {
+	  var dispatch = _ref6.dispatch;
+	  var state = _ref6.state;
 	
 	  dispatch('MOVE_ELEMENT', sectionId, elementId, positionInPage, elementHeight);
 	};
 	
+	//修改元素层叠位置
+	var indexElement = exports.indexElement = function indexElement(_ref7, sectionId, elementId, dir) {
+	  var dispatch = _ref7.dispatch;
+	  var state = _ref7.state;
+	
+	  dispatch('INDEX_ELEMENT', sectionId, elementId, dir);
+	};
+	
+	//缩放元素
+	var resizeElement = exports.resizeElement = function resizeElement(_ref8, sectionId, elementId, newSize) {
+	  var dispatch = _ref8.dispatch;
+	  var state = _ref8.state;
+	
+	  dispatch('RESIZE_ELEMENT', sectionId, elementId, newSize);
+	};
+	
 	//修改元素style
-	var modifyElement = exports.modifyElement = function modifyElement(_ref6, sectionId, elementId, newPropsObj) {
-	  var dispatch = _ref6.dispatch;
-	  var state = _ref6.state;
+	var modifyElement = exports.modifyElement = function modifyElement(_ref9, sectionId, elementId, newPropsObj) {
+	  var dispatch = _ref9.dispatch;
+	  var state = _ref9.state;
 	
 	  dispatch('MODIFY_ELEMENT', sectionId, elementId, newPropsObj);
 	};
 	
 	//修改元素style
-	var replaceElement = exports.replaceElement = function replaceElement(_ref7, sectionId, elementId, newElement) {
-	  var dispatch = _ref7.dispatch;
-	  var state = _ref7.state;
+	var replaceElement = exports.replaceElement = function replaceElement(_ref10, sectionId, elementId, newElement) {
+	  var dispatch = _ref10.dispatch;
+	  var state = _ref10.state;
 	
 	  dispatch('REPLACE_ELEMENT', sectionId, elementId, newElement);
 	};
 	
 	//设置当前板块
-	var setCurrentSectionId = exports.setCurrentSectionId = function setCurrentSectionId(_ref8, sectionId) {
-	  var dispatch = _ref8.dispatch;
-	  var state = _ref8.state;
+	var setCurrentSectionId = exports.setCurrentSectionId = function setCurrentSectionId(_ref11, sectionId) {
+	  var dispatch = _ref11.dispatch;
+	  var state = _ref11.state;
 	
 	  dispatch('SET_CURRENT_SECTION_ID', sectionId);
 	};
 	
 	//设置编辑状态中的板块
-	var setActiveSectionId = exports.setActiveSectionId = function setActiveSectionId(_ref9, sectionId) {
-	  var dispatch = _ref9.dispatch;
-	  var state = _ref9.state;
+	var setActiveSectionId = exports.setActiveSectionId = function setActiveSectionId(_ref12, sectionId) {
+	  var dispatch = _ref12.dispatch;
+	  var state = _ref12.state;
 	
 	  dispatch('SET_ACTIVE_SECTION_ID', sectionId);
 	};
 	
 	//移动板块
-	var moveSection = exports.moveSection = function moveSection(_ref10, dir, sectionId) {
-	  var dispatch = _ref10.dispatch;
-	  var state = _ref10.state;
+	var moveSection = exports.moveSection = function moveSection(_ref13, dir, sectionId) {
+	  var dispatch = _ref13.dispatch;
+	  var state = _ref13.state;
 	
 	  dispatch('MOVE_SECTION', dir, sectionId);
 	};
 	
 	//删除板块
-	var removeSection = exports.removeSection = function removeSection(_ref11, sectionId) {
-	  var dispatch = _ref11.dispatch;
-	  var state = _ref11.state;
+	var removeSection = exports.removeSection = function removeSection(_ref14, sectionId) {
+	  var dispatch = _ref14.dispatch;
+	  var state = _ref14.state;
 	
 	  dispatch('REMOVE_SECTION', sectionId);
 	};
 	
 	//修改板块
-	var modifySection = exports.modifySection = function modifySection(_ref12, sectionId, style) {
-	  var dispatch = _ref12.dispatch;
-	  var state = _ref12.state;
+	var modifySection = exports.modifySection = function modifySection(_ref15, sectionId, style) {
+	  var dispatch = _ref15.dispatch;
+	  var state = _ref15.state;
 	
 	  dispatch('MODIFY_SECTION', sectionId, style);
 	};
 	
 	//添加板块
-	var addSection = exports.addSection = function addSection(_ref13) {
-	  var dispatch = _ref13.dispatch;
-	  var state = _ref13.state;
+	var addSection = exports.addSection = function addSection(_ref16) {
+	  var dispatch = _ref16.dispatch;
+	  var state = _ref16.state;
 	
 	  dispatch('ADD_SECTION');
 	};
 	
 	//重做
-	var redo = exports.redo = function redo(_ref14) {
-	  var dispatch = _ref14.dispatch;
-	  var state = _ref14.state;
+	var redo = exports.redo = function redo(_ref17) {
+	  var dispatch = _ref17.dispatch;
+	  var state = _ref17.state;
 	
 	  dispatch('REDO');
 	};
 	
 	//撤销
-	var undo = exports.undo = function undo(_ref15) {
-	  var dispatch = _ref15.dispatch;
-	  var state = _ref15.state;
+	var undo = exports.undo = function undo(_ref18) {
+	  var dispatch = _ref18.dispatch;
+	  var state = _ref18.state;
 	
 	  dispatch('UNDO');
 	};
 	
 	//版本切换
-	var toggleVersion = exports.toggleVersion = function toggleVersion(_ref16) {
-	  var dispatch = _ref16.dispatch;
-	  var state = _ref16.state;
+	var toggleVersion = exports.toggleVersion = function toggleVersion(_ref19) {
+	  var dispatch = _ref19.dispatch;
+	  var state = _ref19.state;
 	
 	  dispatch('VERSION');
 	};
@@ -2831,39 +2867,207 @@
 	
 	var _actions = __webpack_require__(7);
 	
+	var _getters = __webpack_require__(8);
+	
 	exports.default = {
-	  name: 'editorToolbar',
 	  vuex: {
 	    actions: {
-	      addSection: _actions.addSection
+	      addSection: _actions.addSection,
+	      addElement: _actions.addElement
+	    },
+	    getters: {
+	      workspace: _getters.getWorkspaceData
 	    }
 	  },
 	  data: function data() {
 	    return {
-	      list: [{
+	      tools: [{
 	        name: '版块',
 	        style: 'modal-window',
 	        action: this.addSection
 	      }, {
 	        name: '图片',
 	        style: 'picture',
-	        action: function action() {
-	          console.log(this);
-	        }
+	        action: this.addImage
 	      }, {
 	        name: '文字',
 	        style: 'font',
-	        action: function action() {}
+	        action: this.addText
 	      }, {
 	        name: '按钮',
 	        style: 'expand',
-	        action: function action() {}
+	        action: this.addButton
 	      }, {
 	        name: '表单',
 	        style: 'edit',
-	        action: function action() {}
+	        action: this.addForm
+	      }, {
+	        name: 'HTML',
+	        style: 'header',
+	        action: this.addHTML
 	      }]
 	    };
+	  },
+	
+	  methods: {
+	    addText: function addText() {
+	      var defaultText = {
+	        type: "text",
+	        content: "<p>双击开始编辑这段文字</p>",
+	        style: {
+	          'pc': {
+	            left: "380px",
+	            top: "10px",
+	            width: "200px",
+	            zIndex: this.workspace.zIndex.pc.max + 1
+	          },
+	          'mobile': {
+	            left: "100px",
+	            top: "10px",
+	            width: "200px",
+	            zIndex: this.workspace.zIndex.mobile.max + 1
+	          }
+	        },
+	        fontStyle: {
+	          color: "4",
+	          fontSize: "16px",
+	          lineHeight: "1.4",
+	          textAlign: "left"
+	        }
+	      };
+	      this.addElement(this.workspace.currentSectionId, defaultText);
+	    },
+	
+	    addImage: function addImage(e) {
+	      var defaultImage = {
+	        type: "image",
+	        src: "",
+	        style: {
+	          'pc': {
+	            top: "10px",
+	            width: "",
+	            zIndex: this.workspace.zIndex.pc.max + 1
+	          },
+	          'mobile': {
+	            top: "10px",
+	            width: "",
+	            zIndex: this.workspace.zIndex.mobile.max + 1
+	          }
+	        }
+	      };
+	      this.addElement(this.workspace.currentSectionId, defaultImage);
+	    },
+	
+	    addButton: function addButton() {
+	      var defaultButton = {
+	        type: "button",
+	        text: "点击下载",
+	        props: {
+	          backgroundColor: '3',
+	          borderColor: '4',
+	          fontColor: '0',
+	          hoverColor: '4',
+	          borderRadius: '5px',
+	          fontSize: '18px',
+	          shadow: true,
+	          bold: false,
+	          border: false
+	        },
+	        style: {
+	          'pc': {
+	            left: "400px",
+	            top: "10px",
+	            width: "160px",
+	            zIndex: this.workspace.zIndex.pc.max + 1
+	          },
+	          'mobile': {
+	            left: "120px",
+	            top: "10px",
+	            width: "160px",
+	            zIndex: this.workspace.zIndex.mobile.max + 1
+	          }
+	        },
+	        link: {}
+	      };
+	      this.addElement(this.workspace.currentSectionId, defaultButton);
+	    },
+	
+	    addForm: function addForm() {
+	      var defaultForm = {
+	        type: "form",
+	        style: {
+	          'pc': {
+	            left: "330px",
+	            top: "10px",
+	            width: "300px",
+	            zIndex: this.workspace.zIndex.pc.max + 1
+	          },
+	          'mobile': {
+	            left: "50px",
+	            top: "10px",
+	            width: "300px",
+	            zIndex: this.workspace.zIndex.mobile.max + 1
+	          }
+	        },
+	        props: {
+	          labelInside: true,
+	          innerShadow: false,
+	          fieldColor: "#fff",
+	          inputColor: "4",
+	          borderColor: "#ccc",
+	          labelColor: "3",
+	          redirect: "",
+	          thankyou: "表单提交成功，感谢！"
+	        },
+	        fields: [{
+	          label: "姓名",
+	          type: "text",
+	          validator: ['required']
+	        }, {
+	          label: "手机号码",
+	          type: "text",
+	          validator: ['required', 'mobile']
+	        }],
+	        button: {
+	          text: "提交",
+	          props: {
+	            backgroundColor: '3',
+	            borderColor: '4',
+	            fontColor: '0',
+	            hoverColor: '4',
+	            borderRadius: '5px',
+	            fontSize: '18px',
+	            shadow: true,
+	            bold: false,
+	            border: false
+	          }
+	        }
+	      };
+	      this.addElement(this.workspace.currentSectionId, defaultForm);
+	    },
+	
+	    addHTML: function addHTML() {
+	      var defaultHTML = {
+	        type: "html",
+	        content: "",
+	        style: {
+	          'pc': {
+	            left: "330px",
+	            top: "10px",
+	            width: "300px",
+	            zIndex: this.workspace.zIndex.pc.max + 1
+	          },
+	          'mobile': {
+	            left: "50px",
+	            top: "10px",
+	            width: "300px",
+	            zIndex: this.workspace.zIndex.mobile.max + 1
+	          }
+	        }
+	      };
+	      this.addElement(this.workspace.currentSectionId, defaultHTML);
+	    }
+	
 	  }
 	};
 
@@ -2871,7 +3075,7 @@
 /* 35 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div class=\"toolbar shadow\">\n  <div class=\"toolbar-header\">组件</div>\n  <div class=\"toolbar-body\">\n    <div v-for=\"item in list\" class=\"tool shadow\" @click=\"item.action\">\n      <span class=\"glyphicon glyphicon-{{item.style}}\"></span>\n      <div class=\"tool-name\">{{item.name}}</div>\n    </div>\n  </div>\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"toolbar shadow\">\n  <div class=\"toolbar-header\">组件</div>\n  <div class=\"toolbar-body\">\n    <div v-for=\"tool in tools\" class=\"tool shadow\" @click.stop=\"tool.action\">\n      <span class=\"glyphicon glyphicon-{{tool.style}}\"></span>\n      <div class=\"tool-name\">{{tool.name}}</div>\n    </div>\n  </div>\n</div>\n";
 
 /***/ },
 /* 36 */
@@ -2883,7 +3087,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/editor-workspace.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(126)
+	__vue_template__ = __webpack_require__(129)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2947,7 +3151,7 @@
 	    __vue_script__.__esModule &&
 	    Object.keys(__vue_script__).length > 1) {
 	  console.warn("[vue-loader] resources/assets/js/components/page-section.vue: named exports in *.vue files are ignored.")}
-	__vue_template__ = __webpack_require__(125)
+	__vue_template__ = __webpack_require__(128)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) {
@@ -2999,6 +3203,10 @@
 	
 	var _elementForm2 = _interopRequireDefault(_elementForm);
 	
+	var _elementHtml = __webpack_require__(125);
+	
+	var _elementHtml2 = _interopRequireDefault(_elementHtml);
+	
 	var _colorMixin = __webpack_require__(53);
 	
 	var _colorMixin2 = _interopRequireDefault(_colorMixin);
@@ -3013,6 +3221,7 @@
 	    elementImage: _elementImage2.default,
 	    elementButton: _elementButton2.default,
 	    elementForm: _elementForm2.default,
+	    elementHtml: _elementHtml2.default,
 	    sectionEdit: _sectionEdit2.default
 	  },
 	  data: function data() {
@@ -3281,7 +3490,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n  height: 55px;\n  border-bottom: 1px solid #ddd;\n}\n\n.sidebar-body {\n  padding:12px;\n  height:100%;\n  overflow-x: auto;\n  position: relative;\n}\n\n.sidebar-block{\n  padding:15px 0;\n}\n\n.sidebar-block .text-input{\n  width: 100%;\n\n  padding: 4px 8px;\n  border:1px solid #ccc;\n  border-radius: 4px;\n}\n\n.sidebar-block-inside{\n  padding-top:10px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/sidebar.vue?9a96035a"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAsCA;EACA,eAAA;EACA,eAAA;EACA,YAAA;EACA,SAAA;EACA,SAAA;EACA,YAAA;EACA,uBAAA;EACA,yCAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;EACA,8BAAA;CACA;;AAEA;EACA,aAAA;EACA,YAAA;EACA,iBAAA;EACA,mBAAA;CACA;;AAEA;EACA,eAAA;CACA;;AAEA;EACA,YAAA;;EAEA,iBAAA;EACA,sBAAA;EACA,mBAAA;CACA;;AAEA;EACA,iBAAA;CACA","file":"sidebar.vue","sourcesContent":["<script>\n\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    }\n  },\n  data(){\n    return {\n      bodyHeight:'auto',\n    }\n  },\n  ready(){\n    var browserHeight = document.documentElement.clientHeight;\n    this.bodyHeight = (browserHeight - 100) + 'px';\n  }\n}\n</script>\n\n<template>\n  <div class=\"sidebar\" v-if=\"show\">\n    \n    <div class=\"sidebar-header\">\n      <slot name=\"header\">\n      </slot>\n    </div>\n    \n    <div class=\"sidebar-body\" :style=\"{height:bodyHeight}\">\n      <slot name=\"body\">\n      </slot>\n    </div>\n  </div>\n</template>\n\n<style>\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n  height: 55px;\n  border-bottom: 1px solid #ddd;\n}\n\n.sidebar-body {\n  padding:12px;\n  height:100%;\n  overflow-x: auto;\n  position: relative;\n}\n\n.sidebar-block{\n  padding:15px 0;\n}\n\n.sidebar-block .text-input{\n  width: 100%;\n\n  padding: 4px 8px;\n  border:1px solid #ccc;\n  border-radius: 4px;\n}\n\n.sidebar-block-inside{\n  padding-top:10px;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n  height: 55px;\n  border-bottom: 1px solid #ddd;\n}\n\n.sidebar-body {\n  padding:12px;\n  height:100%;\n  overflow-y: auto;\n  overflow-x: hidden;\n  position: relative;\n}\n\n.sidebar-block{\n  padding:15px 0;\n}\n\n.sidebar-block .text-input{\n  width: 100%;\n\n  padding: 4px 8px;\n  border:1px solid #ccc;\n  border-radius: 4px;\n}\n\n.sidebar-block-inside{\n  padding-top:10px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/sidebar.vue?78f93b80"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAsCA;EACA,eAAA;EACA,eAAA;EACA,YAAA;EACA,SAAA;EACA,SAAA;EACA,YAAA;EACA,uBAAA;EACA,yCAAA;CACA;;AAEA;EACA,aAAA;EACA,aAAA;EACA,8BAAA;CACA;;AAEA;EACA,aAAA;EACA,YAAA;EACA,iBAAA;EACA,mBAAA;EACA,mBAAA;CACA;;AAEA;EACA,eAAA;CACA;;AAEA;EACA,YAAA;;EAEA,iBAAA;EACA,sBAAA;EACA,mBAAA;CACA;;AAEA;EACA,iBAAA;CACA","file":"sidebar.vue","sourcesContent":["<script>\n\nexport default {\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true\n    }\n  },\n  data(){\n    return {\n      bodyHeight:'auto',\n    }\n  },\n  ready(){\n    var browserHeight = document.documentElement.clientHeight;\n    this.bodyHeight = (browserHeight - 100) + 'px';\n  }\n}\n</script>\n\n<template>\n  <div class=\"sidebar\" v-if=\"show\">\n    \n    <div class=\"sidebar-header\">\n      <slot name=\"header\">\n      </slot>\n    </div>\n    \n    <div class=\"sidebar-body\" :style=\"{height:bodyHeight}\">\n      <slot name=\"body\">\n      </slot>\n    </div>\n  </div>\n</template>\n\n<style>\n.sidebar {\n  position:fixed;\n  z-index: 80000;\n  width:240px;\n  top:45px;\n  right: 0;\n  height:100%;\n  background-color: #fff;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);\n}\n\n.sidebar-header {\n  padding:10px;\n  height: 55px;\n  border-bottom: 1px solid #ddd;\n}\n\n.sidebar-body {\n  padding:12px;\n  height:100%;\n  overflow-y: auto;\n  overflow-x: hidden;\n  position: relative;\n}\n\n.sidebar-block{\n  padding:15px 0;\n}\n\n.sidebar-block .text-input{\n  width: 100%;\n\n  padding: 4px 8px;\n  border:1px solid #ccc;\n  border-radius: 4px;\n}\n\n.sidebar-block-inside{\n  padding-top:10px;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -19854,8 +20063,14 @@
 	    return {
 	      buttonGroup: 'main',
 	      editing: false,
-	      textElement: (0, _lodash.merge)({}, this.element),
-	      changed: false
+	      textElement: {
+	        content: this.element.content,
+	        fontStyle: (0, _lodash.merge)({}, this.element.fontStyle)
+	      },
+	      changed: false,
+	      resize: {
+	        handles: 'e'
+	      }
 	    };
 	  },
 	
@@ -19880,7 +20095,6 @@
 	    editDone: function editDone() {
 	      this.editing = false;
 	      this.buttonGroup = 'main';
-	      this.$els.content.setAttribute("contenteditable", false);
 	
 	      if (this.changed) {
 	        this.modifyElement(this.sectionId, this.elementId, this.textElement);
@@ -19952,12 +20166,43 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  props: ['element', 'sectionId', 'elementId', 'buttonGroup', 'draggable'],
+	  props: {
+	    element: {
+	      type: Object,
+	      required: true
+	    },
+	    sectionId: {
+	      required: true
+	    },
+	    elementId: {
+	      type: String,
+	      required: true
+	    },
+	    buttonGroup: {
+	      type: String,
+	      twoWay: true,
+	      default: 'main'
+	    },
+	    draggable: {
+	      type: Boolean,
+	      default: true
+	    },
+	    resizable: {
+	      type: Boolean,
+	      default: false
+	    },
+	    resize: {
+	      type: Object
+	    }
+	  },
 	  vuex: {
 	    actions: {
 	      setActiveElementId: _actions.setActiveElementId,
 	      removeElement: _actions.removeElement,
-	      moveElement: _actions.moveElement
+	      moveElement: _actions.moveElement,
+	      resizeElement: _actions.resizeElement,
+	      indexElement: _actions.indexElement,
+	      addElement: _actions.addElement
 	    },
 	    getters: {
 	      workspace: _getters.getWorkspaceData
@@ -19972,54 +20217,71 @@
 	    };
 	  },
 	
-	  computed: {
-	    elStyles: function elStyles() {
-	      var styles = (0, _lodash.merge)({}, this.element.style[this.workspace.version]);
-	      delete styles.zIndex;
-	      return styles;
-	    }
-	  },
 	  methods: {
 	    showToolbar: function showToolbar() {
-	      if (this.workspace.activeElementId !== this.elementId) {
-	        this.setActiveElementId(this.elementId);
-	        this.buttonGroup = 'main';
-	      }
+	      this.buttonGroup = 'main';
 	
 	      var viewTop = getElementTop(this.$el) - document.documentElement.scrollTop;
 	      var toolbarPositionY = viewTop < 95 ? 'bottom' : 'top';
 	
-	      var viewRight = this.workspace.width - parseInt(this.elStyles.left);
+	      var viewRight = this.workspace.width - parseInt(this.element.style[this.workspace.version].left);
 	      var toolbarPositionX = viewRight < 0 ? 'right' : 'left';
 	
 	      this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX;
+	
+	      this.resizable = true;
+	    },
+	    duplicate: function duplicate() {
+	      var newElement = (0, _lodash.merge)({}, this.element);
+	
+	      newElement.style.pc.zIndex = this.workspace.zIndex.pc.max + 1;
+	      newElement.style.mobile.zIndex = this.workspace.zIndex.mobile.max + 1;
+	
+	      var pcLeft = parseInt(this.element.style.pc.left);
+	      var pcWidth = parseInt(this.element.style.pc.width);
+	      if (pcLeft + pcWidth > 940) {
+	        newElement.style.pc.left = (pcLeft - 20 > 0 ? pcLeft - 20 : 0) + 'px';
+	      } else {
+	        newElement.style.pc.left = pcLeft + 20 + 'px';
+	      }
+	      var mobileLeft = parseInt(this.element.style.mobile.left);
+	      var mobileWidth = parseInt(this.element.style.mobile.width);
+	      if (mobileLeft + mobileWidth > 380) {
+	        newElement.style.mobile.left = (mobileLeft - 20 > 0 ? mobileLeft - 20 : 0) + 'px';
+	      } else {
+	        newElement.style.mobile.left = mobileLeft + 20 + 'px';
+	      }
+	      newElement.style.pc.top = parseInt(this.element.style.pc.top) + 20 + 'px';
+	      newElement.style.mobile.top = parseInt(this.element.style.mobile.top) + 20 + 'px';
+	
+	      this.addElement(this.sectionId, newElement);
 	    },
 	    dragEnable: function dragEnable() {
 	      this.draggie = new _draggabilly2.default(this.$el, {
 	        containment: '#content-area'
 	      });
 	      var startTop = 0;
-	      var that = this;
+	      var vm = this;
 	
 	      this.draggie.on('dragEnd', function (event) {
-	        that.buttonGroup = 'main';
+	        vm.buttonGroup = 'main';
 	        var position = $(this.element).position();
-	        that.elPositionInPage.left = position.left;
-	        that.elPositionInPage.top = startTop + position.top;
-	        that.moveElement(that.sectionId, that.elementId, that.elPositionInPage, that.$el.offsetHeight);
+	        vm.elPositionInPage.left = position.left;
+	        vm.elPositionInPage.top = startTop + position.top;
+	        vm.moveElement(vm.sectionId, vm.elementId, vm.elPositionInPage, vm.$el.offsetHeight);
 	      });
 	
 	      this.draggie.on('dragStart', function (event) {
-	        that.showToolbar();
-	        that.$dispatch('drag-start');
-	        startTop = getElementTop(that.$el) - 45 - that.$el.offsetTop;
+	        vm.setActiveElementId(vm.elementId);
+	        vm.$dispatch('drag-start');
+	        startTop = getElementTop(vm.$el) - 45 - vm.$el.offsetTop;
 	      });
 	
 	      this.draggie.on('dragMove', function (event) {
-	        that.buttonGroup = 'position';
+	        vm.buttonGroup = 'position';
 	        var position = $(this.element).position();
-	        that.elPositionInPage.left = position.left;
-	        that.elPositionInPage.top = startTop + position.top;
+	        vm.elPositionInPage.left = position.left;
+	        vm.elPositionInPage.top = startTop + position.top;
 	      });
 	    },
 	    dragDisable: function dragDisable() {
@@ -20028,19 +20290,57 @@
 	      this.draggie.destroy();
 	      this.$el.style.top = top;
 	      this.$el.style.left = left;
+	    },
+	    resizeInit: function resizeInit() {
+	      var vm = this;
+	      var defaultResize = {
+	        handles: "s,e",
+	        aspectRatio: false
+	      };
+	      var config = (0, _lodash.merge)({}, defaultResize, this.resize);
+	      var vmDraggable = vm.draggable;
+	      $(this.$els.content).resizable({
+	        handles: config.handles,
+	        aspectRatio: config.aspectRatio,
+	        containment: $('#content-area'),
+	        start: function start() {
+	          vmDraggable = vm.draggable;
+	          vm.draggable = false;
+	        },
+	        stop: function stop(e, ui) {
+	          vm.draggable = vmDraggable;
+	          vm.resizeElement(vm.sectionId, vm.elementId, ui.size);
+	        }
+	      });
+	    },
+	    resizeEnable: function resizeEnable() {
+	      $(this.$els.content).resizable('enable');
+	    },
+	    resizeDisable: function resizeDisable() {
+	      $(this.$els.content).resizable('disable');
 	    }
 	  },
 	  watch: {
-	    'draggable': function draggable(status) {
-	      if (status) {
-	        this.dragEnable();
+	    'draggable': function draggable(dragEnabled) {
+	      dragEnabled ? this.dragEnable() : this.dragDisable();
+	    },
+	    'resizable': function resizable(resizeEnabled) {
+	      resizeEnabled ? this.resizeEnable() : this.resizeDisable();
+	    },
+	    'workspace.activeElementId': function workspaceActiveElementId(elementId) {
+	      if (this.elementId === elementId) {
+	        this.showToolbar();
 	      } else {
-	        this.dragDisable();
+	        this.resizeDisable();
 	      }
 	    }
 	  },
 	  ready: function ready() {
 	    this.dragEnable();
+	    this.resizeInit();
+	    if (this.workspace.activeElementId === this.elementId) {
+	      this.showToolbar();
+	    }
 	  }
 	};
 	
@@ -21470,7 +21770,7 @@
 /* 67 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div :style=\"elStyles\" class=\"element\" @click=\"showToolbar\" @mousedown.stop>\n  <div class=\"el-content\" id=\"element-{{elementId}}\" :style=\"{zIndex:element.style[this.workspace.version].zIndex}\" v-bind:class=\"{'outline':workspace.activeElementId === elementId}\">\n    <slot name=\"content\"></slot>\n  </div>\n  <div v-if=\"workspace.activeElementId === elementId\" class=\"el-toolbar {{toolbarPosition}}\" @mousedown.stop>\n    <div v-show=\"buttonGroup === 'main'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <slot name=\"main-buttons-extend\"></slot>\n      <div class=\"btn btn-default\" title=\"复制一个\"><span class=\"glyphicon glyphicon-duplicate\"></span></div>\n      <div class=\"btn btn-default\" title=\"移到顶层\"><span class=\"glyphicon glyphicon-circle-arrow-up\"></span></div>\n      <div class=\"btn btn-default\" title=\"移到底层\"><span class=\"glyphicon glyphicon-circle-arrow-down\"></span></div>\n      <div class=\"btn btn-default\" title=\"删除\" @click=\"removeElement(sectionId,elementId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n    </div>\n    <div v-show=\"buttonGroup === 'position'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-success\">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</span></div>\n    </div>\n    <slot name=\"button-groups\"></slot>\n  </div>\n  <slot name=\"tools\"></slot>\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"element\" @click=\"setActiveElementId(elementId)\" @mousedown.stop \n  :style=\"{\n    left:element.style[this.workspace.version].left,\n    top:element.style[this.workspace.version].top,\n  }\"\n>\n  <div class=\"el-content\" id=\"element-{{elementId}}\" v-el:content \n    :style=\"{\n      zIndex:element.style[this.workspace.version].zIndex,\n      width:element.style[this.workspace.version].width,\n      height:element.style[this.workspace.version].height\n    }\" \n    v-bind:class=\"{'outline':workspace.activeElementId === elementId}\"\n  >\n    <slot name=\"content\"></slot>\n  </div>\n  <div v-if=\"workspace.activeElementId === elementId\" class=\"el-toolbar {{toolbarPosition}}\" @mousedown.stop>\n    <div v-show=\"buttonGroup === 'main'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <slot name=\"main-buttons-extend\"></slot>\n      <div class=\"btn btn-default\" title=\"复制一个\" @click.stop=\"duplicate\"><span class=\"glyphicon glyphicon-duplicate\"></span></div>\n      <div class=\"btn btn-default\" title=\"移到顶层\" @click=\"indexElement(sectionId, elementId, 'top')\"><span class=\"glyphicon glyphicon-circle-arrow-up\"></span></div>\n      <div class=\"btn btn-default\" title=\"移到底层\" @click=\"indexElement(sectionId, elementId, 'bottom')\"><span class=\"glyphicon glyphicon-circle-arrow-down\"></span></div>\n      <div class=\"btn btn-default\" title=\"删除\" @click=\"removeElement(sectionId,elementId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n    </div>\n    <div v-show=\"buttonGroup === 'position'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-success\">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</span></div>\n    </div>\n    <slot name=\"button-groups\"></slot>\n  </div>\n  <slot name=\"tools\"></slot>\n</div>\n";
 
 /***/ },
 /* 68 */
@@ -21839,7 +22139,7 @@
 /* 83 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n  <div v-el:content slot=\"content\" @dblclick=\"edit\" contenteditable=\"false\" style=\"outline:none\" :style=\"[textElement.fontStyle,{cursor:editing ? 'text' : 'pointer',color:getColor(textElement.fontStyle.color)}]\" v-content=\"textElement.content\">\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\" style=\"min-width:300px;\">\n      <color-picker :color.sync=\"textElement.fontStyle.color\">\n        <div class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" title=\"颜色\" ><span class=\"glyphicon glyphicon-text-color\" :style=\"{color:getColor(textElement.fontStyle.color)}\"></span> <span class=\"caret\"></span></div>\n      </color-picker>\n      <font-size :font-size.sync=\"textElement.fontStyle.fontSize\"></font-size>\n      <line-height :line-height.sync=\"textElement.fontStyle.lineHeight\"></line-height>\n      <text-align :text-align.sync=\"textElement.fontStyle.textAlign\"></text-align>\n      <!-- <div class=\"btn btn-default\" title=\"加粗\">B</div>\n      <div class=\"btn btn-default\" title=\"斜体\"><i>I</i></div>\n      <div class=\"btn btn-default\" title=\"斜体\"><u>U</u></div>\n      <div class=\"btn btn-default\" title=\"链接\"><span class=\"glyphicon glyphicon-link\"></span></div> -->\n      <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n    </div>\n  </template>\n</element-common>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\" :resize=\"resize\">\n  <div v-el:content slot=\"content\" @dblclick=\"edit\" contenteditable=\"{{editing}}\" spellcheck=\"false\" style=\"outline:none\" :style=\"[textElement.fontStyle,{cursor:editing ? 'text' : 'pointer',color:getColor(textElement.fontStyle.color)}]\" v-content=\"textElement.content\">\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\" style=\"min-width:300px;\">\n      <color-picker :color.sync=\"textElement.fontStyle.color\">\n        <div class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" title=\"颜色\" ><span class=\"glyphicon glyphicon-text-color\" :style=\"{color:getColor(textElement.fontStyle.color)}\"></span> <span class=\"caret\"></span></div>\n      </color-picker>\n      <font-size :font-size.sync=\"textElement.fontStyle.fontSize\"></font-size>\n      <line-height :line-height.sync=\"textElement.fontStyle.lineHeight\"></line-height>\n      <text-align :text-align.sync=\"textElement.fontStyle.textAlign\"></text-align>\n      <!-- <div class=\"btn btn-default\" title=\"加粗\">B</div>\n      <div class=\"btn btn-default\" title=\"斜体\"><i>I</i></div>\n      <div class=\"btn btn-default\" title=\"斜体\"><u>U</u></div>\n      <div class=\"btn btn-default\" title=\"链接\"><span class=\"glyphicon glyphicon-link\"></span></div> -->\n      <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n    </div>\n  </template>\n</element-common>\n";
 
 /***/ },
 /* 84 */
@@ -21908,7 +22208,8 @@
 	  },
 	  vuex: {
 	    actions: {
-	      modifyElement: _actions.modifyElement
+	      modifyElement: _actions.modifyElement,
+	      removeElement: _actions.removeElement
 	    },
 	    getters: {
 	      workspace: _getters.getWorkspaceData
@@ -21917,9 +22218,12 @@
 	  data: function data() {
 	    return {
 	      buttonGroup: 'main',
-	      showImageLibary: false,
+	      showImageLibary: this.element.src == '',
 	      imageObj: {},
-	      linkObj: (0, _lodash.merge)({}, this.element.link)
+	      linkObj: (0, _lodash.merge)({}, this.element.link),
+	      resize: {
+	        aspectRatio: true
+	      }
 	    };
 	  },
 	
@@ -21966,8 +22270,21 @@
 	        };
 	      }
 	      this.modifyElement(this.sectionId, this.elementId, newPropsObj);
+	    },
+	    'showImageLibary': function showImageLibary(value) {
+	      var _this = this;
+	
+	      if (!value && !this.imageObj.url && this.element.src == '') {
+	        (function () {
+	          var vm = _this;
+	          Vue.nextTick(function () {
+	            vm.removeElement(vm.sectionId, vm.elementId);
+	          });
+	        })();
+	      }
 	    }
-	  }
+	  },
+	  ready: function ready() {}
 	};
 
 /***/ },
@@ -22034,7 +22351,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.images-wrapper{\n  height:400px;\n  overflow-y: auto;\n}\n\n.images-sidebar{\n  float:left;\n  border-right:1px solid #ccc;\n  padding-right:15px;\n  width: 200px;\n  height:100%;\n}\n\n.images-content{\n  left: 10px;\n  width: 560px;\n  height: 100%;\n  position: relative;\n  overflow: auto;\n}\n\n.image-item{\n  position: relative;\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n.image-item-operation{\n  width: 140px;\n  position: absolute;\n  bottom: 3px;\n}\n\n.image-upload-button{\n  position: relative;\n  float:left;\n  margin-right: 8px;\n}\n\n.image-upload-input{\n  position: absolute;\n  left: 0;\n  top: 0;\n  font-size: 0;\n  opacity: 0;\n  width: 100%;\n  height: 100%;\n  cursor: pointer;\n}\n\n.image-url-input{\n  width:400px;\n}\n\n.image-load-info{\n  width:600px;\n  text-align: center;\n  position:absolute; \n  top:50%;\n  left:50%;\n  -webkit-transform:translate(-50%,-50%);\n          transform:translate(-50%,-50%); \n}\n\n.modify-image-input{\n  margin-top:20px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/image-library.vue?3fa17480"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAmNA;EACA,aAAA;EACA,iBAAA;CACA;;AAEA;EACA,WAAA;EACA,4BAAA;EACA,mBAAA;EACA,aAAA;EACA,YAAA;CACA;;AAEA;EACA,WAAA;EACA,aAAA;EACA,aAAA;EACA,mBAAA;EACA,eAAA;CACA;;AAEA;EACA,mBAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,aAAA;EACA,mBAAA;EACA,gBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA;;AAEA;EACA,aAAA;EACA,mBAAA;EACA,YAAA;CACA;;AAEA;EACA,mBAAA;EACA,WAAA;EACA,kBAAA;CACA;;AAEA;EACA,mBAAA;EACA,QAAA;EACA,OAAA;EACA,aAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,gBAAA;CACA;;AAEA;EACA,YAAA;CACA;;AAEA;EACA,YAAA;EACA,mBAAA;EACA,kBAAA;EACA,QAAA;EACA,SAAA;EACA,uCAAA;UAAA,+BAAA;CACA;;AAEA;EACA,gBAAA;CACA","file":"image-library.vue","sourcesContent":["<script>\nimport {  } from '../store/actions'\nimport {  } from '../store/getters'\nimport modal from './modal.vue'\nimport dropdown from './dropdown.vue'\nimport eventHandler from '../utils/eventHandler'\nimport { merge } from 'lodash'\n\nexport default {\n  components: {\n    modal,\n    dropdown\n  },\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true    \n    },\n    imageObj:{\n      type: Object,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      currentTab: 'my',\n      loadStatus: 'loading',\n      currentImageId: null,\n      viewingImage: {},\n      imageUrlEditing: false,\n      images: {}\n    }\n  },\n  methods:{\n    pickImage: function(index){\n      if (index != null){\n        this.imageObj = this.images[index];\n        this.show = false;\n      }\n    },\n    selectImage: function(index){\n      this.currentImageId = index;\n    },\n    viewImage: function(index){\n      this.viewingImage = merge({},this.images[index]);\n      this.loadStatus = 'view';\n    },\n    modifyImage: function(e){\n      var data = new FormData(e.target);\n      this.$http.post('/editor/image/modimage',data).then(function(response){\n        console.log(response)\n      },function(response){\n        console.log(response)\n      });\n      console.log(e.target);\n    },\n    removeImage: function(imageId){\n\n    },\n    uploadImage: function(e){\n      let files = e.target.files;\n      let data = new FormData();\n      let folder = '默认文件夹';\n      data.append('file', files[0]);\n      data.append('folder',folder);\n      this.$http.post('/editor/image/upload', data).then(function(response){\n        let data = response.json();\n        this.images.push(data.image);\n        console.log(data);\n      },function(response){\n        console.log(response);\n      });\n    },\n    editImageUrl: function(){\n      this.currentImageId = null;\n      const el = this.$els.imageUrlEditor;\n      this._closeEvent = eventHandler.listen(window, 'click', (e)=> {\n        if (!el.contains(e.target)) this.editImageUrlDone();\n      })\n      this.imageUrlEditing = true;\n      var vm = this;\n      Vue.nextTick(function(){\n        vm.$els.imageUrlInput.focus();\n      });\n    },\n    editImageUrlDone: function(){\n      this.imageUrlEditing = false;\n      if (this._closeEvent) this._closeEvent.remove();\n    },\n    loadImages: function(folder){\n      this.$http.get('/editor/image/list/'+folder+'/1/9999').then(function(response){\n        let data = response.json();\n        this.images = data.images;\n        if (this.images.length === 0){\n          this.loadStatus = 'empty';\n        } else {\n          this.loadStatus = 'loaded';\n        }\n      },function(response){\n        if (response.status === 401){\n          //未登录\n        } else {\n          this.loadStatus = 'failed';\n        }\n        //handling error\n        console.log(response)\n      });\n    }\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      \n    }\n  },\n  ready (){\n    this.loadImages('default');\n  }\n}\n</script>\n\n<template>\n  <modal :show.sync=\"show\" :width=\"'800px'\">\n    <div slot=\"header\">\n      <ul class=\"nav nav-pills\">\n        <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n        <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n      </ul>\n    </div>\n    \n    <div slot=\"body\" class=\"images-wrapper\">\n      <div v-show=\"loadStatus === 'loading'\" class=\"loading\"></div>\n      <div v-show=\"loadStatus === 'empty'\" class=\"image-load-info\">\n        <p>您的图片库目前还是空的，您可以尝试上传一些。</p>\n      </div>\n\n      <div v-show=\"loadStatus === 'failed'\" class=\"image-load-info\">\n        <p class=\"text-danger\">由于网络或服务器的原因，图片列表加载失败，请稍后再试。</p>\n        <p class=\"text-muted\">如果这个问题一直存在，请与我们联系。</p>\n      </div>\n\n      <div v-show=\"loadStatus === 'loaded'\" class=\"loaded\">\n        <div v-for=\"(index,image) in images\" class=\"image-item\" v-bind:class=\"{selected: currentImageId === index}\" @click=\"selectImage(index)\" @dblclick=\"pickImage(index)\">\n          <img :src=\"image.url+'@140w_140h'\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n          <div v-show=\"currentImageId === index\" class=\"image-item-operation\">\n            <div class=\"btn btn-primary btn-sm fl\" @click=\"pickImage(index)\">&nbsp; 选择 &nbsp;</div>\n            <div class=\"btn btn-default btn-sm fr\" @click=\"viewImage(index)\"><span class=\"glyphicon glyphicon-zoom-in\"></span></div>\n          </div>\n        </div>\n      </div>\n\n      <!-- 大图查看&修改 -->\n      <div v-show=\"loadStatus === 'view'\" style=\"height:100%\">\n        <div class=\"images-sidebar\">\n          <div @click=\"loadStatus = 'loaded'\" class=\"btn btn-default btn-sm\">返回</div>\n          <form action=\"\" @submit.prevent=\"modifyImage\">\n            <div class=\"modify-image-input\">\n              <p>名称</p>\n              <p><input type=\"text\" class=\"form-control\" name=\"name\" v-model=\"viewingImage.name\"></p>\n            </div>\n            <div class=\"modify-image-input\">\n              <p>Alt</p>\n              <p><input type=\"text\" class=\"form-control\" name=\"alt\" v-model=\"viewingImage.alt\"></p>\n            </div>\n            <div class=\"modify-image-input\">\n              <input type=\"hidden\" name=\"id\" :value=\"viewingImage.id\">\n              <input type=\"hidden\" name=\"folder\" value=\"default\">\n              <button type=\"submit\" class=\"btn btn-success\">保存修改</button> &nbsp; \n              <div class=\"btn btn-danger\" @click=\"removeImage\">删除图片</div>\n            </div>\n          </form>\n        </div>\n        <div class=\"images-content\">\n          <img :src=\"viewingImage.url\" style=\"max-width:540px;\">\n        </div>\n      </div>\n\n    </div>\n    <div slot=\"footer\">\n      <div class=\"btn btn-primary btn-sm image-upload-button\">\n        <span class=\"glyphicon glyphicon-cloud-upload\"></span>\n        上传图片\n        <input type=\"file\" name=\"files[]\" class=\"image-upload-input\" accept=\"image/*\" v-on:change=\"uploadImage\">\n      </div>\n      <div v-el:image-url-editor class=\"fl\">\n        <div v-show=\"!imageUrlEditing\" class=\"btn btn-default btn-sm\" @click=\"editImageUrl\">\n          <span class=\"glyphicon glyphicon-link\"></span>\n          粘贴网址\n        </div>\n        <div v-show=\"imageUrlEditing\" class=\"input-group input-group-sm shadow image-url-input\">\n          <div class=\"input-group-addon\"> 图片网址 </div>\n          <input v-el:image-url-input type=\"text\" class=\"form-control input-text-shadow\">\n          <div class=\"input-group-btn\" @click=\"editImageUrlDone\">\n            <div class=\"btn btn-success\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n          </div>\n        </div>\n      </div>\n      <span v-if=\"currentImageId !== null\">\n        名称: {{images[currentImageId].name}} &nbsp;\n        尺寸: {{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n      </span> \n    </div>\n  </modal>\n</template>\n\n<style>\n\n.images-wrapper{\n  height:400px;\n  overflow-y: auto;\n}\n\n.images-sidebar{\n  float:left;\n  border-right:1px solid #ccc;\n  padding-right:15px;\n  width: 200px;\n  height:100%;\n}\n\n.images-content{\n  left: 10px;\n  width: 560px;\n  height: 100%;\n  position: relative;\n  overflow: auto;\n}\n\n.image-item{\n  position: relative;\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n.image-item-operation{\n  width: 140px;\n  position: absolute;\n  bottom: 3px;\n}\n\n.image-upload-button{\n  position: relative;\n  float:left;\n  margin-right: 8px;\n}\n\n.image-upload-input{\n  position: absolute;\n  left: 0;\n  top: 0;\n  font-size: 0;\n  opacity: 0;\n  width: 100%;\n  height: 100%;\n  cursor: pointer;\n}\n\n.image-url-input{\n  width:400px;\n}\n\n.image-load-info{\n  width:600px;\n  text-align: center;\n  position:absolute; \n  top:50%;\n  left:50%;\n  transform:translate(-50%,-50%); \n}\n\n.modify-image-input{\n  margin-top:20px;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.images-wrapper{\n  height:400px;\n  overflow-y: auto;\n}\n\n.images-sidebar{\n  float:left;\n  border-right:1px solid #ccc;\n  padding-right:15px;\n  width: 200px;\n  height:100%;\n}\n\n.images-content{\n  left: 10px;\n  width: 560px;\n  height: 100%;\n  position: relative;\n  overflow: auto;\n}\n\n.image-item{\n  position: relative;\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n.image-item-operation{\n  width: 140px;\n  position: absolute;\n  bottom: 3px;\n}\n\n.image-upload-button{\n  position: relative;\n  float:left;\n  margin-right: 8px;\n}\n\n.image-upload-input{\n  position: absolute;\n  left: 0;\n  top: 0;\n  font-size: 0;\n  opacity: 0;\n  width: 100%;\n  height: 100%;\n  cursor: pointer;\n}\n\n.image-url-input{\n  width:400px;\n}\n\n.image-load-info{\n  width:600px;\n  text-align: center;\n  position:absolute; \n  top:50%;\n  left:50%;\n  -webkit-transform:translate(-50%,-50%);\n          transform:translate(-50%,-50%); \n}\n\n.modify-image-input{\n  margin-top:20px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/image-library.vue?c2e21f08"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAmNA;EACA,aAAA;EACA,iBAAA;CACA;;AAEA;EACA,WAAA;EACA,4BAAA;EACA,mBAAA;EACA,aAAA;EACA,YAAA;CACA;;AAEA;EACA,WAAA;EACA,aAAA;EACA,aAAA;EACA,mBAAA;EACA,eAAA;CACA;;AAEA;EACA,mBAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,aAAA;EACA,mBAAA;EACA,gBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA;;AAEA;EACA,wBAAA;EACA,uBAAA;CACA;;AAEA;EACA,aAAA;EACA,mBAAA;EACA,YAAA;CACA;;AAEA;EACA,mBAAA;EACA,WAAA;EACA,kBAAA;CACA;;AAEA;EACA,mBAAA;EACA,QAAA;EACA,OAAA;EACA,aAAA;EACA,WAAA;EACA,YAAA;EACA,aAAA;EACA,gBAAA;CACA;;AAEA;EACA,YAAA;CACA;;AAEA;EACA,YAAA;EACA,mBAAA;EACA,kBAAA;EACA,QAAA;EACA,SAAA;EACA,uCAAA;UAAA,+BAAA;CACA;;AAEA;EACA,gBAAA;CACA","file":"image-library.vue","sourcesContent":["<script>\nimport {  } from '../store/actions'\nimport {  } from '../store/getters'\nimport modal from './modal.vue'\nimport dropdown from './dropdown.vue'\nimport eventHandler from '../utils/eventHandler'\nimport { merge } from 'lodash'\n\nexport default {\n  components: {\n    modal,\n    dropdown\n  },\n  props: {\n    show: {\n      type: Boolean,\n      required: true,\n      twoWay: true    \n    },\n    imageObj:{\n      type: Object,\n      required: true,\n      twoWay: true\n    }\n  },\n  data (){\n    return {\n      currentTab: 'my',\n      loadStatus: 'loading',\n      currentImageId: null,\n      viewingImage: {},\n      imageUrlEditing: false,\n      images: {}\n    }\n  },\n  methods:{\n    pickImage: function(index){\n      if (index != null){\n        this.imageObj = this.images[index];\n        this.show = false;\n      }\n    },\n    selectImage: function(index){\n      this.currentImageId = index;\n    },\n    viewImage: function(index){\n      this.viewingImage = merge({},this.images[index]);\n      this.loadStatus = 'view';\n    },\n    modifyImage: function(e){\n      var data = new FormData(e.target);\n      this.$http.post('/editor/image/modimage',data).then(function(response){\n        console.log(response)\n      },function(response){\n        console.log(response)\n      });\n      console.log(e.target);\n    },\n    removeImage: function(imageId){\n\n    },\n    uploadImage: function(e){\n      let files = e.target.files;\n      let data = new FormData();\n      let folder = '默认文件夹';\n      data.append('file', files[0]);\n      data.append('folder',folder);\n      this.$http.post('/editor/image/upload', data).then(function(response){\n        let data = response.json();\n        this.images.push(data.image);\n        console.log(data);\n      },function(response){\n        console.log(response);\n      });\n    },\n    editImageUrl: function(){\n      this.currentImageId = null;\n      const el = this.$els.imageUrlEditor;\n      this._closeEvent = eventHandler.listen(window, 'click', (e)=> {\n        if (!el.contains(e.target)) this.editImageUrlDone();\n      })\n      this.imageUrlEditing = true;\n      var vm = this;\n      Vue.nextTick(function(){\n        vm.$els.imageUrlInput.focus();\n      });\n    },\n    editImageUrlDone: function(){\n      this.imageUrlEditing = false;\n      if (this._closeEvent) this._closeEvent.remove();\n    },\n    loadImages: function(folder){\n      this.$http.get('/editor/image/list/'+folder+'/1/9999').then(function(response){\n        let data = response.json();\n        this.images = data.images;\n        if (this.images.length === 0){\n          this.loadStatus = 'empty';\n        } else {\n          this.loadStatus = 'loaded';\n        }\n      },function(response){\n        if (response.status === 401){\n          //未登录\n        } else {\n          this.loadStatus = 'failed';\n        }\n        //handling error\n        console.log(response)\n      });\n    }\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      \n    }\n  },\n  ready (){\n    this.loadImages('default');\n  }\n}\n</script>\n\n<template>\n  <modal :show.sync=\"show\" :width=\"'800px'\">\n    <div slot=\"header\">\n      <ul class=\"nav nav-pills\">\n        <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n        <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n      </ul>\n    </div>\n    \n    <div slot=\"body\" class=\"images-wrapper\">\n      <div v-show=\"loadStatus === 'loading'\" class=\"loading\"></div>\n      <div v-show=\"loadStatus === 'empty'\" class=\"image-load-info\">\n        <p>您的图片库目前还是空的，您可以尝试上传一些。</p>\n      </div>\n\n      <div v-show=\"loadStatus === 'failed'\" class=\"image-load-info\">\n        <p class=\"text-danger\">由于网络或服务器的原因，图片列表加载失败，请稍后再试。</p>\n        <p class=\"text-muted\">如果这个问题一直存在，请与我们联系。</p>\n      </div>\n\n      <div v-show=\"loadStatus === 'loaded'\" class=\"loaded\">\n        <div v-for=\"(index,image) in images\" class=\"image-item\" v-bind:class=\"{selected: currentImageId === index}\" @click=\"selectImage(index)\" @dblclick=\"pickImage(index)\">\n          <img :src=\"image.url+'@140w_140h'\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n          <div v-show=\"currentImageId === index\" class=\"image-item-operation\">\n            <div class=\"btn btn-primary btn-sm fl\" @click=\"pickImage(index)\">&nbsp; 选择 &nbsp;</div>\n            <div class=\"btn btn-default btn-sm fr\" @click=\"viewImage(index)\"><span class=\"glyphicon glyphicon-zoom-in\"></span></div>\n          </div>\n        </div>\n      </div>\n\n      <!-- 大图查看&修改 -->\n      <div v-show=\"loadStatus === 'view'\" style=\"height:100%\">\n        <div class=\"images-sidebar\">\n          <div @click=\"loadStatus = 'loaded'\" class=\"btn btn-default btn-sm\">返回</div>\n          <form action=\"\" method=\"post\" @submit.prevent=\"modifyImage\">\n            <div class=\"modify-image-input\">\n              <p>名称</p>\n              <p><input type=\"text\" class=\"form-control\" name=\"name\" v-model=\"viewingImage.name\"></p>\n            </div>\n            <div class=\"modify-image-input\">\n              <p>Alt</p>\n              <p><input type=\"text\" class=\"form-control\" name=\"alt\" v-model=\"viewingImage.alt\"></p>\n            </div>\n            <div class=\"modify-image-input\">\n              <input type=\"hidden\" name=\"id\" :value=\"viewingImage.id\">\n              <input type=\"hidden\" name=\"folder\" value=\"default\">\n              <button type=\"submit\" class=\"btn btn-success\">保存修改</button> &nbsp; \n              <div class=\"btn btn-danger\" @click=\"removeImage\">删除图片</div>\n            </div>\n          </form>\n        </div>\n        <div class=\"images-content\">\n          <img :src=\"viewingImage.url\" style=\"max-width:540px;\">\n        </div>\n      </div>\n\n    </div>\n    <div slot=\"footer\">\n      <div class=\"btn btn-primary btn-sm image-upload-button\">\n        <span class=\"glyphicon glyphicon-cloud-upload\"></span>\n        上传图片\n        <input type=\"file\" name=\"files[]\" class=\"image-upload-input\" accept=\"image/*\" v-on:change=\"uploadImage\">\n      </div>\n      <div v-el:image-url-editor class=\"fl\">\n        <div v-show=\"!imageUrlEditing\" class=\"btn btn-default btn-sm\" @click=\"editImageUrl\">\n          <span class=\"glyphicon glyphicon-link\"></span>\n          粘贴网址\n        </div>\n        <div v-show=\"imageUrlEditing\" class=\"input-group input-group-sm shadow image-url-input\">\n          <div class=\"input-group-addon\"> 图片网址 </div>\n          <input v-el:image-url-input type=\"text\" class=\"form-control input-text-shadow\">\n          <div class=\"input-group-btn\" @click=\"editImageUrlDone\">\n            <div class=\"btn btn-success\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n          </div>\n        </div>\n      </div>\n      <span v-if=\"currentImageId !== null\">\n        名称: {{images[currentImageId].name}} &nbsp;\n        尺寸: {{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n      </span> \n    </div>\n  </modal>\n</template>\n\n<style>\n\n.images-wrapper{\n  height:400px;\n  overflow-y: auto;\n}\n\n.images-sidebar{\n  float:left;\n  border-right:1px solid #ccc;\n  padding-right:15px;\n  width: 200px;\n  height:100%;\n}\n\n.images-content{\n  left: 10px;\n  width: 560px;\n  height: 100%;\n  position: relative;\n  overflow: auto;\n}\n\n.image-item{\n  position: relative;\n  float:left;\n  width:146px;\n  padding: 3px;\n  margin: 2px;\n  height:146px;\n  text-align: center;\n  cursor: pointer;\n}\n\n.image-item:hover{\n  outline: 1px solid #ccc;\n  background-color: #fff;\n}\n\n.image-item.selected{\n  outline: 2px solid #bbb;\n  background-color: #fff;\n}\n\n.image-item-operation{\n  width: 140px;\n  position: absolute;\n  bottom: 3px;\n}\n\n.image-upload-button{\n  position: relative;\n  float:left;\n  margin-right: 8px;\n}\n\n.image-upload-input{\n  position: absolute;\n  left: 0;\n  top: 0;\n  font-size: 0;\n  opacity: 0;\n  width: 100%;\n  height: 100%;\n  cursor: pointer;\n}\n\n.image-url-input{\n  width:400px;\n}\n\n.image-load-info{\n  width:600px;\n  text-align: center;\n  position:absolute; \n  top:50%;\n  left:50%;\n  transform:translate(-50%,-50%); \n}\n\n.modify-image-input{\n  margin-top:20px;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -22184,7 +22501,7 @@
 /* 90 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<modal :show.sync=\"show\" :width=\"'800px'\">\n  <div slot=\"header\">\n    <ul class=\"nav nav-pills\">\n      <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n      <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n    </ul>\n  </div>\n  \n  <div slot=\"body\" class=\"images-wrapper\">\n    <div v-show=\"loadStatus === 'loading'\" class=\"loading\"></div>\n    <div v-show=\"loadStatus === 'empty'\" class=\"image-load-info\">\n      <p>您的图片库目前还是空的，您可以尝试上传一些。</p>\n    </div>\n\n    <div v-show=\"loadStatus === 'failed'\" class=\"image-load-info\">\n      <p class=\"text-danger\">由于网络或服务器的原因，图片列表加载失败，请稍后再试。</p>\n      <p class=\"text-muted\">如果这个问题一直存在，请与我们联系。</p>\n    </div>\n\n    <div v-show=\"loadStatus === 'loaded'\" class=\"loaded\">\n      <div v-for=\"(index,image) in images\" class=\"image-item\" v-bind:class=\"{selected: currentImageId === index}\" @click=\"selectImage(index)\" @dblclick=\"pickImage(index)\">\n        <img :src=\"image.url+'@140w_140h'\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n        <div v-show=\"currentImageId === index\" class=\"image-item-operation\">\n          <div class=\"btn btn-primary btn-sm fl\" @click=\"pickImage(index)\">&nbsp; 选择 &nbsp;</div>\n          <div class=\"btn btn-default btn-sm fr\" @click=\"viewImage(index)\"><span class=\"glyphicon glyphicon-zoom-in\"></span></div>\n        </div>\n      </div>\n    </div>\n\n    <!-- 大图查看&修改 -->\n    <div v-show=\"loadStatus === 'view'\" style=\"height:100%\">\n      <div class=\"images-sidebar\">\n        <div @click=\"loadStatus = 'loaded'\" class=\"btn btn-default btn-sm\">返回</div>\n        <form action=\"\" @submit.prevent=\"modifyImage\">\n          <div class=\"modify-image-input\">\n            <p>名称</p>\n            <p><input type=\"text\" class=\"form-control\" name=\"name\" v-model=\"viewingImage.name\"></p>\n          </div>\n          <div class=\"modify-image-input\">\n            <p>Alt</p>\n            <p><input type=\"text\" class=\"form-control\" name=\"alt\" v-model=\"viewingImage.alt\"></p>\n          </div>\n          <div class=\"modify-image-input\">\n            <input type=\"hidden\" name=\"id\" :value=\"viewingImage.id\">\n            <input type=\"hidden\" name=\"folder\" value=\"default\">\n            <button type=\"submit\" class=\"btn btn-success\">保存修改</button> &nbsp; \n            <div class=\"btn btn-danger\" @click=\"removeImage\">删除图片</div>\n          </div>\n        </form>\n      </div>\n      <div class=\"images-content\">\n        <img :src=\"viewingImage.url\" style=\"max-width:540px;\">\n      </div>\n    </div>\n\n  </div>\n  <div slot=\"footer\">\n    <div class=\"btn btn-primary btn-sm image-upload-button\">\n      <span class=\"glyphicon glyphicon-cloud-upload\"></span>\n      上传图片\n      <input type=\"file\" name=\"files[]\" class=\"image-upload-input\" accept=\"image/*\" v-on:change=\"uploadImage\">\n    </div>\n    <div v-el:image-url-editor class=\"fl\">\n      <div v-show=\"!imageUrlEditing\" class=\"btn btn-default btn-sm\" @click=\"editImageUrl\">\n        <span class=\"glyphicon glyphicon-link\"></span>\n        粘贴网址\n      </div>\n      <div v-show=\"imageUrlEditing\" class=\"input-group input-group-sm shadow image-url-input\">\n        <div class=\"input-group-addon\"> 图片网址 </div>\n        <input v-el:image-url-input type=\"text\" class=\"form-control input-text-shadow\">\n        <div class=\"input-group-btn\" @click=\"editImageUrlDone\">\n          <div class=\"btn btn-success\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n        </div>\n      </div>\n    </div>\n    <span v-if=\"currentImageId !== null\">\n      名称: {{images[currentImageId].name}} &nbsp;\n      尺寸: {{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n    </span> \n  </div>\n</modal>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<modal :show.sync=\"show\" :width=\"'800px'\">\n  <div slot=\"header\">\n    <ul class=\"nav nav-pills\">\n      <li role=\"presentation\"><a href=\"#\">我的图片库</a></li>\n      <!-- <li role=\"presentation\" :class=\"{active: currentTab === 'store'}\"><a href=\"#\" @click=\"currentTab = 'store'\">图片商店</a></li> -->\n    </ul>\n  </div>\n  \n  <div slot=\"body\" class=\"images-wrapper\">\n    <div v-show=\"loadStatus === 'loading'\" class=\"loading\"></div>\n    <div v-show=\"loadStatus === 'empty'\" class=\"image-load-info\">\n      <p>您的图片库目前还是空的，您可以尝试上传一些。</p>\n    </div>\n\n    <div v-show=\"loadStatus === 'failed'\" class=\"image-load-info\">\n      <p class=\"text-danger\">由于网络或服务器的原因，图片列表加载失败，请稍后再试。</p>\n      <p class=\"text-muted\">如果这个问题一直存在，请与我们联系。</p>\n    </div>\n\n    <div v-show=\"loadStatus === 'loaded'\" class=\"loaded\">\n      <div v-for=\"(index,image) in images\" class=\"image-item\" v-bind:class=\"{selected: currentImageId === index}\" @click=\"selectImage(index)\" @dblclick=\"pickImage(index)\">\n        <img :src=\"image.url+'@140w_140h'\" alt=\"{{image.alt}}\" style=\"max-width:140px;max-height:140px\">\n        <div v-show=\"currentImageId === index\" class=\"image-item-operation\">\n          <div class=\"btn btn-primary btn-sm fl\" @click=\"pickImage(index)\">&nbsp; 选择 &nbsp;</div>\n          <div class=\"btn btn-default btn-sm fr\" @click=\"viewImage(index)\"><span class=\"glyphicon glyphicon-zoom-in\"></span></div>\n        </div>\n      </div>\n    </div>\n\n    <!-- 大图查看&修改 -->\n    <div v-show=\"loadStatus === 'view'\" style=\"height:100%\">\n      <div class=\"images-sidebar\">\n        <div @click=\"loadStatus = 'loaded'\" class=\"btn btn-default btn-sm\">返回</div>\n        <form action=\"\" method=\"post\" @submit.prevent=\"modifyImage\">\n          <div class=\"modify-image-input\">\n            <p>名称</p>\n            <p><input type=\"text\" class=\"form-control\" name=\"name\" v-model=\"viewingImage.name\"></p>\n          </div>\n          <div class=\"modify-image-input\">\n            <p>Alt</p>\n            <p><input type=\"text\" class=\"form-control\" name=\"alt\" v-model=\"viewingImage.alt\"></p>\n          </div>\n          <div class=\"modify-image-input\">\n            <input type=\"hidden\" name=\"id\" :value=\"viewingImage.id\">\n            <input type=\"hidden\" name=\"folder\" value=\"default\">\n            <button type=\"submit\" class=\"btn btn-success\">保存修改</button> &nbsp; \n            <div class=\"btn btn-danger\" @click=\"removeImage\">删除图片</div>\n          </div>\n        </form>\n      </div>\n      <div class=\"images-content\">\n        <img :src=\"viewingImage.url\" style=\"max-width:540px;\">\n      </div>\n    </div>\n\n  </div>\n  <div slot=\"footer\">\n    <div class=\"btn btn-primary btn-sm image-upload-button\">\n      <span class=\"glyphicon glyphicon-cloud-upload\"></span>\n      上传图片\n      <input type=\"file\" name=\"files[]\" class=\"image-upload-input\" accept=\"image/*\" v-on:change=\"uploadImage\">\n    </div>\n    <div v-el:image-url-editor class=\"fl\">\n      <div v-show=\"!imageUrlEditing\" class=\"btn btn-default btn-sm\" @click=\"editImageUrl\">\n        <span class=\"glyphicon glyphicon-link\"></span>\n        粘贴网址\n      </div>\n      <div v-show=\"imageUrlEditing\" class=\"input-group input-group-sm shadow image-url-input\">\n        <div class=\"input-group-addon\"> 图片网址 </div>\n        <input v-el:image-url-input type=\"text\" class=\"form-control input-text-shadow\">\n        <div class=\"input-group-btn\" @click=\"editImageUrlDone\">\n          <div class=\"btn btn-success\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n        </div>\n      </div>\n    </div>\n    <span v-if=\"currentImageId !== null\">\n      名称: {{images[currentImageId].name}} &nbsp;\n      尺寸: {{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;\n    </span> \n  </div>\n</modal>\n";
 
 /***/ },
 /* 91 */
@@ -22328,7 +22645,7 @@
 /* 96 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n  <div slot=\"content\" @dblclick=\"edit\">\n    <img v-bind:src=\"element.src\" :style=\"{width:element.style[workspace.version].width,height:'auto'}\">\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"更换图片\" @click.stop=\"edit\">更换图片</div>\n    <div class=\"btn btn-default\" title=\"链接\" @click=\"buttonGroup='link'\"><span class=\"glyphicon glyphicon-link\"></span></div>\n  </template>\n  <template slot=\"button-groups\">\n    <link-edit v-show=\"buttonGroup === 'link'\" :link-editing=\"buttonGroup === 'link'\" :link-obj=\"linkObj\"></link-edit>\n  </template>\n</element-common>\n<image-library v-if=\"showImageLibary\" :show.sync=\"showImageLibary\" :image-obj.sync=\"imageObj\"></image-library>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\" :resize=\"resize\">\n  <div slot=\"content\" @dblclick=\"edit\">\n    <img v-bind:src=\"element.src\" :style=\"{width:element.style[workspace.version].width,height:'auto'}\">\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"更换图片\" @click.stop=\"edit\">更换图片</div>\n    <div class=\"btn btn-default\" title=\"链接\" @click=\"buttonGroup='link'\"><span class=\"glyphicon glyphicon-link\"></span></div>\n  </template>\n  <template slot=\"button-groups\">\n    <link-edit v-show=\"buttonGroup === 'link'\" :link-editing=\"buttonGroup === 'link'\" :link-obj=\"linkObj\"></link-edit>\n  </template>\n</element-common>\n<image-library v-if=\"showImageLibary\" :show.sync=\"showImageLibary\" :image-obj.sync=\"imageObj\"></image-library>\n";
 
 /***/ },
 /* 97 */
@@ -22394,7 +22711,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.element-button{\n  text-align: center;\n  cursor:pointer;\n  padding:6px;\n  border-width: 2px;\n}\n\n.element-button-border {\n  border-style: solid;\n}\n\n.element-button-bold {\n  font-weight: bold;\n}\n\n.element-button-shadow{\n  box-shadow:1px 3px 6px #888;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/element-button.vue?326e44ec"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAqIA;EACA,mBAAA;EACA,eAAA;EACA,YAAA;EACA,kBAAA;CACA;;AAEA;EACA,oBAAA;CACA;;AAEA;EACA,kBAAA;CACA;;AAEA;EACA,4BAAA;CACA","file":"element-button.vue","sourcesContent":["<script>\nimport { modifyElement }  from '../store/actions'\nimport { getWorkspaceData } from '../store/getters'\nimport elementCommon from './element-common.vue'\nimport buttonEdit from './button-edit.vue'\nimport { merge } from 'lodash'\nimport colorMixin from '../mixins/colorMixin.js'\nimport linkEdit from './link-edit.vue'\n\nexport default {\n  //接受父组件传参，element元素属性，sid:板块ID sectionId，eid:元素ID elementId\n  props:['element','sectionId','elementId'],\n  mixins: [colorMixin],\n  components: {\n    elementCommon,\n    buttonEdit,\n    linkEdit\n  },\n  vuex: {\n    actions: {\n      modifyElement\n    },\n    getters: {\n      workspace: getWorkspaceData,\n    }\n  },\n  data (){\n    return {\n      //初始加载主按钮组\n      buttonGroup: 'main',\n      //是否处于编辑状态\n      editing: false,\n      //是否被修改\n      changed: false,\n      //组件实例化时将传入的element参数复制到button中，以避免直接修改store中的状态\n      button: {\n        text: this.element.text,\n        props: merge({}, this.element.props),\n      },\n      //js模拟css hover伪类效果\n      hover: false\n    }\n  },\n  computed:{\n    // 编辑状态不允许拖动\n    draggable: function(){\n      return !this.editing && this.buttonGroup !== 'link';\n    }\n  },\n  methods: {\n    edit: function(){\n      this.editing = true;\n      this.buttonGroup = 'edit';\n    },\n    editLink: function(){\n      this.buttonGroup = 'link';\n    },\n    editDone: function(){\n      this.editing = false;\n      this.buttonGroup = 'main';\n      if (this.changed){\n        this.modifyElement(this.sectionId, this.elementId, this.button);\n        this.changed = false;\n      }\n    }\n  },\n  events:{\n    'link-edit-done':function(changed, linkObj){\n      if (changed){\n        const newPropsObj = {link:linkObj};\n        this.modifyElement(this.sectionId, this.elementId, newPropsObj); \n      }\n      this.buttonGroup = 'main';\n    },\n    'button-edit-done': function(){\n      this.editDone();\n    }\n  },\n  watch: {\n    'workspace.activeElementId': function(val){\n      if (val !== this.elementId) this.editDone();\n    },\n    'button':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    }\n  }\n}\n</script>\n\n<template>\n  <element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n    <div slot=\"content\" class=\"element-button\"\n      @dblclick=\"edit\" \n      @mouseenter = \"hover = true\"\n      @mouseleave = \"hover = false\"\n      :style=\"[\n        {\n          borderRadius: button.props.borderRadius,\n          fontSize: button.props.fontSize,\n          backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n          borderColor:getColor(button.props.borderColor),\n          color:getColor(button.props.fontColor)\n        }\n      ]\" \n      :class=\"{\n        'element-button-shadow':button.props.shadow,\n        'element-button-border':button.props.border,\n        'element-button-bold':button.props.bold\n      }\">\n      {{button.text}}\n    </div>\n    \n    <template slot=\"main-buttons-extend\">\n      <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n      <div class=\"btn btn-default\" title=\"链接\" @click=\"editLink\"><span class=\"glyphicon glyphicon-link\"></span></div>\n    </template>\n    <template slot=\"button-groups\">\n      <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n        <div class=\"btn btn-success\" @click=\"editDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n      </div>\n      <link-edit v-show=\"buttonGroup === 'link'\" :link-editing=\"buttonGroup === 'link'\" :link-obj=\"element.link\"></link-edit>\n    </template>\n    <template slot=\"tools\">\n      <button-edit :show.sync=\"editing\" :button.sync=\"button\"></button-edit>\n    </template>\n  </element-common>\n</template>\n\n<style>\n\n.element-button{\n  text-align: center;\n  cursor:pointer;\n  padding:6px;\n  border-width: 2px;\n}\n\n.element-button-border {\n  border-style: solid;\n}\n\n.element-button-bold {\n  font-weight: bold;\n}\n\n.element-button-shadow{\n  box-shadow:1px 3px 6px #888;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.element-button{\n  text-align: center;\n  cursor:pointer;\n  border-width: 2px;\n  padding: 6px;\n  height:100%;\n}\n\n.element-button-border {\n  border-style: solid;\n}\n\n.element-button-bold {\n  font-weight: bold;\n}\n\n.element-button-shadow{\n  box-shadow:1px 3px 6px #888;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/components/element-button.vue?359b7374"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAyIA;EACA,mBAAA;EACA,eAAA;EACA,kBAAA;EACA,aAAA;EACA,YAAA;CACA;;AAEA;EACA,oBAAA;CACA;;AAEA;EACA,kBAAA;CACA;;AAEA;EACA,4BAAA;CACA","file":"element-button.vue","sourcesContent":["<script>\nimport { modifyElement }  from '../store/actions'\nimport { getWorkspaceData } from '../store/getters'\nimport elementCommon from './element-common.vue'\nimport buttonEdit from './button-edit.vue'\nimport { merge } from 'lodash'\nimport colorMixin from '../mixins/colorMixin.js'\nimport linkEdit from './link-edit.vue'\n\nexport default {\n  //接受父组件传参，element元素属性，sid:板块ID sectionId，eid:元素ID elementId\n  props:['element','sectionId','elementId'],\n  mixins: [colorMixin],\n  components: {\n    elementCommon,\n    buttonEdit,\n    linkEdit\n  },\n  vuex: {\n    actions: {\n      modifyElement\n    },\n    getters: {\n      workspace: getWorkspaceData,\n    }\n  },\n  data (){\n    return {\n      //初始加载主按钮组\n      buttonGroup: 'main',\n      //是否处于编辑状态\n      editing: false,\n      //是否被修改\n      changed: false,\n      //组件实例化时将传入的element参数复制到button中，以避免直接修改store中的状态\n      button: {\n        text: this.element.text,\n        props: merge({}, this.element.props),\n      },\n      //js模拟css hover伪类效果\n      hover: false,\n      resize:{}\n    }\n  },\n  computed:{\n    // 编辑状态不允许拖动\n    draggable: function(){\n      return !this.editing && this.buttonGroup !== 'link';\n    },\n    resizable: function(){\n      return !this.editing;\n    }\n  },\n  methods: {\n    edit: function(){\n      this.editing = true;\n      this.buttonGroup = 'edit';\n    },\n    editLink: function(){\n      this.buttonGroup = 'link';\n    },\n    editDone: function(){\n      this.editing = false;\n      this.buttonGroup = 'main';\n      if (this.changed){\n        this.modifyElement(this.sectionId, this.elementId, this.button);\n        this.changed = false;\n      }\n    }\n  },\n  events:{\n    'link-edit-done':function(changed, linkObj){\n      if (changed){\n        const newPropsObj = {link:linkObj};\n        this.modifyElement(this.sectionId, this.elementId, newPropsObj); \n      }\n      this.buttonGroup = 'main';\n    },\n    'button-edit-done': function(){\n      this.editDone();\n    }\n  },\n  watch: {\n    'workspace.activeElementId': function(val){\n      if (val !== this.elementId) this.editDone();\n    },\n    'button':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    }\n  }\n}\n</script>\n\n<template>\n  <element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\" :resize=\"resize\" :resizable=\"resizable\">\n    <div slot=\"content\" class=\"element-button\"\n      @dblclick=\"edit\" \n      @mouseenter = \"hover = true\"\n      @mouseleave = \"hover = false\"\n      :style=\"[\n        {\n          borderRadius: button.props.borderRadius,\n          fontSize: button.props.fontSize,\n          backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n          borderColor:getColor(button.props.borderColor),\n          color:getColor(button.props.fontColor),\n        }\n      ]\" \n      :class=\"{\n        'element-button-shadow':button.props.shadow,\n        'element-button-border':button.props.border,\n        'element-button-bold':button.props.bold\n      }\">\n      {{button.text}}\n    </div>\n    \n    <template slot=\"main-buttons-extend\">\n      <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n      <div class=\"btn btn-default\" title=\"链接\" @click=\"editLink\"><span class=\"glyphicon glyphicon-link\"></span></div>\n    </template>\n    <template slot=\"button-groups\">\n      <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n        <div class=\"btn btn-success\" @click=\"editDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n      </div>\n      <link-edit v-show=\"buttonGroup === 'link'\" :link-editing=\"buttonGroup === 'link'\" :link-obj=\"element.link\"></link-edit>\n    </template>\n    <template slot=\"tools\">\n      <button-edit :show.sync=\"editing\" :button.sync=\"button\"></button-edit>\n    </template>\n  </element-common>\n</template>\n\n<style>\n\n.element-button{\n  text-align: center;\n  cursor:pointer;\n  border-width: 2px;\n  padding: 6px;\n  height:100%;\n}\n\n.element-button-border {\n  border-style: solid;\n}\n\n.element-button-bold {\n  font-weight: bold;\n}\n\n.element-button-shadow{\n  box-shadow:1px 3px 6px #888;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -22462,13 +22779,17 @@
 	        props: (0, _lodash.merge)({}, this.element.props)
 	      },
 	
-	      hover: false
+	      hover: false,
+	      resize: {}
 	    };
 	  },
 	
 	  computed: {
 	    draggable: function draggable() {
 	      return !this.editing && this.buttonGroup !== 'link';
+	    },
+	    resizable: function resizable() {
+	      return !this.editing;
 	    }
 	  },
 	  methods: {
@@ -22720,7 +23041,7 @@
 /* 109 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n  <div slot=\"content\" class=\"element-button\"\n    @dblclick=\"edit\" \n    @mouseenter = \"hover = true\"\n    @mouseleave = \"hover = false\"\n    :style=\"[\n      {\n        borderRadius: button.props.borderRadius,\n        fontSize: button.props.fontSize,\n        backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n        borderColor:getColor(button.props.borderColor),\n        color:getColor(button.props.fontColor)\n      }\n    ]\" \n    :class=\"{\n      'element-button-shadow':button.props.shadow,\n      'element-button-border':button.props.border,\n      'element-button-bold':button.props.bold\n    }\">\n    {{button.text}}\n  </div>\n  \n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n    <div class=\"btn btn-default\" title=\"链接\" @click=\"editLink\"><span class=\"glyphicon glyphicon-link\"></span></div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-success\" @click=\"editDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n    </div>\n    <link-edit v-show=\"buttonGroup === 'link'\" :link-editing=\"buttonGroup === 'link'\" :link-obj=\"element.link\"></link-edit>\n  </template>\n  <template slot=\"tools\">\n    <button-edit :show.sync=\"editing\" :button.sync=\"button\"></button-edit>\n  </template>\n</element-common>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\" :resize=\"resize\" :resizable=\"resizable\">\n  <div slot=\"content\" class=\"element-button\"\n    @dblclick=\"edit\" \n    @mouseenter = \"hover = true\"\n    @mouseleave = \"hover = false\"\n    :style=\"[\n      {\n        borderRadius: button.props.borderRadius,\n        fontSize: button.props.fontSize,\n        backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n        borderColor:getColor(button.props.borderColor),\n        color:getColor(button.props.fontColor),\n      }\n    ]\" \n    :class=\"{\n      'element-button-shadow':button.props.shadow,\n      'element-button-border':button.props.border,\n      'element-button-bold':button.props.bold\n    }\">\n    {{button.text}}\n  </div>\n  \n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n    <div class=\"btn btn-default\" title=\"链接\" @click=\"editLink\"><span class=\"glyphicon glyphicon-link\"></span></div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-success\" @click=\"editDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n    </div>\n    <link-edit v-show=\"buttonGroup === 'link'\" :link-editing=\"buttonGroup === 'link'\" :link-obj=\"element.link\"></link-edit>\n  </template>\n  <template slot=\"tools\">\n    <button-edit :show.sync=\"editing\" :button.sync=\"button\"></button-edit>\n  </template>\n</element-common>\n";
 
 /***/ },
 /* 110 */
@@ -22786,7 +23107,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.form-field-wrapper{\n  padding:5px 0;\n}\n\n.form-field-input{\n  line-height: 30px;\n  width: 100%;\n  border-radius: 5px;\n  border-width: 1px;\n  border-style: solid;\n  padding: 2px 8px;\n}\n\n.form-field-input .caret{\n  float:right;\n  margin-top:12px;\n  margin-right:2px;\n}\n\n.form-field-dropdown{\n  float:left;\n  width:auto;\n}\n\n.options-in-line{\n  display: inline-block;\n  margin-right:10px;\n}\n\n.shadow-inside{\n  box-shadow: inset 0 1px 6px #ccc;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/element-form.vue?3c843630"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAuOA;EACA,cAAA;CACA;;AAEA;EACA,kBAAA;EACA,YAAA;EACA,mBAAA;EACA,kBAAA;EACA,oBAAA;EACA,iBAAA;CACA;;AAEA;EACA,YAAA;EACA,gBAAA;EACA,iBAAA;CACA;;AAEA;EACA,WAAA;EACA,WAAA;CACA;;AAEA;EACA,sBAAA;EACA,kBAAA;CACA;;AAEA;EACA,iCAAA;CACA","file":"element-form.vue","sourcesContent":["<script>\nimport { replaceElement }  from '../store/actions'\nimport { getWorkspaceData } from '../store/getters'\nimport elementCommon from './element-common.vue'\nimport buttonEdit from './button-edit.vue'\nimport formProps from './form-props.vue'\nimport formFields from './form-fields.vue'\nimport { merge } from 'lodash'\nimport colorMixin from '../mixins/colorMixin.js'\n\nexport default {\n  //接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID\n  props:['element','sectionId','elementId'],\n  mixins: [colorMixin],\n  components: {\n    elementCommon,\n    buttonEdit,\n    formProps,\n    formFields\n  },\n  vuex: {\n    actions: {\n      replaceElement\n    },\n    getters: {\n      workspace: getWorkspaceData,\n    }\n  },\n  methods:{\n    edit: function(){\n      this.buttonGroup = 'edit';\n    },\n    editButton: function(){\n      this.editDone();\n      this.edit();\n      this.buttonEditing = true;\n    },\n    editButtonDone: function(){\n      this.buttonEditing = false;\n      this.saveForm();\n    },\n    editFields: function(){\n      this.editDone();\n      this.edit();\n      this.fieldsEditing = true;\n    },\n    editFieldsDone: function(){\n      this.fieldsEditing = false;\n      this.saveForm();\n    },\n    editProps: function(){\n      this.editDone();\n      this.edit();\n      this.propsEditing = true;\n    },\n    editPropsDone: function(){\n      this.propsEditing = false;\n      this.saveForm();\n    },\n    editDone: function(){\n      if (this.buttonEditing) this.editButtonDone();\n      if (this.fieldsEditing) this.editFieldsDone();\n      if (this.propsEditing)  this.editPropsDone();\n      this.buttonGroup = 'main';\n    },\n    saveForm: function(){\n      if (this.changed){\n        let formObj = {\n          type:\"form\",\n          style:this.element.style,\n          button:this.button,\n          props:this.formProps,\n          fields:this.formFields\n        };\n        this.replaceElement(this.sectionId, this.elementId, formObj);\n        this.changed = false;\n      }\n    }\n  },\n  data (){\n    return {\n      buttonGroup:'main',\n      buttonEditing: false,\n      changed: false,\n      propsEditing:  false,\n      fieldsEditing: false,\n      button: {\n        text: this.element.button.text,\n        props: merge({}, this.element.button.props),\n      },\n      formProps: merge({}, this.element.props),\n      formFields: merge([], this.element.fields)\n    }\n  },\n  computed:{\n    fieldStyles: function(){\n      return {\n        backgroundColor:this.getColor(this.formProps.fieldColor),\n        borderColor:this.getColor(this.formProps.borderColor),\n        color:this.getColor(this.formProps.labelColor),\n        boxShadow:(this.formProps.innerShadow) ? \"inset 0 1px 6px #ccc\" : \"\"\n      }\n    },\n    // 编辑状态不允许拖动\n    draggable: function(){\n      return !this.editing;\n    },\n    editing: function(){\n      return (this.buttonEditing || this.propsEditing || this.fieldsEditing);\n    }\n  },\n  events:{\n    'button-edit-done': function(){\n      this.editButtonDone();\n    },\n    'form-props-done': function(){\n      this.editPropsDone()\n    },\n    'form-fields-done': function(){\n      this.editFieldsDone();\n    }\n  },\n  watch: {\n    'workspace.activeElementId': function(val){\n      if (val !== this.elementId) this.editDone();\n    },\n    'button':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    },\n    'formFields':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    },\n    'formProps':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    }\n  }\n}\n</script>\n\n<template>\n  <element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n    <div slot=\"content\" @dblclick=\"edit\">\n      <div class=\"el-overlay\"></div>\n      <div v-for=\"(index,field) in formFields\" class=\"form-field-wrapper\">\n        <template v-if=\"field.type === 'text'\">\n          <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <input type=\"text\" class=\"form-field-input\" :style=\"fieldStyles\" value=\"{{formProps.labelInside ? field.label : ''}}\">\n        </template>\n\n        <template v-if=\"field.type === 'textarea'\">\n          <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <textarea class=\"form-field-input\" :style=\"fieldStyles\" rows=\"3\">{{formProps.labelInside ? field.label : ''}}</textarea>\n        </template>\n\n        <template v-if=\"field.type === 'radio'\">\n          <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"radio\"> {{option}}</label></div>\n        </template>\n\n        <template v-if=\"field.type === 'checkbox'\">\n          <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"checkbox\"> {{option}}</label></div>\n        </template>\n\n        <template v-if=\"field.type === 'dropdown'\">\n          <div class=\"form-field-input\" :style=\"fieldStyles\">{{field.label}} <span class=\"caret\"></span></div>\n          <div style=\"clear:both;\"></div>\n        </template>\n\n        <template v-if=\"field.type === 'china-state'\">\n          <div>\n            <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          </div>\n          <div>\n            <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">省份 <span class=\"caret\"></span></div>\n            <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">城市 <span class=\"caret\"></span></div>\n            <div class=\"form-field-input form-field-dropdown\" style=\"width:32%\" :style=\"fieldStyles\">区县 <span class=\"caret\"></span></div>\n            <div style=\"clear:both;\"></div>\n          </div>\n        </template>\n\n      </div> <!-- End fields for -->\n      <div class=\"element-button\"\n        @mouseenter = \"hover = true\"\n        @mouseleave = \"hover = false\"\n        :style=\"[\n          {\n            borderRadius: button.props.borderRadius,\n            fontSize: button.props.fontSize,\n            backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n            borderColor:getColor(button.props.borderColor),\n            color:getColor(button.props.fontColor)\n          }\n        ]\" \n        :class=\"{\n          'element-button-shadow':button.props.shadow,\n          'element-button-border':button.props.border,\n          'element-button-bold':button.props.bold\n        }\">\n        {{button.text}}\n      </div>\n    </div>\n    <template slot=\"main-buttons-extend\">\n      <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n    </template>\n    <template slot=\"button-groups\">\n      <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n        <div class=\"btn btn-default\" title=\"表单字段\" :class=\"{active:fieldsEditing}\" @click=\"editFields\">表单字段</div>\n        <div class=\"btn btn-default\" title=\"表单设置\" :class=\"{active:propsEditing}\" @click=\"editProps\">表单设置</div>\n        <div class=\"btn btn-default\" title=\"表单按钮\" :class=\"{active:buttonEditing}\" @click=\"editButton\">按钮</div>\n        <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n      </div>\n    </template>\n    <template slot=\"tools\">\n      <button-edit :show.sync=\"buttonEditing\" :button.sync=\"button\"></button-edit>\n      <form-fields :show.sync=\"fieldsEditing\" :form-fields.sync=\"formFields\"></form-fields>\n      <form-props :show.sync=\"propsEditing\" :form-props.sync=\"formProps\"></form-props>\n    </template>\n  </element-common>\n</template>\n\n<style>\n.form-field-wrapper{\n  padding:5px 0;\n}\n\n.form-field-input{\n  line-height: 30px;\n  width: 100%;\n  border-radius: 5px;\n  border-width: 1px;\n  border-style: solid;\n  padding: 2px 8px;\n}\n\n.form-field-input .caret{\n  float:right;\n  margin-top:12px;\n  margin-right:2px;\n}\n\n.form-field-dropdown{\n  float:left;\n  width:auto;\n}\n\n.options-in-line{\n  display: inline-block;\n  margin-right:10px;\n}\n\n.shadow-inside{\n  box-shadow: inset 0 1px 6px #ccc;\n}\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.form-field-wrapper{\n  padding:5px 0;\n}\n\n.form-field-input{\n  line-height: 30px;\n  width: 100%;\n  border-radius: 5px;\n  border-width: 1px;\n  border-style: solid;\n  padding: 2px 8px;\n}\n\n.form-field-input .caret{\n  float:right;\n  margin-top:12px;\n  margin-right:2px;\n}\n\n.form-field-dropdown{\n  float:left;\n  width:auto;\n}\n\n.options-in-line{\n  display: inline-block;\n  margin-right:10px;\n}\n\n.shadow-inside{\n  box-shadow: inset 0 1px 6px #ccc;\n}\n", "", {"version":3,"sources":["/./resources/assets/js/components/element-form.vue?ef6de9ca"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA0OA;EACA,cAAA;CACA;;AAEA;EACA,kBAAA;EACA,YAAA;EACA,mBAAA;EACA,kBAAA;EACA,oBAAA;EACA,iBAAA;CACA;;AAEA;EACA,YAAA;EACA,gBAAA;EACA,iBAAA;CACA;;AAEA;EACA,WAAA;EACA,WAAA;CACA;;AAEA;EACA,sBAAA;EACA,kBAAA;CACA;;AAEA;EACA,iCAAA;CACA","file":"element-form.vue","sourcesContent":["<script>\nimport { replaceElement }  from '../store/actions'\nimport { getWorkspaceData } from '../store/getters'\nimport elementCommon from './element-common.vue'\nimport buttonEdit from './button-edit.vue'\nimport formProps from './form-props.vue'\nimport formFields from './form-fields.vue'\nimport { merge } from 'lodash'\nimport colorMixin from '../mixins/colorMixin.js'\n\nexport default {\n  //接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID\n  props:['element','sectionId','elementId'],\n  mixins: [colorMixin],\n  components: {\n    elementCommon,\n    buttonEdit,\n    formProps,\n    formFields\n  },\n  vuex: {\n    actions: {\n      replaceElement\n    },\n    getters: {\n      workspace: getWorkspaceData,\n    }\n  },\n  methods:{\n    edit: function(){\n      this.buttonGroup = 'edit';\n    },\n    editButton: function(){\n      this.editDone();\n      this.edit();\n      this.buttonEditing = true;\n    },\n    editButtonDone: function(){\n      this.buttonEditing = false;\n      this.saveForm();\n    },\n    editFields: function(){\n      this.editDone();\n      this.edit();\n      this.fieldsEditing = true;\n    },\n    editFieldsDone: function(){\n      this.fieldsEditing = false;\n      this.saveForm();\n    },\n    editProps: function(){\n      this.editDone();\n      this.edit();\n      this.propsEditing = true;\n    },\n    editPropsDone: function(){\n      this.propsEditing = false;\n      this.saveForm();\n    },\n    editDone: function(){\n      if (this.buttonEditing) this.editButtonDone();\n      if (this.fieldsEditing) this.editFieldsDone();\n      if (this.propsEditing)  this.editPropsDone();\n      this.buttonGroup = 'main';\n    },\n    saveForm: function(){\n      if (this.changed){\n        let formObj = {\n          type:\"form\",\n          style:this.element.style,\n          button:this.button,\n          props:this.formProps,\n          fields:this.formFields\n        };\n        this.replaceElement(this.sectionId, this.elementId, formObj);\n        this.changed = false;\n      }\n    }\n  },\n  data (){\n    return {\n      buttonGroup:'main',\n      buttonEditing: false,\n      changed: false,\n      propsEditing:  false,\n      fieldsEditing: false,\n      button: {\n        text: this.element.button.text,\n        props: merge({}, this.element.button.props),\n      },\n      formProps: merge({}, this.element.props),\n      formFields: merge([], this.element.fields),\n      resize:{\n        handles: \"e\"\n      }\n    }\n  },\n  computed:{\n    fieldStyles: function(){\n      return {\n        backgroundColor:this.getColor(this.formProps.fieldColor),\n        borderColor:this.getColor(this.formProps.borderColor),\n        color:this.getColor(this.formProps.labelColor),\n        boxShadow:(this.formProps.innerShadow) ? \"inset 0 1px 6px #ccc\" : \"\"\n      }\n    },\n    // 编辑状态不允许拖动\n    draggable: function(){\n      return !this.editing;\n    },\n    editing: function(){\n      return (this.buttonEditing || this.propsEditing || this.fieldsEditing);\n    }\n  },\n  events:{\n    'button-edit-done': function(){\n      this.editButtonDone();\n    },\n    'form-props-done': function(){\n      this.editPropsDone()\n    },\n    'form-fields-done': function(){\n      this.editFieldsDone();\n    }\n  },\n  watch: {\n    'workspace.activeElementId': function(val){\n      if (val !== this.elementId) this.editDone();\n    },\n    'button':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    },\n    'formFields':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    },\n    'formProps':{\n      deep: true,\n      handler: function(val){\n        this.changed = true;\n      }\n    }\n  }\n}\n</script>\n\n<template>\n  <element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\" :resize=\"resize\">\n    <div slot=\"content\" @dblclick=\"edit\">\n      <div class=\"el-overlay\"></div>\n      <div v-for=\"(index,field) in formFields\" class=\"form-field-wrapper\">\n        <template v-if=\"field.type === 'text'\">\n          <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <input type=\"text\" class=\"form-field-input\" :style=\"fieldStyles\" value=\"{{formProps.labelInside ? field.label : ''}}\">\n        </template>\n\n        <template v-if=\"field.type === 'textarea'\">\n          <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <textarea class=\"form-field-input\" :style=\"fieldStyles\" rows=\"3\">{{formProps.labelInside ? field.label : ''}}</textarea>\n        </template>\n\n        <template v-if=\"field.type === 'radio'\">\n          <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"radio\"> {{option}}</label></div>\n        </template>\n\n        <template v-if=\"field.type === 'checkbox'\">\n          <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"checkbox\"> {{option}}</label></div>\n        </template>\n\n        <template v-if=\"field.type === 'dropdown'\">\n          <div class=\"form-field-input\" :style=\"fieldStyles\">{{field.label}} <span class=\"caret\"></span></div>\n          <div style=\"clear:both;\"></div>\n        </template>\n\n        <template v-if=\"field.type === 'china-state'\">\n          <div>\n            <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n          </div>\n          <div>\n            <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">省份 <span class=\"caret\"></span></div>\n            <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">城市 <span class=\"caret\"></span></div>\n            <div class=\"form-field-input form-field-dropdown\" style=\"width:32%\" :style=\"fieldStyles\">区县 <span class=\"caret\"></span></div>\n            <div style=\"clear:both;\"></div>\n          </div>\n        </template>\n\n      </div> <!-- End fields for -->\n      <div class=\"element-button\"\n        @mouseenter = \"hover = true\"\n        @mouseleave = \"hover = false\"\n        :style=\"[\n          {\n            borderRadius: button.props.borderRadius,\n            fontSize: button.props.fontSize,\n            backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n            borderColor:getColor(button.props.borderColor),\n            color:getColor(button.props.fontColor)\n          }\n        ]\" \n        :class=\"{\n          'element-button-shadow':button.props.shadow,\n          'element-button-border':button.props.border,\n          'element-button-bold':button.props.bold\n        }\">\n        {{button.text}}\n      </div>\n    </div>\n    <template slot=\"main-buttons-extend\">\n      <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n    </template>\n    <template slot=\"button-groups\">\n      <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n        <div class=\"btn btn-default\" title=\"表单字段\" :class=\"{active:fieldsEditing}\" @click=\"editFields\">表单字段</div>\n        <div class=\"btn btn-default\" title=\"表单设置\" :class=\"{active:propsEditing}\" @click=\"editProps\">表单设置</div>\n        <div class=\"btn btn-default\" title=\"表单按钮\" :class=\"{active:buttonEditing}\" @click=\"editButton\">按钮</div>\n        <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n      </div>\n    </template>\n    <template slot=\"tools\">\n      <button-edit :show.sync=\"buttonEditing\" :button.sync=\"button\"></button-edit>\n      <form-fields :show.sync=\"fieldsEditing\" :form-fields.sync=\"formFields\"></form-fields>\n      <form-props :show.sync=\"propsEditing\" :form-props.sync=\"formProps\"></form-props>\n    </template>\n  </element-common>\n</template>\n\n<style>\n.form-field-wrapper{\n  padding:5px 0;\n}\n\n.form-field-input{\n  line-height: 30px;\n  width: 100%;\n  border-radius: 5px;\n  border-width: 1px;\n  border-style: solid;\n  padding: 2px 8px;\n}\n\n.form-field-input .caret{\n  float:right;\n  margin-top:12px;\n  margin-right:2px;\n}\n\n.form-field-dropdown{\n  float:left;\n  width:auto;\n}\n\n.options-in-line{\n  display: inline-block;\n  margin-right:10px;\n}\n\n.shadow-inside{\n  box-shadow: inset 0 1px 6px #ccc;\n}\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -22909,7 +23230,10 @@
 	        props: (0, _lodash.merge)({}, this.element.button.props)
 	      },
 	      formProps: (0, _lodash.merge)({}, this.element.props),
-	      formFields: (0, _lodash.merge)([], this.element.fields)
+	      formFields: (0, _lodash.merge)([], this.element.fields),
+	      resize: {
+	        handles: "e"
+	      }
 	    };
 	  },
 	
@@ -23297,22 +23621,38 @@
 /* 124 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\">\n  <div slot=\"content\" @dblclick=\"edit\">\n    <div class=\"el-overlay\"></div>\n    <div v-for=\"(index,field) in formFields\" class=\"form-field-wrapper\">\n      <template v-if=\"field.type === 'text'\">\n        <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <input type=\"text\" class=\"form-field-input\" :style=\"fieldStyles\" value=\"{{formProps.labelInside ? field.label : ''}}\">\n      </template>\n\n      <template v-if=\"field.type === 'textarea'\">\n        <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <textarea class=\"form-field-input\" :style=\"fieldStyles\" rows=\"3\">{{formProps.labelInside ? field.label : ''}}</textarea>\n      </template>\n\n      <template v-if=\"field.type === 'radio'\">\n        <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"radio\"> {{option}}</label></div>\n      </template>\n\n      <template v-if=\"field.type === 'checkbox'\">\n        <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"checkbox\"> {{option}}</label></div>\n      </template>\n\n      <template v-if=\"field.type === 'dropdown'\">\n        <div class=\"form-field-input\" :style=\"fieldStyles\">{{field.label}} <span class=\"caret\"></span></div>\n        <div style=\"clear:both;\"></div>\n      </template>\n\n      <template v-if=\"field.type === 'china-state'\">\n        <div>\n          <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        </div>\n        <div>\n          <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">省份 <span class=\"caret\"></span></div>\n          <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">城市 <span class=\"caret\"></span></div>\n          <div class=\"form-field-input form-field-dropdown\" style=\"width:32%\" :style=\"fieldStyles\">区县 <span class=\"caret\"></span></div>\n          <div style=\"clear:both;\"></div>\n        </div>\n      </template>\n\n    </div> <!-- End fields for -->\n    <div class=\"element-button\"\n      @mouseenter = \"hover = true\"\n      @mouseleave = \"hover = false\"\n      :style=\"[\n        {\n          borderRadius: button.props.borderRadius,\n          fontSize: button.props.fontSize,\n          backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n          borderColor:getColor(button.props.borderColor),\n          color:getColor(button.props.fontColor)\n        }\n      ]\" \n      :class=\"{\n        'element-button-shadow':button.props.shadow,\n        'element-button-border':button.props.border,\n        'element-button-bold':button.props.bold\n      }\">\n      {{button.text}}\n    </div>\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-default\" title=\"表单字段\" :class=\"{active:fieldsEditing}\" @click=\"editFields\">表单字段</div>\n      <div class=\"btn btn-default\" title=\"表单设置\" :class=\"{active:propsEditing}\" @click=\"editProps\">表单设置</div>\n      <div class=\"btn btn-default\" title=\"表单按钮\" :class=\"{active:buttonEditing}\" @click=\"editButton\">按钮</div>\n      <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n    </div>\n  </template>\n  <template slot=\"tools\">\n    <button-edit :show.sync=\"buttonEditing\" :button.sync=\"button\"></button-edit>\n    <form-fields :show.sync=\"fieldsEditing\" :form-fields.sync=\"formFields\"></form-fields>\n    <form-props :show.sync=\"propsEditing\" :form-props.sync=\"formProps\"></form-props>\n  </template>\n</element-common>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\" :resize=\"resize\">\n  <div slot=\"content\" @dblclick=\"edit\">\n    <div class=\"el-overlay\"></div>\n    <div v-for=\"(index,field) in formFields\" class=\"form-field-wrapper\">\n      <template v-if=\"field.type === 'text'\">\n        <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <input type=\"text\" class=\"form-field-input\" :style=\"fieldStyles\" value=\"{{formProps.labelInside ? field.label : ''}}\">\n      </template>\n\n      <template v-if=\"field.type === 'textarea'\">\n        <div v-if=\"!formProps.labelInside\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <textarea class=\"form-field-input\" :style=\"fieldStyles\" rows=\"3\">{{formProps.labelInside ? field.label : ''}}</textarea>\n      </template>\n\n      <template v-if=\"field.type === 'radio'\">\n        <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"radio\"> {{option}}</label></div>\n      </template>\n\n      <template v-if=\"field.type === 'checkbox'\">\n        <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        <div v-for=\"option in field.options\" track-by=\"$index\" :class=\"{'options-in-line':field.optionsInLine}\"><label :style=\"{color:getColor(formProps.labelColor)}\"><input type=\"checkbox\"> {{option}}</label></div>\n      </template>\n\n      <template v-if=\"field.type === 'dropdown'\">\n        <div class=\"form-field-input\" :style=\"fieldStyles\">{{field.label}} <span class=\"caret\"></span></div>\n        <div style=\"clear:both;\"></div>\n      </template>\n\n      <template v-if=\"field.type === 'china-state'\">\n        <div>\n          <div v-if=\"!field.hideLabel\"><label :style=\"{color:getColor(formProps.labelColor)}\">{{field.label}}</label></div>\n        </div>\n        <div>\n          <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">省份 <span class=\"caret\"></span></div>\n          <div class=\"form-field-input form-field-dropdown\" style=\"margin-right:2%;width:32%\" :style=\"fieldStyles\">城市 <span class=\"caret\"></span></div>\n          <div class=\"form-field-input form-field-dropdown\" style=\"width:32%\" :style=\"fieldStyles\">区县 <span class=\"caret\"></span></div>\n          <div style=\"clear:both;\"></div>\n        </div>\n      </template>\n\n    </div> <!-- End fields for -->\n    <div class=\"element-button\"\n      @mouseenter = \"hover = true\"\n      @mouseleave = \"hover = false\"\n      :style=\"[\n        {\n          borderRadius: button.props.borderRadius,\n          fontSize: button.props.fontSize,\n          backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),\n          borderColor:getColor(button.props.borderColor),\n          color:getColor(button.props.fontColor)\n        }\n      ]\" \n      :class=\"{\n        'element-button-shadow':button.props.shadow,\n        'element-button-border':button.props.border,\n        'element-button-bold':button.props.bold\n      }\">\n      {{button.text}}\n    </div>\n  </div>\n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-default\" title=\"表单字段\" :class=\"{active:fieldsEditing}\" @click=\"editFields\">表单字段</div>\n      <div class=\"btn btn-default\" title=\"表单设置\" :class=\"{active:propsEditing}\" @click=\"editProps\">表单设置</div>\n      <div class=\"btn btn-default\" title=\"表单按钮\" :class=\"{active:buttonEditing}\" @click=\"editButton\">按钮</div>\n      <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n    </div>\n  </template>\n  <template slot=\"tools\">\n    <button-edit :show.sync=\"buttonEditing\" :button.sync=\"button\"></button-edit>\n    <form-fields :show.sync=\"fieldsEditing\" :form-fields.sync=\"formFields\"></form-fields>\n    <form-props :show.sync=\"propsEditing\" :form-props.sync=\"formProps\"></form-props>\n  </template>\n</element-common>\n";
 
 /***/ },
 /* 125 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div  \n  class=\"page-section\" \n  :style=\"{\n    height:section.style[workspace.version]['height'],\n    backgroundColor:getColor(section.style[workspace.version]['background-color']),\n    borderColor:getColor(section.style[workspace.version]['border-color']),\n    borderWidth:'0',\n    borderTopWidth:section.style[workspace.version]['border-width'] + 'px',\n    borderBottomWidth:section.style[workspace.version]['border-width'] + 'px',\n    borderStyle:'solid'\n  }\"  \n  v-on:mouseenter=\"setCurrentSectionId(sectionId)\"\n  v-on:mouseleave=\"setCurrentSectionId('')\"\n>\n  <div class=\"editable-area\" :style=\"{width: workspace.width + 'px'}\">\n    <!-- 页面元素组件 -->\n    <component v-for=\"(elementId,element) in section.elements\" :is=\"'element-' + element.type\" :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\"></component>\n    <!-- 板块操作按钮组 -->\n    <div class=\"btn-group-vertical page-section-operation\" role=\"group\" v-show=\"workspace.currentSectionId==sectionId\" transition=\"fade\" :style=\"{left: workspace.width + 5 + 'px'}\">\n      <template v-if=\"workspace.activeSectionId === sectionId\">\n        <div class=\"btn btn-success\" title=\"完成\" @click=\"sectionEditDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n      </template>\n      <template v-if=\"(workspace.activeSectionId !== sectionId)\">\n        <div class=\"btn btn-primary\" title=\"修改\" @click.stop=\"editSection\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n        <div class=\"btn btn-default\" title=\"上移\" @click=\"moveSection('up',sectionId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n        <div class=\"btn btn-default\" title=\"下移\" @click=\"moveSection('down',sectionId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n        <div class=\"btn btn-default\" title=\"删除\" @click=\"removeSection(sectionId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n      </template>\n    </div>\n  </div>\n  <section-edit :show.sync=\"sectionEditing\" :section-id=\"sectionId\" ></section-edit>\n  <div class=\"resize-line\"></div>\n  <div class=\"resize-line-wrap\"></div>\n</div>\n";
+	var __vue_script__, __vue_template__
+	__vue_script__ = __webpack_require__(126)
+	if (__vue_script__ &&
+	    __vue_script__.__esModule &&
+	    Object.keys(__vue_script__).length > 1) {
+	  console.warn("[vue-loader] resources/assets/js/components/element-html.vue: named exports in *.vue files are ignored.")}
+	__vue_template__ = __webpack_require__(127)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) {
+	(typeof module.exports === "function" ? (module.exports.options || (module.exports.options = {})) : module.exports).template = __vue_template__
+	}
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), false)
+	  if (!hotAPI.compatible) return
+	  var id = "./element-html.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
 
 /***/ },
 /* 126 */
-/***/ function(module, exports) {
-
-	module.exports = "\n<div class=\"workspace\">\n  <div id=\"content-area\" :style=\"{height: workspace.height + 'px', width: (workspace.width-2) + 'px', marginLeft:(-workspace.width/2 + 1) +'px'}\"></div>\n  <page-section v-for=\"(sectionId, section) in sections\" :section-id=\"sectionId\", :section=\"section\"></page-section>\n</div>\n";
-
-/***/ },
-/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23321,11 +23661,107 @@
 	  value: true
 	});
 	
-	var _vuex = __webpack_require__(128);
+	var _actions = __webpack_require__(7);
+	
+	var _getters = __webpack_require__(8);
+	
+	var _elementCommon = __webpack_require__(60);
+	
+	var _elementCommon2 = _interopRequireDefault(_elementCommon);
+	
+	var _lodash = __webpack_require__(55);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  props: ['element', 'sectionId', 'elementId'],
+	  components: {
+	    elementCommon: _elementCommon2.default
+	  },
+	  vuex: {
+	    actions: {
+	      modifyElement: _actions.modifyElement
+	    },
+	    getters: {
+	      workspace: _getters.getWorkspaceData
+	    }
+	  },
+	  data: function data() {
+	    return {
+	      buttonGroup: 'main',
+	      editing: false,
+	      content: this.element.content,
+	      resize: {
+	        handles: 'e'
+	      }
+	    };
+	  },
+	
+	  computed: {
+	    draggable: function draggable() {
+	      return !this.editing;
+	    }
+	  },
+	  methods: {
+	    edit: function edit() {
+	      if (this.editing === false) {
+	        this.editing = true;
+	        this.buttonGroup = 'edit';
+	      }
+	    },
+	    editDone: function editDone() {
+	      this.editing = false;
+	      this.buttonGroup = 'main';
+	
+	      if (this.element.content !== this.content) {
+	        this.modifyElement(this.sectionId, this.elementId, { content: this.content });
+	      }
+	    }
+	  },
+	  watch: {
+	    'workspace.activeElementId': function workspaceActiveElementId(val) {
+	      if (val !== this.elementId && this.editing) this.editDone();
+	    }
+	  }
+	};
+
+/***/ },
+/* 127 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<element-common :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\" :button-group.sync=\"buttonGroup\" :draggable.sync=\"draggable\" :resize=\"resize\">\n  <div slot=\"content\">\n    <div v-show=\"!editing\" @dblclick=\"edit\">HTML<br>在预览模式中可以查看渲染效果</div>\n    <textarea v-show=\"editing\" spellcheck=\"false\" class=\"form-control\" v-model=\"content\"></textarea>\n  </div>\n  \n  <template slot=\"main-buttons-extend\">\n    <div class=\"btn btn-primary\" title=\"编辑\" @click=\"edit\">编辑</div>\n  </template>\n  <template slot=\"button-groups\">\n    <div v-show=\"buttonGroup === 'edit'\" class=\"btn-group el-btn-group\" role=\"group\">\n      <div class=\"btn btn-success\" title=\"完成编辑\" @click=\"editDone\">完成</div>\n    </div>\n  </template>\n</element-common>\n";
+
+/***/ },
+/* 128 */
+/***/ function(module, exports) {
+
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  <div  \n    class=\"page-section\" \n    :style=\"{\n      height:section.style[workspace.version]['height'],\n      backgroundColor:getColor(section.style[workspace.version]['background-color']),\n      borderColor:getColor(section.style[workspace.version]['border-color']),\n      borderWidth:'0',\n      borderTopWidth:section.style[workspace.version]['border-width'] + 'px',\n      borderBottomWidth:section.style[workspace.version]['border-width'] + 'px',\n      borderStyle:'solid'\n    }\"  \n    v-on:mouseenter=\"setCurrentSectionId(sectionId)\"\n  >\n    <div class=\"editable-area\" :style=\"{width: workspace.width + 'px'}\">\n      <!-- 页面元素组件 -->\n      <component v-for=\"(elementId,element) in section.elements\" :is=\"'element-' + element.type\" :element=\"element\" :section-id=\"sectionId\" :element-id=\"elementId\"></component>\n      <!-- 板块操作按钮组 -->\n      <div class=\"btn-group-vertical page-section-operation\" role=\"group\" v-show=\"workspace.currentSectionId==sectionId\" transition=\"fade\" :style=\"{left: workspace.width + 5 + 'px'}\">\n        <template v-if=\"sectionEditing\">\n          <div class=\"btn btn-success\" title=\"完成\" @click=\"sectionEditDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n        </template>\n        <template v-if=\"!sectionEditing\">\n          <div class=\"btn btn-primary\" title=\"修改\" @click.stop=\"editSection\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n          <div class=\"btn btn-default\" title=\"上移\" @click=\"moveSection('up',sectionId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n          <div class=\"btn btn-default\" title=\"下移\" @click=\"moveSection('down',sectionId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n          <div class=\"btn btn-default\" title=\"删除\" @click=\"removeSection(sectionId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n        </template>\n      </div>\n    </div>\n    <section-edit :show.sync=\"sectionEditing\" :section-id=\"sectionId\" ></section-edit>\n<!--     <div class=\"resize-line\"></div>\n    <div class=\"resize-line-wrap\"></div> -->\n  </div>\n";
+
+/***/ },
+/* 129 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div class=\"workspace\">\n  <div id=\"content-area\" :style=\"{height: workspace.height + 'px', width: (workspace.width-2) + 'px', marginLeft:(-workspace.width/2 + 1) +'px'}\"></div>\n  <page-section v-for=\"(sectionId, section) in sections\" :section-id=\"sectionId\", :section=\"section\"></page-section>\n</div>\n<div style=\"height:20px;\"></div>\n";
+
+/***/ },
+/* 130 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _vuex = __webpack_require__(131);
 	
 	var _vuex2 = _interopRequireDefault(_vuex);
 	
 	var _lodash = __webpack_require__(55);
+	
+	var _randomChar = __webpack_require__(132);
+	
+	var _randomChar2 = _interopRequireDefault(_randomChar);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -23351,7 +23787,12 @@
 	    //是否可以执行重做操作
 	    redo: false,
 	    //编辑状态中的页面元素id
-	    activeElementId: ""
+	    activeElementId: "",
+	    //元素最大最小zindex,
+	    zIndex: {
+	      'pc': { max: 50000, min: 50000 },
+	      'mobile': { max: 50000, min: 50000 }
+	    }
 	  },
 	
 	  settings: {
@@ -23381,6 +23822,7 @@
 	    pageStates = [(0, _lodash.merge)({}, state.page)];
 	    pageHistoryIndex = 0;
 	    mutations.SUM_PAGE_HEIGHT(state);
+	    mutations.COUNT_PAGE_LAYER(state);
 	  },
 	
 	
@@ -23391,6 +23833,21 @@
 	    pageStates.push((0, _lodash.merge)({}, state.page));
 	    state.workspace.undo = true;
 	    state.workspace.redo = false;
+	  },
+	  COUNT_PAGE_LAYER: function COUNT_PAGE_LAYER(state) {
+	    var zIndex = {
+	      'pc': { max: 50000, min: 50000 },
+	      'mobile': { max: 50000, min: 50000 }
+	    };
+	    state.page.sections.forEach(function (section) {
+	      for (var elementId in section.elements) {
+	        zIndex.pc.max = section.elements[elementId].style.pc.zIndex > zIndex.pc.max ? section.elements[elementId].style.pc.zIndex : zIndex.pc.max;
+	        zIndex.pc.min = section.elements[elementId].style.pc.zIndex < zIndex.pc.min ? section.elements[elementId].style.pc.zIndex : zIndex.pc.min;
+	        zIndex.mobile.max = section.elements[elementId].style.mobile.zIndex > zIndex.mobile.max ? section.elements[elementId].style.mobile.zIndex : zIndex.mobile.max;
+	        zIndex.mobile.min = section.elements[elementId].style.mobile.zIndex < zIndex.mobile.min ? section.elements[elementId].style.mobile.zIndex : zIndex.mobile.min;
+	      }
+	    });
+	    state.workspace.zIndex = zIndex;
 	  },
 	
 	
@@ -23441,7 +23898,7 @@
 	
 	  //删除板块
 	  REMOVE_SECTION: function REMOVE_SECTION(state, sectionId) {
-	    state.workspace.height -= parseInt(state.page.sections[sectionId].style.height);
+	    state.workspace.height -= parseInt(state.page.sections[sectionId].style[state.workspace.version].height);
 	    state.page.sections.splice(sectionId, 1);
 	    mutations.SAVE_PAGE_STATE(state);
 	  },
@@ -23530,6 +23987,17 @@
 	  },
 	
 	
+	  //添加元素
+	  ADD_ELEMENT: function ADD_ELEMENT(state, sectionId, element) {
+	    var elementId = (0, _randomChar2.default)(8);
+	    Vue.set(state.page.sections[sectionId]['elements'], elementId, element);
+	    state.workspace.zIndex.pc.max = element.style.pc.zIndex;
+	    state.workspace.zIndex.mobile.max = element.style.mobile.zIndex;
+	    state.workspace.activeElementId = elementId;
+	    mutations.SAVE_PAGE_STATE(state);
+	  },
+	
+	
 	  //删除元素
 	  REMOVE_ELEMENT: function REMOVE_ELEMENT(state, sectionId, elementId) {
 	    Vue.delete(state.page.sections[sectionId]['elements'], elementId);
@@ -23571,15 +24039,45 @@
 	
 	    mutations.SAVE_PAGE_STATE(state);
 	  },
+	
+	
+	  //缩放元素
+	  RESIZE_ELEMENT: function RESIZE_ELEMENT(state, sectionId, elementId, newSize) {
+	    state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['width'] = newSize.width + "px";
+	    state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['height'] = newSize.height + "px";
+	    mutations.SAVE_PAGE_STATE(state);
+	  },
+	
+	
+	  //修改元素
 	  MODIFY_ELEMENT: function MODIFY_ELEMENT(state, sectionId, elementId, newPropsObj) {
 	    var newElement = (0, _lodash.merge)({}, state.page.sections[sectionId]['elements'][elementId], newPropsObj);
 	    Vue.set(state.page.sections[sectionId]['elements'], elementId, newElement);
 	    mutations.SAVE_PAGE_STATE(state);
 	  },
+	
+	
+	  //修改元素的另一种方式，整体替换
 	  REPLACE_ELEMENT: function REPLACE_ELEMENT(state, sectionId, elementId, newElement) {
 	    Vue.set(state.page.sections[sectionId]['elements'], elementId, (0, _lodash.merge)({}, newElement));
 	    mutations.SAVE_PAGE_STATE(state);
 	  },
+	
+	
+	  //修改元素层次
+	  INDEX_ELEMENT: function INDEX_ELEMENT(state, sectionId, elementId, dir) {
+	    var zIndex = 0;
+	    if (dir === 'top') {
+	      zIndex = ++state.workspace.zIndex[state.workspace.version].max;
+	    } else {
+	      zIndex = --state.workspace.zIndex[state.workspace.version].min;
+	    }
+	    state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['zIndex'] = zIndex;
+	    mutations.SAVE_PAGE_STATE(state);
+	  },
+	
+	
+	  //修改配色方案
 	  SET_COLOR_SET: function SET_COLOR_SET(state, colorSet) {
 	    state.page.colorSet = colorSet;
 	    mutations.SAVE_PAGE_STATE(state);
@@ -23593,7 +24091,7 @@
 	});
 
 /***/ },
-/* 128 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*!
@@ -24232,7 +24730,27 @@
 	}));
 
 /***/ },
-/* 129 */
+/* 132 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var randomChar = function randomChar(len) {
+	  var x = "0123456789abcdefghijklmnopqrstuvwxyz";
+	  var tmp = "";
+	  for (var i = 0; i < len; i++) {
+	    tmp += x.charAt(Math.ceil(Math.random() * 100000000) % x.length);
+	  }
+	  return tmp;
+	};
+	
+	exports.default = randomChar;
+
+/***/ },
+/* 133 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div @mousedown=\"setActiveElementId('')\">\n  <editor-header></editor-header>\n  <div class=\"main\">\n    <editor-toolbar></editor-toolbar>\n    <editor-workspace></editor-workspace>\n  </div> \n</div>\n";

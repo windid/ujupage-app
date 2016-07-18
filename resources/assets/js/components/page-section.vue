@@ -8,6 +8,7 @@ import elementText from './element-text.vue'
 import elementImage from './element-image.vue'
 import elementButton from './element-button.vue'
 import elementForm from './element-form.vue'
+import elementHtml from './element-html.vue'
 
 import colorMixin from '../mixins/colorMixin.js'
 
@@ -19,6 +20,7 @@ export default {
     elementImage,
     elementButton,
     elementForm,
+    elementHtml,
     sectionEdit
   },
   data (){
@@ -49,6 +51,10 @@ export default {
     }
   },
   ready:function() {
+    // $(this.$el).resizable({
+    //   handles: "s",
+    //   minHeight: 20,
+    // });
   }
 }
 </script>
@@ -66,17 +72,16 @@ export default {
       borderStyle:'solid'
     }"  
     v-on:mouseenter="setCurrentSectionId(sectionId)"
-    v-on:mouseleave="setCurrentSectionId('')"
   >
     <div class="editable-area" :style="{width: workspace.width + 'px'}">
       <!-- 页面元素组件 -->
       <component v-for="(elementId,element) in section.elements" :is="'element-' + element.type" :element="element" :section-id="sectionId" :element-id="elementId"></component>
       <!-- 板块操作按钮组 -->
       <div class="btn-group-vertical page-section-operation" role="group" v-show="workspace.currentSectionId==sectionId" transition="fade" :style="{left: workspace.width + 5 + 'px'}">
-        <template v-if="workspace.activeSectionId === sectionId">
+        <template v-if="sectionEditing">
           <div class="btn btn-success" title="完成" @click="sectionEditDone"><span class="glyphicon glyphicon-ok"></span></div>
         </template>
-        <template v-if="(workspace.activeSectionId !== sectionId)">
+        <template v-if="!sectionEditing">
           <div class="btn btn-primary" title="修改" @click.stop="editSection"><span class="glyphicon glyphicon-pencil"></span></div>
           <div class="btn btn-default" title="上移" @click="moveSection('up',sectionId)"><span class="glyphicon glyphicon-chevron-up"></span></div>
           <div class="btn btn-default" title="下移" @click="moveSection('down',sectionId)"><span class="glyphicon glyphicon-chevron-down"></span></div>
@@ -85,7 +90,7 @@ export default {
       </div>
     </div>
     <section-edit :show.sync="sectionEditing" :section-id="sectionId" ></section-edit>
-    <div class="resize-line"></div>
-    <div class="resize-line-wrap"></div>
+<!--     <div class="resize-line"></div>
+    <div class="resize-line-wrap"></div> -->
   </div>
 </template>

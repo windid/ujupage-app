@@ -38,13 +38,17 @@ export default {
         props: merge({}, this.element.props),
       },
       //js模拟css hover伪类效果
-      hover: false
+      hover: false,
+      resize:{}
     }
   },
   computed:{
     // 编辑状态不允许拖动
     draggable: function(){
       return !this.editing && this.buttonGroup !== 'link';
+    },
+    resizable: function(){
+      return !this.editing;
     }
   },
   methods: {
@@ -91,7 +95,7 @@ export default {
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize" :resizable="resizable">
     <div slot="content" class="element-button"
       @dblclick="edit" 
       @mouseenter = "hover = true"
@@ -102,7 +106,7 @@ export default {
           fontSize: button.props.fontSize,
           backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),
           borderColor:getColor(button.props.borderColor),
-          color:getColor(button.props.fontColor)
+          color:getColor(button.props.fontColor),
         }
       ]" 
       :class="{
@@ -134,8 +138,9 @@ export default {
 .element-button{
   text-align: center;
   cursor:pointer;
-  padding:6px;
   border-width: 2px;
+  padding: 6px;
+  height:100%;
 }
 
 .element-button-border {

@@ -13,6 +13,11 @@ export const setActiveElementId = function ({ dispatch, state }, elementId) {
   dispatch('SET_ACTIVE_ELEMENT_ID', elementId)
 }
 
+//新增元素
+export const addElement = function ({ dispatch, state }, sectionId, element) {
+  dispatch('ADD_ELEMENT', sectionId, element)
+}
+
 //删除元素
 export const removeElement = function ({ dispatch, state }, sectionId, elementId) {
   dispatch('REMOVE_ELEMENT', sectionId, elementId)
@@ -21,6 +26,16 @@ export const removeElement = function ({ dispatch, state }, sectionId, elementId
 //移动元素
 export const moveElement = function ({ dispatch, state }, sectionId, elementId, positionInPage, elementHeight) {
   dispatch('MOVE_ELEMENT', sectionId, elementId, positionInPage, elementHeight)
+}
+
+//修改元素层叠位置
+export const indexElement = function ({ dispatch, state }, sectionId, elementId, dir) {
+  dispatch('INDEX_ELEMENT', sectionId, elementId, dir)
+}
+
+//缩放元素
+export const resizeElement = function ({ dispatch, state }, sectionId, elementId, newSize) {
+  dispatch('RESIZE_ELEMENT', sectionId, elementId, newSize)
 }
 
 //修改元素style
