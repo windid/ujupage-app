@@ -5,17 +5,40 @@ namespace App\Http\Controllers\Editor;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
+use App\Models\Page\PageVariation;
+
 class EditorController extends Controller {
 
     public $user;
+    public $pageVariation;
 
     public function __construct() {
         $this->user = auth()->user();
+        
+        $this->pageVariation = new PageVariation;
     }
     
     // editor 页面
     public function v1() {
         return view('editor');
+    }
+    
+    /**
+     * 预览
+     * @param int $id 版本ID
+     * @return string $content 页面内空
+     */
+    public function preview(int $id) {
+         
+        $page_variation = $this->pageVariation->where('user_id', $this->user->id)
+                                            ->with(['page', 'userSetting'])
+                                            ->find($id);
+        if (!$page_variation) {
+            return $this->err('找不到相关版本');
+        }
+        
+        $content = \App\Services\ParseHtml::decode($page_variation->toArray());
+        return response($content);
     }
     
     public function api(Request $request) {
