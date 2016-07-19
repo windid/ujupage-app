@@ -89,7 +89,10 @@ export default {
         props: merge({}, this.element.button.props),
       },
       formProps: merge({}, this.element.props),
-      formFields: merge([], this.element.fields)
+      formFields: merge([], this.element.fields),
+      resize:{
+        handles: "e"
+      }
     }
   },
   computed:{
@@ -147,7 +150,7 @@ export default {
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize">
     <div slot="content" @dblclick="edit">
       <div class="el-overlay"></div>
       <div v-for="(index,field) in formFields" class="form-field-wrapper">
@@ -261,5 +264,4 @@ export default {
 .shadow-inside{
   box-shadow: inset 0 1px 6px #ccc;
 }
-
 </style>

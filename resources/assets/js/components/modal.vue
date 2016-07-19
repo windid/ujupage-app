@@ -1,4 +1,6 @@
 <script>
+import eventHandler from '../utils/eventHandler'
+
 export default {
   props: {
     show: {
@@ -20,7 +22,7 @@ export default {
       bodyHeight:"auto"
     }
   },
-  ready:function(){
+  attached:function(){
     //如果传入的高度是百分比，根据用户浏览器高度转化为像素
     var heightUnit = this.height.substr(this.height.length-1)
     if (heightUnit === '%'){
@@ -30,22 +32,24 @@ export default {
     } else {
       this.bodyHeight = this.height;
     }
-  // 	document.body.style.overflow = 'hidden';
-  //  document.body.style['margin-right'] = '15px';
+
+    var el = this.$els.container;
+
+    this._closeEvent = eventHandler.listen(window, 'click', (e)=> {
+      if (!el.contains(e.target)) this.show = false;
+    })
   },
-  // destroyed:function(){
-  //   document.body.style.overflow = 'auto';
-  //   document.body.style['margin-right'] = '0';
-  // }
+  beforeDestroy:function(){
+    if (this._closeEvent) this._closeEvent.remove()
+  }
 }
 </script>
 
 <template>
-  <div class="modal-mask" transition="modal" @click="show=false">
+  <div class="modal-mask" transition="modal">
     <div class="modal-wrapper">
-      <div class="modal-container" :style="{width:width}" @click.stop>
+      <div v-el:container class="modal-container" :style="{width:width}">
         
-
         <div class="modal-header">
           <button type="button" class="close fr" aria-label="Close" @click="show = false"><span aria-hidden="true">&times;</span></button>
           <slot name="header">

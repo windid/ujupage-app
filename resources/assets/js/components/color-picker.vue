@@ -51,7 +51,7 @@ export default {
 
 <template>
   <dropdown :show.sync="show">
-    <slot><div data-toggle="dropdown" class="color-button" :style="{background:getColor(color)}"></div></slot>
+    <slot><div data-toggle="dropdown" class="color-button dropdown-toggle" :style="{background:getColor(color)}"></div></slot>
     <div slot="dropdown-menu" class="dropdown-menu" :class="{'dropdown-menu-right':position === 'right'}">
       <div v-for="colorItem in colorSet" :style="{background: colorItem}" @click="setColor($index)" class="color-block" :class="{'selected':$index.toString() === color}"></div>
       <div class="common-color-blocks-wrapper">

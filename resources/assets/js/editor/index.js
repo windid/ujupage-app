@@ -3,37 +3,27 @@ import editor from '../components/editor.vue'
 
 Vue.use(VueResource);
 
-Vue.http.options.root = '/root';
+Vue.http.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-// import tooltip from '../libs/vue-strap/src/tooltip.vue'
 
-// // import eventHandler from '../utils/eventHandler.js'
-// import {merge} from 'lodash'
-
-// Vue.directive('tooltip',function(settings){
-//   let defaults = {
-//     position: 'bottom',
-//     content: '',
-//     trigger: 'hover'
-//   };
-//   settings = merge({},defaults,settings);
-
-//   $(this.el).replaceWith(function(){
-//     let content = '';
-//     content += "<tooltip>" + $(this.el).outerHTML + "</tooltip>";
-//     return content
-//   });
-
-//   console.log(this.el);
-// });
+Vue.directive('content', {
+  twoWay: true,
+  bind: function () {
+    this.handler = function () {
+      this.set(this.el.innerHTML)
+    }.bind(this)
+    this.el.addEventListener('keyup', this.handler)
+  },
+  update: function (newValue, oldValue) {
+    this.el.innerHTML = newValue || ''
+  },
+  unbind: function () {
+    this.el.removeEventListener('keyup', this.handler)
+  }
+});
 
 var vm = new Vue({
   el: 'body',
-  components: { editor },
-  methods: {
-    bodyClick: function(event){
-      this.$broadcast('body-click',event);
-    }
-  }
+  components: { editor }
 })
 

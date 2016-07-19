@@ -1,5 +1,5 @@
 <template>
-  <div class="btn-group" v-bind:class="{open:show}">
+  <div class="btn-group" v-bind:class="{open:show,dropup:(dir === 'up')}">
     <slot></slot>
     <slot name="dropdown-menu"></slot>
   </div>
@@ -12,6 +12,11 @@
         type: Boolean,
         required: true,
         twoWay: true
+      },
+      //向上还是向下弹出菜单，默认向下，向上用up
+      dir:{
+        type: String,
+        default:'down'
       }
     },
     methods: {
@@ -37,3 +42,25 @@
     }
   }
 </script>
+
+
+<style>
+.dropdown-menu-narrow{
+  min-width:52px;
+}
+
+.dropdown-menu-narrow li{
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  line-height: 32px;
+  cursor: pointer;
+}
+
+.dropdown-menu-narrow li:last-child{
+  border: 0;
+}
+
+.dropdown-menu-narrow li.selected, .dropdown-menu-narrow li:hover{
+  background-color:#eee;
+}
+</style>

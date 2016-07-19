@@ -1,5 +1,5 @@
 <script>
-import { modifyElement }  from '../store/actions'
+import { modifyElement,removeElement }  from '../store/actions'
 import { getWorkspaceData } from '../store/getters'
 import elementCommon from './element-common.vue'
 import imageLibrary from './image-library.vue'
@@ -16,7 +16,8 @@ export default {
   },
   vuex: {
     actions: {
-      modifyElement
+      modifyElement,
+      removeElement
     },
     getters: {
       workspace: getWorkspaceData,
@@ -25,9 +26,12 @@ export default {
   data (){
     return {
       buttonGroup:'main',
-      showImageLibary: false,
+      showImageLibary: (this.element.src == ''),
       imageObj: {},
-      linkObj: merge({}, this.element.link)
+      linkObj: merge({}, this.element.link),
+      resize:{
+        aspectRatio: true
+      }
     }
   },
   methods: {
@@ -73,18 +77,29 @@ export default {
         }
       }
       this.modifyElement(this.sectionId, this.elementId, newPropsObj);
+    },
+    'showImageLibary': function(value){
+      if(!value && !this.imageObj.url && this.element.src == ''){
+        let vm = this;
+        Vue.nextTick(function(){
+          vm.removeElement(vm.sectionId, vm.elementId);
+        });
+      }
     }
+  },
+  ready: function(){
+    // this.edit();
   }
 }
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize">
     <div slot="content" @dblclick="edit">
       <img v-bind:src="element.src" :style="{width:element.style[workspace.version].width,height:'auto'}">
     </div>
     <template slot="main-buttons-extend">
-      <div class="btn btn-primary" title="更换图片" @click="edit">更换图片</div>
+      <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>
       <div class="btn btn-default" title="链接" @click="buttonGroup='link'"><span class="glyphicon glyphicon-link"></span></div>
     </template>
     <template slot="button-groups">

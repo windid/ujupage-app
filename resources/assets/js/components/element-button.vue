@@ -37,14 +37,19 @@ export default {
         text: this.element.text,
         props: merge({}, this.element.props),
       },
+      linkObj: merge({}, this.element.link),
       //js模拟css hover伪类效果
-      hover: false
+      hover: false,
+      resize:{}
     }
   },
   computed:{
     // 编辑状态不允许拖动
     draggable: function(){
       return !this.editing && this.buttonGroup !== 'link';
+    },
+    resizable: function(){
+      return !this.editing;
     }
   },
   methods: {
@@ -67,6 +72,7 @@ export default {
   events:{
     'link-edit-done':function(changed, linkObj){
       if (changed){
+        this.linkObj = merge({}, linkObj);
         const newPropsObj = {link:linkObj};
         this.modifyElement(this.sectionId, this.elementId, newPropsObj); 
       }
@@ -91,7 +97,7 @@ export default {
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize" :resizable="resizable">
     <div slot="content" class="element-button"
       @dblclick="edit" 
       @mouseenter = "hover = true"
@@ -102,7 +108,7 @@ export default {
           fontSize: button.props.fontSize,
           backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),
           borderColor:getColor(button.props.borderColor),
-          color:getColor(button.props.fontColor)
+          color:getColor(button.props.fontColor),
         }
       ]" 
       :class="{
@@ -121,7 +127,7 @@ export default {
       <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">
         <div class="btn btn-success" @click="editDone"><span class="glyphicon glyphicon-ok"></span></div>
       </div>
-      <link-edit v-show="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="element.link"></link-edit>
+      <link-edit v-show="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj"></link-edit>
     </template>
     <template slot="tools">
       <button-edit :show.sync="editing" :button.sync="button"></button-edit>
@@ -134,8 +140,9 @@ export default {
 .element-button{
   text-align: center;
   cursor:pointer;
-  padding:6px;
   border-width: 2px;
+  padding: 6px;
+  height:100%;
 }
 
 .element-button-border {

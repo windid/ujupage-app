@@ -56,7 +56,8 @@ export default {
 .sidebar-body {
   padding:12px;
   height:100%;
-  overflow-x: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
 }
 

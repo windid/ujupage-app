@@ -32,6 +32,22 @@ export default {
     loadPage: function(){
       let data = {
         page: {
+          settings: {
+            seo: {
+              'pageTitle':'Hello, Juye Page!',
+              'keywords':'Landing Pages, 落地页, 着陆页',
+              'description':'It is an amazing tool for e-marketing!'
+            },
+            goals: {
+              first:""
+            },
+            code: {
+              header:  'console.log(123)',
+              bodyIn:  '',
+              bodyOut: ''
+            }
+          },
+
           colorSet: ['#E6E2AF',"#A7A37E","#EFECCA","#046380","#002F2F"],
 
           sections: [
@@ -41,24 +57,24 @@ export default {
                 "mobile":{"background-color":"0",height:"500px"}
               },
               elements:{
-                // "dfgs234f":{
-                //   type:"image",
-                //   src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
-                //   style:{
-                //     'pc':{
-                //       left:"200px",
-                //       top:"100px",
-                //       width:"",
-                //       zIndex:101
-                //     },
-                //     'mobile':{
-                //       left:"50px",
-                //       top:"150px",
-                //       width:"",
-                //       zIndex:101
-                //     }
-                //   }
-                // },
+                "dfgs234f":{
+                  type:"image",
+                  src:"http://www.ujumedia.com/data/link/151110/151110060506teqwje.png",
+                  style:{
+                    'pc':{
+                      left:"200px",
+                      top:"100px",
+                      width:"",
+                      zIndex:50000
+                    },
+                    'mobile':{
+                      left:"50px",
+                      top:"150px",
+                      width:"",
+                      zIndex:50000
+                    }
+                  }
+                },
                 "fgh24g":{
                   type:"button",
                   text:"点击下载",
@@ -78,13 +94,13 @@ export default {
                       left:"100px",
                       top:"20px",
                       width:"160px",
-                      zIndex:300
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"50px",
                       top:"20px",
                       width:"100px",
-                      zIndex:300
+                      zIndex:50000
                     }
                   },
                   link:{}
@@ -94,15 +110,15 @@ export default {
                   style:{
                     'pc':{
                       left:"200px",
-                      top:"150px",
+                      top:"250px",
                       width:"300px",
-                      zIndex:3000
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"50px",
-                      top:"150px",
+                      top:"250px",
                       width:"300px",
-                      zIndex:1342
+                      zIndex:50000
                     }
                   },
                   props:{
@@ -139,7 +155,8 @@ export default {
                     {
                       label: "testDropdown",
                       type: "dropdown",
-                      options: ["wawawa","hahaha","hehehe"]
+                      options: ["wawawa","hahaha","hehehe"],
+                      validator: []
                     },
                     {
                       label: "性别",
@@ -175,20 +192,26 @@ export default {
               elements:{
                 "bifsdc":{
                   type:"text",
-                  content:"<p>wdfsdf<br>dksjlfjslkd jksdfs ksdfksd</p>",
+                  content:"<p>wdfsdf<br>dksjlfjslkd jksdfs ksdfksd</p><p><br></p>",
                   style:{
                     'pc':{
                       left:"200px",
                       top:"100px",
                       width:"500px",
-                      zIndex:100
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"100px",
                       top:"100px",
                       width:"200px",
-                      zIndex:100
+                      zIndex:50000
                     }
+                  },
+                  fontStyle:{
+                    color:"3",
+                    fontSize:"14px",
+                    lineHeight:"1.4",
+                    textAlign:"left"
                   }
                 },
               },
@@ -201,20 +224,26 @@ export default {
               elements:{
                 "123ghfdv":{
                   type:"text",
-                  content:"Hello, World!",
+                  content:"<p>Hello, World!</p>",
                   style:{
                     'pc': {
                       left:"500px",
                       top:"100px",
                       width:"458px",
-                      zIndex:1000
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"150px",
                       top:"100px",
                       width:"200px",
-                      zIndex:100
+                      zIndex:50000
                     }
+                  },
+                  fontStyle:{
+                    color:"3",
+                    fontSize:"14px",
+                    lineHeight:"1.6",
+                    textAlign:"left"
                   }
                 },
                 "testurltesturl":{
@@ -225,13 +254,13 @@ export default {
                       left:"200px",
                       top:"100px",
                       width:"333px",
-                      zIndex:101
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"50px",
                       top:"150px",
                       width:"120px",
-                      zIndex:101
+                      zIndex:50000
                     }
                   }
                 },
@@ -245,20 +274,26 @@ export default {
               elements:{
                 "bvsdfg23":{
                   type:"text",
-                  content:"Hello, World!",
+                  content:"<p>Hello, World!</p>",
                   style: {
                     'pc':{
                       left:"500px",
                       top:"100px",
                       width:"125px",
-                      zIndex:1000
+                      zIndex:50000
                     },
                     'mobile':{
                       left:"150px",
                       top:"100px",
                       width:"200px",
-                      zIndex:2000
+                      zIndex:50000
                     }
+                  },
+                  fontStyle:{
+                    color:"3",
+                    fontSize:"14px",
+                    lineHeight:"1.6",
+                    textAlign:"center"
                   }
                 },
               }
@@ -275,7 +310,15 @@ export default {
           ] //end sections
         }//end page
       }
-      this.pageInit(data);
+      let variationId = 1;
+      this.$http.get('/editor/page/init/' + variationId).then(function(response){
+        let data = response.json();
+        let page = data.html_json;
+        this.pageInit({page:page});
+      },function(response){
+        console.log(response.json());
+      });
+
     }
   },
   created: function(){

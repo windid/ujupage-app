@@ -66,17 +66,17 @@ export default {
       if (target !== fieldId){
         this.formFields[fieldId] = this.formFields.splice(target, 1, this.formFields[fieldId])[0];
       }
+      this.editingField = null;
     },
     addOption: function(fieldId){
       let newOptionId = this.formFields[fieldId].options.length;
       this.formFields[fieldId].options.push("");
-      
-      setTimeout(function(){
+      Vue.nextTick(function(){
         var el = document.getElementById('form-field-options');
         el.scrollTop = el.scrollHeight;
         var input = document.getElementById('field-option-' + fieldId + '-' + newOptionId);
         input.focus();
-      },10);
+      });
     },
     removeOption: function(fieldId,optionId){
       this.formFields[fieldId].options.splice(optionId, 1);
@@ -122,7 +122,7 @@ export default {
     <div slot="body" @click="editingField = null">
 
       <div class="sidebar-block">
-        <div v-for="(fieldId,field) in formFields" class="form-field-label-wrapper" @mouseenter="currentField = fieldId" @mouseleave="currentField = null" @click.stop @dblclick="editingField = fieldId" :style="{background:(editingField === fieldId)?'#fff':''}">
+        <div v-for="(fieldId,field) in formFields" class="form-field-label-wrapper" @mouseenter="currentField = fieldId" @mouseleave="currentField = null" @click.stop :style="{background:(editingField === fieldId)?'#fff':''}">
           <div class="form-field-label">
             {{field.label}}
           </div>
