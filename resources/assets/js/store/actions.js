@@ -8,6 +8,10 @@ export const setColorSet = function ({ dispatch, state }, colorSet) {
   dispatch('SET_COLOR_SET', colorSet)
 }
 
+export const saveSettings = function ({ dispatch, state }, settings) {
+  dispatch('SAVE_SETTINGS', settings)
+}
+
 //设置处于编辑状态的元素
 export const setActiveElementId = function ({ dispatch, state }, elementId) {
   dispatch('SET_ACTIVE_ELEMENT_ID', elementId)

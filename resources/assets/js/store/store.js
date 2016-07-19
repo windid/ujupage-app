@@ -32,17 +32,6 @@ const state = {
     }
   },
 
-  settings: {
-    'seo': {
-      'pageTitle':'Hello, Juye Page!',
-      'keywords':'Landing Pages, 落地页, 着陆页',
-      'description':'It is an amazing tool for e-marketing!'
-    },
-    'conversion': {
-
-    }
-  },
-
   page: {}
 }
 
@@ -56,7 +45,7 @@ const mutations = {
   
   //页面初始加载
   PAGE_INIT (state, data) {
-    state.page = data.page;
+    state.page = merge({},data.page);
     pageStates = [merge({},state.page)];
     pageHistoryIndex = 0;
     mutations.SUM_PAGE_HEIGHT(state);
@@ -92,13 +81,13 @@ const mutations = {
   SUM_PAGE_HEIGHT(state){
     let heightPC  = 0;
     let heightM   = 0;
-    for (let sectionId in state.page.sections){
-      heightPC += parseInt(state.page.sections[sectionId].style.pc.height);
-      heightM += parseInt(state.page.sections[sectionId].style.mobile.height);
-    }
+    state.page.sections.forEach(function(section){
+      heightPC += parseInt(section.style.pc.height);
+      heightM  += parseInt(section.style.mobile.height);
+    });
     state.workspace.heightPC = heightPC;
-    state.workspace.heightM = heightM;
-    state.workspace.height = (state.workspace.version == 'pc') ? heightPC : heightM;
+    state.workspace.heightM  = heightM;
+    state.workspace.height   = (state.workspace.version == 'pc') ? heightPC : heightM;
   },
 
   //移动板块
@@ -294,6 +283,11 @@ const mutations = {
     }
     state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['zIndex'] = zIndex;
     mutations.SAVE_PAGE_STATE(state);    
+  },
+
+  SAVE_SETTINGS(state, settings){
+    state.page.settings = merge({},settings);
+    mutations.SAVE_PAGE_STATE(state);
   },
 
   //修改配色方案

@@ -2,7 +2,7 @@
   z-index:810000;
   height:45px;
   width:100%;
-  min-width:980px;
+  min-width:990px;
   position:relative;
   border-top:1px solid #ccc;
   border-bottom:4px solid #555;
@@ -29,15 +29,15 @@
   background-color:#ddd;
 }
 
-.do-disabled{
+.button-disabled{
   cursor: not-allowed!important;
 }
 
-.do-disabled span{
+.button-disabled span{
   opacity:0.4;
 }
 
-.do-disabled:hover{
+.button-disabled:hover{
   background-color:#f9f9f9!important;
 }
 

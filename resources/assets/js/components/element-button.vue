@@ -37,6 +37,7 @@ export default {
         text: this.element.text,
         props: merge({}, this.element.props),
       },
+      linkObj: merge({}, this.element.link),
       //js模拟css hover伪类效果
       hover: false,
       resize:{}
@@ -71,6 +72,7 @@ export default {
   events:{
     'link-edit-done':function(changed, linkObj){
       if (changed){
+        this.linkObj = merge({}, linkObj);
         const newPropsObj = {link:linkObj};
         this.modifyElement(this.sectionId, this.elementId, newPropsObj); 
       }
@@ -125,7 +127,7 @@ export default {
       <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">
         <div class="btn btn-success" @click="editDone"><span class="glyphicon glyphicon-ok"></span></div>
       </div>
-      <link-edit v-show="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="element.link"></link-edit>
+      <link-edit v-show="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj"></link-edit>
     </template>
     <template slot="tools">
       <button-edit :show.sync="editing" :button.sync="button"></button-edit>

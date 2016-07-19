@@ -140,8 +140,7 @@ export default {
             width:"160px",
             zIndex:this.workspace.zIndex.mobile.max + 1
           }
-        },
-        link:{}
+        }
       };
       this.addElement(this.workspace.currentSectionId, defaultButton);
     },

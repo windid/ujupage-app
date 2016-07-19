@@ -32,6 +32,22 @@ export default {
     loadPage: function(){
       let data = {
         page: {
+          settings: {
+            seo: {
+              'pageTitle':'Hello, Juye Page!',
+              'keywords':'Landing Pages, 落地页, 着陆页',
+              'description':'It is an amazing tool for e-marketing!'
+            },
+            goals: {
+              first:""
+            },
+            code: {
+              header:  'console.log(123)',
+              bodyIn:  '',
+              bodyOut: ''
+            }
+          },
+
           colorSet: ['#E6E2AF',"#A7A37E","#EFECCA","#046380","#002F2F"],
 
           sections: [
@@ -294,7 +310,15 @@ export default {
           ] //end sections
         }//end page
       }
-      this.pageInit(data);
+      let variationId = 1;
+      this.$http.get('/editor/page/init/' + variationId).then(function(response){
+        let data = response.json();
+        let page = data.html_json;
+        this.pageInit({page:page});
+      },function(response){
+        console.log(response.json());
+      });
+
     }
   },
   created: function(){
