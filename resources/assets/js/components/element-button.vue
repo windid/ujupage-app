@@ -106,16 +106,14 @@ export default {
         {
           borderRadius: button.props.borderRadius,
           fontSize: button.props.fontSize,
+          boxShadow: button.props.boxShadow,
+          fontWeight: button.props.fontWeight,
+          borderStyle: button.props.borderStyle,
           backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),
           borderColor:getColor(button.props.borderColor),
-          color:getColor(button.props.fontColor),
+          color:getColor(button.props.color),
         }
-      ]" 
-      :class="{
-        'element-button-shadow':button.props.shadow,
-        'element-button-border':button.props.border,
-        'element-button-bold':button.props.bold
-      }">
+      ]">
       {{button.text}}
     </div>
     
@@ -144,17 +142,4 @@ export default {
   padding: 6px;
   height:100%;
 }
-
-.element-button-border {
-  border-style: solid;
-}
-
-.element-button-bold {
-  font-weight: bold;
-}
-
-.element-button-shadow{
-  box-shadow:1px 3px 6px #888;
-}
-
 </style>

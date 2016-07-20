@@ -102,9 +102,9 @@ export default {
       </div>
 
       <div class="sidebar-block" style="text-align:center;">
-        <checkbox-button :value.sync="button.props.bold">加粗</checkbox-button> &nbsp; 
-        <checkbox-button :value.sync="button.props.shadow">阴影</checkbox-button> &nbsp; 
-        <checkbox-button :value.sync="button.props.border">边框</checkbox-button>
+        <checkbox-button :value.sync="button.props.fontWeight" :values="['normal','bold']">加粗</checkbox-button> &nbsp; 
+        <checkbox-button :value.sync="button.props.boxShadow" :values="['','1px 3px 6px #888']">阴影</checkbox-button> &nbsp; 
+        <checkbox-button :value.sync="button.props.borderStyle" :values="['','solid']">边框</checkbox-button>
       </div>
       
     </div>

@@ -19,7 +19,7 @@ class EditorController extends Controller {
     }
     
     // editor 页面
-    public function v1() {
+    public function index() {
         return view('editor');
     }
     
@@ -28,7 +28,7 @@ class EditorController extends Controller {
      * @param int $id 版本ID
      * @return string $content 页面内空
      */
-    public function preview(int $id) {
+    public function previewVariation(int $id) {
          
         $page_variation = $this->pageVariation->where('user_id', $this->user->id)
                                             ->with(['page', 'userSetting'])
@@ -38,7 +38,7 @@ class EditorController extends Controller {
         }
         
         $content = \App\Services\ParseHtml::decode($page_variation->toArray());
-        return response($content);
+        return view('preview.variation', compact('content'));
     }
     
     public function api(Request $request) {

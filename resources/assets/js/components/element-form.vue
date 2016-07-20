@@ -192,23 +192,21 @@ export default {
         </template>
 
       </div> <!-- End fields for -->
-      <div class="element-button"
+      <div class="element-button form-field-wrapper"
         @mouseenter = "hover = true"
         @mouseleave = "hover = false"
         :style="[
           {
             borderRadius: button.props.borderRadius,
             fontSize: button.props.fontSize,
+            boxShadow: button.props.boxShadow,
+            fontWeight: button.props.fontWeight,
+            borderStyle: button.props.borderStyle,
             backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),
             borderColor:getColor(button.props.borderColor),
-            color:getColor(button.props.fontColor)
+            color:getColor(button.props.color),
           }
-        ]" 
-        :class="{
-          'element-button-shadow':button.props.shadow,
-          'element-button-border':button.props.border,
-          'element-button-bold':button.props.bold
-        }">
+        ]">
         {{button.text}}
       </div>
     </div>
@@ -233,7 +231,7 @@ export default {
 
 <style>
 .form-field-wrapper{
-  padding:5px 0;
+  margin:6px 0;
 }
 
 .form-field-input{

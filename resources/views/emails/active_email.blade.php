@@ -1,1 +1,1 @@
-点击链接激活: [[ url('auth/active/'.$token) ]]
+点击链接激活: {{ url('auth/active/'.$token) }}

@@ -4,8 +4,8 @@
     </head>
     <body>
         
-        <form action="[[route('oauth.forget.post')]]" method="post">
-            [[csrf_field()]]
+        <form action="{{route('oauth.forget.post')}}" method="post">
+            {{csrf_field()}}
             
             <input type="text" name="email" value="" placeholder="邮箱"/>
             
