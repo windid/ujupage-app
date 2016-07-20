@@ -163,7 +163,9 @@ use AuthenticatesAndRegistersUsers,
             $user = Auth::user();
             $user->token = UserActive::createNewToken();
             $user->save();
-            return response()->json(['auth' => $user]);
+            
+            return redirect($request->get('to', '/'));
+            //return response()->json(['auth' => $user]);
         }
 
         return response()->json(['_csrf' => csrf_token(), 'error' => $this->getFailedLoginMessage()]);
