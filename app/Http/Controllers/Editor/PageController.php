@@ -76,8 +76,8 @@ class PageController extends Controller {
         if (!$page_variation) {
             return $this->err('找不到相关版本');
         }
-        
-        return $this->dump($page_variation->toArray());
+        //return $this->dump($page_variation->toArray());
+        return $page_variation->html_json;
     }
     
     /**
