@@ -21,7 +21,9 @@ class PageVariation extends Model {
     public function getSettingAttribute($value) {
         return json_decode($value, true);
     }
+    /*
     public function getHtmlJsonAttribute($value) {
         return json_decode($value, true);
     }
+    */
 }
