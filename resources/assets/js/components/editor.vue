@@ -311,7 +311,7 @@ export default {
         }//end page
       }
       let variationId = 1;
-      this.$http.get('/editor/page/init/' + variationId).then(function(response){
+      this.$http.get('/editor/page/variation/' + variationId).then(function(response){
         let data = response.json();
         let page = data.html_json;
         this.pageInit({page:page});

@@ -2,7 +2,7 @@
   <div @click="toggleValue"
   class="btn"
   v-bind:class="{
-    'active':value,
+    'active':value == values[1],
     'btn-success':type == 'success',
     'btn-warning':type == 'warning',
     'btn-info':type == 'info',
@@ -20,8 +20,12 @@
   export default {
     props: {
       value: {
-        type: Boolean,
         twoWay: true
+      },
+      values: {
+        default: function(){ 
+          return [false, true];
+        }
       },
       type: {
         type: String,
@@ -30,7 +34,7 @@
     },
     methods: {
       toggleValue() {
-        this.value = !this.value
+        this.value = (this.values[1] === this.value) ? this.values[0] : this.values[1];
       }
     }
   }

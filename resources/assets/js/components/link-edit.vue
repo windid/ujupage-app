@@ -56,7 +56,7 @@ export default {
 <div class="input-group shadow">
   <input type="text" class="form-control input-text-shadow link-input" placeholder="输入您的链接" v-model="link.url">
   <div class="input-group-addon link-input-option"><label><input type="checkbox" v-model="link.isNewTab"> 新窗口</label></div>
-  <div class="input-group-addon link-input-option"><label><input type="checkbox" v-model="link.isTrack"> 追踪</label></div>
+  <!-- <div class="input-group-addon link-input-option"><label><input type="checkbox" v-model="link.isTrack"> 追踪</label></div> -->
   <div class="input-group-addon link-input-option btn btn-danger" v-show="linkObj.url" @click="removeLink">取消链接</div>
   <div class="input-group-btn"><div class="btn btn-success" title="完成" @click="editDone">完成</div></div>
 </div>

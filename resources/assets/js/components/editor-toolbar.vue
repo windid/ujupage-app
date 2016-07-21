@@ -119,13 +119,13 @@ export default {
         props:{
           backgroundColor:'3',
           borderColor:'4',
-          fontColor:'0',
+          color:'0',
           hoverColor:'4',
           borderRadius:'5px',
           fontSize:'18px',
-          shadow:true,
-          bold:false,
-          border:false
+          borderStyle: '',
+          boxShadow:'1px 3px 6px #888',
+          fontWeight:'normal'
         },
         style:{
           'pc':{
@@ -189,13 +189,13 @@ export default {
           props:{
             backgroundColor:'3',
             borderColor:'4',
-            fontColor:'0',
+            color:'0',
             hoverColor:'4',
             borderRadius:'5px',
             fontSize:'18px',
-            shadow:true,
-            bold:false,
-            border:false
+            borderStyle: '',
+            boxShadow:'1px 3px 6px #888',
+            fontWeight:'normal'
           }
         }
       };
