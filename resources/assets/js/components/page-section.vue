@@ -73,7 +73,7 @@ export default {
     }"  
     v-on:mouseenter="setCurrentSectionId(sectionId)"
   >
-    <div class="editable-area" :style="{width: workspace.width + 'px'}">
+    <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">
       <!-- 页面元素组件 -->
       <component v-for="(elementId,element) in section.elements" :is="'element-' + element.type" :element="element" :section-id="sectionId" :element-id="elementId"></component>
       <!-- 板块操作按钮组 -->

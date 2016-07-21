@@ -71,9 +71,9 @@ export default {
           </div>
         </color-picker>
         
-        <color-picker :color.sync="button.props.fontColor" :position="'right'">
+        <color-picker :color.sync="button.props.color" :position="'right'">
           <div  data-toggle="dropdown" class="float-color-picker">
-            <div class="float-color-block shadow" :style="{background:getColor(button.props.fontColor)}"></div>
+            <div class="float-color-block shadow" :style="{background:getColor(button.props.color)}"></div>
             <div class="float-color-block-text">文字</div>
           </div>
         </color-picker>
@@ -104,7 +104,7 @@ export default {
       <div class="sidebar-block" style="text-align:center;">
         <checkbox-button :value.sync="button.props.fontWeight" :values="['normal','bold']">加粗</checkbox-button> &nbsp; 
         <checkbox-button :value.sync="button.props.boxShadow" :values="['','1px 3px 6px #888']">阴影</checkbox-button> &nbsp; 
-        <checkbox-button :value.sync="button.props.borderStyle" :values="['','solid']">边框</checkbox-button>
+        <checkbox-button :value.sync="button.props.borderStyle" :values="['none','solid']">边框</checkbox-button>
       </div>
       
     </div>

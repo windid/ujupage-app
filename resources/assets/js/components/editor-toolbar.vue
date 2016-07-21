@@ -76,7 +76,7 @@ export default {
             zIndex: this.workspace.zIndex.pc.max + 1
           },
           'mobile':{
-            left:"100px",
+            left:"80px",
             top:"10px",
             width:"200px",
             zIndex: this.workspace.zIndex.mobile.max + 1
@@ -123,7 +123,7 @@ export default {
           hoverColor:'4',
           borderRadius:'5px',
           fontSize:'18px',
-          borderStyle: '',
+          borderStyle: 'none',
           boxShadow:'1px 3px 6px #888',
           fontWeight:'normal'
         },
@@ -135,7 +135,7 @@ export default {
             zIndex:this.workspace.zIndex.pc.max + 1
           },
           'mobile':{
-            left:"120px",
+            left:"100px",
             top:"10px",
             width:"160px",
             zIndex:this.workspace.zIndex.mobile.max + 1
@@ -156,7 +156,7 @@ export default {
             zIndex:this.workspace.zIndex.pc.max + 1
           },
           'mobile':{
-            left:"50px",
+            left:"30px",
             top:"10px",
             width:"300px",
             zIndex:this.workspace.zIndex.mobile.max + 1
@@ -193,7 +193,7 @@ export default {
             hoverColor:'4',
             borderRadius:'5px',
             fontSize:'18px',
-            borderStyle: '',
+            borderStyle: 'none',
             boxShadow:'1px 3px 6px #888',
             fontWeight:'normal'
           }

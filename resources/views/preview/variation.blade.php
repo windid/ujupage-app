@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+  <meta name="viewport" content="width=360,minimum-scale=0.5, maximum-scale=5, user-scalable=no">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Editor</title>
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
@@ -36,6 +36,7 @@
     padding:6px;
     text-align: center;
     border-width: 2px;
+    width: 100%
   }
 
   .element-button a{
@@ -47,17 +48,28 @@
     height: 100%;
   }
 
-  .form-field{
-    margin:6px 0;
+  .form-group{
+    position: relative;
   }
 
   .form-field-input{
-    line-height: 30px;
-    width: 100%;
-    border-radius: 5px;
-    border-width: 1px;
-    border-style: solid;
-    padding: 2px 8px;
+    font-size: 16px;
+    height: 40px;
+    line-height: 20px;
+    padding: 4px 10px;
+  }
+
+  .label-inside{
+    position: absolute;
+    font-weight: normal;
+    top:9px;
+    left:11px;
+    font-size:16px;
+  }
+
+  .options-inline{
+    display: inline-block;
+    margin-right:10px;
   }
 
   @foreach($content['style']['pc'] as $class => $styles)
@@ -73,11 +85,11 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
 screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( max-device-width: 1000px )
 {
   body{
-    min-width: 400px;
+    min-width: 360px;
   }
 
   .section-inner{
-    width: 400px;
+    width: 360px;
   }
 
   @foreach($content['style']['mobile'] as $class => $styles)

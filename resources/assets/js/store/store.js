@@ -5,8 +5,8 @@ import randomChar from '../utils/randomChar'
 // Vue.use(Vuex)
 const state = {
   workspace: {
-    //页面宽度，桌面960，移动400
-    width: 400,
+    //页面宽度，桌面960，移动360
+    width: 360,
     //
     height:0,
     //PC版页面高度，需计算
@@ -196,7 +196,7 @@ const mutations = {
       state.workspace.width = 960;
     } else {
       state.workspace.version = 'mobile';
-      state.workspace.width = 400;
+      state.workspace.width = 360;
     }
     //重新计算页面高度
     mutations.SUM_PAGE_HEIGHT(state);
