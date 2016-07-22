@@ -72,7 +72,7 @@ export default {
 
       this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX;
 
-      this.resizable = true;
+      // this.resizable = true;
     },
     duplicate: function(){
       let newElement = merge({},this.element);
@@ -128,23 +128,22 @@ export default {
       });
     },
     dragDisable: function(){
-      let left = this.$el.style.left;
-      let top = this.$el.style.top;
       this.draggie.destroy()
-      this.$el.style.top = top;
-      this.$el.style.left = left;
+      this.updateStyle();
+      // this.$el.style.top = this.element.style[this.workspace.version].top;
+      // this.$el.style.left = this.element.style[this.workspace.version].left;
     },
     resizeInit: function(){
       let vm = this;
       let defaultResize = {
-        handles: "s,e",
+        handles: "e",
         aspectRatio: false
       };
-      let config = merge({}, defaultResize, this.resize);
+      this.resize = merge({}, defaultResize, this.resize);
       let vmDraggable = vm.draggable;
-      $(this.$els.content).resizable({
-        handles: config.handles,
-        aspectRatio: config.aspectRatio,
+      $(this.$el).resizable({
+        handles: vm.resize.handles,
+        aspectRatio: vm.resize.aspectRatio,
         containment: $('#content-area'),
         start: function(){
           vmDraggable = vm.draggable;
@@ -153,15 +152,23 @@ export default {
         stop: function(e, ui){
           vm.draggable = vmDraggable;
           vm.resizeElement(vm.sectionId,vm.elementId,ui.size);
+          vm.updateStyle();
         }
       });
     },
     resizeEnable: function(){
-      $(this.$els.content).resizable('enable')
+      $(this.$el).resizable('enable')
     },
     resizeDisable: function(){
-      $(this.$els.content).resizable('disable')
+      $(this.$el).resizable('disable')
     },
+    updateStyle: function(){
+      for (let prop in this.element.style[this.workspace.version]){
+        if (prop !== "zIndex"){
+          this.$el.style[prop] = this.element.style[this.workspace.version][prop];
+        }
+      }
+    }
   },
   watch: {
     'draggable': function(dragEnabled){
@@ -173,14 +180,13 @@ export default {
     'workspace.activeElementId': function(elementId){
       if (this.elementId === elementId){
         this.showToolbar();
-      } else {
-        this.resizeDisable();
       }
     }
   },
   ready: function(){
     this.dragEnable();
     this.resizeInit();
+    this.resizable = false;
     if (this.workspace.activeElementId === this.elementId){
       this.showToolbar();
     }
@@ -204,20 +210,26 @@ let getElementTop = function( element ){
 <template>
   <div class="element" @click="setActiveElementId(elementId)" @mousedown.stop 
     :style="{
-      left:element.style[this.workspace.version].left,
-      top:element.style[this.workspace.version].top,
+      left:element.style[workspace.version].left,
+      top:element.style[workspace.version].top,
+      width:element.style[workspace.version].width,
+      height:element.style[workspace.version].height || 'auto'
     }"
   >
     <div class="el-content" id="element-{{elementId}}" v-el:content 
       :style="{
-        zIndex:element.style[this.workspace.version].zIndex,
-        width:element.style[this.workspace.version].width,
-        height:element.style[this.workspace.version].height
+        zIndex:element.style[workspace.version].zIndex,
       }" 
       v-bind:class="{'outline':workspace.activeElementId === elementId}"
     >
       <slot name="content"></slot>
     </div>
+    <template v-if="resizable">
+      <div class="resizable-w" v-if="resize.handles && resize.handles.indexOf('w') > -1"></div>
+      <div class="resizable-e" v-if="resize.handles && resize.handles.indexOf('e') > -1"></div>
+      <div class="resizable-n" v-if="resize.handles && resize.handles.indexOf('n') > -1"></div>
+      <div class="resizable-s" v-if="resize.handles && resize.handles.indexOf('s') > -1"></div>
+    </template>
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar {{toolbarPosition}}" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>

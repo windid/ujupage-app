@@ -30,6 +30,7 @@
 
   .element{
     position: absolute;
+    word-wrap: break-word;
   }
 
   .element-button{
@@ -46,6 +47,11 @@
     left: 0;
     width: 100%;
     height: 100%;
+  }
+
+  .element-image{
+    width:100%;
+    height:auto;
   }
 
   .form-group{

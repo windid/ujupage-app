@@ -91,7 +91,6 @@ export default {
       formProps: merge({}, this.element.props),
       formFields: merge([], this.element.fields),
       resize:{
-        handles: "e"
       }
     }
   },
@@ -104,9 +103,12 @@ export default {
         boxShadow:(this.formProps.innerShadow) ? "inset 0 1px 6px #ccc" : ""
       }
     },
-    // 编辑状态不允许拖动
+    // 编辑状态不允许拖动，不允许缩放
     draggable: function(){
       return !this.editing;
+    },
+    resizable: function(){
+      return (!this.editing && this.workspace.activeElementId === this.elementId);
     },
     editing: function(){
       return (this.buttonEditing || this.propsEditing || this.fieldsEditing);
@@ -150,7 +152,7 @@ export default {
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize" :resizable="resizable">
     <div slot="content" @dblclick="edit">
       <div class="el-overlay"></div>
       <div v-for="(index,field) in formFields" class="form-group">

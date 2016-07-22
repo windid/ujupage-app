@@ -51,10 +51,16 @@ export default {
     }
   },
   ready:function() {
-    // $(this.$el).resizable({
-    //   handles: "s",
-    //   minHeight: 20,
-    // });
+    let vm = this;
+    $(this.$el).resizable({
+      handles: "s",
+      minHeight: 20,
+      stop: function(e, ui){
+        let style = {}
+        style[vm.workspace.version] = {height:ui.size.height + "px"};
+        vm.modifySection(vm.sectionId, style);
+      }
+    });
   }
 }
 </script>
@@ -90,7 +96,7 @@ export default {
       </div>
     </div>
     <section-edit :show.sync="sectionEditing" :section-id="sectionId" ></section-edit>
-<!--     <div class="resize-line"></div>
-    <div class="resize-line-wrap"></div> -->
+    <div class="section-line"></div>
+    <!-- <div class="resize-line-wrap"></div> -->
   </div>
 </template>

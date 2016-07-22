@@ -132,12 +132,14 @@ export default {
             left:"400px",
             top:"10px",
             width:"160px",
+            height:"37px",
             zIndex:this.workspace.zIndex.pc.max + 1
           },
           'mobile':{
             left:"100px",
             top:"10px",
             width:"160px",
+            height:"37px",
             zIndex:this.workspace.zIndex.mobile.max + 1
           }
         }
@@ -211,12 +213,14 @@ export default {
             left:"330px",
             top:"10px",
             width:"300px",
+            height:"150px",
             zIndex:this.workspace.zIndex.pc.max + 1
           },
           'mobile':{
             left:"50px",
             top:"10px",
             width:"300px",
+            height:"150px",
             zIndex:this.workspace.zIndex.mobile.max + 1
           }
         }

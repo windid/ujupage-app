@@ -9,7 +9,7 @@ class ParseHtml {
     protected static $color_set = array();
     
     public static function decode($array) {
-        $content = $array['html_json'];
+        $content = json_decode($array['html_json'],true);
 
         self::$color_set = $content['colorSet'];
 
