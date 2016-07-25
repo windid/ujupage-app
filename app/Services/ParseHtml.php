@@ -9,7 +9,7 @@ class ParseHtml {
     protected static $color_set = array();
     
     public static function decode($array) {
-        $content = $array['html_json'];
+        $content = json_decode($array['html_json'],true);
 
         self::$color_set = $content['colorSet'];
 
@@ -21,7 +21,7 @@ class ParseHtml {
             self::parseSection($section_id, $section);
         }
 
-        print_r(self::$page);
+        // print_r(self::$page);
 
         return self::$page;
     }
@@ -66,10 +66,14 @@ class ParseHtml {
     }
 
     protected static function parseElementImage($element_id, $element){
-        
     }
 
     protected static function parseElementForm($element_id, $element){
+        self::$page['style']['common']['element-'.$element_id." label"] = self::parseStyles(['color'=>$element['props']['labelColor']]);
+        $hover_color = self::getColor($element['button']['props']['hoverColor']);
+        unset ($element['button']['props']['hoverColor']);
+        self::$page['style']['common']['element-'.$element_id."-button"] = self::parseStyles($element['button']['props']);
+        self::$page['style']['common']['element-'.$element_id."-button:hover"] = ['background-color'=>$hover_color];
 
     }
 

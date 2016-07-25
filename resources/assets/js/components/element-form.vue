@@ -91,7 +91,6 @@ export default {
       formProps: merge({}, this.element.props),
       formFields: merge([], this.element.fields),
       resize:{
-        handles: "e"
       }
     }
   },
@@ -104,9 +103,12 @@ export default {
         boxShadow:(this.formProps.innerShadow) ? "inset 0 1px 6px #ccc" : ""
       }
     },
-    // 编辑状态不允许拖动
+    // 编辑状态不允许拖动，不允许缩放
     draggable: function(){
       return !this.editing;
+    },
+    resizable: function(){
+      return (!this.editing && this.workspace.activeElementId === this.elementId);
     },
     editing: function(){
       return (this.buttonEditing || this.propsEditing || this.fieldsEditing);
@@ -150,10 +152,10 @@ export default {
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize" :resizable="resizable">
     <div slot="content" @dblclick="edit">
       <div class="el-overlay"></div>
-      <div v-for="(index,field) in formFields" class="form-field-wrapper">
+      <div v-for="(index,field) in formFields" class="form-group">
         <template v-if="field.type === 'text'">
           <div v-if="!formProps.labelInside"><label :style="{color:getColor(formProps.labelColor)}">{{field.label}}</label></div>
           <input type="text" class="form-field-input" :style="fieldStyles" value="{{formProps.labelInside ? field.label : ''}}">
@@ -166,12 +168,16 @@ export default {
 
         <template v-if="field.type === 'radio'">
           <div v-if="!field.hideLabel"><label :style="{color:getColor(formProps.labelColor)}">{{field.label}}</label></div>
-          <div v-for="option in field.options" track-by="$index" :class="{'options-in-line':field.optionsInLine}"><label :style="{color:getColor(formProps.labelColor)}"><input type="radio"> {{option}}</label></div>
+          <div v-for="option in field.options" track-by="$index" :class="{'options-in-line':field.optionsInLine}">
+            <label :style="{color:getColor(formProps.labelColor)}"><input type="radio"> {{option}}</label>
+          </div>
         </template>
 
         <template v-if="field.type === 'checkbox'">
           <div v-if="!field.hideLabel"><label :style="{color:getColor(formProps.labelColor)}">{{field.label}}</label></div>
-          <div v-for="option in field.options" track-by="$index" :class="{'options-in-line':field.optionsInLine}"><label :style="{color:getColor(formProps.labelColor)}"><input type="checkbox"> {{option}}</label></div>
+          <div v-for="option in field.options" track-by="$index" :class="{'options-in-line':field.optionsInLine}">
+            <label :style="{color:getColor(formProps.labelColor)}"><input type="checkbox"> {{option}}</label>
+          </div>
         </template>
 
         <template v-if="field.type === 'dropdown'">
@@ -192,7 +198,7 @@ export default {
         </template>
 
       </div> <!-- End fields for -->
-      <div class="element-button form-field-wrapper"
+      <button type="submit" class="form-control element-button form-group"
         @mouseenter = "hover = true"
         @mouseleave = "hover = false"
         :style="[
@@ -208,7 +214,7 @@ export default {
           }
         ]">
         {{button.text}}
-      </div>
+      </button>
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click="edit">编辑</div>

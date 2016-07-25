@@ -40,7 +40,8 @@ export default {
       linkObj: merge({}, this.element.link),
       //js模拟css hover伪类效果
       hover: false,
-      resize:{}
+      resize:{
+      }
     }
   },
   computed:{
@@ -49,7 +50,7 @@ export default {
       return !this.editing && this.buttonGroup !== 'link';
     },
     resizable: function(){
-      return !this.editing;
+      return (!this.editing && this.buttonGroup !== 'link' && this.workspace.activeElementId === this.elementId);
     }
   },
   methods: {

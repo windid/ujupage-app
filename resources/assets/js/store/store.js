@@ -5,8 +5,8 @@ import randomChar from '../utils/randomChar'
 // Vue.use(Vuex)
 const state = {
   workspace: {
-    //页面宽度，桌面960，移动400
-    width: 400,
+    //页面宽度，桌面960，移动360
+    width: 360,
     //
     height:0,
     //PC版页面高度，需计算
@@ -50,6 +50,7 @@ const mutations = {
     pageHistoryIndex = 0;
     mutations.SUM_PAGE_HEIGHT(state);
     mutations.COUNT_PAGE_LAYER(state);
+    console.log(state.page)
   },
 
   //对sections进行操作过后保存其状态，供撤销重做
@@ -110,8 +111,8 @@ const mutations = {
   ADD_SECTION(state){
     state.page.sections.push({
       style:{
-        "pc":{"background-color":"",height:"200px"},
-        "mobile":{"background-color":"",height:"200px"}
+        "pc":{"background-color":"",height:"500px"},
+        "mobile":{"background-color":"",height:"500px"}
       },
       elements:{}
     });
@@ -134,7 +135,8 @@ const mutations = {
     // } else {
     //   state.page.sections[sectionId].styleM = extend({}, stateSection.styleM, style);
     // }
-    state.page.sections[sectionId].style[state.workspace.version] = extend({}, stateSection.style[state.workspace.version], style);
+    state.page.sections[sectionId].style = merge({}, stateSection.style, style);
+    mutations.SUM_PAGE_HEIGHT(state);
     mutations.SAVE_PAGE_STATE(state);
   },
 
@@ -196,7 +198,7 @@ const mutations = {
       state.workspace.width = 960;
     } else {
       state.workspace.version = 'mobile';
-      state.workspace.width = 400;
+      state.workspace.width = 360;
     }
     //重新计算页面高度
     mutations.SUM_PAGE_HEIGHT(state);
@@ -256,7 +258,12 @@ const mutations = {
   //缩放元素
   RESIZE_ELEMENT(state, sectionId, elementId, newSize){
     state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['width'] = newSize.width + "px";
-    state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['height'] = newSize.height + "px";
+    const height = state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['height'];
+    if (height && height !== "auto"){
+      state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['height'] = newSize.height + "px";
+    } else {
+      state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['height'] = "auto";      
+    }
     mutations.SAVE_PAGE_STATE(state);
   },
 

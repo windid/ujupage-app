@@ -51,10 +51,16 @@ export default {
     }
   },
   ready:function() {
-    // $(this.$el).resizable({
-    //   handles: "s",
-    //   minHeight: 20,
-    // });
+    let vm = this;
+    $(this.$el).resizable({
+      handles: "s",
+      minHeight: 20,
+      stop: function(e, ui){
+        let style = {}
+        style[vm.workspace.version] = {height:ui.size.height + "px"};
+        vm.modifySection(vm.sectionId, style);
+      }
+    });
   }
 }
 </script>
@@ -73,7 +79,7 @@ export default {
     }"  
     v-on:mouseenter="setCurrentSectionId(sectionId)"
   >
-    <div class="editable-area" :style="{width: workspace.width + 'px'}">
+    <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">
       <!-- 页面元素组件 -->
       <component v-for="(elementId,element) in section.elements" :is="'element-' + element.type" :element="element" :section-id="sectionId" :element-id="elementId"></component>
       <!-- 板块操作按钮组 -->
@@ -90,7 +96,7 @@ export default {
       </div>
     </div>
     <section-edit :show.sync="sectionEditing" :section-id="sectionId" ></section-edit>
-<!--     <div class="resize-line"></div>
-    <div class="resize-line-wrap"></div> -->
+    <div class="section-line"></div>
+    <!-- <div class="resize-line-wrap"></div> -->
   </div>
 </template>

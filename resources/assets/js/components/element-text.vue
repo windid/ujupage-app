@@ -38,13 +38,15 @@ export default {
       },
       changed: false,
       resize: {
-        handles: 'e'
       }
     }
   },
   computed:{
     draggable: function(){
       return !this.editing;
+    },
+    resizable: function(){
+      return (!this.editing && this.workspace.activeElementId === this.elementId);
     }
   },
   methods: {
@@ -85,8 +87,8 @@ export default {
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize">
-    <div v-el:content slot="content" @dblclick="edit" contenteditable="{{editing}}" spellcheck="false" style="outline:none" :style="[textElement.fontStyle,{cursor:editing ? 'text' : 'pointer',color:getColor(textElement.fontStyle.color)}]" v-content="textElement.content">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize" :resizable.sync="resizable">
+    <div class="element-text-content" v-el:content slot="content" @dblclick="edit" contenteditable="{{editing}}" spellcheck="false" style="outline:none" :style="[textElement.fontStyle,{cursor:editing ? 'text' : 'pointer',color:getColor(textElement.fontStyle.color)}]" v-content="textElement.content">
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click="edit">编辑</div>
@@ -108,3 +110,9 @@ export default {
     </template>
   </element-common>
 </template>
+
+<style>
+.element-text-content p{
+  margin:0;
+}
+</style>

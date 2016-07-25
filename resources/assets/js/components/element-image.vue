@@ -30,7 +30,7 @@ export default {
       imageObj: {},
       linkObj: merge({}, this.element.link),
       resize:{
-        aspectRatio: true
+        // aspectRatio: true
       }
     }
   },
@@ -42,6 +42,9 @@ export default {
   computed: {
     draggable: function(){
       return this.buttonGroup !== 'link';
+    },
+    resizable: function(){
+      return (this.buttonGroup !== 'link' && this.workspace.activeElementId === this.elementId);
     }
   },
   events:{
@@ -61,9 +64,9 @@ export default {
 
       if (!this.element.style.pc.width){
         const pcWidth     = (newImage.width > 960) ? 960 : newImage.width;
-        const mobileWidth = (newImage.width > 400) ? 400 : newImage.width;
+        const mobileWidth = (newImage.width > 360) ? 360 : newImage.width;
         const pcLeft      = (960 - pcWidth) / 2;
-        const mobileLeft  = (400 - mobileWidth) /2;
+        const mobileLeft  = (360 - mobileWidth) /2;
 
         newPropsObj.style = {
           'pc': {
@@ -94,9 +97,9 @@ export default {
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize" :resizable.sync="resizable">
     <div slot="content" @dblclick="edit">
-      <img v-bind:src="element.src" :style="{width:element.style[workspace.version].width,height:'auto'}">
+      <img v-bind:src="element.src" :style="{width:'100%',height:'auto'}">
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>

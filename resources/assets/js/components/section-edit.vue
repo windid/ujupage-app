@@ -21,11 +21,11 @@
     </div>
     <div slot="body">
       <div class="sidebar-block">
-        <color-picker :color.sync="style['background-color']"></color-picker> &nbsp; 背景颜色
+        <color-picker :color.sync="style[workspace.version]['background-color']"></color-picker> &nbsp; 背景颜色
       </div>
       <div class="sidebar-block">
-        <div><color-picker :color.sync="style['border-color']"></color-picker> &nbsp; 边框颜色</div>
-        <div class="sidebar-block-inside"><input type="text" class="border-width" v-model="style['border-width']"> &nbsp; 边框尺寸</div>
+        <div><color-picker :color.sync="style[workspace.version]['border-color']"></color-picker> &nbsp; 边框颜色</div>
+        <div class="sidebar-block-inside"><input type="text" class="border-width" v-model="style[workspace.version]['border-width']"> &nbsp; 边框尺寸</div>
       </div>
     </div>
       
@@ -64,26 +64,13 @@ export default {
   data (){
     return {
       backgroundColor:"0",
-      style:{}
-      // style:this.sections[this.sectionId]['style'][this.workspace.version]
-      //section: this.sections[this.workspace.activeSectionId]
+      style:merge({},this.sections[this.sectionId]['style'])
     }
   },
-  // computed: {
-  //   style: function(){
-  //     if (this.sectionId){
-  //       return this.sections[this.sectionId]['style'][this.workspace.version]
-  //     } else {
-  //       return {}
-  //     }
-  //   }
-  // },
   watch: {
     'style': {
       handler: function(newStyle,oldStyle){
-        if (oldStyle.height){
-          this.modifySection(this.sectionId,newStyle);
-        }
+        this.modifySection(this.sectionId,newStyle);
       },
       deep:true
     }
@@ -104,10 +91,7 @@ export default {
       sections: getSections
     }
   },
-  created(){
-    this.style = merge({},this.sections[this.sectionId]['style'][this.workspace.version]);
-  },
-  ready (){
+  ready(){
     var el = this.$el;
     this._closeEvent = eventHandler.listen(window, 'click', (e)=> {
       if (!el.contains(e.target)){

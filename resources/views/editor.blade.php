@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Editor</title>
+  <link href="{{asset('js/libs/jquery-ui/jquery-ui.min.css')}}" rel="stylesheet">
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
   <link href="{{asset('css/editor.css')}}" rel="stylesheet">
-  <link href="{{asset('js/libs/jquery-ui/jquery-ui.min.css')}}" rel="stylesheet">
   <style>
     .loading{
       width:128px;
