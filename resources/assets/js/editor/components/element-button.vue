@@ -65,7 +65,7 @@ export default {
       this.editing = false;
       this.buttonGroup = 'main';
       if (this.changed){
-        this.modifyElement(this.sectionId, this.elementId, this.button);
+        this.modifyElement(this.elementId, this.button);
         this.changed = false;
       }
     }
@@ -75,7 +75,7 @@ export default {
       if (changed){
         this.linkObj = merge({}, linkObj);
         const newPropsObj = {link:linkObj};
-        this.modifyElement(this.sectionId, this.elementId, newPropsObj); 
+        this.modifyElement(this.elementId, newPropsObj); 
       }
       this.buttonGroup = 'main';
     },

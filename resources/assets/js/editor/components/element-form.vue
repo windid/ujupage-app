@@ -72,7 +72,7 @@ export default {
           props:this.formProps,
           fields:this.formFields
         };
-        this.replaceElement(this.sectionId, this.elementId, formObj);
+        this.replaceElement(this.elementId, formObj);
         this.changed = false;
       }
     }
@@ -99,8 +99,8 @@ export default {
       return {
         backgroundColor:this.getColor(this.formProps.fieldColor),
         borderColor:this.getColor(this.formProps.borderColor),
-        color:this.getColor(this.formProps.labelColor),
-        boxShadow:(this.formProps.innerShadow) ? "inset 0 1px 6px #ccc" : ""
+        color:this.getColor(this.formProps.fontColor),
+        boxShadow:this.formProps.boxShadow
       }
     },
     // 编辑状态不允许拖动，不允许缩放
@@ -158,12 +158,12 @@ export default {
       <div v-for="(index,field) in formFields" class="form-group">
         <template v-if="field.type === 'text'">
           <div v-if="!formProps.labelInside"><label :style="{color:getColor(formProps.labelColor)}">{{field.label}}</label></div>
-          <input type="text" class="form-field-input" :style="fieldStyles" value="{{formProps.labelInside ? field.label : ''}}">
+          <input type="text" class="form-control form-field-input" :style="fieldStyles" value="{{formProps.labelInside ? field.label : ''}}">
         </template>
 
         <template v-if="field.type === 'textarea'">
           <div v-if="!formProps.labelInside"><label :style="{color:getColor(formProps.labelColor)}">{{field.label}}</label></div>
-          <textarea class="form-field-input" :style="fieldStyles" rows="3">{{formProps.labelInside ? field.label : ''}}</textarea>
+          <textarea class="form-control form-field-input" :style="fieldStyles" rows="3">{{formProps.labelInside ? field.label : ''}}</textarea>
         </template>
 
         <template v-if="field.type === 'radio'">
@@ -181,24 +181,30 @@ export default {
         </template>
 
         <template v-if="field.type === 'dropdown'">
-          <div class="form-field-input" :style="fieldStyles">{{field.label}} <span class="caret"></span></div>
-          <div style="clear:both;"></div>
+          <select class="form-control form-field-input" :style="fieldStyles">
+            <option value="">{{field.label}} </option>
+          </select>
         </template>
 
         <template v-if="field.type === 'china-state'">
+          <div v-if="!field.hideLabel"><label :style="{color:getColor(formProps.labelColor)}">{{field.label}}</label></div>
           <div>
-            <div v-if="!field.hideLabel"><label :style="{color:getColor(formProps.labelColor)}">{{field.label}}</label></div>
-          </div>
-          <div>
-            <div class="form-field-input form-field-dropdown" style="margin-right:2%;width:32%" :style="fieldStyles">省份 <span class="caret"></span></div>
-            <div class="form-field-input form-field-dropdown" style="margin-right:2%;width:32%" :style="fieldStyles">城市 <span class="caret"></span></div>
-            <div class="form-field-input form-field-dropdown" style="width:32%" :style="fieldStyles">区县 <span class="caret"></span></div>
+            <select class="form-control form-field-input" style="float:left;margin-right:2%;width:32%" :style="fieldStyles">
+              <option value="">省份</option>
+            </select>
+            <select class="form-control form-field-input" style="float:left;margin-right:2%;width:32%" :style="fieldStyles">
+              <option value="">城市</option>
+            </select>
+            <select class="form-control form-field-input" style="float:left;width:32%" :style="fieldStyles">
+              <option value="">区县</option>
+            </select>
             <div style="clear:both;"></div>
           </div>
         </template>
 
       </div> <!-- End fields for -->
-      <button type="submit" class="form-control element-button form-group"
+      
+      <button type="submit" class="form-control element-button"
         @mouseenter = "hover = true"
         @mouseleave = "hover = false"
         :style="[
@@ -241,12 +247,10 @@ export default {
 }
 
 .form-field-input{
-  line-height: 30px;
-  width: 100%;
-  border-radius: 5px;
-  border-width: 1px;
-  border-style: solid;
-  padding: 2px 8px;
+  font-size: 16px;
+  height: 40px;
+  line-height: 20px;
+  padding: 4px 10px;
 }
 
 .form-field-input .caret{

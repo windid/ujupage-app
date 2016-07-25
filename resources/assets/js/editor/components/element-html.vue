@@ -48,7 +48,7 @@ export default {
       this.buttonGroup = 'main';
       
       if (this.element.content !== this.content){
-        this.modifyElement(this.sectionId, this.elementId, {content:this.content});
+        this.modifyElement(this.elementId, {content:this.content});
       }
     }
   },

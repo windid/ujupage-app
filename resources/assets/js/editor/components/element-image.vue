@@ -52,7 +52,7 @@ export default {
       if (changed){
         this.linkObj = merge({}, linkObj);
         const newPropsObj = {link:linkObj};
-        this.modifyElement(this.sectionId, this.elementId, newPropsObj); 
+        this.modifyElement(this.elementId, newPropsObj); 
       }
       this.buttonGroup = 'main';
     }
@@ -79,13 +79,13 @@ export default {
           }
         }
       }
-      this.modifyElement(this.sectionId, this.elementId, newPropsObj);
+      this.modifyElement(this.elementId, newPropsObj);
     },
     'showImageLibary': function(value){
       if(!value && !this.imageObj.url && this.element.src == ''){
         let vm = this;
         Vue.nextTick(function(){
-          vm.removeElement(vm.sectionId, vm.elementId);
+          vm.removeElement(vm.elementId);
         });
       }
     }

@@ -9,6 +9,7 @@
   <meta name="force-rendering" content="webkit">
   <title>聚页</title>
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
+  <link href="{{asset('css/dashboard.css')}}" rel="stylesheet">
   <style>
     .loading{
       width:128px;
@@ -28,26 +29,12 @@
   <div class="loading"></div>
 </editor>
 
-<script>
-  var _pageInfo = {
-    pageId: 1,
-    variations: [
-      {
-        id:1,
-        name:'版本 A'
-      }
-    ],
-    url:""
-  };
-</script>
-
 @if ( Config::get('app.debug') )
   <script src="{{asset('js/libs/vue.js')}}"></script>
 @else
   <script src="{{asset('js/libs/vue.min.js')}}"></script>
 @endif
-  <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>
-  <script src="{{asset('js/editor.js')}}"></script>
+  <script src="{{asset('js/dashboard.js')}}"></script>
 
 </body>
 </html>

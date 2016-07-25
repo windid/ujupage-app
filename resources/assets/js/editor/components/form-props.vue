@@ -69,7 +69,7 @@ export default {
 
       <div class="sidebar-block" style="text-align:center;">
         <checkbox-button :value.sync="formProps.labelInside">标签内置</checkbox-button> &nbsp; 
-        <checkbox-button :value.sync="formProps.innerShadow">内阴影</checkbox-button> &nbsp; 
+        <checkbox-button :value.sync="formProps.boxShadow" :values="['','inset 0 1px 6px #ccc']">内阴影</checkbox-button> &nbsp; 
       </div>
 
       <div class="sidebar-block">

@@ -44,6 +44,7 @@ export default {
   right: 0;
   height:100%;
   background-color: #fff;
+  font-size:14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
 }
 

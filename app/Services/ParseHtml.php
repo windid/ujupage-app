@@ -7,6 +7,8 @@ class ParseHtml {
     protected static $page = array();
 
     protected static $color_set = array();
+
+    protected static $elements = array('pc'=>array(),'mobile'=>array());
     
     public static function decode($array) {
         $content = json_decode($array['html_json'],true);
@@ -15,11 +17,23 @@ class ParseHtml {
 
         self::$page['settings'] = $content['settings'];
         self::$page['sections'] = $content['sections'];
+        self::$page['elements'] = $content['elements'];
         self::$page['style'] = array('common'=>array(), 'pc'=>array(), 'mobile'=>array());
+
+        self::$page['style']['pc']['content']['height'] = 0;
+        self::$page['style']['mobile']['content']['height'] = 0;
 
         foreach ($content['sections'] as $section_id => $section) {
             self::parseSection($section_id, $section);
         }
+
+        foreach ($content['elements'] as $element_id => $element) {
+            self::parseElement($element_id, $element);
+        }
+
+        // print_r($content['elements']);
+
+        // print_r(self::$elements);
 
         // print_r(self::$page);
 
@@ -29,36 +43,87 @@ class ParseHtml {
     protected static function parseSection($section_id, $section){
         self::$page['style']['pc']['section-'.$section_id]     = self::parseStyles($section['style']['pc']);
         self::$page['style']['mobile']['section-'.$section_id] = self::parseStyles($section['style']['mobile']);
-        foreach ($section['elements'] as $element_id => $element) {
 
-            self::parseElement($element_id, $element);
-
-            switch ($element['type']) {
-                case 'text':
-                    self::parseElementText($element_id, $element);
-                    break;
-                case 'image':
-                    self::parseElementImage($element_id, $element);
-                    break;
-                case 'form':
-                    self::parseElementForm($element_id, $element);
-                    break;
-                case 'button':
-                    self::parseElementButton($element_id, $element);
-                    break;
-                case 'html':
-                    self::parseElementHTML($element_id, $element);
-                    break;
-                default:
-                    # code...
-                    break;
-            }
+        foreach ($section['elements']['pc'] as $element_id){
+            self::$elements['pc'][$element_id] = self::$page['style']['pc']['content']['height'];
         }
+
+        foreach ($section['elements']['mobile'] as $element_id){
+            self::$elements['mobile'][$element_id] = self::$page['style']['mobile']['content']['height'];
+        }
+
+        self::$page['style']['pc']['content']['height'] += $section['style']['pc']['height'];
+        self::$page['style']['pc']['content']['height'] .= "px";
+        self::$page['style']['mobile']['content']['height'] += $section['style']['mobile']['height'];
+        self::$page['style']['mobile']['content']['height'] .= "px";
+
+        // self::$elements['pc'] = array_merge(self::$elements['pc'], $section['elements']['pc']);
+        // self::$elements['mobile'] = array_merge(self::$elements['mobile'], $section['elements']['mobile']);
+
+        // foreach ($section['elements'] as $element_id => $element) {
+
+        //     self::parseElement($element_id, $element);
+
+        //     switch ($element['type']) {
+        //         case 'text':
+        //             self::parseElementText($element_id, $element);
+        //             break;
+        //         case 'image':
+        //             self::parseElementImage($element_id, $element);
+        //             break;
+        //         case 'form':
+        //             self::parseElementForm($element_id, $element);
+        //             break;
+        //         case 'button':
+        //             self::parseElementButton($element_id, $element);
+        //             break;
+        //         case 'html':
+        //             self::parseElementHTML($element_id, $element);
+        //             break;
+        //         default:
+        //             # code...
+        //             break;
+        //     }
+        // }
     }
 
     protected static function parseElement($element_id, $element){
-        self::$page['style']['pc']['element-'.$element_id] = self::parseStyles($element['style']['pc']);
-        self::$page['style']['mobile']['element-'.$element_id] = self::parseStyles($element['style']['mobile']);
+        if (isset(self::$elements['pc'][$element_id])){
+            $element['style']['pc']['top'] = ($element['style']['pc']['top'] + self::$elements['pc'][$element_id])."px";
+            self::$page['style']['pc']['element-'.$element_id] = self::parseStyles($element['style']['pc']);
+        } else {
+            self::$page['style']['pc']['element-'.$element_id] = array("display"=>"none");
+        }
+
+        if (isset(self::$elements['mobile'][$element_id])){
+            $element['style']['mobile']['top'] = ($element['style']['mobile']['top'] + self::$elements['mobile'][$element_id])."px";
+            $element['style']['mobile']['display'] = "block";
+            self::$page['style']['mobile']['element-'.$element_id] = self::parseStyles($element['style']['mobile']);
+        } else {
+            self::$page['style']['mobile']['element-'.$element_id] = array("display"=>"none");
+        }
+
+
+        switch ($element['type']) {
+            case 'text':
+                self::parseElementText($element_id, $element);
+                break;
+            case 'image':
+                self::parseElementImage($element_id, $element);
+                break;
+            case 'form':
+                self::parseElementForm($element_id, $element);
+                break;
+            case 'button':
+                self::parseElementButton($element_id, $element);
+                break;
+            case 'html':
+                self::parseElementHTML($element_id, $element);
+                break;
+            default:
+                break;
+        }
+        
     }
 
     protected static function parseElementText($element_id, $element){
@@ -110,7 +175,7 @@ class ParseHtml {
 
     protected static function getColor($str){
         if ($str === ""){
-            return "";
+            return "transparent";
         } elseif (substr($str, 0, 1) === "#") {
             return $str;
         } else {

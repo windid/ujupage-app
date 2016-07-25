@@ -14,7 +14,7 @@
   display:flex;
 }
 
-.header-holder li{
+.header-holder > li{
   font-size:16px;
   line-height:40px;
   border-right:1px solid #ccc;
@@ -25,8 +25,12 @@
   *zoom:1;
 }
 
-.header-holder li:hover{
-  background-color:#ddd;
+.header-holder > li .btn-group{
+  vertical-align: top;
+}
+
+.header-holder > li:hover{
+  background-color:#eee;
 }
 
 .button-disabled{

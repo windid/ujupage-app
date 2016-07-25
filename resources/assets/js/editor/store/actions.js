@@ -23,8 +23,8 @@ export const addElement = function ({ dispatch, state }, sectionId, element) {
 }
 
 //删除元素
-export const removeElement = function ({ dispatch, state }, sectionId, elementId) {
-  dispatch('REMOVE_ELEMENT', sectionId, elementId)
+export const removeElement = function ({ dispatch, state }, elementId) {
+  dispatch('REMOVE_ELEMENT', elementId)
 }
 
 //移动元素
@@ -32,24 +32,24 @@ export const moveElement = function ({ dispatch, state }, sectionId, elementId, 
   dispatch('MOVE_ELEMENT', sectionId, elementId, positionInPage, elementHeight)
 }
 
-//修改元素层叠位置
-export const indexElement = function ({ dispatch, state }, sectionId, elementId, dir) {
-  dispatch('INDEX_ELEMENT', sectionId, elementId, dir)
-}
-
 //缩放元素
-export const resizeElement = function ({ dispatch, state }, sectionId, elementId, newSize) {
-  dispatch('RESIZE_ELEMENT', sectionId, elementId, newSize)
+export const resizeElement = function ({ dispatch, state }, elementId, newSize) {
+  dispatch('RESIZE_ELEMENT', elementId, newSize)
+}
+
+//修改元素层叠位置
+export const indexElement = function ({ dispatch, state }, elementId, dir) {
+  dispatch('INDEX_ELEMENT', elementId, dir)
 }
 
 //修改元素style
-export const modifyElement = function ({ dispatch, state }, sectionId, elementId, newPropsObj) {
-  dispatch('MODIFY_ELEMENT', sectionId, elementId, newPropsObj)
+export const modifyElement = function ({ dispatch, state }, elementId, newPropsObj) {
+  dispatch('MODIFY_ELEMENT', elementId, newPropsObj)
 }
 
 //修改元素style
-export const replaceElement = function ({ dispatch, state }, sectionId, elementId, newElement) {
-  dispatch('REPLACE_ELEMENT', sectionId, elementId, newElement)
+export const replaceElement = function ({ dispatch, state }, elementId, newElement) {
+  dispatch('REPLACE_ELEMENT', elementId, newElement)
 }
 
 //设置当前板块

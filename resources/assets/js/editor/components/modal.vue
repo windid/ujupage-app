@@ -1,5 +1,5 @@
 <script>
-import eventHandler from '../utils/eventHandler'
+import eventHandler from '../../utils/eventHandler'
 
 export default {
   props: {

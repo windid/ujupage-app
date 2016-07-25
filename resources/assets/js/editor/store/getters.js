@@ -6,6 +6,10 @@ export function getSections (state) {
   return state.page.sections
 }
 
+export function getElements (state) {
+  return state.page.elements
+}
+
 export function getPage (state) {
   return state.page
 }

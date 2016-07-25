@@ -33,7 +33,7 @@ export default {
 
 <template>
   <dropdown :show.sync="show">
-    <slot></slot>
+    <div data-toggle="dropdown" class="color-schemes-button">配色 <span class="glyphicon glyphicon-th-large"></span></div>
     <div slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">
       <div class="color-schemes-content">
         <div v-for="colorScheme in colorSchemes" @click="setColorSet(colorScheme.colors)">
@@ -50,8 +50,8 @@ export default {
         </div>
       </div>
       <div class="color-schemes-footer">
-        <span class="fl">自定义</span>
-        <button class="btn btn-success btn-sm" @click="show=false">&nbsp; 完成 &nbsp;</button>
+        <button class="btn btn-default btn-sm fl">自定义</button>
+        <button class="btn btn-success btn-sm fr" @click="show=false">&nbsp; 完成 &nbsp;</button>
       </div>
     </div>
   </dropdown>
@@ -59,6 +59,9 @@ export default {
 </template>
 
 <style>
+.color-schemes-button{
+  padding:0 14px;
+}
 
 .color-schemes-content{
   cursor:default;

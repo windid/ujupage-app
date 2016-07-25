@@ -1,6 +1,6 @@
 <script>
 import { setCurrentSectionId,setActiveSectionId,moveSection,removeSection,modifySection }  from '../store/actions'
-import { getWorkspaceData } from '../store/getters'
+import { getWorkspaceData,getElements } from '../store/getters'
 
 import sectionEdit from './section-edit.vue'
 
@@ -23,6 +23,19 @@ export default {
     elementHtml,
     sectionEdit
   },
+  vuex: {
+    actions: {
+      setCurrentSectionId,
+      setActiveSectionId,
+      removeSection,
+      moveSection,
+      modifySection
+    },
+    getters: {
+      workspace: getWorkspaceData,
+      elements: getElements
+    }
+  },
   data (){
     return {
       sectionEditing: false,
@@ -36,18 +49,6 @@ export default {
     sectionEditDone: function() {
       this.sectionEditing = false;
       this.setActiveSectionId(null);
-    }
-  },
-  vuex: {
-    actions: {
-      setCurrentSectionId,
-      setActiveSectionId,
-      removeSection,
-      moveSection,
-      modifySection
-    },
-    getters: {
-      workspace: getWorkspaceData,
     }
   },
   ready:function() {
@@ -81,7 +82,7 @@ export default {
   >
     <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">
       <!-- 页面元素组件 -->
-      <component v-for="(elementId,element) in section.elements" :is="'element-' + element.type" :element="element" :section-id="sectionId" :element-id="elementId"></component>
+      <component v-for="elementId in section.elements[workspace.version]" :is="'element-' + elements[elementId].type" :element="elements[elementId]" :section-id="sectionId" :element-id="elementId"></component>
       <!-- 板块操作按钮组 -->
       <div class="btn-group-vertical page-section-operation" role="group" v-show="workspace.currentSectionId==sectionId" transition="fade" :style="{left: workspace.width + 5 + 'px'}">
         <template v-if="sectionEditing">

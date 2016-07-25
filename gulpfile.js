@@ -17,7 +17,7 @@ elixir(function(mix) {
     //bootstrap sass单独打包
     mix.sass('bootstrap.scss');
     //编辑器
-    mix.sass('editor.scss');
+    // mix.sass('editor.scss');
 
     mix.browserSync({
         files:['app/**/*', 'public/**/*', 'resources/views/**/*'],
@@ -31,6 +31,8 @@ elixir(function(mix) {
         module: {
             loaders: [
                 {test: /\.css$/, loader: 'style-loader!css-loader'},
+                {test: /\.png$/, loader: "url-loader?mimetype=image/png"},
+                {test: /\.scss$/, loader: 'style!css!sass'},
                 {test: /\.html$/, loader: 'text-loader'},
                 {test: /\.vue$/,loader: 'vue'},
                 {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: {compact: false,presets:['es2015',"stage-0"],plugins:['transform-runtime']}}

@@ -67,7 +67,7 @@ export default {
       this.buttonGroup = 'main';
       
       if (this.changed){
-        this.modifyElement(this.sectionId, this.elementId, this.textElement);
+        this.modifyElement(this.elementId, this.textElement);
         this.changed = false;
       }
     }

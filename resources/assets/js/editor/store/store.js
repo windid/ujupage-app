@@ -1,6 +1,6 @@
 import Vuex from 'vuex'
-import {extend,merge} from 'lodash'
-import randomChar from '../utils/randomChar'
+import { extend, merge, intersection, difference, union } from 'lodash'
+import randomChar from '../../utils/randomChar'
 
 // Vue.use(Vuex)
 const state = {
@@ -50,7 +50,6 @@ const mutations = {
     pageHistoryIndex = 0;
     mutations.SUM_PAGE_HEIGHT(state);
     mutations.COUNT_PAGE_LAYER(state);
-    console.log(state.page)
   },
 
   //对sections进行操作过后保存其状态，供撤销重做
@@ -67,14 +66,12 @@ const mutations = {
       'pc':{max:50000, min:50000},
       'mobile':{max:50000, min:50000}
     };
-    state.page.sections.forEach(function(section){
-      for (let elementId in section.elements){
-        zIndex.pc.max = (section.elements[elementId].style.pc.zIndex > zIndex.pc.max) ? section.elements[elementId].style.pc.zIndex : zIndex.pc.max;
-        zIndex.pc.min = (section.elements[elementId].style.pc.zIndex < zIndex.pc.min) ? section.elements[elementId].style.pc.zIndex : zIndex.pc.min;
-        zIndex.mobile.max = (section.elements[elementId].style.mobile.zIndex > zIndex.mobile.max) ? section.elements[elementId].style.mobile.zIndex : zIndex.mobile.max;
-        zIndex.mobile.min = (section.elements[elementId].style.mobile.zIndex < zIndex.mobile.min) ? section.elements[elementId].style.mobile.zIndex : zIndex.mobile.min;
-      }
-    });
+    for (let elementId in state.page.elements){
+      zIndex.pc.max = (state.page.elements[elementId].style.pc.zIndex > zIndex.pc.max) ? state.page.elements[elementId].style.pc.zIndex : zIndex.pc.max;
+      zIndex.pc.min = (state.page.elements[elementId].style.pc.zIndex < zIndex.pc.min) ? state.page.elements[elementId].style.pc.zIndex : zIndex.pc.min;
+      zIndex.mobile.max = (state.page.elements[elementId].style.mobile.zIndex > zIndex.mobile.max) ? state.page.elements[elementId].style.mobile.zIndex : zIndex.mobile.max;
+      zIndex.mobile.min = (state.page.elements[elementId].style.mobile.zIndex < zIndex.mobile.min) ? state.page.elements[elementId].style.mobile.zIndex : zIndex.mobile.min;
+    }
     state.workspace.zIndex = zIndex;
   },
 
@@ -111,31 +108,40 @@ const mutations = {
   ADD_SECTION(state){
     state.page.sections.push({
       style:{
-        "pc":{"background-color":"",height:"500px"},
-        "mobile":{"background-color":"",height:"500px"}
+        "pc":{"background-color":"",height:"300px"},
+        "mobile":{"background-color":"",height:"300px"}
       },
-      elements:{}
+      elements:{"pc":[],"mobile":[]}
     });
-    state.workspace.height += 200;
+    state.workspace.height += 300;
     mutations.SAVE_PAGE_STATE(state);
   },
 
   //删除板块
   REMOVE_SECTION(state, sectionId){
+    //板块内的元素
+    let sectionElements = union(state.page.sections[sectionId]['elements']['pc'],state.page.sections[sectionId]['elements']['mobile']);
+    //删除板块
     state.workspace.height  -= parseInt(state.page.sections[sectionId].style[state.workspace.version].height);
     state.page.sections.splice(sectionId,1);
+    //其他板块所包含的所有元素
+    let allElements = [];
+    state.page.sections.forEach(function(section){
+      allElements = union(allElements, section.elements.pc, section.elements.mobile);
+    });
+    //如果板块内元素已不在别的板块中，则删除
+    sectionElements.forEach(function(elementId){
+      if (allElements.indexOf(elementId) === -1){
+        Vue.delete(state.page.elements,elementId);
+      }
+    });
+    
     mutations.SAVE_PAGE_STATE(state);
   },
 
   //修改板块
   MODIFY_SECTION(state,sectionId,style){
-    let stateSection = state.page.sections[sectionId];
-    // if (state.workspace.version === 'pc'){
-    //   state.page.sections[sectionId].style = extend({}, stateSection.style, style);
-    // } else {
-    //   state.page.sections[sectionId].styleM = extend({}, stateSection.styleM, style);
-    // }
-    state.page.sections[sectionId].style = merge({}, stateSection.style, style);
+    state.page.sections[sectionId].style = merge({}, state.page.sections[sectionId].style, style);
     mutations.SUM_PAGE_HEIGHT(state);
     mutations.SAVE_PAGE_STATE(state);
   },
@@ -207,7 +213,9 @@ const mutations = {
   //添加元素
   ADD_ELEMENT(state, sectionId, element){
     const elementId = randomChar(8);
-    Vue.set(state.page.sections[sectionId]['elements'], elementId, element);
+    Vue.set(state.page.elements, elementId, element);
+    state.page.sections[sectionId]['elements']['pc'].push(elementId);
+    state.page.sections[sectionId]['elements']['mobile'].push(elementId);
     state.workspace.zIndex.pc.max     = element.style.pc.zIndex;
     state.workspace.zIndex.mobile.max = element.style.mobile.zIndex;
     state.workspace.activeElementId = elementId;
@@ -215,13 +223,16 @@ const mutations = {
   },
 
   //删除元素
-  REMOVE_ELEMENT(state, sectionId, elementId){
-    Vue.delete(state.page.sections[sectionId]['elements'],elementId);
+  REMOVE_ELEMENT(state, elementId){
+    state.page.sections.forEach(function(section){
+      section.elements.pc.$remove(elementId);
+      section.elements.mobile.$remove(elementId);
+    });
+    Vue.delete(state.page.elements,elementId);
     mutations.SAVE_PAGE_STATE(state);
   },
 
   // 移动元素
-  // 逻辑写得太复杂了，以后得重构
   MOVE_ELEMENT(state, sectionId, elementId, positionInPage, elementHeight){    
     let sumSectionsHeight  = 0;
     let sectionHeight = 0;
@@ -234,62 +245,55 @@ const mutations = {
     while (elementLine >= sumSectionsHeight){
       newSectionId ++;
       sectionHeight = parseInt(state.page.sections[newSectionId].style[state.workspace.version].height);
-      // parseInt((state.workspace.version == 'pc') ? state.page.sections[newSectionId].style.height : state.page.sections[newSectionId].styleM.height);
       sumSectionsHeight += sectionHeight;
     }
 
-    let style = {
-      top: positionInPage.top - (sumSectionsHeight - sectionHeight) + "px",
-      left: positionInPage.left + "px"
+    state.page.elements[elementId].style[state.workspace.version].top = positionInPage.top - (sumSectionsHeight - sectionHeight) + "px";
+    state.page.elements[elementId].style[state.workspace.version].left = positionInPage.left + "px";
+
+    if (newSectionId !== sectionId){
+      state.page.sections[sectionId]['elements'][state.workspace.version].$remove(elementId);
+      state.page.sections[newSectionId]['elements'][state.workspace.version].push(elementId);
     }
-
-    //旧元素
-    let elState = state.page.sections[sectionId].elements[elementId];
-    elState.style[state.workspace.version] = extend({}, elState.style[state.workspace.version], style);
-
-    // if (newSectionId !== sectionId){
-    Vue.delete(state.page.sections[sectionId]['elements'],elementId);
-    Vue.set(state.page.sections[newSectionId]['elements'],elementId,elState);
-    // }
 
     mutations.SAVE_PAGE_STATE(state);
   },
 
   //缩放元素
-  RESIZE_ELEMENT(state, sectionId, elementId, newSize){
-    state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['width'] = newSize.width + "px";
-    const height = state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['height'];
+  RESIZE_ELEMENT(state, elementId, newSize){
+    state.page.elements[elementId]['style'][state.workspace.version]['width'] = newSize.width + "px";
+    const height = state.page.elements[elementId]['style'][state.workspace.version]['height'];
     if (height && height !== "auto"){
-      state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['height'] = newSize.height + "px";
+      state.page.elements[elementId]['style'][state.workspace.version]['height'] = newSize.height + "px";
     } else {
-      state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['height'] = "auto";      
+      state.page.elements[elementId]['style'][state.workspace.version]['height'] = "auto";      
     }
     mutations.SAVE_PAGE_STATE(state);
   },
 
-  //修改元素
-  MODIFY_ELEMENT(state, sectionId, elementId, newPropsObj){
-    let newElement = merge({}, state.page.sections[sectionId]['elements'][elementId], newPropsObj);
-    Vue.set(state.page.sections[sectionId]['elements'], elementId, newElement);
-    mutations.SAVE_PAGE_STATE(state);
-  },
-
-  //修改元素的另一种方式，整体替换
-  REPLACE_ELEMENT(state, sectionId, elementId, newElement){
-    Vue.set(state.page.sections[sectionId]['elements'], elementId, merge({},newElement));
-    mutations.SAVE_PAGE_STATE(state);
-  },
-
   //修改元素层次
-  INDEX_ELEMENT(state, sectionId, elementId, dir){
+  INDEX_ELEMENT(state, elementId, dir){
     let zIndex = 0;
     if (dir === 'top'){
       zIndex = ++state.workspace.zIndex[state.workspace.version].max;
     } else {
       zIndex = --state.workspace.zIndex[state.workspace.version].min;      
     }
-    state.page.sections[sectionId]['elements'][elementId]['style'][state.workspace.version]['zIndex'] = zIndex;
+    state.page.elements[elementId]['style'][state.workspace.version]['zIndex'] = zIndex;
     mutations.SAVE_PAGE_STATE(state);    
+  },
+
+  //修改元素
+  MODIFY_ELEMENT(state, elementId, newPropsObj){
+    let newElement = merge({}, state.page.elements[elementId], newPropsObj);
+    Vue.set(state.page.elements, elementId, newElement);
+    mutations.SAVE_PAGE_STATE(state);
+  },
+
+  //修改元素的另一种方式，整体替换
+  REPLACE_ELEMENT(state, elementId, newElement){
+    Vue.set(state.page.elements, elementId, merge({},newElement));
+    mutations.SAVE_PAGE_STATE(state);
   },
 
   SAVE_SETTINGS(state, settings){

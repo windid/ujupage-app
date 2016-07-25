@@ -166,7 +166,8 @@ export default {
         },
         props:{
           labelInside:true,
-          innerShadow:false,
+          // innerShadow:false,
+          boxShadow:'',
           fieldColor:"#fff",
           inputColor:"4",
           borderColor:"#ccc",

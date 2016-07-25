@@ -3,23 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=360,minimum-scale=0.5, maximum-scale=5, user-scalable=no">
+  <meta name="viewport" content="width=360,minimum-scale=0.5, maximum-scale=5, user-scalable=yes">
+  <meta name="renderer" content="webkit">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Editor</title>
+  <title>{{$content['settings']['seo']['pageTitle']}}</title>
+  <meta name="keywords" content="{{$content['settings']['seo']['keywords']}}">
+  <meta name="description" content="{{$content['settings']['seo']['description']}}">
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
 <style>
 
-  @foreach($content['style']['common'] as $class => $styles)
-    #{{$class}}{
-      @foreach($styles as $key => $value)
-      {{$key}}:{{$value}};
-      @endforeach
-    }
-  @endforeach
-
-
   body{
     min-width: 960px;
+    font-size:16px;
+  }
+
+  label{
+    font-weight: normal;
+  }
+
+  #content{
+    position: absolute;
+    width: 960px;
+    top: 0;
+    left: 50%;
+    margin-left: -480px;
   }
 
   .section-inner{
@@ -78,6 +85,14 @@
     margin-right:10px;
   }
 
+  @foreach($content['style']['common'] as $class => $styles)
+    #{{$class}}{
+      @foreach($styles as $key => $value)
+      {{$key}}:{{$value}};
+      @endforeach
+    }
+  @endforeach
+
   @foreach($content['style']['pc'] as $class => $styles)
     #{{$class}}{
       @foreach($styles as $key => $value)
@@ -92,6 +107,11 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
 {
   body{
     min-width: 360px;
+  }
+
+  #content{
+    width: 360px;
+    margin-left:-180px;
   }
 
   .section-inner{
@@ -113,18 +133,17 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
 @foreach($content['sections'] as $section_id => $section)
 <div class="section" id="section-{{$section_id}}">
   <div class="section-inner">
-  @foreach($section['elements'] as $element_id => $element)
-    @include('preview.'.$element['type'])
-  @endforeach
+  
   </div>
 </div>
 @endforeach
 
-@if ( Config::get('app.debug') )
-  <script src="{{asset('js/libs/vue.js')}}"></script>
-@else
-  <script src="{{asset('js/libs/vue.min.js')}}"></script>
-@endif
+<div id="content">
+  @foreach($content['elements'] as $element_id => $element)
+    @include('preview.'.$element['type'])
+  @endforeach
+</div>
+
   <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>
 </body>
 </html>

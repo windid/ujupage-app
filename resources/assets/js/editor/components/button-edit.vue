@@ -147,6 +147,7 @@ export default {
 
 .float-color-block-text{
   margin-top:4px;
+  font-size:14px;
 }
 </style>
 

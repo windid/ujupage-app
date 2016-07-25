@@ -12,7 +12,7 @@ import editorHeader from './editor-header.vue'
 import editorToolbar from './editor-toolbar.vue'
 import editorWorkspace from './editor-workspace.vue'
 import store from '../store/store'
-import { setActiveElementId, pageInit }  from '../store/actions'
+import { setActiveElementId }  from '../store/actions'
 
 export default {
   name: 'editor',
@@ -23,26 +23,15 @@ export default {
   },
   vuex: {
     actions: {
-      setActiveElementId,
-      pageInit
+      setActiveElementId
     }
   },
   store,
   methods: {
-    loadPage: function(){
-      let variationId = 1;
-      this.$http.get('/editor/page/variation/' + variationId).then(function(response){
-        let page = response.json();
-        // let page = data.html_json;
-        this.pageInit({page:page});
-      },function(response){
-        console.log(response.json());
-      });
-
-    }
+    
   },
   created: function(){
-    this.loadPage()
+    
   }
 }
 </script>

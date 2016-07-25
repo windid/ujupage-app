@@ -151,7 +151,7 @@ export default {
         },
         stop: function(e, ui){
           vm.draggable = vmDraggable;
-          vm.resizeElement(vm.sectionId,vm.elementId,ui.size);
+          vm.resizeElement(vm.elementId,ui.size);
           vm.updateStyle();
         }
       });
@@ -234,9 +234,9 @@ let getElementTop = function( element ){
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
         <div class="btn btn-default" title="复制一个" @click.stop="duplicate"><span class="glyphicon glyphicon-duplicate"></span></div>
-        <div class="btn btn-default" title="移到顶层" @click="indexElement(sectionId, elementId, 'top')"><span class="glyphicon glyphicon-circle-arrow-up"></span></div>
-        <div class="btn btn-default" title="移到底层" @click="indexElement(sectionId, elementId, 'bottom')"><span class="glyphicon glyphicon-circle-arrow-down"></span></div>
-        <div class="btn btn-default" title="删除" @click="removeElement(sectionId,elementId)"><span class="glyphicon glyphicon-trash"></span></div>
+        <div class="btn btn-default" title="移到顶层" @click="indexElement(elementId, 'top')"><span class="glyphicon glyphicon-circle-arrow-up"></span></div>
+        <div class="btn btn-default" title="移到底层" @click="indexElement(elementId, 'bottom')"><span class="glyphicon glyphicon-circle-arrow-down"></span></div>
+        <div class="btn btn-default" title="删除" @click="removeElement(elementId)"><span class="glyphicon glyphicon-trash"></span></div>
       </div>
       <div v-show="buttonGroup === 'position'" class="btn-group el-btn-group" role="group">
         <div class="btn btn-success">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</span></div>

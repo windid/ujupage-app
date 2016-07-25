@@ -3,7 +3,7 @@ import {  } from '../store/actions'
 import {  } from '../store/getters'
 import modal from './modal.vue'
 import dropdown from './dropdown.vue'
-import eventHandler from '../utils/eventHandler'
+import eventHandler from '../../utils/eventHandler'
 import { merge } from 'lodash'
 
 export default {

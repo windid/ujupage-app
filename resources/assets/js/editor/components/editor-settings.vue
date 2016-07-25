@@ -1,6 +1,6 @@
 <script>
 import { saveSettings }  from '../store/actions'
-import { getWorkspaceData, getSettings, getSections } from '../store/getters'
+import { getWorkspaceData, getSettings, getElements } from '../store/getters'
 import modal from './modal.vue'
 import { merge } from 'lodash'
 
@@ -15,7 +15,7 @@ export default {
     getters: {
       workspace: getWorkspaceData,
       pageSettings: getSettings,
-      sections:getSections
+      elements: getElements
     }
   },
   props: {
@@ -52,19 +52,17 @@ export default {
     }
   },
   ready: function(){
-    let vm = this;
-    this.sections.forEach(function(section){
-      for (let elementId in section.elements){
-        if (section.elements[elementId].type === "form"){
-          vm.formsInPage = true;
-        }
-        if (section.elements[elementId].link && section.elements[elementId].link.url){
-          vm.goals.push(section.elements[elementId].link.url);
-        }
+    // let vm = this;
+    for (let elementId in this.elements){
+      if (this.elements[elementId].type === "form"){
+        this.formsInPage = true;
       }
-    });
+      if (this.elements[elementId].link && this.elements[elementId].link.url){
+        this.goals.push(this.elements[elementId].link.url);
+      }
+    }
     if (this.formsInPage){
-      this.goals.push('form')
+      this.goals.push('form');
     }
   }
 }

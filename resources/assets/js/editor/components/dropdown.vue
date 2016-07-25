@@ -1,11 +1,5 @@
-<template>
-  <div class="btn-group" v-bind:class="{open:show,dropup:(dir === 'up')}">
-    <slot></slot>
-    <slot name="dropdown-menu"></slot>
-  </div>
-</template>
 <script>
-  import eventHandler from '../utils/eventHandler'
+  import eventHandler from '../../utils/eventHandler'
   export default {
     props: {
       show: {
@@ -43,6 +37,12 @@
   }
 </script>
 
+<template>
+  <div class="btn-group" v-bind:class="{open:show,dropup:(dir === 'up')}">
+    <slot></slot>
+    <slot name="dropdown-menu"></slot>
+  </div>
+</template>
 
 <style>
 .dropdown-menu-narrow{
