@@ -1552,7 +1552,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"editor-header.vue","sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"editor-header.vue","sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -1909,10 +1909,16 @@
 	      });
 	    },
 	    loadPage: function loadPage(variationId) {
+	      this.pageLoading = true;
 	      this.$http.get('/editor/page/variation/' + variationId).then(function (response) {
 	        var page = response.json();
-	        this.pageInit({ page: page });
+	        this.pageInit(page);
 	        this.pageLoading = false;
+	
+	        var vm = this;
+	        Vue.nextTick(function () {
+	          vm.saveStatus = 'saved';
+	        });
 	      }, function (response) {
 	        console.log(response.json());
 	      });
@@ -1924,6 +1930,12 @@
 	      handler: function handler() {
 	        this.saveStatus = 'unsaved';
 	      }
+	    }
+	  },
+	  events: {
+	    'variation-changed': function variationChanged(variationId) {
+	      this.currentVariationId = variationId;
+	      this.loadPage(variationId);
 	    }
 	  },
 	  created: function created() {
@@ -18995,7 +19007,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.variations-button{\n  padding: 0 14px;\n}\n\n.current-variation-name{\n  max-width: 120px;\n  float: left;\n  overflow: hidden;\n  white-space: nowrap;\n}\n\n.variation-name{\n  white-space: nowrap;\n}\n\n.variations-menu{\n  cursor: default;\n}\n\n.variations-menu > li{\n  position: relative;\n  line-height: 34px;\n  padding: 0 14px;\n  cursor: pointer;\n}\n\n.variations-menu > li:hover{\n  background: #eee;\n}\n\n.variations-menu > li > .btn-group {\n  position: absolute;\n  right:-100px;\n  top: 0;\n  display: none;\n}\n\n.variations-menu > li:hover > .btn-group{\n  display:block;\n}\n\n.variations-menu > li > .input-group{\n  position: absolute;\n  left:0;\n  top:0;\n  width: 260px;\n}\n\n.caret-right{\n  position: absolute;\n  top: 50%;\n  margin-top: -4px;\n  right: 0;\n  width: 0;\n  height: 0;\n  border-width: 4px;\n  border-style: solid;\n  border-color: transparent transparent transparent #333;\n}\n\n\n", "", {"version":3,"sources":["/./resources/assets/js/editor/components/page-variations.vue?45a23a76"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAmGA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;EACA,YAAA;EACA,iBAAA;EACA,oBAAA;CACA;;AAEA;EACA,oBAAA;CACA;;AAEA;EACA,gBAAA;CACA;;AAEA;EACA,mBAAA;EACA,kBAAA;EACA,gBAAA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;CACA;;AAEA;EACA,mBAAA;EACA,aAAA;EACA,OAAA;EACA,cAAA;CACA;;AAEA;EACA,cAAA;CACA;;AAEA;EACA,mBAAA;EACA,OAAA;EACA,MAAA;EACA,aAAA;CACA;;AAEA;EACA,mBAAA;EACA,SAAA;EACA,iBAAA;EACA,SAAA;EACA,SAAA;EACA,UAAA;EACA,kBAAA;EACA,oBAAA;EACA,uDAAA;CACA","file":"page-variations.vue","sourcesContent":["<script>\nimport dropdown from '../../ui/dropdown.vue'\nimport {  }  from '../store/actions'\nimport {  } from '../store/getters'\n\nexport default {\n  components: {\n    dropdown\n  },\n  props:{\n    variations: {\n      type: Array,\n      required: true,\n      twoWay: true\n    },\n    currentVariationId: {\n      type: Number,\n      required: true,\n      twoWay: true\n    },\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      \n    }\n  },\n  data () {\n    return {\n      show: false,\n      currentVariationName: '',\n      editingVariationId: null\n    }\n  },\n  methods:{\n    rename: function(variationId){\n      this.editingVariationId = variationId;\n      \n      Vue.nextTick(function(){\n        var input = document.getElementById(\"variation-name-\" + variationId);\n        input.focus();\n      });\n    },\n    renameDone: function(){\n      this.editingVariationId = null;\n    }\n  },\n  watch: {\n    \"show\": function(val){\n      if(val === true){\n        this.editingVariationId = null;\n      }\n    }\n  },\n  created: function(){\n    let vm = this;\n    this.variations.forEach(function(variation){\n      if (variation.id == vm.currentVariationId){\n        vm.currentVariationName = variation.name;\n      }\n    });\n  }\n}\n</script>\n\n<template>\n  <dropdown :show.sync=\"show\">\n    <div class=\"variations-button\" data-toggle=\"dropdown\">\n      <div v-if=\"variations.length > 1\"><span class=\"current-variation-name\">{{currentVariationName}}</span> <span class=\"caret\"></span></div>\n      <div v-else>A/B测试</div>\n    </div>\n    <ul slot=\"dropdown-menu\" class=\"dropdown-menu variations-menu\">\n      <li v-for=\"variation in variations\">\n        <span class=\"variation-name\">{{variation.name}}</span>\n        <span class=\"caret-right\"></span>\n        <div v-show=\"editingVariationId === variation.id\" class=\"input-group\">\n          <span class=\"input-group-addon\">重命名</span>\n          <input id=\"variation-name-{{variation.id}}\" class=\"form-control\" type=\"text\" v-model=\"variation.name\" @keyup.enter=\"renameDone\">\n          <span class=\"input-group-btn\">\n            <div class=\"btn btn-success\" @click=\"renameDone\">保存</div>\n          </span>\n        </div>\n        <div v-else class=\"btn-group\">\n          <div class=\"btn btn-default\" title=\"重命名\" @click=\"rename(variation.id)\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n          <div class=\"btn btn-default\" title=\"复制\"><span class=\"glyphicon glyphicon-duplicate\"></span></div>\n          <div class=\"btn btn-danger\" title=\"删除\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n        </div>\n        \n      </li>\n      <li>\n        <span class=\"glyphicon glyphicon-plus\"></span> 添加\n      </li>\n    </ul>\n  </dropdown>\n</template>\n\n<style>\n.variations-button{\n  padding: 0 14px;\n}\n\n.current-variation-name{\n  max-width: 120px;\n  float: left;\n  overflow: hidden;\n  white-space: nowrap;\n}\n\n.variation-name{\n  white-space: nowrap;\n}\n\n.variations-menu{\n  cursor: default;\n}\n\n.variations-menu > li{\n  position: relative;\n  line-height: 34px;\n  padding: 0 14px;\n  cursor: pointer;\n}\n\n.variations-menu > li:hover{\n  background: #eee;\n}\n\n.variations-menu > li > .btn-group {\n  position: absolute;\n  right:-100px;\n  top: 0;\n  display: none;\n}\n\n.variations-menu > li:hover > .btn-group{\n  display:block;\n}\n\n.variations-menu > li > .input-group{\n  position: absolute;\n  left:0;\n  top:0;\n  width: 260px;\n}\n\n.caret-right{\n  position: absolute;\n  top: 50%;\n  margin-top: -4px;\n  right: 0;\n  width: 0;\n  height: 0;\n  border-width: 4px;\n  border-style: solid;\n  border-color: transparent transparent transparent #333;\n}\n\n\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n.variations-button{\n  padding: 0 14px;\n}\n\n.current-variation-name{\n  max-width: 120px;\n  float: left;\n  overflow: hidden;\n  white-space: nowrap;\n}\n\n.variation-name{\n  white-space: nowrap;\n}\n\n.variations-menu{\n  cursor: default;\n}\n\n.variations-menu > li{\n  position: relative;\n  line-height: 34px;\n  padding: 0 14px;\n  cursor: pointer;\n}\n\n.variations-menu > li:hover{\n  background: #eee;\n}\n\n.variations-menu > li > .btn-group {\n  position: absolute;\n  right:-100px;\n  top: 0;\n  display: none;\n}\n\n.variations-menu > li:hover > .btn-group{\n  display:block;\n}\n\n.variations-menu > li > .input-group{\n  position: absolute;\n  left:0;\n  top:0;\n  width: 260px;\n}\n\n.caret-right{\n  position: absolute;\n  top: 50%;\n  margin-top: -4px;\n  right: 0;\n  width: 0;\n  height: 0;\n  border-width: 4px;\n  border-style: solid;\n  border-color: transparent transparent transparent #333;\n}\n\n\n", "", {"version":3,"sources":["/./resources/assets/js/editor/components/page-variations.vue?0bde3958"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAiIA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;EACA,YAAA;EACA,iBAAA;EACA,oBAAA;CACA;;AAEA;EACA,oBAAA;CACA;;AAEA;EACA,gBAAA;CACA;;AAEA;EACA,mBAAA;EACA,kBAAA;EACA,gBAAA;EACA,gBAAA;CACA;;AAEA;EACA,iBAAA;CACA;;AAEA;EACA,mBAAA;EACA,aAAA;EACA,OAAA;EACA,cAAA;CACA;;AAEA;EACA,cAAA;CACA;;AAEA;EACA,mBAAA;EACA,OAAA;EACA,MAAA;EACA,aAAA;CACA;;AAEA;EACA,mBAAA;EACA,SAAA;EACA,iBAAA;EACA,SAAA;EACA,SAAA;EACA,UAAA;EACA,kBAAA;EACA,oBAAA;EACA,uDAAA;CACA","file":"page-variations.vue","sourcesContent":["<script>\nimport dropdown from '../../ui/dropdown.vue'\nimport {  }  from '../store/actions'\nimport {  } from '../store/getters'\n\nexport default {\n  components: {\n    dropdown\n  },\n  props:{\n    pageInfo: {\n      type: Object,\n      required: true,\n      twoWay: true\n    },\n    currentVariationId: {\n      type: Number,\n      required: true,\n    },\n  },\n  vuex: {\n    actions: {\n      \n    },\n    getters: {\n      \n    }\n  },\n  data () {\n    return {\n      show: false,\n      currentVariationName: '',\n      editingVariationId: null\n    }\n  },\n  methods:{\n    rename: function(variationId){\n      this.editingVariationId = variationId;\n      \n      Vue.nextTick(function(){\n        var input = document.getElementById(\"variation-name-\" + variationId);\n        input.focus();\n      });\n    },\n\n    renameDone: function(){\n      this.editingVariationId = null;\n    },\n\n    createVariation: function(){\n      let url = '/editor/page/variation/create/' + this.pageInfo.pageId;\n      this.newVariation(url);\n    },\n\n    duplicateVariation: function(variationId){\n      let url = '/editor/page/variation/duplicate/' + variationId;\n      this.newVariation(url);\n    },\n\n    newVariation: function(url){\n      this.$http.get(url).then(function(response){\n        let data = response.json();\n        this.$dispatch('variation-changed', data.id);\n        this.pageInfo.variations.push({id:data.id, name:data.name});\n        this.currentVariationName = data.name;\n      }, function(response){\n        debugger\n      });\n    },\n\n    removeVariation: function(variationId){\n\n    },\n\n    switchVariation: function(variationId){\n      this.$dispatch('variation-changed', variationId);\n    }\n\n  },\n  watch: {\n    \"show\": function(val){\n      if(val === true){\n        this.editingVariationId = null;\n      }\n    }\n  },\n  created: function(){\n    let vm = this;\n    this.pageInfo.variations.forEach(function(variation){\n      if (variation.id == vm.currentVariationId){\n        vm.currentVariationName = variation.name;\n      }\n    });\n  }\n}\n</script>\n\n<template>\n  <dropdown :show.sync=\"show\">\n    <div class=\"variations-button\" data-toggle=\"dropdown\">\n      <div v-if=\"pageInfo.variations.length > 1\"><span class=\"current-variation-name\">{{currentVariationName}}</span> <span class=\"caret\"></span></div>\n      <div v-else>A/B测试</div>\n    </div>\n    <ul slot=\"dropdown-menu\" class=\"dropdown-menu variations-menu\">\n      <li v-for=\"variation in pageInfo.variations\">\n        <span class=\"variation-name\" @click=\"switchVariation(variation.id)\">{{variation.name}}</span>\n        <span class=\"caret-right\"></span>\n        <div v-show=\"editingVariationId === variation.id\" class=\"input-group\">\n          <span class=\"input-group-addon\">重命名</span>\n          <input id=\"variation-name-{{variation.id}}\" class=\"form-control\" type=\"text\" v-model=\"variation.name\" @keyup.enter=\"renameDone\">\n          <span class=\"input-group-btn\">\n            <div class=\"btn btn-success\" @click=\"renameDone\">保存</div>\n          </span>\n        </div>\n        <div v-else class=\"btn-group\">\n          <div class=\"btn btn-default\" title=\"重命名\" @click=\"rename(variation.id)\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n          <div class=\"btn btn-default\" title=\"复制\" @click=\"duplicateVariation(variation.id)\"><span class=\"glyphicon glyphicon-duplicate\"></span></div>\n          <div class=\"btn btn-danger\" title=\"删除\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n        </div>\n        \n      </li>\n      <li @click=\"createVariation()\">\n        <span class=\"glyphicon glyphicon-plus\"></span> 添加\n      </li>\n    </ul>\n  </dropdown>\n</template>\n\n<style>\n.variations-button{\n  padding: 0 14px;\n}\n\n.current-variation-name{\n  max-width: 120px;\n  float: left;\n  overflow: hidden;\n  white-space: nowrap;\n}\n\n.variation-name{\n  white-space: nowrap;\n}\n\n.variations-menu{\n  cursor: default;\n}\n\n.variations-menu > li{\n  position: relative;\n  line-height: 34px;\n  padding: 0 14px;\n  cursor: pointer;\n}\n\n.variations-menu > li:hover{\n  background: #eee;\n}\n\n.variations-menu > li > .btn-group {\n  position: absolute;\n  right:-100px;\n  top: 0;\n  display: none;\n}\n\n.variations-menu > li:hover > .btn-group{\n  display:block;\n}\n\n.variations-menu > li > .input-group{\n  position: absolute;\n  left:0;\n  top:0;\n  width: 260px;\n}\n\n.caret-right{\n  position: absolute;\n  top: 50%;\n  margin-top: -4px;\n  right: 0;\n  width: 0;\n  height: 0;\n  border-width: 4px;\n  border-style: solid;\n  border-color: transparent transparent transparent #333;\n}\n\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -19025,15 +19037,14 @@
 	    dropdown: _dropdown2.default
 	  },
 	  props: {
-	    variations: {
-	      type: Array,
+	    pageInfo: {
+	      type: Object,
 	      required: true,
 	      twoWay: true
 	    },
 	    currentVariationId: {
 	      type: Number,
-	      required: true,
-	      twoWay: true
+	      required: true
 	    }
 	  },
 	  vuex: {
@@ -19057,9 +19068,38 @@
 	        input.focus();
 	      });
 	    },
+	
 	    renameDone: function renameDone() {
 	      this.editingVariationId = null;
+	    },
+	
+	    createVariation: function createVariation() {
+	      var url = '/editor/page/variation/create/' + this.pageInfo.pageId;
+	      this.newVariation(url);
+	    },
+	
+	    duplicateVariation: function duplicateVariation(variationId) {
+	      var url = '/editor/page/variation/duplicate/' + variationId;
+	      this.newVariation(url);
+	    },
+	
+	    newVariation: function newVariation(url) {
+	      this.$http.get(url).then(function (response) {
+	        var data = response.json();
+	        this.$dispatch('variation-changed', data.id);
+	        this.pageInfo.variations.push({ id: data.id, name: data.name });
+	        this.currentVariationName = data.name;
+	      }, function (response) {
+	        debugger;
+	      });
+	    },
+	
+	    removeVariation: function removeVariation(variationId) {},
+	
+	    switchVariation: function switchVariation(variationId) {
+	      this.$dispatch('variation-changed', variationId);
 	    }
+	
 	  },
 	  watch: {
 	    "show": function show(val) {
@@ -19070,7 +19110,7 @@
 	  },
 	  created: function created() {
 	    var vm = this;
-	    this.variations.forEach(function (variation) {
+	    this.pageInfo.variations.forEach(function (variation) {
 	      if (variation.id == vm.currentVariationId) {
 	        vm.currentVariationName = variation.name;
 	      }
@@ -19082,13 +19122,13 @@
 /* 41 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :show.sync=\"show\">\n  <div class=\"variations-button\" data-toggle=\"dropdown\">\n    <div v-if=\"variations.length > 1\"><span class=\"current-variation-name\">{{currentVariationName}}</span> <span class=\"caret\"></span></div>\n    <div v-else>A/B测试</div>\n  </div>\n  <ul slot=\"dropdown-menu\" class=\"dropdown-menu variations-menu\">\n    <li v-for=\"variation in variations\">\n      <span class=\"variation-name\">{{variation.name}}</span>\n      <span class=\"caret-right\"></span>\n      <div v-show=\"editingVariationId === variation.id\" class=\"input-group\">\n        <span class=\"input-group-addon\">重命名</span>\n        <input id=\"variation-name-{{variation.id}}\" class=\"form-control\" type=\"text\" v-model=\"variation.name\" @keyup.enter=\"renameDone\">\n        <span class=\"input-group-btn\">\n          <div class=\"btn btn-success\" @click=\"renameDone\">保存</div>\n        </span>\n      </div>\n      <div v-else class=\"btn-group\">\n        <div class=\"btn btn-default\" title=\"重命名\" @click=\"rename(variation.id)\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n        <div class=\"btn btn-default\" title=\"复制\"><span class=\"glyphicon glyphicon-duplicate\"></span></div>\n        <div class=\"btn btn-danger\" title=\"删除\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n      </div>\n      \n    </li>\n    <li>\n      <span class=\"glyphicon glyphicon-plus\"></span> 添加\n    </li>\n  </ul>\n</dropdown>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<dropdown :show.sync=\"show\">\n  <div class=\"variations-button\" data-toggle=\"dropdown\">\n    <div v-if=\"pageInfo.variations.length > 1\"><span class=\"current-variation-name\">{{currentVariationName}}</span> <span class=\"caret\"></span></div>\n    <div v-else>A/B测试</div>\n  </div>\n  <ul slot=\"dropdown-menu\" class=\"dropdown-menu variations-menu\">\n    <li v-for=\"variation in pageInfo.variations\">\n      <span class=\"variation-name\" @click=\"switchVariation(variation.id)\">{{variation.name}}</span>\n      <span class=\"caret-right\"></span>\n      <div v-show=\"editingVariationId === variation.id\" class=\"input-group\">\n        <span class=\"input-group-addon\">重命名</span>\n        <input id=\"variation-name-{{variation.id}}\" class=\"form-control\" type=\"text\" v-model=\"variation.name\" @keyup.enter=\"renameDone\">\n        <span class=\"input-group-btn\">\n          <div class=\"btn btn-success\" @click=\"renameDone\">保存</div>\n        </span>\n      </div>\n      <div v-else class=\"btn-group\">\n        <div class=\"btn btn-default\" title=\"重命名\" @click=\"rename(variation.id)\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n        <div class=\"btn btn-default\" title=\"复制\" @click=\"duplicateVariation(variation.id)\"><span class=\"glyphicon glyphicon-duplicate\"></span></div>\n        <div class=\"btn btn-danger\" title=\"删除\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n      </div>\n      \n    </li>\n    <li @click=\"createVariation()\">\n      <span class=\"glyphicon glyphicon-plus\"></span> 添加\n    </li>\n  </ul>\n</dropdown>\n";
 
 /***/ },
 /* 42 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"header\">\n  <ul class=\"header-holder list-inline fl\">\n    <li class=\"dashboard-link\"><a href=\"../dashboard\"><span class=\"glyphicon glyphicon-home\"></span></a></li>\n    <li class=\"page-variations\"><page-variations :variations.sync=\"pageInfo.variations\" :current-variation-id.sync=\"currentVariationId\"></page-variations></li>\n  </ul>\n  <div class=\"btn-group btn-group-sm version-switch\">\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='pc'}\" @click=\"toggleVersion\">桌面版 <span class=\"glyphicon glyphicon-blackboard\"></span></div>\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='mobile'}\" @click=\"toggleVersion\">移动版 <span class=\"glyphicon glyphicon-phone\"></span></div>\n  </div>\n\n  <ul class=\"header-holder list-inline fr\">\n    <li><span class=\"glyphicon glyphicon-question-sign\"></span></li>\n    <!-- <tooltip placement=\"bottom\" content=\"撤销\"> -->\n      <li @click=\"undo\" v-bind:class=\"{'button-disabled':workspace.undo === false}\"><span class=\"glyphicon glyphicon-share-alt flipx\"></span></li>\n    <!-- </tooltip> -->\n    <!-- <tooltip placement=\"bottom\" content=\"重做\"> -->\n      <li @click=\"redo\" v-bind:class=\"{'button-disabled':workspace.redo === false}\"><span class=\"glyphicon glyphicon-share-alt\"></span></li>\n    <!-- </tooltip> -->\n    <li class=\"color-schemes\"><color-schemes></color-schemes></li>\n    <li @click.stop=\"showSettings=true\">设置 <span class=\"glyphicon glyphicon-cog\"></span></li>\n    <li @click=\"save\" :class=\"{'button-disabled':saveStatus !== 'unsaved'}\">\n      <span v-show=\"saveStatus === 'unsaved'\">保存</span>\n      <span v-show=\"saveStatus === 'saving'\">保存中</span>\n      <span v-show=\"saveStatus === 'saved'\">已保存</span>\n      <span class=\"glyphicon glyphicon-floppy-disk\"></span>\n    </li>\n    <li>预览 <span class=\"glyphicon glyphicon-eye-open\"></span></li>\n    <li class=\"publish\">发布 <span class=\"glyphicon glyphicon-send\"></span></li>\n  </ul>\n  <editor-settings v-if=\"showSettings\" :show.sync=\"showSettings\"></editor-settings>\n  <div v-if=\"pageLoading\" class=\"loading-wrapper\">\n    <div class=\"loading\"></div>\n  </div>\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"header\">\n  <ul class=\"header-holder list-inline fl\">\n    <li class=\"dashboard-link\"><a href=\"../dashboard\"><span class=\"glyphicon glyphicon-home\"></span></a></li>\n    <li class=\"page-variations\">\n      <page-variations :page-info.sync=\"pageInfo\" :current-variation-id=\"currentVariationId\"></page-variations>\n    </li>\n  </ul>\n  <div class=\"btn-group btn-group-sm version-switch\">\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='pc'}\" @click=\"toggleVersion\">桌面版 <span class=\"glyphicon glyphicon-blackboard\"></span></div>\n    <div class=\"btn btn-default\" v-bind:class=\"{'active':workspace.version=='mobile'}\" @click=\"toggleVersion\">移动版 <span class=\"glyphicon glyphicon-phone\"></span></div>\n  </div>\n\n  <ul class=\"header-holder list-inline fr\">\n    <li><span class=\"glyphicon glyphicon-question-sign\"></span></li>\n    <!-- <tooltip placement=\"bottom\" content=\"撤销\"> -->\n      <li @click=\"undo\" v-bind:class=\"{'button-disabled':workspace.undo === false}\"><span class=\"glyphicon glyphicon-share-alt flipx\"></span></li>\n    <!-- </tooltip> -->\n    <!-- <tooltip placement=\"bottom\" content=\"重做\"> -->\n      <li @click=\"redo\" v-bind:class=\"{'button-disabled':workspace.redo === false}\"><span class=\"glyphicon glyphicon-share-alt\"></span></li>\n    <!-- </tooltip> -->\n    <li class=\"color-schemes\"><color-schemes></color-schemes></li>\n    <li @click.stop=\"showSettings=true\">设置 <span class=\"glyphicon glyphicon-cog\"></span></li>\n    <li @click=\"save\" :class=\"{'button-disabled':saveStatus !== 'unsaved'}\">\n      <span v-show=\"saveStatus === 'unsaved'\">保存</span>\n      <span v-show=\"saveStatus === 'saving'\">保存中</span>\n      <span v-show=\"saveStatus === 'saved'\">已保存</span>\n      <span class=\"glyphicon glyphicon-floppy-disk\"></span>\n    </li>\n    <li>预览 <span class=\"glyphicon glyphicon-eye-open\"></span></li>\n    <li class=\"publish\">发布 <span class=\"glyphicon glyphicon-send\"></span></li>\n  </ul>\n  <editor-settings v-if=\"showSettings\" :show.sync=\"showSettings\"></editor-settings>\n  <div v-if=\"pageLoading\" class=\"loading-wrapper\">\n    <div class=\"loading\"></div>\n  </div>\n</div>\n";
 
 /***/ },
 /* 43 */
@@ -23904,8 +23944,8 @@
 	
 	  //页面初始加载
 	
-	  PAGE_INIT: function PAGE_INIT(state, data) {
-	    state.page = (0, _lodash.merge)({}, data.page);
+	  PAGE_INIT: function PAGE_INIT(state, page) {
+	    state.page = (0, _lodash.merge)({}, page);
 	    pageStates = [(0, _lodash.merge)({}, state.page)];
 	    pageHistoryIndex = 0;
 	    mutations.SUM_PAGE_HEIGHT(state);

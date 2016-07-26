@@ -169,7 +169,7 @@ class PageController extends Controller {
         return $this->dump(['result' => 'success']);
     }
     
-    protected function getVersionName($counts) {
+    protected function getVariationName($counts) {
         $num26 = base_convert($counts, 10, 26);
         $addcode = 17;  
         $result = '';  
@@ -181,7 +181,7 @@ class PageController extends Controller {
                 $result .= chr($code+$addcode-39);  
             }  
         }  
-        return $result; 
+        return '版本 '.$result; 
     }
 
     public function duplicate($id) {
@@ -206,12 +206,12 @@ class PageController extends Controller {
         $copy_variation = new PageVariation;
         $copy_variation->page_id = $page_variation->page_id;
         $copy_variation->user_id = $page_variation->user_id;
-        $copy_variation->name = $this->getVersionName($page_variations);
+        $copy_variation->name = $this->getVariationName($page_variations);
         $copy_variation->setting = json_encode($page_variation->setting);
         $copy_variation->html_json = $page_variation->html_json;
         $copy_variation->save();
         
-        return $this->dump(['id' => $copy_variation->id]);
+        return $this->dump(['id' => $copy_variation->id, 'name'=> $copy_variation->name]);
     }
     
     public function create($page_id = 0) {
@@ -234,12 +234,12 @@ class PageController extends Controller {
         
         $this->pageVariation->page_id = $page_id;
         $this->pageVariation->user_id = $this->user->id;
-        $this->pageVariation->name = $this->getVersionName($page_variations);
+        $this->pageVariation->name = $this->getVariationName($page_variations);
         $this->pageVariation->setting = json_encode([]);
         $this->pageVariation->html_json = json_encode([]);
         $this->pageVariation->save();
         
-        return $this->dump(['id' => $this->pageVariation->id]);
+        return $this->dump(['id' => $this->pageVariation->id, 'name'=> $this->pageVariation->name]);
     }
     
     public function rename(Request $request) {
@@ -254,7 +254,7 @@ class PageController extends Controller {
                 ->where('user_id' , $this->user->id)
                 ->count();
                 
-        $page_variation->name = $request->get('name', $this->getVersionName($page_variations));
+        $page_variation->name = $request->get('name', $this->getVariationName($page_variations));
         $page_variation->save();
         
         return $this->dump();

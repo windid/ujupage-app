@@ -8,15 +8,14 @@ export default {
     dropdown
   },
   props:{
-    variations: {
-      type: Array,
+    pageInfo: {
+      type: Object,
       required: true,
       twoWay: true
     },
     currentVariationId: {
       type: Number,
       required: true,
-      twoWay: true
     },
   },
   vuex: {
@@ -43,9 +42,40 @@ export default {
         input.focus();
       });
     },
+
     renameDone: function(){
       this.editingVariationId = null;
+    },
+
+    createVariation: function(){
+      let url = '/editor/page/variation/create/' + this.pageInfo.pageId;
+      this.newVariation(url);
+    },
+
+    duplicateVariation: function(variationId){
+      let url = '/editor/page/variation/duplicate/' + variationId;
+      this.newVariation(url);
+    },
+
+    newVariation: function(url){
+      this.$http.get(url).then(function(response){
+        let data = response.json();
+        this.$dispatch('variation-changed', data.id);
+        this.pageInfo.variations.push({id:data.id, name:data.name});
+        this.currentVariationName = data.name;
+      }, function(response){
+        debugger
+      });
+    },
+
+    removeVariation: function(variationId){
+
+    },
+
+    switchVariation: function(variationId){
+      this.$dispatch('variation-changed', variationId);
     }
+
   },
   watch: {
     "show": function(val){
@@ -56,7 +86,7 @@ export default {
   },
   created: function(){
     let vm = this;
-    this.variations.forEach(function(variation){
+    this.pageInfo.variations.forEach(function(variation){
       if (variation.id == vm.currentVariationId){
         vm.currentVariationName = variation.name;
       }
@@ -68,12 +98,12 @@ export default {
 <template>
   <dropdown :show.sync="show">
     <div class="variations-button" data-toggle="dropdown">
-      <div v-if="variations.length > 1"><span class="current-variation-name">{{currentVariationName}}</span> <span class="caret"></span></div>
+      <div v-if="pageInfo.variations.length > 1"><span class="current-variation-name">{{currentVariationName}}</span> <span class="caret"></span></div>
       <div v-else>A/B测试</div>
     </div>
     <ul slot="dropdown-menu" class="dropdown-menu variations-menu">
-      <li v-for="variation in variations">
-        <span class="variation-name">{{variation.name}}</span>
+      <li v-for="variation in pageInfo.variations">
+        <span class="variation-name" @click="switchVariation(variation.id)">{{variation.name}}</span>
         <span class="caret-right"></span>
         <div v-show="editingVariationId === variation.id" class="input-group">
           <span class="input-group-addon">重命名</span>
@@ -84,12 +114,12 @@ export default {
         </div>
         <div v-else class="btn-group">
           <div class="btn btn-default" title="重命名" @click="rename(variation.id)"><span class="glyphicon glyphicon-pencil"></span></div>
-          <div class="btn btn-default" title="复制"><span class="glyphicon glyphicon-duplicate"></span></div>
+          <div class="btn btn-default" title="复制" @click="duplicateVariation(variation.id)"><span class="glyphicon glyphicon-duplicate"></span></div>
           <div class="btn btn-danger" title="删除"><span class="glyphicon glyphicon-trash"></span></div>
         </div>
         
       </li>
-      <li>
+      <li @click="createVariation()">
         <span class="glyphicon glyphicon-plus"></span> 添加
       </li>
     </ul>

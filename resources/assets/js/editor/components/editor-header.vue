@@ -49,10 +49,17 @@ export default {
       });
     },
     loadPage: function(variationId){
+      this.pageLoading = true;
       this.$http.get('/editor/page/variation/' + variationId).then(function(response){
         let page = response.json();
-        this.pageInit({page:page});
+        this.pageInit(page);
         this.pageLoading = false;
+
+        var vm = this;
+        Vue.nextTick(function(){
+          vm.saveStatus = 'saved';
+        });
+        
       },function(response){
         console.log(response.json());
       });
@@ -64,6 +71,12 @@ export default {
       handler: function(){
         this.saveStatus = 'unsaved'
       }
+    }
+  },
+  events: {
+    'variation-changed': function(variationId){
+      this.currentVariationId = variationId;
+      this.loadPage(variationId);
     }
   },
   created: function(){
@@ -78,7 +91,9 @@ export default {
   <div class="header">
     <ul class="header-holder list-inline fl">
       <li class="dashboard-link"><a href="../dashboard"><span class="glyphicon glyphicon-home"></span></a></li>
-      <li class="page-variations"><page-variations :variations.sync="pageInfo.variations" :current-variation-id.sync="currentVariationId"></page-variations></li>
+      <li class="page-variations">
+        <page-variations :page-info.sync="pageInfo" :current-variation-id="currentVariationId"></page-variations>
+      </li>
     </ul>
     <div class="btn-group btn-group-sm version-switch">
       <div class="btn btn-default" v-bind:class="{'active':workspace.version=='pc'}" @click="toggleVersion">桌面版 <span class="glyphicon glyphicon-blackboard"></span></div>

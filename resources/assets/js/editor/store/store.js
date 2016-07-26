@@ -44,8 +44,8 @@ let pageHistoryIndex= 0;
 const mutations = {
   
   //页面初始加载
-  PAGE_INIT (state, data) {
-    state.page = merge({},data.page);
+  PAGE_INIT (state, page) {
+    state.page = merge({},page);
     pageStates = [merge({},state.page)];
     pageHistoryIndex = 0;
     mutations.SUM_PAGE_HEIGHT(state);

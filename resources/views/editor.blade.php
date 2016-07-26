@@ -7,7 +7,7 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="renderer" content="webkit">
   <meta name="force-rendering" content="webkit">
-  <title>聚页 - UJU Page</title>
+  <title>聚页 - ujupage</title>
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
   <style>
     .loading{
