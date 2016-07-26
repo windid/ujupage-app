@@ -1,6 +1,6 @@
 <script>
 import colorMixin from '../mixins/colorMixin.js'
-import dropdown from './dropdown.vue'
+import dropdown from '../../ui/dropdown.vue'
 import { getColorSet } from '../store/getters'
 
 export default {

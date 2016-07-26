@@ -1,5 +1,5 @@
 .header{
-  z-index:810000;
+  z-index:1000000;
   height:45px;
   width:100%;
   min-width:990px;
@@ -49,9 +49,15 @@
   padding:0!important;
 }
 
-.go-to-dashboard{
+.dashboard-link{
   text-align:center;
   width:60px;
+}
+
+.dashboard-link > a{
+  display:block;
+  width:100%;
+  height:100%;
 }
 
 .publish{
@@ -70,5 +76,17 @@
   margin:5px 20px;
 }
 
+.page-variations, .color-schemes, .dashboard-link{
+  padding:0 !important;
+}
+
+.loading-wrapper{
+  z-index: 1010000;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
 
 

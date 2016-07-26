@@ -1,7 +1,7 @@
 <script>
 import { saveSettings }  from '../store/actions'
 import { getWorkspaceData, getSettings, getElements } from '../store/getters'
-import modal from './modal.vue'
+import modal from '../../ui/modal.vue'
 import { merge } from 'lodash'
 
 export default {
@@ -69,7 +69,7 @@ export default {
 </script>
 
 <template>
-  <modal :show.sync="show" :width="'800px'" :height="'400px'" >
+  <modal :show.sync="show" :width="'800px'" :height="'500px'" >
     <div slot="header">
       <ul class="nav nav-pills">
         <li role="presentation" :class="{active: currentTab === 'seo'}"><a href="javascript:;" @click="currentTab = 'seo'">页面设置</a></li>
@@ -122,6 +122,7 @@ export default {
             <label class="col-sm-2 control-label">转化目标</label>
             <div class="col-sm-10">
               <select class="form-control" v-model="settings.goals.first">
+                <option value="">请选择转化目标</option>
                 <option v-for="goal in goals" :value="goal">{{(goal === 'form') ? '表单提交' : '[链接] ' + goal}}</option>
               </select>
             </div>

@@ -1,8 +1,8 @@
 <script>
 import {  } from '../store/actions'
 import {  } from '../store/getters'
-import modal from './modal.vue'
-import dropdown from './dropdown.vue'
+import modal from '../../ui/modal.vue'
+import dropdown from '../../ui/dropdown.vue'
 import eventHandler from '../../utils/eventHandler'
 import { merge } from 'lodash'
 

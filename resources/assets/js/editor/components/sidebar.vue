@@ -7,15 +7,6 @@ export default {
       required: true,
       twoWay: true
     }
-  },
-  data(){
-    return {
-      bodyHeight:'auto',
-    }
-  },
-  ready(){
-    var browserHeight = document.documentElement.clientHeight;
-    this.bodyHeight = (browserHeight - 100) + 'px';
   }
 }
 </script>
@@ -28,7 +19,7 @@ export default {
       </slot>
     </div>
     
-    <div class="sidebar-body" :style="{height:bodyHeight}">
+    <div class="sidebar-body">
       <slot name="body">
       </slot>
     </div>
@@ -38,7 +29,7 @@ export default {
 <style>
 .sidebar {
   position:fixed;
-  z-index: 80000;
+  z-index: 800000;
   width:240px;
   top:45px;
   right: 0;
@@ -56,7 +47,7 @@ export default {
 
 .sidebar-body {
   padding:12px;
-  height:100%;
+  height: calc(100% - 99px);
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
@@ -68,7 +59,6 @@ export default {
 
 .sidebar-block .text-input{
   width: 100%;
-
   padding: 4px 8px;
   border:1px solid #ccc;
   border-radius: 4px;

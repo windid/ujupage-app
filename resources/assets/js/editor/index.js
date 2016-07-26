@@ -2,9 +2,9 @@ Vue.config.devtools = true
 
 import VueResource from 'vue-resource'
 import editor from './components/editor.vue'
-import '../../sass/editor.scss'
 import '../vendor/jquery-ui/jquery-ui.js'
 import '../vendor/jquery-ui/jquery-ui.css'
+import '../../sass/editor.scss'
 
 
 Vue.use(VueResource);

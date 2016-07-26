@@ -77,7 +77,7 @@ export default {
 <template>
   <div class="header">
     <ul class="header-holder list-inline fl">
-      <li class="go-to-dashboard"><a href="./dashboard"><span class="glyphicon glyphicon-home"></span></a></li>
+      <li class="dashboard-link"><a href="../dashboard"><span class="glyphicon glyphicon-home"></span></a></li>
       <li class="page-variations"><page-variations :variations.sync="pageInfo.variations" :current-variation-id.sync="currentVariationId"></page-variations></li>
     </ul>
     <div class="btn-group btn-group-sm version-switch">
@@ -111,16 +111,5 @@ export default {
   </div>
 </template>
 <style>
-.page-variations, .color-schemes{
-  padding:0 !important;
-}
 
-.loading-wrapper{
-  z-index: 1010000;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
 </style>

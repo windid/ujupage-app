@@ -1,5 +1,5 @@
 <script>
-import dropdown from './dropdown.vue'
+import dropdown from '../../ui/dropdown.vue'
 
 export default {
   components: {
