@@ -86,5 +86,14 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         Route::post('save', ['as' => '.save', 'uses' => 'PageController@save']);
         // 保存设置        
         Route::post('savesetting', ['as' => '.savesetting', 'uses' => 'PageController@savesetting']);
+        
+        // 删除版本
+        Route::get('variation/remove/{id}', ['as' => '.remove', 'uses' => 'PageController@remove']);
+        // 复制版本
+        Route::get('variation/duplicate/{id}', ['as' => '.duplicate', 'uses' => 'PageController@duplicate']);
+        // 新建版本
+        Route::get('variation/create/{page_id}', ['as' => '.create', 'uses' => 'PageController@create']);
+        // 修改版本名
+        Route::post('variation/rename', ['as' => '.rename', 'uses' => 'PageController@rename']);
     });
 });
