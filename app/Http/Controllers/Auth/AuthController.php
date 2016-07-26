@@ -145,6 +145,7 @@ use AuthenticatesAndRegistersUsers,
       }
      * 
      */
+    
 
     /**
      * 提交登录 
@@ -158,13 +159,13 @@ use AuthenticatesAndRegistersUsers,
         ]);
 
         $credentials = $this->getCredentials($request);
-
         if (Auth::attempt($credentials, $request->has('remember'))) {
             $user = Auth::user();
             $user->token = UserActive::createNewToken();
             $user->save();
             
-            return redirect($request->get('to', '/'));
+            return redirect()->intended('/');
+            //return redirect($request->get('to', '/'));
             //return response()->json(['auth' => $user]);
         }
 
