@@ -6,21 +6,35 @@ use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 use App\Models\Page\PageVariation;
+use App\Models\Page\Page;
 
 class EditorController extends Controller {
 
     public $user;
+    public $page;
     public $pageVariation;
 
     public function __construct() {
         $this->user = auth()->user();
         
         $this->pageVariation = new PageVariation;
+        $this->page = new Page;
     }
     
     // editor 页面
-    public function index() {
-        return view('editor');
+    public function index($id) {
+        $page = $this->page->where('user_id', $this->user->id)
+                    ->select('id', 'name', 'url')
+                    ->find($id);
+        if (!$page) {
+            throw new \ErrorException('找不到相关页面');
+        }
+        $page->variations = $page->variation()->select('id', 'name')
+                ->where('deleted_at', '0')
+                ->orderBy('id', 'desc')
+                ->get()->toArray();
+        
+        return view('editor', ['page' => $page]);
     }
     
     /**

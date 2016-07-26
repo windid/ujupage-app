@@ -46,9 +46,9 @@ Route::group(['prefix'=> $zone, 'as' => $zone], function(){
 $zone = 'editor';
 Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'middleware' => 'auth'], function(){   
     
-    Route::get('/{id}', ['as' => '.index', 'uses' => 'EditorController@index']);
+    Route::get('/{id}', ['as' => '.index', 'uses' => 'EditorController@index'])->where('id', '[0-9]+');
     // 预览        
-    Route::get('preview/variation/{id}', ['as' => '.preview', 'uses' => 'EditorController@previewVariation']);
+    Route::get('preview/variation/{id}', ['as' => '.preview', 'uses' => 'EditorController@previewVariation'])->where('id', '[0-9]+');
     
     // API接口分配
     // m=editor_images@editor_upload
@@ -76,23 +76,23 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         // 修改图片信息
         Route::post('modimage', ['as' => '.modimage', 'uses' => 'ImageController@modimage']);
         // 删除图片
-        Route::get('delimage/{id}', ['as' => '.delimage', 'uses' => 'ImageController@delimage']);
+        Route::get('delimage/{id}', ['as' => '.delimage', 'uses' => 'ImageController@delimage'])->where('id', '[0-9]+');
     });
     
     Route::group(['prefix'=>'page', 'as' => '.page'], function(){        
         // 加载        
-        Route::get('variation/{id}', ['as' => '.initpage', 'uses' => 'PageController@initpage']);
+        Route::get('variation/{id}', ['as' => '.initpage', 'uses' => 'PageController@initpage'])->where('id', '[0-9]+');
         // 保存版本        
         Route::post('save', ['as' => '.save', 'uses' => 'PageController@save']);
         // 保存设置        
         Route::post('savesetting', ['as' => '.savesetting', 'uses' => 'PageController@savesetting']);
         
         // 删除版本
-        Route::get('variation/remove/{id}', ['as' => '.remove', 'uses' => 'PageController@remove']);
+        Route::get('variation/remove/{id}', ['as' => '.remove', 'uses' => 'PageController@remove'])->where('id', '[0-9]+');
         // 复制版本
-        Route::get('variation/duplicate/{id}', ['as' => '.duplicate', 'uses' => 'PageController@duplicate']);
+        Route::get('variation/duplicate/{id}', ['as' => '.duplicate', 'uses' => 'PageController@duplicate'])->where('id', '[0-9]+');
         // 新建版本
-        Route::get('variation/create/{page_id}', ['as' => '.create', 'uses' => 'PageController@create']);
+        Route::get('variation/create/{page_id}', ['as' => '.create', 'uses' => 'PageController@create'])->where('page_id', '[0-9]+');
         // 修改版本名
         Route::post('variation/rename', ['as' => '.rename', 'uses' => 'PageController@rename']);
     });
