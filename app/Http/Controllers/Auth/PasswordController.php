@@ -61,10 +61,11 @@ class PasswordController extends Controller
 
         switch ($response) {
             case Password::RESET_LINK_SENT:
-                return response()->json(['result' => 'true']);
+                return $this->getSendResetLinkEmailSuccessResponse($response);
 
             case Password::INVALID_USER:
-                return response()->json(['result' => '无效用户',]);
+            default:
+                return $this->getSendResetLinkEmailFailureResponse($response);
         }
     }
     
@@ -107,10 +108,9 @@ class PasswordController extends Controller
 
         switch ($response) {
             case Password::PASSWORD_RESET:
-                return response()->json(['result' => 'true']);
-
+                return $this->getResetSuccessResponse($response);
             default:
-                return response()->json(['result' => '重设失败']);
+                return $this->getResetFailureResponse($request, $response);
         }
     }
 }
