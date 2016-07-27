@@ -49,7 +49,7 @@ use AuthenticatesAndRegistersUsers,
     protected function validator(array $data) {
         return Validator::make($data, [
                     'name' => 'required|max:255',
-                    'email' => 'required|email|max:255|unique:users',
+                    'email' => ['required', 'email', 'max:255', 'unique:users', 'regex:/^(.*)(@ujumedia.com)$/'],
                     'password' => 'required|confirmed|min:6',
         ]);
     }
@@ -72,7 +72,8 @@ use AuthenticatesAndRegistersUsers,
 
         $user = $this->create($request->all());
         
-        return json_encode(['auth' => $user]);        
+        return view('auth.registerok'
+                , compact('user'));
     }
 
     /**
@@ -168,8 +169,9 @@ use AuthenticatesAndRegistersUsers,
             //return redirect($request->get('to', '/'));
             //return response()->json(['auth' => $user]);
         }
-
-        return response()->json(['_csrf' => csrf_token(), 'error' => $this->getFailedLoginMessage()]);
+        
+        return $this->sendFailedLoginResponse($request);
+        //return response()->json(['_csrf' => csrf_token(), 'error' => $this->getFailedLoginMessage()]);
     }
 
     /**
