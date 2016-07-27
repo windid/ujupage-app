@@ -17,6 +17,12 @@
             {{$v}} <br/>
             @endforeach
             </font>
+            
+            @if (session('status'))
+                <font style="color:green;">
+                    {{ session('status') }}
+                </font>
+            @endif
             <input type="submit" value="重设密码"/>  
         </form>
     </body>
