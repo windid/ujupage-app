@@ -45,7 +45,32 @@ const mutations = {
   
   //页面初始加载
   PAGE_INIT (state, page) {
+    if (!page.settings){
+      page = {
+        settings:{
+          seo:{
+            pageTitle: "",
+            keywords: "",
+            description: ""
+          },
+          goals:{
+            first: ""
+          },
+          code: {
+            header:"",
+            bodyIn:"",
+            bodyOut:""
+          }
+        },
+        colorSet:["#FCFFF5","#D1DBBD","#91AA9D","#3E606F","#193441"],
+        sections:[],
+        elements:{}
+      }
+    }
     state.page = merge({},page);
+    if (page.elements.length < 1){
+      page.elements = {};
+    }
     pageStates = [merge({},state.page)];
     pageHistoryIndex = 0;
     mutations.SUM_PAGE_HEIGHT(state);
@@ -214,6 +239,10 @@ const mutations = {
   ADD_ELEMENT(state, sectionId, element){
     const elementId = randomChar(8);
     Vue.set(state.page.elements, elementId, element);
+    if (state.page.sections.length === 0){
+      mutations.ADD_SECTION(state);
+      sectionId = 0;
+    }
     state.page.sections[sectionId]['elements']['pc'].push(elementId);
     state.page.sections[sectionId]['elements']['mobile'].push(elementId);
     state.workspace.zIndex.pc.max     = element.style.pc.zIndex;

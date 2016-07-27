@@ -1,27 +1,30 @@
-<html>
-    <head>
-        <title>登录</title>
-    </head>
-    <body>
-        
-        <form action="{{route('oauth.login.post')}}" method="post">
-            {{csrf_field()}}
-            
-            <input type="text" name="email" value="" placeholder="邮箱"/>
-            <input type="password" name="password" value="" placeholder="密码"/>
-            <label><input type="checkbox" name="remember" value="1" /> 记住我</label>
-            <!--<input type="text" name="to" value="editor/v1" placeholder="跳转到"/>-->
-            <input type="hidden" name="grant_type" value="password" />
-            <input type="hidden" name="client_id" value="1" />
-            <input type="hidden" name="client_secret" value="a16a85d0e7593b970f53e3de6bdd960f" />           
-            
-            <br />
-            <font style="color:red;">
-            @foreach ($errors->all() as $v)            
-            {{$v}} <br/>
-            @endforeach
-            </font>
-            <input type="submit" value="登录"/>  
-        </form>
-    </body>
-</html>
+@extends('auth.master')
+
+@section('title', '登陆')
+
+@section('content')
+<form action="{{route('oauth.login.post')}}" method="post">
+    {{csrf_field()}}
+    <div class="form-group">
+        <input class="form-control input-lg" type="text" name="email" value="" placeholder="邮箱"/>        
+    </div>
+    <div class="form-group">
+        <input class="form-control input-lg" type="password" name="password" value="" placeholder="密码"/>
+    </div> 
+    <div class="form-group">
+        <label><input type="checkbox" name="remember" value="1" /> 保持我的登陆状态</label>
+    </div>           
+    
+    @foreach ($errors->all() as $v)            
+     <p class="text-danger">{{$v}}</p>
+    @endforeach
+    <div class="form-group">
+        <input type="submit" value="登陆" class="btn btn-primary btn-lg form-control input-lg" />  
+    </div>
+</form>
+    <div><a href="./forget">忘记密码？</a></div>
+@endsection
+
+@section('extra')
+    <p>还没有聚页账户？<a href="./register">注册账户</a></p>
+@endsection

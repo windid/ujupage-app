@@ -80,9 +80,8 @@ export default {
         if (!el.contains(e.target)) this.editImageUrlDone();
       })
       this.imageUrlEditing = true;
-      var vm = this;
-      Vue.nextTick(function(){
-        vm.$els.imageUrlInput.focus();
+      this.$nextTick(function(){
+        this.$els.imageUrlInput.focus();
       });
     },
     editImageUrlDone: function(){

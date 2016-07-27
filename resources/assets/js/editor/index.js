@@ -1,5 +1,3 @@
-Vue.config.devtools = true
-
 import VueResource from 'vue-resource'
 import editor from './components/editor.vue'
 import '../vendor/jquery-ui/jquery-ui.js'
