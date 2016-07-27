@@ -185,7 +185,7 @@ use AuthenticatesAndRegistersUsers,
             User::where('id', $user->id)
                     ->update(['token' => UserActive::createNewToken()]);
 
-            return redirect()->with('status', '登出成功');
+            return redirect(route('auth.login'))->with('status', '登出成功');
         } else {
             return view('auth.logout', ['error' => '找不到相关用户']);
         }
