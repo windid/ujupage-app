@@ -125,12 +125,12 @@ use AuthenticatesAndRegistersUsers,
 
                 $active->where('token', $token)->delete();
             } else {
-                return response()->json(['result' => 'false']);
+                return view('auth.active', ['error' => '激活失败']);
             }
         } else {
-            return response()->json(['result' => 'false']);
+            return view('auth.active', ['error' => '激活失败']);
         }
-        return response()->json(['result' => 'true']);
+        return view('auth.active', ['result' => '激活成功']);
     }
 
     /**
@@ -184,9 +184,9 @@ use AuthenticatesAndRegistersUsers,
             User::where('id', $user->id)
                     ->update(['token' => UserActive::createNewToken()]);
 
-            return response()->json(['result' => 'true']);
+            return view('auth.logout', ['result' => '成功登出']);
         } else {
-            return response()->json(['result' => '找不到相关用户']);
+            return view('auth.logout', ['error' => '找不到相关用户']);
         }
     }
        
