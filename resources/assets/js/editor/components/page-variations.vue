@@ -72,8 +72,9 @@ export default {
 
     },
 
-    switchVariation: function(variationId){
+    switchVariation: function(variationId,variationName){
       this.$dispatch('variation-changed', variationId);
+      this.currentVariationName = variationName;
     }
 
   },
@@ -98,12 +99,12 @@ export default {
 <template>
   <dropdown :show.sync="show">
     <div class="variations-button" data-toggle="dropdown">
-      <div v-if="pageInfo.variations.length > 1"><span class="current-variation-name">{{currentVariationName}}</span> <span class="caret"></span></div>
+      <div v-if="pageInfo.variations.length > 1"><span class="current-variation-name">{{currentVariationName}}</span> &nbsp; <span class="caret"></span></div>
       <div v-else>A/B测试</div>
     </div>
     <ul slot="dropdown-menu" class="dropdown-menu variations-menu">
       <li v-for="variation in pageInfo.variations">
-        <span class="variation-name" @click="switchVariation(variation.id)">{{variation.name}}</span>
+        <span class="variation-name" @click="switchVariation(variation.id, variation.name)">{{variation.name}}</span>
         <span class="caret-right"></span>
         <div v-show="editingVariationId === variation.id" class="input-group">
           <span class="input-group-addon">重命名</span>
@@ -115,12 +116,12 @@ export default {
         <div v-else class="btn-group">
           <div class="btn btn-default" title="重命名" @click="rename(variation.id)"><span class="glyphicon glyphicon-pencil"></span></div>
           <div class="btn btn-default" title="复制" @click="duplicateVariation(variation.id)"><span class="glyphicon glyphicon-duplicate"></span></div>
-          <div class="btn btn-danger" title="删除"><span class="glyphicon glyphicon-trash"></span></div>
+          <div class="btn btn-danger" title="删除" @click="removeVariation(variation.id)"><span class="glyphicon glyphicon-trash"></span></div>
         </div>
         
       </li>
       <li @click="createVariation()">
-        <span class="glyphicon glyphicon-plus"></span> 添加
+        <span class="glyphicon glyphicon-plus"></span> 空白页
       </li>
     </ul>
   </dropdown>
@@ -139,7 +140,9 @@ export default {
 }
 
 .variation-name{
+  min-width: 130px;
   white-space: nowrap;
+  display: block;
 }
 
 .variations-menu{
@@ -179,7 +182,7 @@ export default {
   position: absolute;
   top: 50%;
   margin-top: -4px;
-  right: 0;
+  right: 4px;
   width: 0;
   height: 0;
   border-width: 4px;

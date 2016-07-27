@@ -7,7 +7,7 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="renderer" content="webkit">
   <meta name="force-rendering" content="webkit">
-  <title>聚页 - ujupage</title>
+  <title>{{$page['name']}} - 聚页 ujupage</title>
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
   <style>
     .loading{
@@ -30,14 +30,16 @@
 
 <script>
   var _pageInfo = {
-    pageId: 1,
+    pageId: {{$page['id']}},
     variations: [
+      @foreach($page['variations'] as $variation)
       {
-        id:1,
-        name:'版本 A'
-      }
+        id:{{$variation['id']}},
+        name: "{{$variation['name']}}"
+      },
+      @endforeach
     ],
-    url:""
+    url:"{{$page['url']}}"
   };
 </script>
 

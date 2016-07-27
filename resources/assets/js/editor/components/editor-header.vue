@@ -54,10 +54,8 @@ export default {
         let page = response.json();
         this.pageInit(page);
         this.pageLoading = false;
-
-        var vm = this;
-        Vue.nextTick(function(){
-          vm.saveStatus = 'saved';
+        this.$nextTick(function(){
+          this.saveStatus = 'saved';
         });
         
       },function(response){

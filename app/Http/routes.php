@@ -21,10 +21,6 @@ Route::group(['prefix' => $zone, 'as' => $zone , 'namespace' => ucwords($zone), 
 
 $zone = 'oauth';
 Route::group(['prefix'=> $zone, 'as' => $zone], function(){   
-    // 获取csrf
-    Route::get('csrf_token', function(){
-       return response()->json(['csrf_token' => csrf_token()]); 
-    });
     // 登录 
     Route::post('login', ['as' => '.login.post', 'uses' => 'Auth\AuthController@postLogin']);
     // 注册
@@ -96,4 +92,11 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         // 修改版本名
         Route::post('variation/rename', ['as' => '.rename', 'uses' => 'PageController@rename']);
     });
+});
+
+$zone = 'dashboard';
+Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'middleware' => 'auth'], function(){   
+    
+    Route::get('/', ['as' => '.index', 'uses' => 'DashboardController@index']);
+    
 });

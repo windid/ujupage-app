@@ -7,9 +7,8 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="renderer" content="webkit">
   <meta name="force-rendering" content="webkit">
-  <title>聚页</title>
+  <title>控制面板 - 聚页</title>
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
-  <link href="{{asset('css/dashboard.css')}}" rel="stylesheet">
   <style>
     .loading{
       width:128px;
@@ -25,9 +24,9 @@
 </head>
 <body>
 
-<editor>
+<dashboard>
   <div class="loading"></div>
-</editor>
+</dashboard>
 
 @if ( Config::get('app.debug') )
   <script src="{{asset('js/libs/vue.js')}}"></script>

@@ -83,9 +83,8 @@ export default {
     },
     'showImageLibary': function(value){
       if(!value && !this.imageObj.url && this.element.src == ''){
-        let vm = this;
-        Vue.nextTick(function(){
-          vm.removeElement(vm.elementId);
+        this.$nextTick(function(){
+          this.removeElement(vm.elementId);
         });
       }
     }
