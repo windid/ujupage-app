@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Password;
 
+use App\Models\User\PasswordReset;
+
 class PasswordController extends Controller
 {
     /*
@@ -70,19 +72,20 @@ class PasswordController extends Controller
     }
     
     /**
-     * 获取重设密码crsf
-     * @return ['_csrf']
+     * 重设密码
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string|null  $token
+     * @return \Illuminate\Http\Response
      */
-    /*
-    public function getReset($token = null) {
-        if (is_null($token)) {
-            return response()->json(['result' => '找不到相关页面'], 404);
-        }
+    public function getReset(Request $request, $token = null)
+    {
+        $token_row = PasswordReset::where('token', $token)->first();
+        if ($token_row) {
+            $request->query->set('email', $token_row->email);
+        } 
         
-        return response()->json(['_csrf' => csrf_token(), 'token' => $token]);
+        return $this->showResetForm($request, $token);
     }
-     * 
-     */
     
     /**
      * 提交重设密码

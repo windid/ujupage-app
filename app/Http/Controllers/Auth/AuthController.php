@@ -70,8 +70,9 @@ use AuthenticatesAndRegistersUsers,
             );
         }
 
-        $user = $this->create($request->all());
-        
+        $user = $this->create($request->all());        
+        Auth::guard($this->getGuard())->login($user);
+                
         return view('auth.registerok'
                 , compact('user'));
     }
@@ -184,7 +185,7 @@ use AuthenticatesAndRegistersUsers,
             User::where('id', $user->id)
                     ->update(['token' => UserActive::createNewToken()]);
 
-            return view('auth.logout', ['result' => '成功登出']);
+            return redirect(route('auth.login'))->with('status', '登出成功');
         } else {
             return view('auth.logout', ['error' => '找不到相关用户']);
         }
