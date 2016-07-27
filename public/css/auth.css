@@ -15,6 +15,11 @@
   text-align: center;
   color: #bbb; }
 
+.auto-info {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px; }
+
 label {
   font-weight: normal; }
 

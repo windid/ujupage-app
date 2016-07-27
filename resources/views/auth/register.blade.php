@@ -16,7 +16,7 @@
     </div> 
     <div class="form-group">
         <input class="form-control input-lg" type="password" name="password_confirmation" value="{{old('password_confirmation')}}" placeholder="确认密码"/>
-    </div>       
+    </div>
     
     @foreach ($errors->all() as $v)            
      <p class="text-danger">{{$v}}</p>
