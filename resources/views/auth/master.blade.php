@@ -7,7 +7,7 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="renderer" content="webkit">
   <meta name="force-rendering" content="webkit">
-  <title>@yield('title') - 聚页 ujupage</title>
+  <title>@yield('title') - 聚页</title>
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
   <link href="{{asset('css/auth.css')}}" rel="stylesheet">
   <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>

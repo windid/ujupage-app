@@ -20,6 +20,8 @@ elixir(function(mix) {
   // mix.sass('editor.scss');
   //用户认证（登陆、注册等）
   mix.sass('auth.scss');
+  //app全站通用css
+  mix.sass('global.scss');
 
   mix.browserSync({
     files:['app/**/*', 'public/**/*', 'resources/views/**/*'],
