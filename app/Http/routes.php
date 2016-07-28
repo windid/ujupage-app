@@ -76,21 +76,26 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
     });
     
     Route::group(['prefix'=>'page', 'as' => '.page'], function(){        
-        // 加载        
-        Route::get('variation/{id}', ['as' => '.initpage', 'uses' => 'PageController@initpage'])->where('id', '[0-9]+');
-        // 保存版本        
-        Route::post('save', ['as' => '.save', 'uses' => 'PageController@save']);
         // 保存设置        
         Route::post('savesetting', ['as' => '.savesetting', 'uses' => 'PageController@savesetting']);
         
+        
+        
+        /**
+         * PageVariationController
+         */
+        // 加载        
+        Route::get('variation/{id}', ['as' => '.initpage', 'uses' => 'PageVariationController@start'])->where('id', '[0-9]+');
+        // 保存版本        
+        Route::post('variation/save', ['as' => '.save', 'uses' => 'PageVariationController@save']);
         // 删除版本
-        Route::get('variation/remove/{id}', ['as' => '.remove', 'uses' => 'PageController@remove'])->where('id', '[0-9]+');
+        Route::get('variation/remove/{id}', ['as' => '.remove', 'uses' => 'PageVariationController@remove'])->where('id', '[0-9]+');
         // 复制版本
-        Route::get('variation/duplicate/{id}', ['as' => '.duplicate', 'uses' => 'PageController@duplicate'])->where('id', '[0-9]+');
+        Route::get('variation/duplicate/{id}', ['as' => '.duplicate', 'uses' => 'PageVariationController@duplicate'])->where('id', '[0-9]+');
         // 新建版本
-        Route::get('variation/create/{page_id}', ['as' => '.create', 'uses' => 'PageController@create'])->where('page_id', '[0-9]+');
+        Route::get('variation/create/{page_id}', ['as' => '.create', 'uses' => 'PageVariationController@create'])->where('page_id', '[0-9]+');
         // 修改版本名
-        Route::post('variation/rename', ['as' => '.rename', 'uses' => 'PageController@rename']);
+        Route::post('variation/rename', ['as' => '.rename', 'uses' => 'PageVariationController@rename']);
     });
 });
 
