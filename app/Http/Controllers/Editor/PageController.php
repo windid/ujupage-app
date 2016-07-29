@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Page\Page;
 use App\Models\Page\PageVariation;
-use App\Models\User\UserSetting;
+use App\Models\Page\PageGroup;
 
 class PageController extends Controller {
     
@@ -16,21 +16,54 @@ class PageController extends Controller {
     public $userSetting;
     public $page;
     public $pageVariation;
+    public $pageGroup;
     
     public function __construct() {
         $this->user = auth()->user();
         
-        $this->userSetting = new UserSetting;
         $this->page = new Page;
         $this->pageVariation = new PageVariation;
+        $this->pageGroup = new PageGroup;
     }
     
     /**
-     * 增加页面
-    public function createpage() {
-        
-    }
+     * 初始化project,grouppage,page
+     * @param int $page_id
+     * @return App\Models\Page\Pagen $page
      */
+    private function initPGP(int $page_id) {
+        $this->page = $this->page->find($page_id);
+        if (!$this->page) {
+            return $this->err('not found variation');
+        }
+        $this->pageGroup = $this->pageGroup->find($this->page->group_id);
+        if (!$this->pageGroup) {
+            return $this->err('not found variation');
+        }
+        $this->project = $this->user->projects()->find($this->pageGroup->project_id);
+        if (!$this->project) {
+            return $this->err('not found variation');
+        }
+        
+        return $this->page;
+    }
+    /**
+     * 初始化project,grouppage,page,pagevariation
+     * @param int $variation_id
+     * @return App\Models\Page\PageVariation $pageVariation
+     */
+    private function initPGPV(int $variation_id) {
+        $this->pageVariation = $this->pageVariation->find($variation_id);
+        if (!$this->pageVariation) {
+            return $this->err('not found variation');
+        }        
+        $this->page = $this->initPGP($this->pageVariation->page_id);                 
+        if (get_class($this->page) == 'Illuminate\Http\JsonResponse') {
+            return $this->page;
+        }
+        
+        return $this->pageVariation;
+    }
         
     /**
      * page_savesetting
@@ -44,16 +77,15 @@ class PageController extends Controller {
      * }
      */
     public function savesetting(Request $request) {
-        $page_id = $request->get('id', 0);
-        $page_variation = $this->pageVariation->where('user_id', $this->user->id)
-                                            ->find($page_id);
-        if (!$page_variation) {
-            return $this->err('找不到相关版本');
+        $page_variation_id = $request->get('id', 0);
+        $page_variation = $this->initPGPV($page_variation_id);
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
         }
         
         $page_variation_setting = $request->get('page_variation_setting', '');
         $page_setting = $request->get('page_setting', '');
-        $user_setting = $request->get('user_setting', '');
+        //$user_setting = $request->get('user_setting', '');
         
         if (!$page_variation_setting 
                 || !$page_setting
@@ -66,9 +98,6 @@ class PageController extends Controller {
         ]);
         $this->page->where('id', $page_variation->page_id)->update([
             'setting' => $page_setting
-        ]);
-        $this->userSetting->where('user_id', $page_variation->user_id)->update([
-            'setting' => $user_setting
         ]);
         
         return $this->dump();

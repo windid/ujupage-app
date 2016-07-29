@@ -5,6 +5,8 @@ namespace App\Models\Page;
 use Illuminate\Database\Eloquent\Model;
 
 class PageVariation extends Model {
+        
+    use \Illuminate\Database\Eloquent\SoftDeletes;
     
     public $timestamps = true;
     

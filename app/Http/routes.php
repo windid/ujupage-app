@@ -4,6 +4,11 @@
 Route::get('/', function(){
    return view('welcome'); 
 });
+// 表单测试获取 csrf_token
+Route::get('csrf_token', function(){
+    return csrf_token();
+});
+
 $zone = 'auth';
 Route::group(['prefix' => $zone, 'as' => $zone , 'namespace' => ucwords($zone), 'middleware' => 'web'] ,function() {
     // 注册
@@ -104,4 +109,41 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
     
     Route::get('/', ['as' => '.index', 'uses' => 'DashboardController@index']);
     
+    Route::group(['prefix'=>'project', 'as' => '.project'], function(){
+        // 项目列表
+        Route::get('get', ['as' => '.get', 'uses' => 'ProjectController@get']);
+        
+        // 添加项目
+        Route::post('add', ['as' => '.add', 'uses' => 'ProjectController@add']);
+        // 修改项目
+        Route::post('mod', ['as' => '.mod', 'uses' => 'ProjectController@mod']);
+        // 删除项目
+        Route::get('remove/{id}', ['as' => '.remove', 'uses' => 'ProjectController@remove'])->where('id', '[0-9]+');
+    });
+    
+    Route::group(['prefix'=>'pagegroup', 'as' => '.pagegroup'], function(){
+        // 分组列表
+        Route::get('get/{id}', ['as' => '.get', 'uses' => 'PageGroupController@get'])->where('id', '[0-9]+');
+        
+        // 添加分组
+        Route::post('add', ['as' => '.add', 'uses' => 'PageGroupController@add']);
+        // 修改分组
+        Route::post('mod', ['as' => '.mod', 'uses' => 'PageGroupController@mod']);
+        // 删除分组
+        Route::get('remove/{id}', ['as' => '.remove', 'uses' => 'PageGroupController@remove'])->where('id', '[0-9]+');
+    });
+    
+    Route::group(['prefix'=>'page', 'as' => '.page'], function(){
+        // 页面列表
+        Route::get('get/{id}', ['as' => '.get', 'uses' => 'PageController@get'])->where('id', '[0-9]+');
+        // 单个页面
+        Route::get('one/{id}', ['as' => '.one', 'uses' => 'PageController@one'])->where('id', '[0-9]+');
+
+        // 添加页面
+        Route::post('add', ['as' => '.add', 'uses' => 'PageController@add']);
+        // 修改页面
+        Route::post('mod', ['as' => '.mod', 'uses' => 'PageController@mod']);
+        // 删除页面
+        Route::get('remove/{id}', ['as' => '.remove', 'uses' => 'PageController@remove'])->where('id', '[0-9]+');
+    });
 });
