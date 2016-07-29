@@ -22,4 +22,14 @@ class Project extends Model {
         return $this->hasMany('App\Models\Page\PageGroup');
     }
     
+    public function users($with_role = false) {
+        $_this = $this->belongsToMany('App\User'
+                                    , 'project_users');
+        if ($with_role) {
+            return $_this->withPivot('role');
+        }
+        return $_this;
+    }
+    
+    
 }

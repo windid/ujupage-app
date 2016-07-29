@@ -12,7 +12,7 @@ Route::get('csrf_token', function(){
 $zone = 'auth';
 Route::group(['prefix' => $zone, 'as' => $zone , 'namespace' => ucwords($zone), 'middleware' => 'web'] ,function() {
     // 注册
-    Route::get('register', ['as' => '.register', 'uses' => 'AuthController@getRegister']);
+    Route::get('register/{i?}', ['as' => '.register', 'uses' => 'AuthController@getRegister'])->where('i', '[0-9a-zA-Z]+');
     // 登录 
     Route::get('login', ['as' => '.login', 'uses' => 'AuthController@getLogin']);
     // 忘记密码
@@ -119,6 +119,19 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         Route::post('mod', ['as' => '.mod', 'uses' => 'ProjectController@mod']);
         // 删除项目
         Route::get('remove/{id}', ['as' => '.remove', 'uses' => 'ProjectController@remove'])->where('id', '[0-9]+');
+        
+        // 协作人
+        Route::group(['prefix'=>'invite', 'as' => '.invite'], function(){
+            // 查看该项目的协作人
+            Route::get('get/{project_id}', ['as' => '.get', 'uses' => 'InviteController@get'])->where('project_id', '[0-9]+');
+            // 删除指定的协作人
+            Route::get('remove/{project_id}/{user_id}', ['as' => '.remove', 'uses' => 'InviteController@remove'])
+                    ->where(['project_id' => '[0-9]+', 'user_id' => '[0-9]+']);
+            // 退出协作
+            Route::get('quit/{project_id}', ['as' => '.quit', 'uses' => 'InviteController@quit'])->where('project_id', '[0-9]+');
+            // 发邮件通知邀请协作
+            Route::post('join', ['as' => '.join', 'uses' => 'InviteController@join']);
+        });
     });
     
     Route::group(['prefix'=>'pagegroup', 'as' => '.pagegroup'], function(){
@@ -146,4 +159,6 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         // 删除页面
         Route::get('remove/{id}', ['as' => '.remove', 'uses' => 'PageController@remove'])->where('id', '[0-9]+');
     });
+    
+    
 });

@@ -5,6 +5,7 @@
 @section('content')
 <form action="{{route('oauth.register.post')}}" method="post">
     {{csrf_field()}}
+    <input type="hidden" name="i" value="{{$i}}" />
     <div class="form-group">
         <input class="form-control input-lg" type="text" name="name" value="{{old('name')}}" placeholder="姓名"/>        
     </div>

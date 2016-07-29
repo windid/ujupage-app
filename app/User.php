@@ -22,12 +22,16 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'token', 'actived_at', 'created_at', 'updated_at'
     ];
     
-    public function projects() {
-        return $this->belongsToMany('App\Models\Project\Project'
+    public function projects($with_role = false) {
+        $_this = $this->belongsToMany('App\Models\Project\Project'
                                     , 'project_users');
-    }
-    
+        
+        if ($with_role) {            
+            return $_this->withPivot('role');
+        }
+        return $_this;
+    }    
 }
