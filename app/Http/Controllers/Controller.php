@@ -18,6 +18,6 @@ class Controller extends BaseController
     public function dump(array $merge = []) {
         $merge = array_merge($merge, ['result' => 'true']);
         
-        return response()->json($merge, 200, [], JSON_FORCE_OBJECT);
+        return response()->json($merge, 200, []);
     }
 }

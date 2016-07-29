@@ -1,9 +1,9 @@
-Vue.http.options.root = '/dashboard/page/group/';
+Vue.http.options.root = '/dashboard/pagegroup/';
 
 export default {
 
   list (projectId, success, error){
-    const url = 'list?projectId=' + projectId;
+    const url = 'get?projectId=' + projectId;
     Vue.http.get(url).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
   },
 

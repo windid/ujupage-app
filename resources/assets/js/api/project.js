@@ -1,9 +1,9 @@
-Vue.http.options.root = '/dashboard/page/project/';
+Vue.http.options.root = '/dashboard/project';
 
 export default {
 
   list (success, error){
-    const url = 'list';
+    const url = 'get';
     Vue.http.get(url).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
   },
 

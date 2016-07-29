@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import VueResource from 'vue-resource'
 import dashboard from './components/dashboard.vue'
 import store from './vuex/store'
