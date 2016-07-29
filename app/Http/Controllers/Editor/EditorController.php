@@ -7,30 +7,55 @@ use Symfony\Component\HttpFoundation\Request;
 
 use App\Models\Page\PageVariation;
 use App\Models\Page\Page;
+use App\Models\Page\PageGroup;
+use App\Models\Project\Project;
 
 class EditorController extends Controller {
 
     public $user;
+    public $project;
+    public $pageGroup;
     public $page;
-    public $pageVariation;
+    public $pageVariation;    
 
     public function __construct() {
         $this->user = auth()->user();
         
         $this->pageVariation = new PageVariation;
         $this->page = new Page;
+        $this->pageGroup = new PageGroup;
+        $this->project = new Project;
+    }
+    
+    /**
+     * 初始化project,grouppage,page
+     * @param int $page_id
+     * @return App\Models\Page\Pagen $page
+     */
+    private function initPGP(int $page_id) {
+        $this->page = $this->page->find($page_id);
+        if (!$this->page) {
+            return $this->err('not found variation');
+        }
+        $this->pageGroup = $this->pageGroup->find($this->page->group_id);
+        if (!$this->pageGroup) {
+            return $this->err('not found variation');
+        }
+        $this->project = $this->user->projects()->find($this->pageGroup->project_id);
+        if (!$this->project) {
+            return $this->err('not found variation');
+        }
+        
+        return $this->page;
     }
     
     // editor 页面
     public function index($id) {
-        $page = $this->page->where('user_id', $this->user->id)
-                    ->select('id', 'name', 'url')
-                    ->find($id);
-        if (!$page) {
-            throw new \ErrorException('找不到相关页面');
+        $page = $this->initPGP($id);
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            throw new \ErrorException('not found page');
         }
         $page->variations = $page->variation()->select('id', 'name')
-                ->where('deleted_at', '0')
                 ->orderBy('id', 'desc')
                 ->get()->toArray();
         

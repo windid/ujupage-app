@@ -11,9 +11,12 @@ use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserActive;
+use App\Models\Project\ProjectInvite;
 
 class AuthController extends Controller {
 
+    public $projectInvite;
+    
     protected $redirectPath = '/';
     //protected $username = 'username';
 
@@ -36,7 +39,7 @@ use AuthenticatesAndRegistersUsers,
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct() {        
         $this->middleware('guest', ['except' => ['getLogout', 'getActive']]);
     }
 
@@ -51,15 +54,15 @@ use AuthenticatesAndRegistersUsers,
                     'name' => 'required|max:255',
                     'email' => ['required', 'email', 'max:255', 'unique:users', 'regex:/^(.*)(@ujumedia.com)$/'],
                     'password' => 'required|confirmed|min:6',
+                    'i' => 'alpha_num'
         ]);
     }
 
-    /*
-      public function getRegister() {
-      //parent::getRegister();
-      return response()->json(["_csrf" => csrf_token()]);
-      }
-     */
+    
+    public function getRegister(string $i = '') {
+        return view('auth.register', ['i' => $i]);
+    }
+    
 
     public function postRegister(Request $request) {
         $validator = $this->validator($request->all());
@@ -72,7 +75,13 @@ use AuthenticatesAndRegistersUsers,
 
         $user = $this->create($request->all());        
         Auth::guard($this->getGuard())->login($user);
-                
+                        
+        if ($user->actived_at > 0 && $this->projectInvite) {
+            $project_id = $this->projectInvite->project_id;
+            
+            $this->projectInvite->delete();
+            return redirect(url('dashboard?id='.$project_id));
+        }
         return view('auth.registerok'
                 , compact('user'));
     }
@@ -90,9 +99,22 @@ use AuthenticatesAndRegistersUsers,
                     'email' => $data['email'],
                     'password' => bcrypt($data['password'])
         ]);
-
+        
+        $i = request('i', '');
+        $this->projectInvite = ProjectInvite::where('i', $i)
+                                        ->where('email', $user->email)
+                                        ->first();
+        $user->actived_at = 0;
+        if ($this->projectInvite) {
+            $user->projects()->attach($this->projectInvite->project_id, ['role' => 'member']);  
+            
+            $user->actived_at = time();
+            $user->save();
+            
+            return $user;
+        }
         $token = UserActive::createNewToken();
-        if ($user) {
+        if ($user && $user->actived_at == 0) {
             Mail::send('auth.emails.active_email', ['user' => $data['name'], 'token' => $token], function ($m) use ($data, $token) {
 
                 $from = config('mail')['from'];
