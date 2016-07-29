@@ -77,7 +77,7 @@ export default {
       borderTopWidth:section.style[workspace.version]['border-width'] + 'px',
       borderBottomWidth:section.style[workspace.version]['border-width'] + 'px',
       borderStyle:'solid'
-    }"  
+    }"
     v-on:mouseenter="setCurrentSectionId(sectionId)"
   >
     <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">

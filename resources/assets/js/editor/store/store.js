@@ -131,7 +131,9 @@ const mutations = {
 
   //添加板块
   ADD_SECTION(state){
+    let sectionId = randomChar(8);
     state.page.sections.push({
+      id:sectionId,
       style:{
         "pc":{"background-color":"",height:"300px"},
         "mobile":{"background-color":"",height:"300px"}

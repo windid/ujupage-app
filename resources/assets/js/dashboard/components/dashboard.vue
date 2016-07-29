@@ -1,35 +1,41 @@
-<template>
-  <div>
-    <common-header></common-header>
-    <div id="main-wrapper">
-      <div id="main">
-        <div id="sidebar"></div>
-        <div id="content"></div>
-      </div> 
-    </div>
-    <div id="footer-wrapper">
-      <div id="footer"></div>
-    </div>
-  </div>
-</template>
-
 <script>
-import commonHeader from '../../common/header.vue'
-import store from '../vuex/store'
+
+import commonHeader from '../../layout/header.vue'
+import sidebar from './sidebar.vue'
+import workspace from './workspace.vue'
+import { mapGetters, mapActions } from '../../vendor/vuex-2.0.0'
 
 export default {
   components: {
-    commonHeader
+    commonHeader,
+    sidebar,
+    workspace
   },
-  vuex: {
-    actions: {
-      
-    }
+  computed: {
+
   },
-  store,
-  methods: {
-    
+  methods: mapActions([
+    'init'
+  ]),
+  created (){
+    // this.init();
   }
 }
 </script>
 
+<template>
+  <div id="page">
+    <common-header></common-header>
+    <div id="main" @click="init">
+      <sidebar></sidebar>
+      <workspace></workspace>
+    </div> 
+  </div>
+</template>
+
+<style>
+  #main{
+    position:relative;
+    top:55px;
+  }
+</style>

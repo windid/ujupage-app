@@ -41,7 +41,7 @@ export default {
       
       let variationId = this.currentVariationId;
       this.saveStatus = 'saving';
-      this.$http.post('/editor/page/save?id=' + variationId, {htmljson: JSON.stringify(this.page)}).then(function(response){
+      this.$http.post('/editor/page/variation/save?id=' + variationId, {htmljson: JSON.stringify(this.page)}).then(function(response){
         this.saveStatus = 'saved'
       },function(response){
         console.log(response.json())

@@ -1899,7 +1899,7 @@
 	
 	      var variationId = this.currentVariationId;
 	      this.saveStatus = 'saving';
-	      this.$http.post('/editor/page/save?id=' + variationId, { htmljson: (0, _stringify2.default)(this.page) }).then(function (response) {
+	      this.$http.post('/editor/page/variation/save?id=' + variationId, { htmljson: (0, _stringify2.default)(this.page) }).then(function (response) {
 	        this.saveStatus = 'saved';
 	      }, function (response) {
 	        console.log(response.json());
@@ -23862,13 +23862,13 @@
 /* 140 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div  \n  class=\"page-section\" \n  :style=\"{\n    height:section.style[workspace.version]['height'],\n    backgroundColor:getColor(section.style[workspace.version]['background-color']),\n    borderColor:getColor(section.style[workspace.version]['border-color']),\n    borderWidth:'0',\n    borderTopWidth:section.style[workspace.version]['border-width'] + 'px',\n    borderBottomWidth:section.style[workspace.version]['border-width'] + 'px',\n    borderStyle:'solid'\n  }\"  \n  v-on:mouseenter=\"setCurrentSectionId(sectionId)\"\n>\n  <div class=\"editable-area\" :style=\"{width: workspace.width + 2 + 'px'}\">\n    <!-- 页面元素组件 -->\n    <component v-for=\"elementId in section.elements[workspace.version]\" :is=\"'element-' + elements[elementId].type\" :element=\"elements[elementId]\" :section-id=\"sectionId\" :element-id=\"elementId\"></component>\n    <!-- 板块操作按钮组 -->\n    <div class=\"btn-group-vertical page-section-operation\" role=\"group\" v-show=\"workspace.currentSectionId==sectionId\" transition=\"fade\" :style=\"{left: workspace.width + 5 + 'px'}\">\n      <template v-if=\"sectionEditing\">\n        <div class=\"btn btn-success\" title=\"完成\" @click=\"sectionEditDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n      </template>\n      <template v-if=\"!sectionEditing\">\n        <div class=\"btn btn-primary\" title=\"修改\" @click.stop=\"editSection\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n        <div class=\"btn btn-default\" title=\"上移\" @click=\"moveSection('up',sectionId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n        <div class=\"btn btn-default\" title=\"下移\" @click=\"moveSection('down',sectionId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n        <div class=\"btn btn-default\" title=\"删除\" @click=\"removeSection(sectionId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n      </template>\n    </div>\n  </div>\n  <section-edit :show.sync=\"sectionEditing\" :section-id=\"sectionId\" ></section-edit>\n  <div class=\"section-line\"></div>\n  <!-- <div class=\"resize-line-wrap\"></div> -->\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div  \n  class=\"page-section\" \n  :style=\"{\n    height:section.style[workspace.version]['height'],\n    backgroundColor:getColor(section.style[workspace.version]['background-color']),\n    borderColor:getColor(section.style[workspace.version]['border-color']),\n    borderWidth:'0',\n    borderTopWidth:section.style[workspace.version]['border-width'] + 'px',\n    borderBottomWidth:section.style[workspace.version]['border-width'] + 'px',\n    borderStyle:'solid'\n  }\"\n  v-on:mouseenter=\"setCurrentSectionId(sectionId)\"\n>\n  <div class=\"editable-area\" :style=\"{width: workspace.width + 2 + 'px'}\">\n    <!-- 页面元素组件 -->\n    <component v-for=\"elementId in section.elements[workspace.version]\" :is=\"'element-' + elements[elementId].type\" :element=\"elements[elementId]\" :section-id=\"sectionId\" :element-id=\"elementId\"></component>\n    <!-- 板块操作按钮组 -->\n    <div class=\"btn-group-vertical page-section-operation\" role=\"group\" v-show=\"workspace.currentSectionId==sectionId\" transition=\"fade\" :style=\"{left: workspace.width + 5 + 'px'}\">\n      <template v-if=\"sectionEditing\">\n        <div class=\"btn btn-success\" title=\"完成\" @click=\"sectionEditDone\"><span class=\"glyphicon glyphicon-ok\"></span></div>\n      </template>\n      <template v-if=\"!sectionEditing\">\n        <div class=\"btn btn-primary\" title=\"修改\" @click.stop=\"editSection\"><span class=\"glyphicon glyphicon-pencil\"></span></div>\n        <div class=\"btn btn-default\" title=\"上移\" @click=\"moveSection('up',sectionId)\"><span class=\"glyphicon glyphicon-chevron-up\"></span></div>\n        <div class=\"btn btn-default\" title=\"下移\" @click=\"moveSection('down',sectionId)\"><span class=\"glyphicon glyphicon-chevron-down\"></span></div>\n        <div class=\"btn btn-default\" title=\"删除\" @click=\"removeSection(sectionId)\"><span class=\"glyphicon glyphicon-trash\"></span></div>\n      </template>\n    </div>\n  </div>\n  <section-edit :show.sync=\"sectionEditing\" :section-id=\"sectionId\" ></section-edit>\n  <div class=\"section-line\"></div>\n  <!-- <div class=\"resize-line-wrap\"></div> -->\n</div>\n";
 
 /***/ },
 /* 141 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"workspace\">\n  <div id=\"content-area\" :style=\"{height: workspace.height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}\"></div>\n  <page-section v-for=\"(sectionId, section) in sections\" :section-id=\"sectionId\", :section=\"section\"></page-section>\n</div>\n<div style=\"height:20px;\"></div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"workspace\">\n  <div id=\"content-area\" :style=\"{height: workspace.height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}\"></div>\n  <page-section v-for=\"(sectionId, section) in sections\" track-by=\"id\" :section-id=\"sectionId\", :section=\"section\"></page-section>\n</div>\n<div style=\"height:20px;\"></div>\n";
 
 /***/ },
 /* 142 */
@@ -24025,7 +24025,9 @@
 	
 	  //添加板块
 	  ADD_SECTION: function ADD_SECTION(state) {
+	    var sectionId = (0, _randomChar2.default)(8);
 	    state.page.sections.push({
+	      id: sectionId,
 	      style: {
 	        "pc": { "background-color": "", height: "300px" },
 	        "mobile": { "background-color": "", height: "300px" }
