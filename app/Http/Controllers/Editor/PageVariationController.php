@@ -5,32 +5,63 @@ namespace App\Http\Controllers\Editor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\Page\Page;
 use App\Models\Page\PageVariation;
-use App\Models\User\UserSetting;
+use App\Models\Page\Page;
+use App\Models\Page\PageGroup;
 
 class PageVariationController extends Controller {
     
     public $user;
     
-    public $userSetting;
-    public $page;
     public $pageVariation;
+    public $page;
+    public $pageGroup;
     
     public function __construct() {
         $this->user = auth()->user();
         
-        $this->userSetting = new UserSetting;
-        $this->page = new Page;
         $this->pageVariation = new PageVariation;
+        $this->page = new Page;
+        $this->pageGroup = new PageGroup;
     }
-    
     /**
-     * 增加页面
-    public function createpage() {
-        
-    }
+     * 初始化project,grouppage,page
+     * @param int $page_id
+     * @return App\Models\Page\Pagen $page
      */
+    private function initPGP(int $page_id) {
+        $this->page = $this->page->find($page_id);
+        if (!$this->page) {
+            return $this->err('not found page');
+        }
+        $this->pageGroup = $this->pageGroup->find($this->page->group_id);
+        if (!$this->pageGroup) {
+            return $this->err('not found page');
+        }
+        $this->project = $this->user->projects()->find($this->pageGroup->project_id);
+        if (!$this->project) {
+            return $this->err('not found page');
+        }
+        
+        return $this->page;
+    }
+    /**
+     * 初始化project,grouppage,page,pagevariation
+     * @param int $variation_id
+     * @return App\Models\Page\PageVariation $pageVariation
+     */
+    private function initPGPV(int $variation_id) {
+        $this->pageVariation = $this->pageVariation->find($variation_id);
+        if (!$this->pageVariation) {
+            return $this->err('not found variation');
+        }        
+        $this->page = $this->initPGP($this->pageVariation->page_id);                 
+        if (get_class($this->page) == 'Illuminate\Http\JsonResponse') {
+            return $this->page;
+        }
+        
+        return $this->pageVariation;
+    }
     
     /**
      * 初始化加载
@@ -74,13 +105,11 @@ class PageVariationController extends Controller {
      * @return string json
      */
     public function start(int $id = 0) {
-        $page_variation = $this->pageVariation->where('user_id', $this->user->id)
-                                            ->with(['page', 'userSetting'])
-                                            ->find($id);
-        if (!$page_variation) {
-            return $this->err('找不到相关版本');
+        $page_variation = $this->initPGPV($id);               
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
         }
-        //return $this->dump($page_variation->toArray());
+        
         return $page_variation->html_json;
     }
     
@@ -95,10 +124,9 @@ class PageVariationController extends Controller {
      */
     public function save(Request $request) {        
         $page_variation_id = $request->get('id', 0);
-        $page_variation = $this->pageVariation->where('user_id', $this->user->id)
-                                            ->find($page_variation_id);
-        if (!$page_variation) {
-            return $this->err('找不到相关版本');
+        $page_variation = $this->initPGPV($page_variation_id);         
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
         }
         if (!$request->htmljson) {
             return $this->err('页面数据不能为空');
@@ -118,10 +146,9 @@ class PageVariationController extends Controller {
      * }
      */    
     public function remove($id) {
-        $page_variation = $this->pageVariation->where('user_id', $this->user->id)
-                                            ->find($id);
-        if (!$page_variation) {
-            return $this->err('找不到相关版本');
+        $page_variation = $this->initPGPV($id);         
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
         }
         
         $page_variations = $this->pageVariation->where('page_id', $page_variation->page_id)
@@ -131,8 +158,7 @@ class PageVariationController extends Controller {
             return $this->err('该页面下只有这个版本，不能删除');
         }
         
-        $page_variation->deleted_at = time();
-        $page_variation->save();
+        $page_variation->delete();
         
         return $this->dump(['result' => 'success']);
     }
@@ -165,10 +191,9 @@ class PageVariationController extends Controller {
      * }
      */
     public function duplicate($id) {
-        $page_variation = $this->pageVariation->where('user_id', $this->user->id)
-                                            ->find($id);
-        if (!$page_variation) {
-            return $this->err('找不到相关版本');
+        $page_variation = $this->initPGPV($id);         
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
         }
         
         $exist_variations = $this->pageVariation->where('page_id', $page_variation->page_id)
@@ -204,9 +229,9 @@ class PageVariationController extends Controller {
      * }
      */
     public function create(int $page_id = 0) {
-        $page = $this->page->find($page_id);
-        if (!$page) {
-            return $this->err('找不到该页面');
+        $page = $this->initPGP($page_id); 
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
         }
         
         $exist_variations = $this->pageVariation->where('page_id', $page_id)
@@ -242,10 +267,9 @@ class PageVariationController extends Controller {
      */
     public function rename(Request $request) {
         $page_variation_id = $request->get('id', 0);
-        $page_variation = $this->pageVariation->where('user_id', $this->user->id)
-                                            ->find($page_variation_id);
-        if (!$page_variation) {
-            return $this->err('找不到相关版本');
+        $page_variation = $this->initPGPV($page_variation_id);         
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
         }
         
         $page_variations = $this->pageVariation->where('page_id', $page_variation->page_id)
