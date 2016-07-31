@@ -121,7 +121,7 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         Route::get('remove/{id}', ['as' => '.remove', 'uses' => 'ProjectController@remove'])->where('id', '[0-9]+');
         
         // 协作人
-        Route::group(['prefix'=>'invite', 'as' => '.invite'], function(){
+        Route::group(['prefix'=>'members', 'as' => '.invite'], function(){
             // 查看该项目的协作人
             Route::get('get/{project_id}', ['as' => '.get', 'uses' => 'InviteController@get'])->where('project_id', '[0-9]+');
             // 删除指定的协作人

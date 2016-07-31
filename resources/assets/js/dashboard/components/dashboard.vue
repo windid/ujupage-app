@@ -18,7 +18,7 @@ export default {
     'init'
   ]),
   created (){
-    // this.init();
+    this.init();
   }
 }
 </script>
@@ -26,7 +26,7 @@ export default {
 <template>
   <div id="page">
     <common-header></common-header>
-    <div id="main" @click="init">
+    <div id="main">
       <sidebar></sidebar>
       <workspace></workspace>
     </div> 

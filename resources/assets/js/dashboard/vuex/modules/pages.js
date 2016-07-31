@@ -1,10 +1,13 @@
+import * as types from '../mutation-types'
+
+
 const state = {
-  pages: []
+  all: []
 }
 
 const mutations = {
-  LOAD_PAGE_LIST(state, pageList){
-  	state.pages = pageList;
+  [types.LOAD_PAGES] (state, { pages }){
+  	state.all = pages;
   }
 }
 

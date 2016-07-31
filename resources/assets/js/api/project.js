@@ -1,10 +1,8 @@
-Vue.http.options.root = '/dashboard/project';
-
 export default {
 
   list (success, error){
-    const url = 'get';
-    Vue.http.get(url).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
+    const url = 'project/get';
+    Vue.http.get(url).then(response => success(response.json().projects), response => error(response.json()));
   },
 
   create (name, success, error){
@@ -12,17 +10,22 @@ export default {
     const body = {
       name: name
     }
-    Vue.http.post(url, body).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
+    Vue.http.post(url, body).then( response => success(response.json()), response => error(response.json()) );
   },
 
   remove (projectId, success, error){
     const url = 'remove?id=' + projectId;
-    Vue.http.get(url).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
+    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
   },
 
   rename (projectId, name, success, error){
     const url = 'rename?id=' + projectId + '&name=' + name;
-    Vue.http.get(url).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
+    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
+  },
+
+  members (projectId, success,error){
+    const url = 'project/members/get/' + projectId;
+    Vue.http.get(url).then( response => success(response.json().users), response => error(response.json()) );
   }
 
 }

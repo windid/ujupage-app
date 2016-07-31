@@ -1,10 +1,9 @@
-Vue.http.options.root = '/dashboard/page/';
 
 export default {
 
   list (groupId, success, error){
-    const url = 'list?group_id=' + groupId;
-    Vue.http.get(url).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
+    const url = 'page/get/' + groupId;
+    Vue.http.get(url).then((response)=>{success(response.json().pages)}, (response)=>{error(response.json())});
   },
 
   create (groupId, name, success, error){
@@ -13,17 +12,17 @@ export default {
       groupId: groupId,
       name: name
     }
-    Vue.http.post(url, body).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
+    Vue.http.post(url, body).then( response => success(response.json()), response => error(response.json()) );
   },
 
   remove (pageId, success, error){
     const url = 'remove?id=' + pageId;
-    Vue.http.get(url).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
+    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
   },
 
   rename (pageId, name, success, error){
     const url = 'rename?id=' + pageId + '&name=' + name;
-    Vue.http.get(url).then((response)=>{success(response.json())}, (response)=>{error(response.json())});
+    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
   }
 
 }

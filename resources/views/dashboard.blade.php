@@ -12,6 +12,10 @@
   <link href="{{asset('css/global.css')}}" rel="stylesheet">
 
   <style>
+    #page{
+      height: 100%;
+      width: 100%
+    }
     .loading{
       width:128px;
       height:128px;
@@ -27,88 +31,7 @@
 <body>
 
 <div id="page">
-  <common-header></common-header>
-  <div id="main-wrapper">
-    <div id="main">
-      <sidebar></sidebar>
-      <div id="content">
-        <div class="page-item">
-          <span class="glyphicon glyphicon-plus"></span>
-        </div>
-        <div class="page-item">
-          <div class="page-item-header">
-            <a href="./editor">这是一个测试用的页面名称啊</a>
-          </div>
-          <div class="page-item-body"></div>
-          <div class="page-item-footer">
-            <div class="btn-group fr">
-              <div class="btn btn-default btn-sm">商机 <span class="glyphicon glyphicon-user"></span></div>
-              <div class="btn btn-default btn-sm">分析 <span class="glyphicon glyphicon-signal"></span></div>
-              <div class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="page-item">
-          <div class="page-item-header">
-            <a href="./editor">test</a>
-          </div>
-          <div class="page-item-body"></div>
-          <div class="page-item-footer">
-            <div class="btn-group fr">
-              <div class="btn btn-default btn-sm">商机 <span class="glyphicon glyphicon-user"></span></div>
-              <div class="btn btn-default btn-sm">分析 <span class="glyphicon glyphicon-signal"></span></div>
-              <div class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></div>
-            </div>
-          </div>
-        </div>
-        <div class="page-item">
-          <div class="page-item-header">
-            <a href="./editor">哈哈</a>
-          </div>
-          <div class="page-item-body"></div>
-          <div class="page-item-footer">
-            <div class="btn-group fr">
-              <div class="btn btn-default btn-sm">商机 <span class="glyphicon glyphicon-user"></span></div>
-              <div class="btn btn-default btn-sm">分析 <span class="glyphicon glyphicon-signal"></span></div>
-              <div class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></div>
-            </div>
-          </div>
-        </div>
-        <div class="page-item">
-          <div class="page-item-header">
-            <a href="./editor">这是一个测试用的页面名称啊</a>
-          </div>
-          <div class="page-item-body"></div>
-          <div class="page-item-footer">
-            <div class="btn-group fr">
-              <div class="btn btn-default btn-sm">商机 <span class="glyphicon glyphicon-user"></span></div>
-              <div class="btn btn-default btn-sm">分析 <span class="glyphicon glyphicon-signal"></span></div>
-              <div class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></div>
-            </div>
-          </div>
-        </div>
-        <div class="page-item">
-          <div class="page-item-header">
-            <a href="./editor">这是一个测试用的页面名称啊</a>
-          </div>
-          <div class="page-item-body"></div>
-          <div class="page-item-footer">
-            <div class="btn-group fr">
-              <div class="btn btn-default btn-sm">商机 <span class="glyphicon glyphicon-user"></span></div>
-              <div class="btn btn-default btn-sm">分析 <span class="glyphicon glyphicon-signal"></span></div>
-              <div class="btn btn-default btn-sm"><span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></div>
-            </div>
-          </div>
-        </div>
-
-
-
-
-      </div>
-    </div> 
-  </div>
-
+  <div class="loading"></div>
 </div>
 
   <script src="{{asset('js/libs/vue-2.0.js')}}"></script>

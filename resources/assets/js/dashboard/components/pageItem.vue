@@ -1,11 +1,24 @@
 <script>
-	
+
+
+export default {
+  props: {
+    pageItem:{
+      type: Object
+    }
+  },
+  data(){
+    return {
+
+    }
+  }
+}
 </script>
 
 <template>
   <div class="page-item">
     <div class="page-item-header">
-      <a href="./editor">这是一个测试用的页面名称啊</a>
+      <a :href="'./editor/'+pageItem.id">{{pageItem.name}}</a>
     </div>
     <div class="page-item-body"></div>
     <div class="page-item-footer">

@@ -1,8 +1,9 @@
-
 // import Vue from 'vue'
 import Vuex from '../../vendor/vuex-2.0.0'
 import pages from './modules/pages'
+import pageGroups from './modules/pageGroups'
 import projects from './modules/projects'
+import workspace from './modules/workspace'
 import * as actions from './actions'
 import * as getters from './getters'
 
@@ -14,6 +15,8 @@ export default new Vuex.Store({
   getters,
   modules: {
     pages,
-    projects
+    pageGroups,
+    projects,
+    workspace
   },
 })
