@@ -4,7 +4,8 @@ import * as types from '../mutation-types'
 const state = {
   all: [],
   current: {},
-  members: []
+  members: [],
+  invited: []
 }
 
 const mutations = {
@@ -16,8 +17,9 @@ const mutations = {
     state.current = project;
   },
 
-  [types.LOAD_MEMBERS] (state, { members }) {
+  [types.LOAD_MEMBERS] (state, { members, invited }) {
     state.members = members;
+    state.invited = invited;
   },
 
   [types.CREATE_PROJECT] (state, { project }){

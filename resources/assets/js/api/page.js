@@ -30,6 +30,16 @@ export default {
     Vue.http.post(url, data).then( response => success(response.json()), response => error(response.json()) );
   },
 
+  move (page, pageGroup, success, error){
+    const url = 'page/mod';
+    const data = {
+      id: page.id,
+      group_id: pageGroup.id,
+      name: page.name
+    };
+    Vue.http.post(url, data).then( response => success(response.json()), response => error(response.json()) );
+  },
+
   duplicate (page, success,error) {
     const url = 'page/copy/' + page.id;
     Vue.http.get(url).then( response => success(response.json().page ), response => error(response.json()) );    

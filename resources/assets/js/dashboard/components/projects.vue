@@ -14,7 +14,8 @@ export default {
   computed: mapGetters({
     projects: 'allProjects',
     currentProject: 'currentProject',
-    members: 'projectMembers'
+    members: 'projectMembers',
+    invited: 'projectMembersInvited'
   }),
   methods: {
     createProject(){
@@ -31,6 +32,17 @@ export default {
     switchProject(project){
       this.$store.dispatch('switchProject', project);
       this.showProjects = false;
+    },
+    invite(){
+      this.$store.dispatch('getInput', {
+        header: '请输入新成员的邮箱地址',
+        onConfirm: (email) => {
+          const member = {
+            email: email
+          }
+          this.$store.dispatch('inviteMember', member);
+        }
+      });
     }
   },
 }
@@ -51,11 +63,15 @@ export default {
         <li><a href="javascript:;" @click="createProject"> <span class="glyphicon glyphicon-plus"></span> 新建项目</a></li>
       </ul>
     </dropdown>
-    <div class="member-item" v-for="member in members">
-      <div class="member-name"><span class="badge">管理员</span> </span> {{member.name}} </div>
+    <div class="member-item" v-for="member in members" >
+      <div class="member-name"><span class="badge">{{member.pivot.role === 'admin' ? '管理员' : '成员'}}</span> {{member.name}} </div>
       <div class="member-email">{{member.email}}</div>
     </div>
-    <div class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> 邀请新成员</div>
+    <div class="member-item" v-for="member in invited">
+      <div class="member-name"><span class="badge">已邀请</span> </div>
+      <div class="member-email">{{member.email}}</div>
+    </div>
+    <div class="btn btn-default" @click="invite"><span class="glyphicon glyphicon-plus"></span> 邀请新成员</div>
   </div>
 </template>
 
@@ -66,6 +82,7 @@ export default {
   border-bottom:1px solid $main-block-border-color;
   height:60%;
   padding:20px;
+  overflow-y: auto;
 }
 
 .projects > .btn-group{
@@ -73,11 +90,11 @@ export default {
 }
 
 .current-project{
-  width: 174px;
+  width: 154px;
 }
 
  .projects-menu{
-  width: 200px;
+  width: 180px;
  }
 
 .member-item{

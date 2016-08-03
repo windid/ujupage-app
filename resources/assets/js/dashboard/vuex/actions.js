@@ -17,9 +17,7 @@ export const init = ({ commit }) => {
 export const switchProject = ({ commit }, project) => {
   commit(types.LOADING);
   commit(types.SET_CURRENT_PROJECT, { project });
-  projectAPI.members( project.id, members => {
-    commit(types.LOAD_MEMBERS, { members });
-  }, data => commit(types.LOAD_FAILED, { source:'members', err:data.err }) );
+  loadMembers({ commit }, project);
 
   pageGroupAPI.list( project.id, pageGroups => {
     commit(types.LOAD_PAGEGROUPS, { pageGroups });
@@ -43,15 +41,27 @@ export const createProject = ({ commit }, project) => {
 }
 
 export const removeProject = ({ commit }, project) => {
-  
+  projectAPI.remove(project, data => {
+    commit(types.REMOVE_PROJECT, { project });
+  }, data => commit(types.LOAD_FAILED, { source: 'removeProject', err: data.err }));
 }
 
-export const renameProject = ({ commit }, project, newName) => {
-  
+export const renameProject = ({ commit }, [project, newName]) => {
+  projectAPI.rename(project, newName, data => {
+    commit(types.RENAME_PROJECT, { project, newName });
+  }, data => commit(types.LOAD_FAILED, { source: 'renameProject', err: data.err }));
 }
 
-export const inviteMember = ({ commit }, member, project) => {
-  
+export const loadMembers = ({ commit }, project) => {
+  projectAPI.members( project, (members, invited) => {
+    commit(types.LOAD_MEMBERS, { members, invited });
+  }, data => commit(types.LOAD_FAILED, { source:'loadMembers', err:data.err }) );
+}
+
+export const inviteMember = ({ commit, state }, member) => {
+  projectAPI.invite(member, state.projects.current, member => {
+    loadMembers({ commit }, state.projects.current);
+  }, data => commit(types.LOAD_FAILED, { source: 'inviteMember', err: data.err }));
 }
 
 export const removeMember = ({ commit }, member, project) => {
@@ -103,8 +113,10 @@ export const renamePage = ({ commit }, [ page, newName ]) => {
   }, data => commit(types.LOAD_FAILED, { source: 'renamePage', err: data.err }));
 }
 
-export const movePage = ({ commit }, [ page, ]) => {
-
+export const movePage = ({ commit }, [ page, pageGroup]) => {
+  pageAPI.move(page, pageGroup, data => {
+    commit(types.REMOVE_PAGE, { page })
+  }, data => commit(types.LOAD_FAILED, { source: 'movePage', err: data.err }));
 }
 
 export const duplicatePage = ({ commit }, page) => {

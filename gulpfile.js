@@ -53,7 +53,7 @@ var webpackConfig = {
 }
 
 elixir(function(mix) {
-  // mix.webpack('editor/index.js', webpackConfig, './public/js/editor.js');
-  mix.webpack('dashboard/index.js', webpackConfig, './public/js/dashboard.js');
+  mix.webpack('editor/index.js', webpackConfig, './public/js/editor.js');
+  // mix.webpack('dashboard/index.js', webpackConfig, './public/js/dashboard.js');
   // mix.webpack('landings/index.js', webpackConfig ,'./public/js/landings.js');
 });
