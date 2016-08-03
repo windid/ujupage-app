@@ -59,7 +59,7 @@ class EditorController extends Controller {
                 ->orderBy('id', 'desc')
                 ->get()->toArray();
         
-        return view('editor', ['page' => $page]);
+        return view('editor', ['page' => $page, 'project_id' => $this->project->id]);
     }
     
     /**

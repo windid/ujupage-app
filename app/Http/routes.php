@@ -63,21 +63,21 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
     
     Route::group(['prefix'=>'image', 'as' => '.image'], function(){        
         // 图片列表        
-        Route::get('list/{dirname?}/{page?}/{page_size?}', ['as' => '.list', 'uses' => 'ImageController@getIndex']);
+        Route::get('list/{project_id}/{dirname?}/{page?}/{page_size?}', ['as' => '.list', 'uses' => 'ImageController@getIndex']);
         // 创建文件夹
-        Route::get('dir', ['as' => '.dir', 'uses' => 'ImageController@dir']);
+        Route::get('dir/{project_id}', ['as' => '.dir', 'uses' => 'ImageController@dir']);
         // 创建文件夹
-        Route::get('mkdir/{dirname}', ['as' => '.mkdir', 'uses' => 'ImageController@mkdir']);
+        Route::get('mkdir/{project_id}/{dirname}', ['as' => '.mkdir', 'uses' => 'ImageController@mkdir']);
         // 修改文件夹
-        Route::get('moddir/{dirname}/{mod_dirname}', ['as' => '.moddir', 'uses' => 'ImageController@moddir']);
+        Route::get('moddir/{project_id}/{dirname}/{mod_dirname}', ['as' => '.moddir', 'uses' => 'ImageController@moddir']);
         // 删除文件夹
-        Route::get('deldir/{dirname}', ['as' => '.deldir', 'uses' => 'ImageController@deldir']);
+        Route::get('deldir/{project_id}/{dirname}', ['as' => '.deldir', 'uses' => 'ImageController@deldir']);
         // 上传图片
         Route::post('upload', ['as' => '.upload', 'uses' => 'ImageController@upload']);
         // 修改图片信息
         Route::post('modimage', ['as' => '.modimage', 'uses' => 'ImageController@modimage']);
         // 删除图片
-        Route::get('delimage/{id}', ['as' => '.delimage', 'uses' => 'ImageController@delimage'])->where('id', '[0-9]+');
+        Route::get('delimage/{project_id}/{id}', ['as' => '.delimage', 'uses' => 'ImageController@delimage'])->where('id', '[0-9]+');
     });
     
     Route::group(['prefix'=>'page', 'as' => '.page'], function(){        
