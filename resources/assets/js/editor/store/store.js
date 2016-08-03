@@ -1,4 +1,4 @@
-import Vuex from 'vuex'
+import Vuex from '../../vendor/vuex'
 import { extend, merge, intersection, difference, union } from 'lodash'
 import randomChar from '../../utils/randomChar'
 

@@ -15,6 +15,7 @@ export const init = ({ commit }) => {
 }
 
 export const switchProject = ({ commit }, project) => {
+  commit(types.LOADING);
   commit(types.SET_CURRENT_PROJECT, { project });
   projectAPI.members( project.id, members => {
     commit(types.LOAD_MEMBERS, { members });
@@ -28,14 +29,17 @@ export const switchProject = ({ commit }, project) => {
 }
 
 export const switchPageGroup = ({ commit }, pageGroup) => {
-  commit(types.SET_CURRENT_PAGEGROUP, {pageGroup});
+  commit(types.LOADING);
   pageAPI.list(pageGroup.id, pages => {
+    commit(types.SET_CURRENT_PAGEGROUP, { pageGroup });
     commit(types.LOAD_PAGES, { pages });
   }, data => commit(types.LOAD_FAILED, { source:'pages', err:data.err }) );
 }
 
 export const createProject = ({ commit }, project) => {
-
+  projectAPI.create(project, project => {
+    commit(types.CREATE_PROJECT, { project });
+  }, data => commit(types.LOAD_FAILED, { source: 'createProject', err: data.err }));
 }
 
 export const removeProject = ({ commit }, project) => {
@@ -59,26 +63,65 @@ export const quitProject = ({ commit }, project) => {
 }
 
 export const createPageGroup = ({ commit }, pageGroup) => {
-
+  pageGroupAPI.create(pageGroup, pageGroup => {
+    commit(types.CREATE_PAGEGROUP, { pageGroup });
+  }, data => commit(types.LOAD_FAILED, { source: 'createPageGroup', err: data.err }));
 }
 
 export const removePageGroup = ({ commit }, pageGroup) => {
-
+  pageGroupAPI.remove(pageGroup, data => {
+    commit(types.REMOVE_PAGEGROUP, { pageGroup });
+  }, data => commit(types.LOAD_FAILED, { source: 'removePageGroup', err: data.err }));
 }
 
-export const renamePageGroup = ({ commit }, pageGroup, newName) => {
+export const setEditingPageGroup = ({ commit }, pageGroup) => {
+  commit(types.SET_EDITING_PAGEGROUP, { pageGroup });
+}
 
+export const renamePageGroup = ({ commit, state }, newName) => {
+  const pageGroup = state.pageGroups.editing;
+  pageGroupAPI.rename(pageGroup, newName, data => {
+    commit(types.RENAME_PAGEGROUP, { pageGroup, newName });
+  }, data => commit(types.LOAD_FAILED, { source: 'renamePageGroup', err: data.err }));
 }
 
 export const createPage = ({ commit }, page) => {
-
+  pageAPI.create(page, page => {
+    commit(types.CREATE_PAGE, { page });
+  }, data => commit(types.LOAD_FAILED, { source: 'createPage', err: data.err }));
 }
 
 export const removePage = ({ commit }, page) => {
+  pageAPI.remove(page, data => {
+    commit(types.REMOVE_PAGE, { page });
+  }, data => commit(types.LOAD_FAILED, { source: 'removePage', err: data.err }));
+}
+
+export const renamePage = ({ commit }, page, newName) => {
 
 }
 
-export const renamePage = ({ commit }, page) => {
+export const movePage = ({ commit }, page) => {
 
+}
+
+export const duplicatePage = ({ commit }, page) => {
+
+}
+
+export const closeMessageBox = ({ commit }) => {
+  commit(types.CLOSE_MESSAGE_BOX);
+}
+
+export const warning = ({ commit }, msg) => {
+  commit(types.WARNING, { msg });
+}
+
+export const confirm = ({ commit }, msg) => {
+  commit(types.CONFIRM, { msg });
+}
+
+export const getInput = ({ commit }, msg) => {
+  commit(types.GET_INPUT, { msg });
 }
 

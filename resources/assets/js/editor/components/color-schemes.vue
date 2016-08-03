@@ -1,5 +1,5 @@
 <script>
-import dropdown from '../../ui/dropdown.vue'
+import dropdown from './dropdown.vue'
 import { setColorSet }  from '../store/actions'
 import { getColorSet } from '../store/getters'
 

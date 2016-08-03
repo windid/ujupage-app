@@ -21,7 +21,7 @@ elixir(function(mix) {
   //用户认证（登陆、注册等）
   mix.sass('auth.scss');
   //app全站通用css
-  mix.sass('global.scss');
+  // mix.sass('global.scss');
 
   mix.browserSync({
     files:['app/**/*', 'public/**/*', 'resources/views/**/*'],
@@ -38,7 +38,7 @@ var webpackConfig = {
       {test: /\.scss$/, loader: 'style!css!sass'},
       {test: /\.html$/, loader: 'text-loader'},
       {test: /\.vue$/, loader: 'vue'},
-      {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: {compact: false,presets:['es2015',"stage-0"],plugins:['transform-runtime']}}
+      {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", query: {compact: false,presets:["es2015", "stage-2"],plugins:['transform-runtime']}}
     ]
   },
 
@@ -53,7 +53,7 @@ var webpackConfig = {
 }
 
 elixir(function(mix) {
-  // mix.webpack('editor/index.js', webpackConfig ,'./public/js/editor.js');
-  mix.webpack('dashboard/index.js', webpackConfig ,'./public/js/dashboard.js');
+  // mix.webpack('editor/index.js', webpackConfig, './public/js/editor.js');
+  mix.webpack('dashboard/index.js', webpackConfig, './public/js/dashboard.js');
   // mix.webpack('landings/index.js', webpackConfig ,'./public/js/landings.js');
 });

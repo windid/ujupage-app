@@ -1,33 +1,74 @@
 <script>
 import pageItem from './pageItem.vue'
-import { mapGetters, mapActions } from '../../vendor/vuex-2.0.0'
+import pageGroup from './pageGroup.vue'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
-    pageItem
+    pageItem,
+    pageGroup
   },
   computed: mapGetters({
     workspace: 'workspace',
-    pages: 'allPages'
+    pages: 'allPages',
+    pageGroups: 'allPageGroups',
+    currentProject: 'currentProject',
+    currentPageGroup: 'currentPageGroup',
+    defaultPageGroup: 'defaultPageGroup'
   }),
   methods: {
-    
+    createPageGroup(){
+      const pageGroup = {
+        name: '新建文件夹',
+        projectId: this.currentProject.id
+      };
+      this.$store.dispatch('createPageGroup', pageGroup);
+    },
+    goToDefault(){
+      this.$store.dispatch('switchPageGroup', this.defaultPageGroup);
+    },
+    createPage(){
+      this.$store.dispatch('getInput', {
+        header: '请输入页面名称',
+        onConfirm: (val) => {
+          const page = {
+            name: val || '未命名页面',
+            group_id: this.currentPageGroup.id
+          };
+          this.$store.dispatch('createPage', page);
+        }
+      });
+    }
   }
 }
 </script>
 
 <template>
   <div id="workspace">
-    <div v-if="workspace.loadStatus" class="loading"></div>
-    <page-item v-for="pageItem in pages" :page-item="pageItem"></page-item>
+    <div v-if="workspace.loadStatus === 'loading'" class="loading"></div>
+    <div v-if="workspace.loadStatus === 'failed'" class="load-failed">{{workspace.failedInfo}}</div>
+    <div v-if="workspace.loadStatus === 'done'">
+      <div class="workspace-nav">
+        <div class="btn btn-primary" @click="createPage">新建着陆页 <span class="glyphicon glyphicon-file"></span></div>
+        <div v-show="currentPageGroup.is_default === 1" class="btn btn-default" title="新建文件夹" @click="createPageGroup"><span class="glyphicon glyphicon-plus"></span> <span class="glyphicon glyphicon-folder-open"></span></div>
+        <div v-show="currentPageGroup.name !== 'default'" class="btn btn-default" @click="goToDefault()"><span class="glyphicon glyphicon-level-up"></span> 返回上层</div>
+      </div>
+      <page-group v-show="currentPageGroup.is_default === 1" v-for="pageGroup in pageGroups" :page-group="pageGroup"></page-group>
+      <page-item v-for="pageItem in pages" :page-item="pageItem"></page-item>
+    </div>
   </div>
 </template>
 
 <style>
 #workspace{
   position:relative;
-  height:100%;
+  min-height:600px;
   margin-left:240px;
   padding:15px;
 }
+
+.workspace-nav > .btn{
+  margin:10px;
+}
+
 </style>

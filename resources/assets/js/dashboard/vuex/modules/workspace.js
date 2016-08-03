@@ -26,6 +26,15 @@ const mutations = {
         break;
     }
     console.log(source, err);
+  },
+  [types.CREATE_FAILED] (state, {source, err}){
+    console.log(source, err);    
+  },
+  [types.LOAD_PAGES] (state, { pages }){
+    state.loadStatus = 'done';
+  },
+  [types.LOADING] (state) {
+    state.loadStatus = 'loading';
   }
 }
 

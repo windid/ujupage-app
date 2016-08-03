@@ -1,7 +1,36 @@
-export const LOAD_PROJECTS = 'LOAD_PROJECTS'
-export const LOAD_MEMBERS = 'LOAD_MEMBERS'
-export const LOAD_PAGEGROUPS = 'LOAD_PAGEGROUPS'
-export const LOAD_PAGES = 'LOAD_PAGES'
+//loading
+export const LOADING = 'LOADING'
 export const LOAD_FAILED = 'LOAD_FAILED'
+
+//projects
+export const LOAD_PROJECTS = 'LOAD_PROJECTS'
+export const CREATE_PROJECT = 'CREATE_PROJECT'
+export const RENAME_PROJECT = 'RENAME_PROJECT'
+export const REMOVE_PROJECT = 'REMOVE_PROJECT'
 export const SET_CURRENT_PROJECT = 'SET_CURRENT_PROJECT'
+
+export const LOAD_MEMBERS = 'LOAD_MEMBERS'
+
+//page groups
+export const LOAD_PAGEGROUPS = 'LOAD_PAGEGROUPS'
+export const CREATE_PAGEGROUP = 'CREATE_PAGEGROUP'
+export const REMOVE_PAGEGROUP = 'REMOVE_PAGEGROUP'
+export const RENAME_PAGEGROUP = 'RENAME_PAGEGROUP'
+export const SET_EDITING_PAGEGROUP = 'SET_EDITING_PAGEGROUP'
 export const SET_CURRENT_PAGEGROUP = 'SET_CURRENT_PAGEGROUP'
+
+//pages
+export const LOAD_PAGES = 'LOAD_PAGES'
+export const CREATE_PAGE = 'CREATE_PAGE'
+export const RENAME_PAGE = 'RENAME_PAGE'
+export const REMOVE_PAGE = 'REMOVE_PAGE'
+export const DUPLICATE_PAGE = 'DUPLICATE_PAGE'
+export const MOVE_PAGE = 'MOVE_PAGE'
+
+//ui
+export const WARNING = 'WARNING'
+export const CONFIRM = 'CONFIRM'
+export const GET_INPUT = 'GET_INPUT'
+export const CLOSE_MESSAGE_BOX = 'CLOSE_MESSAGE_BOX'
+
+export const NOTICE = 'NOTICE'

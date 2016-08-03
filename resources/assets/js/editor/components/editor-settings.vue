@@ -1,7 +1,7 @@
 <script>
 import { saveSettings }  from '../store/actions'
 import { getWorkspaceData, getSettings, getElements } from '../store/getters'
-import modal from '../../ui/modal.vue'
+import modal from './modal.vue'
 import { merge } from 'lodash'
 
 export default {

@@ -1,5 +1,5 @@
 <script>
-import dropdown from '../../ui/dropdown.vue'
+import dropdown from './dropdown.vue'
 import {  }  from '../store/actions'
 import {  } from '../store/getters'
 

@@ -3,7 +3,7 @@ import sidebar from './sidebar.vue'
 import colorPicker from './color-picker.vue'
 import checkboxButton from './checkbox-button.vue'
 import colorMixin from '../mixins/colorMixin.js'
-import dropdown from '../../ui/dropdown.vue'
+import dropdown from './dropdown.vue'
 
 export default {
   props:{

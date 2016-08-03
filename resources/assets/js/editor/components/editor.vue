@@ -1,12 +1,3 @@
-<template>
-  <div @mousedown="setActiveElementId('')">
-    <editor-header></editor-header>
-    <div class="main">
-      <editor-toolbar></editor-toolbar>
-      <editor-workspace></editor-workspace>
-    </div> 
-  </div>
-</template>
 <script>
 import editorHeader from './editor-header.vue'
 import editorToolbar from './editor-toolbar.vue'
@@ -36,3 +27,12 @@ export default {
 }
 </script>
 
+<template>
+  <div @mousedown="setActiveElementId('')">
+    <editor-header></editor-header>
+    <div class="main">
+      <editor-toolbar></editor-toolbar>
+      <editor-workspace></editor-workspace>
+    </div> 
+  </div>
+</template>

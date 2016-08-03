@@ -3,7 +3,7 @@ import * as types from '../mutation-types'
 
 const state = {
   all: [],
-  currentProject: {},
+  current: {},
   members: []
 }
 
@@ -13,11 +13,15 @@ const mutations = {
   },
 
   [types.SET_CURRENT_PROJECT] (state, {project}){
-    state.currentProject = project;
+    state.current = project;
   },
 
   [types.LOAD_MEMBERS] (state, { members }) {
     state.members = members;
+  },
+
+  [types.CREATE_PROJECT] (state, { project }){
+    state.all.push(project);
   }
 }
 

@@ -5,23 +5,27 @@ export default {
     Vue.http.get(url).then(response => success(response.json().pagegroups), response => error(response.json()));
   },
 
-  create (projectId, name, success, error){
-    const url = 'create'
-    const body = {
-      projectId: projectId,
+  create (pageGroup, success, error){
+    const url = 'pagegroup/add'
+    const data = {
+      project_id: pageGroup.projectId,
+      name: pageGroup.name
+    }
+    Vue.http.post(url, data).then( response => success(response.json().group), response => error(response.json()) );
+  },
+
+  remove (pageGroup, success, error){
+    const url = 'pagegroup/remove/' + pageGroup.id;
+    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
+  },
+
+  rename (pageGroup, name, success, error){
+    const url = 'pagegroup/mod';
+    const data = {
+      id: pageGroup.id,
       name: name
     }
-    Vue.http.get(url, body).then( response => success(response.json()), response => error(response.json()) );
-  },
-
-  remove (groupId, success, error){
-    const url = 'remove?id=' + groupId;
-    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
-  },
-
-  rename (groupId, name, success, error){
-    const url = 'rename?id=' + groupId + '&name=' + name;
-    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
+    Vue.http.post(url, data).then( response => success(response.json()), response => error(response.json()) );
   }
 
 }

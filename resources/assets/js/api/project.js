@@ -5,22 +5,26 @@ export default {
     Vue.http.get(url).then(response => success(response.json().projects), response => error(response.json()));
   },
 
-  create (name, success, error){
-    const url = 'create'
-    const body = {
+  create (project, success, error){
+    const url = 'project/add'
+    const data = {
+      name: project.name
+    }
+    Vue.http.post(url, data).then( response => success(response.json().project), response => error(response.json()) );
+  },
+
+  remove (project, success, error){
+    const url = 'project/remove/' + project.id;
+    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
+  },
+
+  rename (project, name, success, error){
+    const url = 'project/mod';
+    const data = {
+      id: project.id,
       name: name
     }
-    Vue.http.post(url, body).then( response => success(response.json()), response => error(response.json()) );
-  },
-
-  remove (projectId, success, error){
-    const url = 'remove?id=' + projectId;
-    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
-  },
-
-  rename (projectId, name, success, error){
-    const url = 'rename?id=' + projectId + '&name=' + name;
-    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
+    Vue.http.post(url, data).then( response => success(response.json()), response => error(response.json()) );
   },
 
   members (projectId, success,error){

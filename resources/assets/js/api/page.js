@@ -6,23 +6,27 @@ export default {
     Vue.http.get(url).then((response)=>{success(response.json().pages)}, (response)=>{error(response.json())});
   },
 
-  create (groupId, name, success, error){
-    const url = 'create'
-    const body = {
-      groupId: groupId,
+  create (page, success, error){
+    const url = 'page/add';
+    const data = {
+      group_id: page.group_id,
+      name: page.name
+    };
+    Vue.http.post(url, data).then( response => success(response.json().page), response => error(response.json()) );
+  },
+
+  remove (page, success, error){
+    const url = 'page/remove/' + page.id;
+    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
+  },
+
+  rename (page, name, success, error){
+    const url = 'page/mod';
+    const data = {
+      id: page.id,
       name: name
-    }
-    Vue.http.post(url, body).then( response => success(response.json()), response => error(response.json()) );
-  },
-
-  remove (pageId, success, error){
-    const url = 'remove?id=' + pageId;
-    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
-  },
-
-  rename (pageId, name, success, error){
-    const url = 'rename?id=' + pageId + '&name=' + name;
-    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
+    };
+    Vue.http.post(url, data).then( response => success(response.json()), response => error(response.json()) );
   }
 
 }

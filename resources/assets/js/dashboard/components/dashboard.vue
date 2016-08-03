@@ -3,13 +3,15 @@
 import commonHeader from '../../layout/header.vue'
 import sidebar from './sidebar.vue'
 import workspace from './workspace.vue'
-import { mapGetters, mapActions } from '../../vendor/vuex-2.0.0'
+import messageBox from '../../ui/messageBox.vue'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     commonHeader,
     sidebar,
-    workspace
+    workspace,
+    messageBox
   },
   computed: {
 
@@ -29,7 +31,8 @@ export default {
     <div id="main">
       <sidebar></sidebar>
       <workspace></workspace>
-    </div> 
+    </div>
+    <message-box></message-box>
   </div>
 </template>
 
