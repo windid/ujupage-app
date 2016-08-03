@@ -31,5 +31,8 @@ class Project extends Model {
         return $_this;
     }
     
+    public function invitors() {
+        return $this->hasMany('App\Models\Project\ProjectInvite');
+    }
     
 }
