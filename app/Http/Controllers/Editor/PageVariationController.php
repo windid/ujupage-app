@@ -167,7 +167,7 @@ class PageVariationController extends Controller {
      * @param int $counts
      * @return string
      */
-    protected function getVariationName(int $counts) {
+    public function getVariationName(int $counts) {
         $num26 = base_convert($counts, 10, 26);
         $addcode = 17;  
         $result = '';  
@@ -203,18 +203,15 @@ class PageVariationController extends Controller {
         if ($exist_variations>=10) {
             return $this->err('活跃版本数量上限为10个');
         }
-        
-        $page_variations = $this->pageVariation->where('page_id', $page_variation->page_id)
-                ->where('user_id' , $this->user->id)
-                ->count();
-        
+                
         $copy_variation = new PageVariation;
         $copy_variation->page_id = $page_variation->page_id;
         $copy_variation->user_id = $page_variation->user_id;
-        $copy_variation->name = $this->getVariationName($page_variations);
+        $copy_variation->name = $this->getVariationName($this->page->variation_history);
         $copy_variation->setting = json_encode($page_variation->setting);
         $copy_variation->html_json = $page_variation->html_json;
         $copy_variation->save();
+        $this->page->increment('variation_history');
         
         return $this->dump(['id' => $copy_variation->id, 'name'=> $copy_variation->name]);
     }
@@ -241,17 +238,14 @@ class PageVariationController extends Controller {
         if ($exist_variations>=10) {
             return $this->err('活跃版本数量上限为10个');
         }
-        
-        $page_variations = $this->pageVariation->where('page_id', $page_id)
-                ->where('user_id' , $this->user->id)
-                ->count();
-        
+                
         $this->pageVariation->page_id = $page_id;
         $this->pageVariation->user_id = $this->user->id;
-        $this->pageVariation->name = $this->getVariationName($page_variations);
+        $this->pageVariation->name = $this->getVariationName($this->page->variation_history);
         $this->pageVariation->setting = json_encode([]);
         $this->pageVariation->html_json = json_encode([]);
         $this->pageVariation->save();
+        $this->page->increment('variation_history');
         
         return $this->dump(['id' => $this->pageVariation->id, 'name'=> $this->pageVariation->name]);
     }
@@ -271,12 +265,8 @@ class PageVariationController extends Controller {
         if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
             return $page_variation;
         }
-        
-        $page_variations = $this->pageVariation->where('page_id', $page_variation->page_id)
-                ->where('user_id' , $this->user->id)
-                ->count();
                 
-        $page_variation->name = $request->get('name', $this->getVariationName($page_variations));
+        $page_variation->name = $request->get('name', $this->getVariationName($this->page->variation_history));
         $page_variation->save();
         
         return $this->dump();

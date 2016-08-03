@@ -154,6 +154,8 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
 
         // 添加页面
         Route::post('add', ['as' => '.add', 'uses' => 'PageController@add']);
+        // 添加页面
+        Route::get('copy/{id}', ['as' => '.copy', 'uses' => 'PageController@copy'])->where('id', '[0-9]+');
         // 修改页面
         Route::post('mod', ['as' => '.mod', 'uses' => 'PageController@mod']);
         // 删除页面

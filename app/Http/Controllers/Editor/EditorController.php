@@ -54,7 +54,7 @@ class EditorController extends Controller {
         $page = $this->initPGP($id);
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             throw new \ErrorException('not found page');
-        }
+        }        
         $page->variations = $page->variation()->select('id', 'name')
                 ->orderBy('id', 'desc')
                 ->get()->toArray();

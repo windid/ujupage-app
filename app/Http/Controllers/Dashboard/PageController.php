@@ -134,7 +134,64 @@ class PageController extends Controller {
         $this->page->setting = $request->get('setting', '');
         $pagegroup->pages()->save($this->page);
         
+        // 增加默认版本
+        $this->pageVariation->page_id = $this->page->id;
+        $this->pageVariation->user_id = $this->user->id;
+        $this->pageVariation->name = app('App\Http\Controllers\Editor\PageVariationController')
+                                                ->getVariationName(0);
+        $this->pageVariation->setting = json_encode([]);
+        $this->pageVariation->html_json = json_encode([]);
+        $this->pageVariation->save();
+        $this->page->increment('variation_history');
+        
         return $this->dump(['page' => $this->page->toArray()]);
+    }
+    
+    /**
+     * 复制页面
+     * @param int $page_id 页面ID
+     * @return json {
+     *   id = 页面iD
+     *   name = 项目ID
+     *   url = 分组名称
+     *   setting = 页面设置
+     * }
+     */
+    public function copy(int $page_id) {        
+        $page = $this->initPGP($page_id);        
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
+        }
+                 
+        $pagegroup= $this->initPG($page->group_id);        
+        if (get_class($pagegroup) == 'Illuminate\Http\JsonResponse') {
+            return $pagegroup;
+        }
+        
+        $new_page = new Page;
+        $new_page->group_id = $page->group_id;
+        $new_page->user_id = $page->user_id;
+        $new_page->name = $page->name . " 副本";
+        $new_page->url = '';
+        $new_page->setting = $page->setting;
+        $new_page->variation_history = $page->variation_history;
+        $new_page->save();
+        $pagegroup->pages()->save($new_page);
+        
+        $variations = $this->pageVariation->where('page_id', $page->id)                                            
+                                            ->whereNull('deleted_at')
+                                            ->get();
+        foreach ($variations as $v) {
+            $new_page_variation = new PageVariation;
+            $new_page_variation->page_id = $new_page->id;
+            $new_page_variation->user_id = $this->user->id;
+            $new_page_variation->name = $v->name . ' 副本';
+            $new_page_variation->setting = $v->setting;
+            $new_page_variation->html_json = $v->html_json;
+            $new_page_variation->save();
+        }
+                
+        return $this->dump(['page' => $new_page->toArray()]);
     }
     
     /**
@@ -150,7 +207,7 @@ class PageController extends Controller {
      *  name = 项目名称
      */
     public function mod(Request $request) {
-        $group_id = $request->get('group_id', 0);        
+        $group_id = $request->get('group_id', 0);       
         $pagegroup= $this->initPG($group_id);        
         if (get_class($pagegroup) == 'Illuminate\Http\JsonResponse') {
             return $pagegroup;
