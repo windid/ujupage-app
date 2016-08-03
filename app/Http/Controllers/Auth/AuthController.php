@@ -79,7 +79,9 @@ use AuthenticatesAndRegistersUsers,
         if ($user->actived_at > 0 && $this->projectInvite) {
             $project_id = $this->projectInvite->project_id;
             
-            $this->projectInvite->delete();
+            $this->projectInvite->where('project_id', $project_id)
+                                ->where('email', $this->projectInvite->email)
+                                ->delete();
             return redirect(url('dashboard?id='.$project_id));
         }
         return view('auth.registerok'

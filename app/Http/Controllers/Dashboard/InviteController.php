@@ -128,6 +128,9 @@ class InviteController extends Controller {
             if ($i_user->id == $project->user_id) {
                 return $this->err('email is creator');
             }
+            if ($project->users()->find($i_user->id)) {
+                return $this->err('member exits');
+            }
             $project->users()->attach($i_user, ['role' => 'member']);
             Mail::send('auth.emails.invited', ['email' => $email, 'project' => $project], function ($m) use ($email, $user, $project) {
                 $from = config('mail')['from'];
