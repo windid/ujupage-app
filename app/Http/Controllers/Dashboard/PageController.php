@@ -134,7 +134,7 @@ class PageController extends Controller {
         $this->page->setting = $request->get('setting', '');
         $pagegroup->pages()->save($this->page);
         
-        return $this->dump(['page' => $this->page]);
+        return $this->dump(['page' => $this->page->toArray()]);
     }
     
     /**
