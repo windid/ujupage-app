@@ -157,7 +157,7 @@ class PageController extends Controller {
      *   setting = 页面设置
      * }
      */
-    public function copy(int $page_id) {        
+    public function copy(int $page_id) {   
         $page = $this->initPGP($page_id);        
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
@@ -173,7 +173,7 @@ class PageController extends Controller {
         $new_page->user_id = $page->user_id;
         $new_page->name = $page->name . " 副本";
         $new_page->url = '';
-        $new_page->setting = $page->setting;
+        $new_page->setting = json_encode($page->setting);
         $new_page->variation_history = $page->variation_history;
         $new_page->save();
         $pagegroup->pages()->save($new_page);
