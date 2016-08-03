@@ -62,7 +62,7 @@ class ImageController extends Controller {
      *  }
      * }
      */
-    public function getIndex(int $project_id
+    public function getIndex(int $project_id = 0
                                     , string $dirname = "default" 
                                     , int $page = 1 
                                     , int $page_size = 30)  {
