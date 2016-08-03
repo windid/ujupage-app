@@ -97,16 +97,20 @@ export const removePage = ({ commit }, page) => {
   }, data => commit(types.LOAD_FAILED, { source: 'removePage', err: data.err }));
 }
 
-export const renamePage = ({ commit }, page, newName) => {
-
+export const renamePage = ({ commit }, [ page, newName ]) => {
+  pageAPI.rename(page, newName, data => {
+    commit(types.RENAME_PAGE, { page, newName })
+  }, data => commit(types.LOAD_FAILED, { source: 'renamePage', err: data.err }));
 }
 
-export const movePage = ({ commit }, page) => {
+export const movePage = ({ commit }, [ page, ]) => {
 
 }
 
 export const duplicatePage = ({ commit }, page) => {
-
+  pageAPI.duplicate(page, page => {
+    commit(types.CREATE_PAGE, { page });
+  }, data => commit(types.LOAD_FAILED, { source: 'duplicatePage', err: data.err }));
 }
 
 export const closeMessageBox = ({ commit }) => {

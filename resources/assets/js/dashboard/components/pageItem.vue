@@ -29,21 +29,27 @@ export default {
     },
     rename(){
       this.$store.dispatch('getInput', {
-        header: '请输入新的页面名',
+        header: '请输入新的页面名称',
         content: this.pageItem.name,
-        onConfirm: (val) => {
-
+        onConfirm: (newName) => {
+          if (newName && newName !== this.pageItem.name){
+            this.$store.dispatch('renamePage', [ this.pageItem, newName ]);
+          }
         }
       });
+    },
+    duplicate(){
+      this.$store.dispatch('duplicatePage', this.pageItem);
     }
   }
 }
 </script>
 
 <template>
+<transition name="bounce" mode="out-in">
   <div class="page-item">
     <div class="page-item-header">
-      <div class="page-item-name"><a :href="'./editor/'+pageItem.id">{{pageItem.name}}</a></div>
+      <div class="page-item-name"><a :href="'/editor/'+pageItem.id">{{pageItem.name}}</a></div>
       <div class="page-item-url">
         <a v-if="pageItem.url" :href="'http://'+pageItem.url">{{pageItem.url}}</a>
         <span v-else>未发布</span>
@@ -64,7 +70,7 @@ export default {
             <div class="btn-group-vertical">
               <div class="btn btn-danger btn-sm" @click="remove">删除 <span class="glyphicon glyphicon-trash"></span></div>
               <div class="btn btn-default btn-sm" @click="rename">改名 <span class="glyphicon glyphicon-pencil"></span></div>
-              <div class="btn btn-default btn-sm">复制 <span class="glyphicon glyphicon-duplicate"></span></div>
+              <div class="btn btn-default btn-sm" @click="duplicate">复制 <span class="glyphicon glyphicon-duplicate"></span></div>
               <div class="btn btn-default btn-sm">移动 <span class="glyphicon glyphicon-copy"></span></div>
             </div>
           </div>
@@ -72,6 +78,7 @@ export default {
       </div>
     </div>
   </div>
+</transition>
 </template>
 
 <style lang="sass" scoped>

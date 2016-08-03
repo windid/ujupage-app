@@ -60,6 +60,7 @@ export default {
 </script>
 
 <template>
+<transition name="bounce">
   <div class="page-group" @click="switchPageGroup(pageGroup)">
     <div class="page-group-header">
       <div class="page-group-name">
@@ -82,6 +83,7 @@ export default {
       </div>
     </div>
   </div>
+</transition>
 </template>
 
 <style lang="sass" scoped>

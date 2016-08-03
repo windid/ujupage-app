@@ -3,7 +3,7 @@ export default {
 
   list (groupId, success, error){
     const url = 'page/get/' + groupId;
-    Vue.http.get(url).then((response)=>{success(response.json().pages)}, (response)=>{error(response.json())});
+    Vue.http.get(url).then( response => success(response.json().pages), response => error(response.json()) );
   },
 
   create (page, success, error){
@@ -12,7 +12,7 @@ export default {
       group_id: page.group_id,
       name: page.name
     };
-    Vue.http.post(url, data).then( response => success(response.json().page), response => error(response.json()) );
+    Vue.http.post(url, data).then( response => success(response.json().page ), response => error(response.json()) );
   },
 
   remove (page, success, error){
@@ -24,9 +24,15 @@ export default {
     const url = 'page/mod';
     const data = {
       id: page.id,
+      group_id: page.group_id,
       name: name
     };
     Vue.http.post(url, data).then( response => success(response.json()), response => error(response.json()) );
+  },
+
+  duplicate (page, success,error) {
+    const url = 'page/copy/' + page.id;
+    Vue.http.get(url).then( response => success(response.json().page ), response => error(response.json()) );    
   }
 
 }

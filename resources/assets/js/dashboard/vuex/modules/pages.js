@@ -10,11 +10,15 @@ const mutations = {
   },
 
   [types.CREATE_PAGE] (state, { page }){
-  	state.all.push(page);
+    state.all.push(page);
   },
 
   [types.REMOVE_PAGE] (state, { page }){
-  	state.all.remove(page);
+    state.all.remove(page);
+  },
+
+  [types.RENAME_PAGE] (state, { page, newName }){
+    page.name = newName;
   }
 }
 
