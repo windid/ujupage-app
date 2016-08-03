@@ -186,7 +186,7 @@ class PageController extends Controller {
             $new_page_variation->page_id = $new_page->id;
             $new_page_variation->user_id = $this->user->id;
             $new_page_variation->name = $v->name . ' 副本';
-            $new_page_variation->setting = $v->setting;
+            $new_page_variation->setting = json_encode($v->setting);
             $new_page_variation->html_json = $v->html_json;
             $new_page_variation->save();
         }
