@@ -42,7 +42,12 @@ class InviteController extends Controller {
             return $this->err('not found project');
         }
         
-        return $this->dump(['users' => $project->users()->get()->toArray()]);
+        return $this->dump(['users' => $project->users()->withPivot('role')
+                                                            ->get()->toArray()
+                            ,'uninvitor' => $project->invitors()
+                                                   ->get()
+                                                   ->toArray()
+                ]);
     }
     
     /**
