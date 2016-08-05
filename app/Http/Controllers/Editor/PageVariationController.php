@@ -133,7 +133,6 @@ class PageVariationController extends Controller {
         }
         
         $page_variation->html_json = $request->htmljson;
-        $page_variation->html = \App\Services\ParseHtml::decode($request->toArray());
         $page_variation->save();
         
         return $this->dump();

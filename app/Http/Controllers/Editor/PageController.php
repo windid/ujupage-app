@@ -102,5 +102,58 @@ class PageController extends Controller {
         
         return $this->dump();
     }
+        
+    /**
+     * 修改url
+     * @param int $id 页面ID
+     * @param string $url URL地址
+     * @return {
+     *  result = true
+     * }
+     */
+    public function modurl(int $page_id, string $url) {
+        $page = $this->initPGP($page_id);         
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
+        }
+                
+        $validator = validator(['url' => $url], ['url' => 'alpha_dash|required|min:3|unique:pages,url,'.$page->id]);
+        if ($validator->fails()) {
+            return $this->err($validator->errors()->first());
+        }
+        
+        $page->url = $url;
+        $page->save();
+                
+        return $this->dump();
+    }
     
+    /**
+     * 发布页面
+     * @param int $id 页面ID
+     * @return {
+     *  result = true
+     * }
+     */
+    public function publish(int $page_id) {
+        $page = $this->initPGP($page_id);         
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
+        }
+        
+        if ($page->url == '') {
+            return $this->err('empty url name');
+        }
+                
+        $variations = $this->pageVariation->where('page_id', $page->id)
+                ->get()->toArray();
+        foreach ($variations as $k => $v) {
+            $html = view('preview.variation', ['content' => \App\Services\ParseHtml::decode($v)])->render();
+            $this->pageVariation->where('id', $v['id'])->update([
+                'html' => $html
+            ]);
+        }
+        
+        return $this->dump();
+    }
 }
