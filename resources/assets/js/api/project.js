@@ -27,9 +27,18 @@ export default {
     Vue.http.post(url, data).then( response => success(response.json()), response => error(response.json()) );
   },
 
-  members (projectId, success,error){
-    const url = 'project/members/get/' + projectId;
-    Vue.http.get(url).then( response => success(response.json().users), response => error(response.json()) );
+  members (project, success, error){
+    const url = 'project/members/get/' + project.id;
+    Vue.http.get(url).then( response => success(response.json().users, response.json().uninvitor), response => error(response.json()) );
+  },
+
+  invite (member, project, success, error) {
+    const url = 'project/members/join/';
+    const data = {
+      project_id: project.id,
+      email: member.email
+    }
+    Vue.http.post(url, data).then( response => success(response.json()), response => error(response.json()) );
   }
 
 }

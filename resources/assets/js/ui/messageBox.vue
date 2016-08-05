@@ -43,6 +43,7 @@ export default {
 </script>
 
 <template>
+<transition name="fade">
   <div class="message-box-mask" v-if="msg.show" tabindex="-1" @keyup.enter="ok" @keyup.esc="cancel">
     <div class="message-box-wrapper">
       <div class="message-box-container" :style="{width:msg.width}">
@@ -65,6 +66,7 @@ export default {
       </div>
     </div>
   </div>
+</transition>
 </template>
 
 

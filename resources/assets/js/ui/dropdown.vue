@@ -40,3 +40,13 @@
     <slot name="dropdown-menu"></slot>
   </div>
 </template>
+
+<style>
+  .dropdown-enter-active, .dropdown-leave-active {
+    transition: all .3s ease;
+    overflow: hidden;
+  }
+  .dropdown-enter, .dropdown-leave-active {
+    opacity: 0
+  }
+</style>

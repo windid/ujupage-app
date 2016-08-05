@@ -53,8 +53,10 @@ export default {
         <div v-show="currentPageGroup.is_default === 1" class="btn btn-default" title="新建文件夹" @click="createPageGroup"><span class="glyphicon glyphicon-plus"></span> <span class="glyphicon glyphicon-folder-open"></span></div>
         <div v-show="currentPageGroup.name !== 'default'" class="btn btn-default" @click="goToDefault()"><span class="glyphicon glyphicon-level-up"></span> 返回上层</div>
       </div>
-      <page-group v-show="currentPageGroup.is_default === 1" v-for="pageGroup in pageGroups" :page-group="pageGroup"></page-group>
-      <page-item v-for="pageItem in pages" :page-item="pageItem"></page-item>
+      <template v-if="currentPageGroup.is_default === 1">
+        <page-group v-for="pageGroup in pageGroups" :key="pageGroup.id" :page-group="pageGroup"></page-group>
+      </template>
+      <page-item v-for="pageItem in pages" :key="pageItem.id" :page-item="pageItem"></page-item>
     </div>
   </div>
 </template>

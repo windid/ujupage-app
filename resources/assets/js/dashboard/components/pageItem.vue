@@ -1,6 +1,6 @@
 <script>
 import dropdown from '../../ui/dropdown.vue'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 
 export default {
@@ -14,11 +14,18 @@ export default {
   },
   data(){
     return {
-      showMenu: false
+      showMenu: false,
+      moving: false
     }
   },
+  computed: mapGetters({
+    pageGroups: 'allPageGroups',
+    defaultPageGroup: 'defaultPageGroup',
+    currentPageGroup: 'currentPageGroup'
+  }),
   methods:{
     remove(){
+      this.showMenu = false;
       this.$store.dispatch('confirm', {
         header: '确定删除' + this.pageItem.name + '?',
         content: '页面被删除后将不可恢复。',
@@ -28,22 +35,44 @@ export default {
       });
     },
     rename(){
+      this.showMenu = false;
       this.$store.dispatch('getInput', {
-        header: '请输入新的页面名',
+        header: '请输入新的页面名称',
         content: this.pageItem.name,
-        onConfirm: (val) => {
-
+        onConfirm: (newName) => {
+          if (newName && newName !== this.pageItem.name){
+            this.$store.dispatch('renamePage', [ this.pageItem, newName ]);
+          }
         }
       });
+    },
+    duplicate(){
+      this.$store.dispatch('duplicatePage', this.pageItem);
+      this.showMenu = false;
+    },
+    move(){
+      this.moving = true;
+    },
+    moveTo(pageGroup){
+      if (pageGroup !== this.currentPageGroup){
+        this.$store.dispatch('movePage', [this.pageItem, pageGroup]);
+      }
+      this.showMenu = false;
+    }
+  },
+  watch:{
+    'showMenu': function(val){
+      this.moving = false;
     }
   }
 }
 </script>
 
 <template>
+<transition name="bounce" mode="out-in">
   <div class="page-item">
     <div class="page-item-header">
-      <div class="page-item-name"><a :href="'./editor/'+pageItem.id">{{pageItem.name}}</a></div>
+      <div class="page-item-name"><a :href="'/editor/'+pageItem.id">{{pageItem.name}}</a></div>
       <div class="page-item-url">
         <a v-if="pageItem.url" :href="'http://'+pageItem.url">{{pageItem.url}}</a>
         <span v-else>未发布</span>
@@ -61,17 +90,25 @@ export default {
             </div>
           </slot>
           <div slot="dropdown-menu" class="dropdown-menu dropdown-menu-right page-menu">
-            <div class="btn-group-vertical">
+            <div v-if="moving" class="move-to-group-menu">
+              <div class="move-to-group-header">移动到文件夹</div>
+              <div class="move-to-group-body">
+                <div class="move-to-group-item" @click="moveTo(defaultPageGroup)">根目录</div>
+                <div class="move-to-group-item" v-for="pageGroup in pageGroups" @click="moveTo(pageGroup)">{{pageGroup.name}}</div>
+              </div>
+            </div>
+            <div v-else class="btn-group-vertical">
               <div class="btn btn-danger btn-sm" @click="remove">删除 <span class="glyphicon glyphicon-trash"></span></div>
               <div class="btn btn-default btn-sm" @click="rename">改名 <span class="glyphicon glyphicon-pencil"></span></div>
-              <div class="btn btn-default btn-sm">复制 <span class="glyphicon glyphicon-duplicate"></span></div>
-              <div class="btn btn-default btn-sm">移动 <span class="glyphicon glyphicon-copy"></span></div>
+              <div class="btn btn-default btn-sm" @click="duplicate">复制 <span class="glyphicon glyphicon-duplicate"></span></div>
+              <div class="btn btn-default btn-sm" @click.stop="move">移动 <span class="glyphicon glyphicon-copy"></span></div>
             </div>
           </div>
         </dropdown>
       </div>
     </div>
   </div>
+</transition>
 </template>
 
 <style lang="sass" scoped>
@@ -124,4 +161,33 @@ export default {
   background: transparent;
   box-shadow: none;
 }
+
+.move-to-group-menu{
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 180px;
+}
+
+.move-to-group-header{
+  padding: 6px 12px;
+  background: #eee;
+}
+
+.move-to-group-body{
+  max-height:160px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.move-to-group-item{
+  padding: 6px 12px;
+  white-space:nowrap;
+  cursor: pointer;
+}
+
+.move-to-group-item:hover{
+  background: #f6f6f6;
+}
+
 </style>
