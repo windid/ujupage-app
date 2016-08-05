@@ -133,6 +133,7 @@ class PageVariationController extends Controller {
         }
         
         $page_variation->html_json = $request->htmljson;
+        $page_variation->html = \App\Services\ParseHtml::decode($request->toArray());
         $page_variation->save();
         
         return $this->dump();
@@ -210,6 +211,8 @@ class PageVariationController extends Controller {
         $copy_variation->name = $this->getVariationName($this->page->variation_history);
         $copy_variation->setting = json_encode($page_variation->setting);
         $copy_variation->html_json = $page_variation->html_json;
+        $copy_variation->html = $page_variation->html;
+        $copy_variation->quote = $page_variation->quote;
         $copy_variation->save();
         $this->page->increment('variation_history');
         
@@ -244,6 +247,7 @@ class PageVariationController extends Controller {
         $this->pageVariation->name = $this->getVariationName($this->page->variation_history);
         $this->pageVariation->setting = json_encode([]);
         $this->pageVariation->html_json = json_encode([]);
+        $this->pageVariation->html = '';
         $this->pageVariation->save();
         $this->page->increment('variation_history');
         
