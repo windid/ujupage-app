@@ -9,13 +9,8 @@
   <meta name="force-rendering" content="webkit">
   <title>控制面板 - 聚页</title>
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
-  <link href="{{asset('css/global.css')}}" rel="stylesheet">
 
   <style>
-    #page{
-      height: 100%;
-      width: 100%
-    }
     .loading{
       width:128px;
       height:128px;
@@ -30,9 +25,7 @@
 </head>
 <body>
 
-<div id="page">
-  <div class="loading"></div>
-</div>
+<div id="page" class="loading"></div>
 
   <script src="{{asset('js/libs/vue-2.0.js')}}"></script>
   <script src="{{asset('js/dashboard.js')}}"></script>

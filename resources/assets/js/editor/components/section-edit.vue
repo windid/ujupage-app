@@ -71,7 +71,7 @@ export default {
 </script>
 
 <template>
-<div>
+<div @click.stop>
   <sidebar :show.sync="show">
     
     <div slot="header">

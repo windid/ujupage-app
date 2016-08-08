@@ -10,6 +10,8 @@
   <meta name="keywords" content="{{$content['settings']['seo']['keywords']}}">
   <meta name="description" content="{{$content['settings']['seo']['description']}}">
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
+  <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>
+  <script src="{{asset('js/page.js')}}"></script>
 <style>
 
   body{
@@ -19,6 +21,11 @@
 
   label{
     font-weight: normal;
+  }
+
+  label.error{
+    color:#900!important;
+    padding: 6px 12px 0;
   }
 
   #content{
@@ -144,6 +151,5 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
   @endforeach
 </div>
 
-  <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>
 </body>
 </html>

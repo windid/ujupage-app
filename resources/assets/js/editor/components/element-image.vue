@@ -84,7 +84,7 @@ export default {
     'showImageLibary': function(value){
       if(!value && !this.imageObj.url && this.element.src == ''){
         this.$nextTick(function(){
-          this.removeElement(vm.elementId);
+          this.removeElement(this.elementId, false);
         });
       }
     }

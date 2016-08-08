@@ -109,7 +109,7 @@ export default {
           }
         }
       };
-      this.addElement(this.workspace.currentSectionId, defaultImage);
+      this.addElement(this.workspace.currentSectionId, defaultImage, false);
     },
 
     addButton: function(){

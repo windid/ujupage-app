@@ -7,8 +7,9 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="renderer" content="webkit">
   <meta name="force-rendering" content="webkit">
-  <title>{{$page['name']}} - 聚页</title>
+  <title>页面预览 - 聚页</title>
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
+  <link href="{{asset('css/devices.min.css')}}" rel="stylesheet">
   <style>
     .loading{
       width:128px;
@@ -24,33 +25,12 @@
 </head>
 <body>
 
-<editor>
-  <div class="loading"></div>
-</editor>
+<div id="page" class="loading">
+  <div></div>
+</div>
 
-<script>
-  var _pageInfo = {
-    pageId: {{$page['id']}},
-    projectId: {{$project_id}},
-    variations: [
-      @foreach($page['variations'] as $variation)
-      {
-        id:{{$variation['id']}},
-        name: "{{$variation['name']}}"
-      },
-      @endforeach
-    ],
-    url:"{{$page['url']}}"
-  };
-</script>
-
-@if ( Config::get('app.debug') )
-  <script src="{{asset('js/libs/vue.js')}}"></script>
-@else
-  <script src="{{asset('js/libs/vue.min.js')}}"></script>
-@endif
-  <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>
-  <script src="{{asset('js/editor.js')}}"></script>
-
+  <script src="{{asset('js/libs/vue-2.0.js')}}"></script>
+  <script src="{{asset('js/preview.js')}}"></script>
 </body>
+
 </html>

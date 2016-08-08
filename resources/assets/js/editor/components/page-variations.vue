@@ -1,7 +1,5 @@
 <script>
 import dropdown from './dropdown.vue'
-import {  }  from '../store/actions'
-import {  } from '../store/getters'
 
 export default {
   components: {
@@ -17,14 +15,6 @@ export default {
       type: Number,
       required: true,
     },
-  },
-  vuex: {
-    actions: {
-      
-    },
-    getters: {
-      
-    }
   },
   data () {
     return {
@@ -64,7 +54,7 @@ export default {
         this.pageInfo.variations.push({id:data.id, name:data.name});
         this.currentVariationName = data.name;
       }, function(response){
-        debugger
+        console.log(response);
       });
     },
 

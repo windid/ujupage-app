@@ -1,7 +1,6 @@
 <script>
-import {  } from '../store/actions'
-import {  } from '../store/getters'
 import modal from './modal.vue'
+import imageAPI from '../../api/image'
 import dropdown from './dropdown.vue'
 import eventHandler from '../../utils/eventHandler'
 import { merge } from 'lodash'
@@ -30,7 +29,8 @@ export default {
       currentImageId: null,
       viewingImage: {},
       imageUrlEditing: false,
-      images: {}
+      images: [],
+      projectId: window._pageInfo.projectId
     }
   },
   methods:{
@@ -48,16 +48,28 @@ export default {
       this.loadStatus = 'view';
     },
     modifyImage: function(e){
-      var data = new FormData(e.target);
-      this.$http.post('/editor/image/modimage',data).then(function(response){
-        console.log(response)
-      },function(response){
-        console.log(response)
-      });
-      console.log(e.target);
+      var image = new FormData(e.target);
+      imageAPI.modify(image, data => {
+        this.images[this.currentImageId] = merge(this.images[this.currentImageId], image);
+      }, data => {
+        console.log(data);
+      })
+      // this.$http.post('/editor/image/modimage',data).then(function(response){
+      //   console.log(response)
+      // },function(response){
+      //   console.log(response)
+      // });
     },
-    removeImage: function(imageId){
-
+    removeImage: function(){
+      const imageId = this.images[this.currentImageId].id;
+      imageAPI.remove(this.projectId, imageId, data => {
+        const tmpIndex = this.currentImageId;
+        this.currentImageId = null;
+        this.images.splice(tmpIndex, 1);
+        this.loadStatus = 'loaded';
+      }, data => {
+        console.log(data);
+      });
     },
     uploadImage: function(e){
       let files = e.target.files;
@@ -65,55 +77,38 @@ export default {
       let folder = '默认文件夹';
       data.append('file', files[0]);
       data.append('folder',folder);
-      this.$http.post('/editor/image/upload', data).then(function(response){
-        let data = response.json();
-        this.images.push(data.image);
+      data.append('project_id',this.projectId);
+      imageAPI.upload(this.projectId, data, image => {
+        this.images.push(image);
+        this.loadStatus = 'loaded';
+      }, data => {
         console.log(data);
-      },function(response){
-        console.log(response);
       });
     },
-    editImageUrl: function(){
+    inputImageUrl: function(){
       this.currentImageId = null;
       const el = this.$els.imageUrlEditor;
       this._closeEvent = eventHandler.listen(window, 'click', (e)=> {
-        if (!el.contains(e.target)) this.editImageUrlDone();
+        if (!el.contains(e.target)) this.inputImageUrlDone();
       })
       this.imageUrlEditing = true;
       this.$nextTick(function(){
         this.$els.imageUrlInput.focus();
       });
     },
-    editImageUrlDone: function(){
+    inputImageUrlDone: function(){
       this.imageUrlEditing = false;
       if (this._closeEvent) this._closeEvent.remove();
     },
     loadImages: function(folder){
-      this.$http.get('/editor/image/list/'+folder+'/1/9999').then(function(response){
-        let data = response.json();
+      imageAPI.list(this.projectId, folder, 1, 9999, data => {
         this.images = data.images;
         if (this.images.length === 0){
           this.loadStatus = 'empty';
         } else {
           this.loadStatus = 'loaded';
         }
-      },function(response){
-        if (response.status === 401){
-          //未登录
-        } else {
-          this.loadStatus = 'failed';
-        }
-        //handling error
-        console.log(response)
-      });
-    }
-  },
-  vuex: {
-    actions: {
-      
-    },
-    getters: {
-      
+      }, data => {this.loadStatus = 'failed'})
     }
   },
   ready (){
@@ -166,6 +161,7 @@ export default {
               <p><input type="text" class="form-control" name="alt" v-model="viewingImage.alt"></p>
             </div>
             <div class="modify-image-input">
+              <input type="hidden" name="project_id" :value="projectId">
               <input type="hidden" name="id" :value="viewingImage.id">
               <input type="hidden" name="folder" value="default">
               <button type="submit" class="btn btn-success">保存修改</button> &nbsp; 
@@ -183,21 +179,21 @@ export default {
       <div class="btn btn-primary btn-sm image-upload-button">
         <span class="glyphicon glyphicon-cloud-upload"></span>
         上传图片
-        <input type="file" name="files[]" class="image-upload-input" accept="image/*" v-on:change="uploadImage">
+        <input type="file" name="files[]" class="image-upload-input" accept="image/*" @change="uploadImage">
       </div>
-      <div v-el:image-url-editor class="fl">
-        <div v-show="!imageUrlEditing" class="btn btn-default btn-sm" @click="editImageUrl">
+      <!-- <div v-el:image-url-editor class="fl">
+        <div v-show="!imageUrlEditing" class="btn btn-default btn-sm" @click="inputImageUrl">
           <span class="glyphicon glyphicon-link"></span>
           粘贴网址
         </div>
         <div v-show="imageUrlEditing" class="input-group input-group-sm shadow image-url-input">
           <div class="input-group-addon"> 图片网址 </div>
           <input v-el:image-url-input type="text" class="form-control input-text-shadow">
-          <div class="input-group-btn" @click="editImageUrlDone">
+          <div class="input-group-btn" @click="inputImageUrlDone">
             <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
           </div>
         </div>
-      </div>
+      </div> -->
       <span v-if="currentImageId !== null">
         名称: {{images[currentImageId].name}} &nbsp;
         尺寸: {{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;

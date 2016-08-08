@@ -63,7 +63,7 @@ class EditorController extends Controller {
     }
     
     /**
-     * 预览
+     * 版本预览
      * @param int $id 版本ID
      * @return string $content 页面内空
      */
@@ -78,6 +78,15 @@ class EditorController extends Controller {
         
         $content = \App\Services\ParseHtml::decode($page_variation->toArray());
         return view('preview.variation', compact('content'));
+    }
+
+    /**
+     * 页面预览 Todo:输出页面下所有Variation的id和name
+     * @param int $id Page ID
+     * @return 预览页面，在iframe中嵌套previewVariation中的版本 
+     */
+    public function preview(int $id){
+        return view('preview.index');
     }
     
     public function api(Request $request) {

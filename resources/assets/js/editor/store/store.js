@@ -238,7 +238,7 @@ const mutations = {
   },
 
   //添加元素
-  ADD_ELEMENT(state, sectionId, element){
+  ADD_ELEMENT(state, sectionId, element, record = true){
     const elementId = randomChar(8);
     Vue.set(state.page.elements, elementId, element);
     if (state.page.sections.length === 0){
@@ -250,17 +250,21 @@ const mutations = {
     state.workspace.zIndex.pc.max     = element.style.pc.zIndex;
     state.workspace.zIndex.mobile.max = element.style.mobile.zIndex;
     state.workspace.activeElementId = elementId;
-    mutations.SAVE_PAGE_STATE(state);
+    if (record){
+      mutations.SAVE_PAGE_STATE(state);
+    }
   },
 
   //删除元素
-  REMOVE_ELEMENT(state, elementId){
+  REMOVE_ELEMENT(state, elementId, record = true){
     state.page.sections.forEach(function(section){
       section.elements.pc.$remove(elementId);
       section.elements.mobile.$remove(elementId);
     });
     Vue.delete(state.page.elements,elementId);
-    mutations.SAVE_PAGE_STATE(state);
+    if (record){
+      mutations.SAVE_PAGE_STATE(state);
+    }
   },
 
   // 移动元素

@@ -1,4 +1,8 @@
-<form class="element" id="element-{{$element_id}}" method="post" action="">
+<form class="element" id="element-{{$element_id}}" method="post" action="http://192.168.0.194:5000/editor/page/variation/130">
+  <input type="hidden" name="page_id" value="{{$content['variation']['page_id']}}">
+  <input type="hidden" name="variation_id" value="{{$content['variation']['id']}}">
+  <input type="hidden" name="variation_name" value="{{$content['variation']['name']}}">
+
 @foreach($element['fields'] as $field_id=>$field)
   <div class="form-group">
 	@if ($field['type'] === 'text')
@@ -8,7 +12,7 @@
     @else
       <label for="form-{{$element_id}}-{{$field_id}}" class="label-inside">{{$field['label']}}</label>    
     @endif
-      <input id="form-{{$element_id}}-{{$field_id}}" type="text" class="form-control form-field-input">
+      <input name="fields['{{$field['label']}}']" id="form-{{$element_id}}-{{$field_id}}" type="text" class="form-control form-field-input" @if(in_array('required', $field['validator']) ) required @endif>
 
 	@elseif ($field['type'] === 'textarea')
 
@@ -17,7 +21,7 @@
     @else
       <label for="form-{{$element_id}}-{{$field_id}}" class="label-inside">{{$field['label']}}</label>   
     @endif
-      <textarea id="form-{{$element_id}}-{{$field_id}}" class="form-control form-field-input" rows="3"></textarea>
+      <textarea name="fields['{{$field['label']}}']" id="form-{{$element_id}}-{{$field_id}}" class="form-control form-field-input" rows="3" @if(in_array('required', $field['validator']) ) required @endif></textarea>
 
 	@elseif ($field['type'] === 'radio')
 
@@ -26,9 +30,10 @@
     @endif
     @foreach($field['options'] as $option)
       <div @if(isset($field['optionsInLine']) && $field['optionsInLine']) class="options-inline" @endif>
-        <label><input type="radio" value="{{$option}}"> {{$option}}</label>
+        <label><input name="fields['{{$field['label']}}']" type="radio" value="{{$option}}" @if(in_array('required', $field['validator']) ) required @endif > {{$option}}</label>
       </div>
     @endforeach
+      <label style="display:none;" for="fields['{{$field['label']}}']" class="error"></label>
 
 	@elseif ($field['type'] === 'checkbox')
 
@@ -37,13 +42,16 @@
     @endif
     @foreach($field['options'] as $option)
       <div @if(isset($field['optionsInLine']) && $field['optionsInLine']) class="options-inline" @endif>
-        <label><input type="checkbox" value="{{$option}}"> {{$option}}</label>
+        <label><input name="fields['{{$field['label']}}'][]" type="checkbox" value="{{$option}}" @if(in_array('required', $field['validator']) ) required @endif > {{$option}}</label>
       </div>
     @endforeach
+      <div>
+        <label style="display:none;" for="fields['{{$field['label']}}'][]" class="error"></label>
+      </div>
 
 	@elseif ($field['type'] === 'dropdown')
     <div>
-      <select class="form-control form-field-input">
+      <select name="fields['{{$field['label']}}']" class="form-control form-field-input" @if(in_array('required', $field['validator']) ) required @endif>
         <option value="" disabled selected hidden>{{$field['label']}}</option>
         @foreach($field['options'] as $option)
         <option value="{{$option}}">{{$option}}</option>
@@ -62,3 +70,7 @@
     <span>{{$element['button']['text']}}</span>
   </button>
 </form>
+
+<script>
+// $("#element-{{$element_id}}").validate();
+</script>

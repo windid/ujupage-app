@@ -49,7 +49,8 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
     
     Route::get('/{id}', ['as' => '.index', 'uses' => 'EditorController@index'])->where('id', '[0-9]+');
     // 预览        
-    Route::get('preview/variation/{id}', ['as' => '.preview', 'uses' => 'EditorController@previewVariation'])->where('id', '[0-9]+');
+    Route::get('preview/variation/{id}', ['as' => '.previewVariation', 'uses' => 'EditorController@previewVariation'])->where('id', '[0-9]+');
+    Route::get('preview/{id}/{variation_id?}', ['as' => '.preview', 'uses' => 'EditorController@preview'])->where('id', '[0-9]+');
     
     // API接口分配
     // m=editor_images@editor_upload
@@ -64,7 +65,7 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
     Route::group(['prefix'=>'image', 'as' => '.image'], function(){        
         // 图片列表        
         Route::get('list/{project_id}/{dirname?}/{page?}/{page_size?}', ['as' => '.list', 'uses' => 'ImageController@getIndex']);
-        // 创建文件夹
+        // 文件夹列表
         Route::get('dir/{project_id}', ['as' => '.dir', 'uses' => 'ImageController@dir']);
         // 创建文件夹
         Route::get('mkdir/{project_id}/{dirname}', ['as' => '.mkdir', 'uses' => 'ImageController@mkdir']);

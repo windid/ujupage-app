@@ -18,13 +18,13 @@ export const setActiveElementId = function ({ dispatch, state }, elementId) {
 }
 
 //新增元素
-export const addElement = function ({ dispatch, state }, sectionId, element) {
-  dispatch('ADD_ELEMENT', sectionId, element)
+export const addElement = function ({ dispatch, state }, sectionId, element, record = true) {
+  dispatch('ADD_ELEMENT', sectionId, element, record)
 }
 
 //删除元素
-export const removeElement = function ({ dispatch, state }, elementId) {
-  dispatch('REMOVE_ELEMENT', elementId)
+export const removeElement = function ({ dispatch, state }, elementId, record = true) {
+  dispatch('REMOVE_ELEMENT', elementId, record)
 }
 
 //移动元素

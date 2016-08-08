@@ -20,6 +20,12 @@ class ParseHtml {
         self::$page['elements'] = $content['elements'];
         self::$page['style'] = array('common'=>array(), 'pc'=>array(), 'mobile'=>array());
 
+        self::$page['variation'] = array(
+            'id'        => $array['id'], 
+            'page_id'   => $array['page_id'], 
+            'name'      => $array['name']
+        );
+
         self::$page['style']['pc']['content']['height'] = 0;
         self::$page['style']['mobile']['content']['height'] = 0;
 

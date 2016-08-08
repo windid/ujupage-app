@@ -114,7 +114,7 @@ export default {
             <div class="dropdown-field-type" @click="addField('text','姓名',['required'])">姓名</div>
             <div class="dropdown-field-type" @click="addField('text','电子邮件',['required','email'])">电子邮件</div>
             <div class="dropdown-field-type" @click="addField('text','手机号码',['required','mobile'])">手机号码</div>
-            <div class="dropdown-field-type" @click="addField('china-state')">省/市/县</div>
+            <!-- <div class="dropdown-field-type" @click="addField('china-state')">省/市/县</div> -->
           </div>
         </dropdown>
       </div>
@@ -142,9 +142,9 @@ export default {
             <!-- 单行、多行文本选项 -->
             <div v-if="field.type === 'text' || field.type === 'textarea'" class="form-field-configs">
               <div><label><input type="checkbox" v-model="field.validator" value="required"> 必填项</label></div>
-              <div><label><input type="checkbox" v-model="field.validator" value="mobile"> 校验为手机号码</label></div>
+              <!-- <div><label><input type="checkbox" v-model="field.validator" value="mobile"> 校验为手机号码</label></div>
               <div><label><input type="checkbox" v-model="field.validator" value="email"> 校验为Email</label></div>
-              <div><label><input type="checkbox" v-model="field.validator" value="number"> 校验为数字</label></div>
+              <div><label><input type="checkbox" v-model="field.validator" value="number"> 校验为数字</label></div> -->
             </div>
             <!-- 单选、多选框选项 -->
             <div v-if="field.type === 'radio' || field.type === 'checkbox'" class="form-field-configs">
