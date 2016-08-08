@@ -85,8 +85,14 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         // 保存设置        
         Route::post('savesetting', ['as' => '.savesetting', 'uses' => 'PageController@savesetting']);
         
-        
-        
+        /*
+         * PageController
+         */        
+        // 发布页面
+        Route::get('publish/{id}', ['as' => '.issue', 'uses' => 'PageController@publish']);
+        // 修改url
+        Route::get('modurl/{id}/{url}', ['as' => '.modurl', 'uses' => 'PageController@modurl']);
+                
         /**
          * PageVariationController
          */
