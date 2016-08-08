@@ -11,11 +11,17 @@ var site = {
           $(form).ajaxSubmit({
             dataType:"jsonp",
             success:(response => {
+              form.find('.thankyou-mask').show();
               console.log(response);
             })
           });
         }
       });
+
+      const toggleThankyouMsg = function(){
+        const mask = form.find('.thankyou-mask');
+        mask.toggle();
+      };
       
       const labels = form.find('.label-inside');
       labels.each(function(){

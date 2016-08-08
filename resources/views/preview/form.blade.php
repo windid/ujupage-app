@@ -71,6 +71,10 @@
   </button>
 </form>
 
-<script>
-// $("#element-{{$element_id}}").validate();
-</script>
+<div class="thankyou-mask" style="display:none">
+  <div class="thankyou-wrapper">
+    <div class="thankyou">
+      {{$element['props']['thankyou']}}    
+    </div>
+  </div>
+</div>

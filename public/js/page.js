@@ -76,11 +76,17 @@
 	          $(form).ajaxSubmit({
 	            dataType: "jsonp",
 	            success: function success(response) {
+	              form.find('.thankyou-mask').show();
 	              console.log(response);
 	            }
 	          });
 	        }
 	      });
+	
+	      var toggleThankyouMsg = function toggleThankyouMsg() {
+	        var mask = form.find('.thankyou-mask');
+	        mask.toggle();
+	      };
 	
 	      var labels = form.find('.label-inside');
 	      labels.each(function () {

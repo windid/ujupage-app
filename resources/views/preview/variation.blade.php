@@ -92,6 +92,34 @@
     margin-right:10px;
   }
 
+  .thankyou-mask {
+    position: fixed;
+    z-index: 100001;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    display: table;
+  }
+
+  .thankyou-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .thankyou {
+    position: relative;
+    width: 300px;
+    margin:0 auto;
+    background-color: #fff;
+    padding: 50px 0;
+    text-align: center;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+    transition: all .3s ease;
+  }
+
   @foreach($content['style']['common'] as $class => $styles)
     #{{$class}}{
       @foreach($styles as $key => $value)
