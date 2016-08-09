@@ -132,10 +132,6 @@ export default {
   white-space: nowrap;
 }
 
-.page-item-name{
-  
-}
-
 .page-item-url span, .page-item-url a{
   color:#bbb;
   font-size: 12px;
