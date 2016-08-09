@@ -22847,7 +22847,7 @@
 	    var success = arguments[4];
 	    var error = arguments[5];
 	
-	    var url = 'page/image/list/' + projectId + '/' + folder + '/' + page + '/' + pageSize;
+	    var url = 'image/list/' + projectId + '/' + folder + '/' + page + '/' + pageSize;
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json());
 	    }, function (response) {
@@ -22865,7 +22865,7 @@
 	  * }
 	  */
 	  upload: function upload(projectId, image, success, error) {
-	    var url = 'page/image/upload';
+	    var url = 'image/upload';
 	    Vue.http.post(url, image).then(function (response) {
 	      return success(response.json().image);
 	    }, function (response) {
@@ -22873,7 +22873,7 @@
 	    });
 	  },
 	  remove: function remove(projectId, imageId, success, error) {
-	    var url = 'page/image/delimage/' + projectId + '/' + imageId;
+	    var url = 'image/delimage/' + projectId + '/' + imageId;
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json());
 	    }, function (response) {
@@ -22881,7 +22881,7 @@
 	    });
 	  },
 	  modify: function modify(image, success, error) {
-	    var url = 'page/image/modimage';
+	    var url = 'image/modimage';
 	    Vue.http.post(url, image).then(function (response) {
 	      return success(response.json());
 	    }, function (response) {
