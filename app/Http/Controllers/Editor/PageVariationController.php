@@ -134,7 +134,7 @@ class PageVariationController extends Controller {
                 ->orderBy('id', 'desc')
                 ->get()->toArray();
         
-        return $this->dump($page->variations);
+        return $this->dump(['variations' => $page->variations]);
     }
     
     /**
