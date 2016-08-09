@@ -99,7 +99,7 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
         // 加载        
         Route::get('variation/{id}', ['as' => '.initpage', 'uses' => 'PageVariationController@start'])->where('id', '[0-9]+');
         // 列表
-        Route::get('variation/list/{page_id}', ['as' => '.list', 'uses' => 'PageVariationController@list'])->where('page_id', '[0-9]+');
+        Route::get('variation/list/{page_id}', ['as' => '.list', 'uses' => 'PageVariationController@all'])->where('page_id', '[0-9]+');
         // 保存版本        
         Route::post('variation/save', ['as' => '.save', 'uses' => 'PageVariationController@save']);
         // 删除版本

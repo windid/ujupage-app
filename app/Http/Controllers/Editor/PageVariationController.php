@@ -114,6 +114,30 @@ class PageVariationController extends Controller {
     }
     
     /**
+     * 所有版本
+     * @param int $page_id 页面ID
+     * @return {
+     *  {
+     *    id = 版本ID,
+     *    name = 版本号,
+     *    quota = 百份比
+     *   }
+     * }
+     */
+    public function all(int $page_id) {
+        $page = $this->initPGP($page_id); 
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
+        }
+        
+        $page->variations = $page->variation()->select('id', 'name', 'quota')
+                ->orderBy('id', 'desc')
+                ->get()->toArray();
+        
+        return $this->dump($page->variations);
+    }
+    
+    /**
      * page_save
      * 保存版本
      * @param int $id 版本id
