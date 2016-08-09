@@ -78,7 +78,7 @@ export default {
         input.focus();
       });
     },
-    removeOption: function(fieldId,optionId){
+    removeOption: function(fieldId, optionId){
       this.formFields[fieldId].options.splice(optionId, 1);
     }
   },

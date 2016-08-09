@@ -114,7 +114,7 @@ export default {
         <span v-show="saveStatus === 'saved'">已保存</span>
         <span class="glyphicon glyphicon-floppy-disk"></span>
       </li>
-      <li class="preview"><a href="/editor/preview/{{pageInfo.pageId}}" target="_blank"></a>预览 <span class="glyphicon glyphicon-eye-open"></span></li>
+      <li class="preview"><a href="/editor/preview/{{pageInfo.pageId}}?vid={{currentVariationId}}" target="_blank"></a>预览 <span class="glyphicon glyphicon-eye-open"></span></li>
       <li class="publish">发布 <span class="glyphicon glyphicon-send"></span></li>
     </ul>
     <editor-settings v-if="showSettings" :show.sync="showSettings"></editor-settings>

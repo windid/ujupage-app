@@ -1,19 +1,31 @@
 import validation from 'jquery-validation'
-import jqueryForm from 'jquery-form'
 import validationMsgZh from 'jquery-validation/dist/localization/messages_zh'
 
-var site = {
+var Site = {
+
+  init: () => {
+    Site.parseFrom();
+    $('.msg-close').click(()=>{
+      $('.msg-mask').hide();
+    });
+  },
+
   parseFrom: () => {
     $('form').each(function(){
       const form = $(this);
       form.validate({
-        submitHandler: function(form) {
-          $(form).ajaxSubmit({
-            dataType:"jsonp",
-            success:(response => {
-              form.find('.thankyou-mask').show();
-              console.log(response);
-            })
+        submitHandler: function() {
+          $.ajax({
+            url: "http://localhost:8080/post",
+            dataType: "jsonp",
+            jsonpCallback: "callback",
+            data: form.serialize(),
+            success: response => {
+              Site.showMsg(form.attr('msg'));
+            },
+            error: response => {
+              Site.showMsg("表单提交失败，请稍后再试。");
+            }
           });
         }
       });
@@ -38,9 +50,17 @@ var site = {
         });
       });
     });
+  },
+
+  showMsg: (msg) => {
+    const msgBox = $('.msg-mask');
+    const msgBody = $('.msg-body');
+    msgBody.html(msg);
+    msgBox.show();
   }
+
 }
 
 $( document ).ready(function() {
-  site.parseFrom();
+  Site.init();
 });

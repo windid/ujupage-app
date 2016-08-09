@@ -76,7 +76,6 @@
 	
 	Vue.use(_vueResource2.default);
 	Vue.http.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-	Vue.http.options.root = '/dashboard';
 	
 	var vm = new Vue({
 	  el: '#page',
@@ -2913,7 +2912,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n#workspace{\n  position:relative;\n  min-height:600px;\n  margin-left:240px;\n  padding:15px;\n}\n\n.workspace-nav > .btn{\n  margin:10px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/dashboard/components/workspace.vue?3f01ae02"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAgEA;EACA,kBAAA;EACA,iBAAA;EACA,kBAAA;EACA,aAAA;CACA;;AAEA;EACA,YAAA;CACA","file":"workspace.vue","sourcesContent":["<script>\nimport pageItem from './pageItem.vue'\nimport pageGroup from './pageGroup.vue'\nimport { mapGetters, mapActions } from 'vuex'\n\nexport default {\n  components: {\n    pageItem,\n    pageGroup\n  },\n  computed: mapGetters({\n    workspace: 'workspace',\n    pages: 'allPages',\n    pageGroups: 'allPageGroups',\n    currentProject: 'currentProject',\n    currentPageGroup: 'currentPageGroup',\n    defaultPageGroup: 'defaultPageGroup'\n  }),\n  methods: {\n    createPageGroup(){\n      const pageGroup = {\n        name: '新建文件夹',\n        projectId: this.currentProject.id\n      };\n      this.$store.dispatch('createPageGroup', pageGroup);\n    },\n    goToDefault(){\n      this.$store.dispatch('switchPageGroup', this.defaultPageGroup);\n    },\n    createPage(){\n      this.$store.dispatch('getInput', {\n        header: '请输入页面名称',\n        onConfirm: (val) => {\n          const page = {\n            name: val || '未命名页面',\n            group_id: this.currentPageGroup.id\n          };\n          this.$store.dispatch('createPage', page);\n        }\n      });\n    }\n  }\n}\n</script>\n\n<template>\n  <div id=\"workspace\">\n    <div v-if=\"workspace.loadStatus === 'loading'\" class=\"loading\"></div>\n    <div v-if=\"workspace.loadStatus === 'failed'\" class=\"load-failed\">{{workspace.failedInfo}}</div>\n    <div v-if=\"workspace.loadStatus === 'done'\">\n      <div class=\"workspace-nav\">\n        <div class=\"btn btn-primary\" @click=\"createPage\">新建着陆页 <span class=\"glyphicon glyphicon-file\"></span></div>\n        <div v-show=\"currentPageGroup.is_default === 1\" class=\"btn btn-default\" title=\"新建文件夹\" @click=\"createPageGroup\"><span class=\"glyphicon glyphicon-plus\"></span> <span class=\"glyphicon glyphicon-folder-open\"></span></div>\n        <div v-show=\"currentPageGroup.name !== 'default'\" class=\"btn btn-default\" @click=\"goToDefault()\"><span class=\"glyphicon glyphicon-level-up\"></span> 返回上层</div>\n      </div>\n      <template v-if=\"currentPageGroup.is_default === 1\">\n        <page-group v-for=\"pageGroup in pageGroups\" :key=\"pageGroup.id\" :page-group=\"pageGroup\"></page-group>\n      </template>\n      <page-item v-for=\"pageItem in pages\" :key=\"pageItem.id\" :page-item=\"pageItem\"></page-item>\n    </div>\n  </div>\n</template>\n\n<style>\n#workspace{\n  position:relative;\n  min-height:600px;\n  margin-left:240px;\n  padding:15px;\n}\n\n.workspace-nav > .btn{\n  margin:10px;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n#workspace{\n  position:relative;\n  min-height:600px;\n  margin-left:240px;\n  padding:15px;\n}\n\n.workspace-nav > .btn{\n  margin:10px;\n}\n\n", "", {"version":3,"sources":["/./resources/assets/js/dashboard/components/workspace.vue?7ad74c52"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAgEA;EACA,kBAAA;EACA,iBAAA;EACA,kBAAA;EACA,aAAA;CACA;;AAEA;EACA,YAAA;CACA","file":"workspace.vue","sourcesContent":["<script>\nimport pageItem from './pageItem.vue'\nimport pageGroup from './pageGroup.vue'\nimport { mapGetters } from 'vuex'\n\nexport default {\n  components: {\n    pageItem,\n    pageGroup\n  },\n  computed: mapGetters({\n    workspace: 'workspace',\n    pages: 'allPages',\n    pageGroups: 'allPageGroups',\n    currentProject: 'currentProject',\n    currentPageGroup: 'currentPageGroup',\n    defaultPageGroup: 'defaultPageGroup'\n  }),\n  methods: {\n    createPageGroup(){\n      const pageGroup = {\n        name: '新建文件夹',\n        projectId: this.currentProject.id\n      };\n      this.$store.dispatch('createPageGroup', pageGroup);\n    },\n    goToDefault(){\n      this.$store.dispatch('switchPageGroup', this.defaultPageGroup);\n    },\n    createPage(){\n      this.$store.dispatch('getInput', {\n        header: '请输入页面名称',\n        onConfirm: (val) => {\n          const page = {\n            name: val || '未命名页面',\n            group_id: this.currentPageGroup.id\n          };\n          this.$store.dispatch('createPage', page);\n        }\n      });\n    }\n  }\n}\n</script>\n\n<template>\n  <div id=\"workspace\">\n    <div v-if=\"workspace.loadStatus === 'loading'\" class=\"loading\"></div>\n    <div v-if=\"workspace.loadStatus === 'failed'\" class=\"load-failed\">{{workspace.failedInfo}}</div>\n    <div v-if=\"workspace.loadStatus === 'done'\">\n      <div class=\"workspace-nav\">\n        <div class=\"btn btn-primary\" @click=\"createPage\">新建着陆页 <span class=\"glyphicon glyphicon-file\"></span></div>\n        <div v-show=\"currentPageGroup.is_default === 1\" class=\"btn btn-default\" title=\"新建文件夹\" @click=\"createPageGroup\"><span class=\"glyphicon glyphicon-plus\"></span> <span class=\"glyphicon glyphicon-folder-open\"></span></div>\n        <div v-show=\"currentPageGroup.name !== 'default'\" class=\"btn btn-default\" @click=\"goToDefault()\"><span class=\"glyphicon glyphicon-level-up\"></span> 返回上层</div>\n      </div>\n      <template v-if=\"currentPageGroup.is_default === 1\">\n        <page-group v-for=\"pageGroup in pageGroups\" :key=\"pageGroup.id\" :page-group=\"pageGroup\"></page-group>\n      </template>\n      <page-item v-for=\"pageItem in pages\" :key=\"pageItem.id\" :page-item=\"pageItem\"></page-item>\n    </div>\n  </div>\n</template>\n\n<style>\n#workspace{\n  position:relative;\n  min-height:600px;\n  margin-left:240px;\n  padding:15px;\n}\n\n.workspace-nav > .btn{\n  margin:10px;\n}\n\n</style>"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -3232,17 +3231,11 @@
 	      type: Object
 	    }
 	  },
-	  data: function data() {
-	    return {};
-	  },
-	
-	  computed: (0, _lodash.extend)((0, _vuex.mapGetters)({
-	    editingPageGroup: 'editingPageGroup'
-	  }), {
+	  computed: {
 	    editing: function editing() {
-	      return this.editingPageGroup === this.pageGroup;
+	      return this.$store.getters.editingPageGroup === this.pageGroup;
 	    }
-	  }),
+	  },
 	  methods: (0, _lodash.extend)((0, _vuex.mapActions)(['removePageGroup', 'switchPageGroup', 'setEditingPageGroup', 'renamePageGroup']), {
 	    rename: function rename(e) {
 	      if (!this.editing) {
@@ -19549,7 +19542,7 @@
 /* 46 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<transition name=\"bounce\" _v-7b164daa=\"\">\n  <div class=\"page-group\" @click=\"switchPageGroup(pageGroup)\" _v-7b164daa=\"\">\n    <div class=\"page-group-header\" _v-7b164daa=\"\">\n      <div class=\"page-group-name\" _v-7b164daa=\"\">\n        <div v-if=\"editing\" class=\"input-group\" @click.stop=\"\" _v-7b164daa=\"\">\n          <input ref=\"nameInput\" :value=\"pageGroup.name\" @keyup.enter=\"rename\" @blur=\"rename\" class=\"form-control\" type=\"text\" _v-7b164daa=\"\">\n          <div class=\"input-group-btn\" _v-7b164daa=\"\">\n            <div class=\"btn btn-success\" _v-7b164daa=\"\"><span class=\"glyphicon glyphicon-ok\" _v-7b164daa=\"\"></span></div>\n          </div>\n        </div>\n        <span v-else=\"\" _v-7b164daa=\"\">{{pageGroup.name}}</span>\n      </div>\n    </div>\n    <div class=\"page-group-body\" _v-7b164daa=\"\">\n      <span class=\"glyphicon glyphicon-folder-open\" _v-7b164daa=\"\"></span>\n    </div>\n    <div class=\"page-group-footer\" _v-7b164daa=\"\">\n      <div class=\"btn-group fr\" _v-7b164daa=\"\">\n        <div class=\"btn btn-default btn-sm\" @click.stop=\"setEditingPageGroup(pageGroup)\" _v-7b164daa=\"\">改名 <span class=\"glyphicon glyphicon-pencil\" _v-7b164daa=\"\"></span></div>\n        <div class=\"btn btn-default btn-sm\" @click.stop=\"remove\" _v-7b164daa=\"\">删除 <span class=\"glyphicon glyphicon-trash\" _v-7b164daa=\"\"></span></div>\n      </div>\n    </div>\n  </div>\n</transition>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<transition name=\"bounce\" _v-7b164daa=\"\">\n  <div class=\"page-group\" @click=\"switchPageGroup(pageGroup)\" _v-7b164daa=\"\">\n    <div class=\"page-group-header\" _v-7b164daa=\"\">\n      <div class=\"page-group-name\" _v-7b164daa=\"\">\n        <div v-if=\"editing\" class=\"input-group\" @click.stop=\"\" _v-7b164daa=\"\">\n          <input ref=\"nameInput\" :value=\"pageGroup.name\" @keyup.enter=\"rename\" @blur=\"rename\" class=\"form-control\" type=\"text\" _v-7b164daa=\"\">\n          <div class=\"input-group-btn\" _v-7b164daa=\"\">\n            <div class=\"btn btn-success\" _v-7b164daa=\"\"><span class=\"glyphicon glyphicon-ok\" _v-7b164daa=\"\"></span></div>\n          </div>\n        </div>\n        <span v-else=\"\" _v-7b164daa=\"\">{{pageGroup.name}}</span>\n      </div>\n    </div>\n    <div class=\"page-group-body\" _v-7b164daa=\"\">\n      <span class=\"glyphicon glyphicon-folder-open\" _v-7b164daa=\"\"></span>\n    </div>\n    <div class=\"page-group-footer\" _v-7b164daa=\"\">\n      <div class=\"btn-group fr\" _v-7b164daa=\"\">\n        <div class=\"btn btn-default btn-sm\" @click.stop=\"setEditingPageGroup(pageGroup)\" _v-7b164daa=\"\">改名 <span class=\"glyphicon glyphicon-pencil\" _v-7b164daa=\"\"></span></div>\n        <div class=\"btn btn-default btn-sm\" @click.stop=\"remove\" _v-7b164daa=\"\">删除 <span class=\"glyphicon glyphicon-trash\" _v-7b164daa=\"\"></span></div>\n      </div>\n    </div>\n  </div>\n</transition>\n";
 
 /***/ },
 /* 47 */
@@ -21380,7 +21373,7 @@
 	});
 	exports.default = {
 	  list: function list(groupId, success, error) {
-	    var url = 'page/get/' + groupId;
+	    var url = 'dashboard/page/get/' + groupId;
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json().pages);
 	    }, function (response) {
@@ -21388,7 +21381,7 @@
 	    });
 	  },
 	  create: function create(page, success, error) {
-	    var url = 'page/add';
+	    var url = 'dashboard/page/add';
 	    var data = {
 	      group_id: page.group_id,
 	      name: page.name
@@ -21400,7 +21393,7 @@
 	    });
 	  },
 	  remove: function remove(page, success, error) {
-	    var url = 'page/remove/' + page.id;
+	    var url = 'dashboard/page/remove/' + page.id;
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json());
 	    }, function (response) {
@@ -21408,7 +21401,7 @@
 	    });
 	  },
 	  rename: function rename(page, name, success, error) {
-	    var url = 'page/mod';
+	    var url = 'dashboard/page/mod';
 	    var data = {
 	      id: page.id,
 	      group_id: page.group_id,
@@ -21421,7 +21414,7 @@
 	    });
 	  },
 	  move: function move(page, pageGroup, success, error) {
-	    var url = 'page/mod';
+	    var url = 'dashboard/page/mod';
 	    var data = {
 	      id: page.id,
 	      group_id: pageGroup.id,
@@ -21434,7 +21427,7 @@
 	    });
 	  },
 	  duplicate: function duplicate(page, success, error) {
-	    var url = 'page/copy/' + page.id;
+	    var url = 'dashboard/page/copy/' + page.id;
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json().page);
 	    }, function (response) {
@@ -21454,7 +21447,7 @@
 	});
 	exports.default = {
 	  list: function list(projectId, success, error) {
-	    var url = 'pagegroup/get/' + projectId;
+	    var url = 'dashboard/pagegroup/get/' + projectId;
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json().pagegroups);
 	    }, function (response) {
@@ -21462,7 +21455,7 @@
 	    });
 	  },
 	  create: function create(pageGroup, success, error) {
-	    var url = 'pagegroup/add';
+	    var url = 'dashboard/pagegroup/add';
 	    var data = {
 	      project_id: pageGroup.projectId,
 	      name: pageGroup.name
@@ -21474,7 +21467,7 @@
 	    });
 	  },
 	  remove: function remove(pageGroup, success, error) {
-	    var url = 'pagegroup/remove/' + pageGroup.id;
+	    var url = 'dashboard/pagegroup/remove/' + pageGroup.id;
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json());
 	    }, function (response) {
@@ -21482,7 +21475,7 @@
 	    });
 	  },
 	  rename: function rename(pageGroup, name, success, error) {
-	    var url = 'pagegroup/mod';
+	    var url = 'dashboard/pagegroup/mod';
 	    var data = {
 	      id: pageGroup.id,
 	      name: name
@@ -21506,7 +21499,7 @@
 	});
 	exports.default = {
 	  list: function list(success, error) {
-	    var url = 'project/get';
+	    var url = 'dashboard/project/get';
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json().projects);
 	    }, function (response) {
@@ -21514,7 +21507,7 @@
 	    });
 	  },
 	  create: function create(project, success, error) {
-	    var url = 'project/add';
+	    var url = 'dashboard/project/add';
 	    var data = {
 	      name: project.name
 	    };
@@ -21525,7 +21518,7 @@
 	    });
 	  },
 	  remove: function remove(project, success, error) {
-	    var url = 'project/remove/' + project.id;
+	    var url = 'dashboard/project/remove/' + project.id;
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json());
 	    }, function (response) {
@@ -21533,7 +21526,7 @@
 	    });
 	  },
 	  rename: function rename(project, name, success, error) {
-	    var url = 'project/mod';
+	    var url = 'dashboard/project/mod';
 	    var data = {
 	      id: project.id,
 	      name: name
@@ -21545,7 +21538,7 @@
 	    });
 	  },
 	  members: function members(project, success, error) {
-	    var url = 'project/members/get/' + project.id;
+	    var url = 'dashboard/project/members/get/' + project.id;
 	    Vue.http.get(url).then(function (response) {
 	      return success(response.json().users, response.json().uninvitor);
 	    }, function (response) {
@@ -21553,7 +21546,7 @@
 	    });
 	  },
 	  invite: function invite(member, project, success, error) {
-	    var url = 'project/members/join/';
+	    var url = 'dashboard/project/members/join/';
 	    var data = {
 	      project_id: project.id,
 	      email: member.email

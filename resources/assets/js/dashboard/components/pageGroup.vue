@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import { extend } from 'lodash'
 
 export default {
@@ -8,18 +8,11 @@ export default {
       type: Object
     }
   },
-  data(){
-    return {
-
+  computed: {
+    editing () {
+      return this.$store.getters.editingPageGroup === this.pageGroup;
     }
   },
-  computed: extend(mapGetters({
-    editingPageGroup: 'editingPageGroup',
-  }),{
-    editing () {
-      return this.editingPageGroup === this.pageGroup
-    }
-  }),
   methods: extend(mapActions([
     'removePageGroup',
     'switchPageGroup',

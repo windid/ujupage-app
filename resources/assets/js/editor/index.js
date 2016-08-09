@@ -6,9 +6,7 @@ import '../../sass/editor.scss'
 
 
 Vue.use(VueResource);
-
 Vue.http.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-Vue.http.options.root = '/editor';
 
 Vue.directive('content', {
   twoWay: true,

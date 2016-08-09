@@ -10,8 +10,9 @@
   <meta name="keywords" content="{{$content['settings']['seo']['keywords']}}">
   <meta name="description" content="{{$content['settings']['seo']['description']}}">
   <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
-  <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>
-  <script src="{{asset('js/page.js')}}"></script>
+  <script>
+    {!! $content['settings']['code']['header'] !!}
+  </script>
 <style>
 
   body{
@@ -92,7 +93,7 @@
     margin-right:10px;
   }
 
-  .thankyou-mask {
+  .msg-mask {
     position: fixed;
     z-index: 100001;
     top: 0;
@@ -103,12 +104,12 @@
     display: table;
   }
 
-  .thankyou-wrapper {
+  .msg-wrapper {
     display: table-cell;
     vertical-align: middle;
   }
 
-  .thankyou {
+  .msg-content {
     position: relative;
     width: 300px;
     margin:0 auto;
@@ -118,6 +119,12 @@
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
     transition: all .3s ease;
+  }
+
+  .msg-close{
+    position: absolute;
+    right:8px;
+    top:5px;
   }
 
   @foreach($content['style']['common'] as $class => $styles)
@@ -179,5 +186,21 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
   @endforeach
 </div>
 
+<div class="msg-mask" style="display:none">
+  <div class="msg-wrapper">
+    <div class="msg-content">
+      <button type="button" class="close msg-close" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="msg-body"></div>
+    </div>
+  </div>
+</div>
+  <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>
+  <script src="{{asset('js/page.js')}}"></script>
+  <script>
+    {!! $content['settings']['code']['bodyIn'] !!}
+  </script>
 </body>
+  <script>
+    {!! $content['settings']['code']['bodyOut'] !!}
+  </script>
 </html>

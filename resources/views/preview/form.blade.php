@@ -1,4 +1,4 @@
-<form class="element" id="element-{{$element_id}}" method="post" action="http://192.168.0.194:5000/editor/page/variation/130">
+<form class="element" id="element-{{$element_id}}" method="post" action="http://localhost:8080/post" msg="{{$element['props']['thankyou']}}">
   <input type="hidden" name="page_id" value="{{$content['variation']['page_id']}}">
   <input type="hidden" name="variation_id" value="{{$content['variation']['id']}}">
   <input type="hidden" name="variation_name" value="{{$content['variation']['name']}}">
@@ -69,12 +69,6 @@
   <button type="submit" class="element-button form-group" id="element-{{$element_id}}-button">
     <span>{{$element['button']['text']}}</span>
   </button>
+
 </form>
 
-<div class="thankyou-mask" style="display:none">
-  <div class="thankyou-wrapper">
-    <div class="thankyou">
-      {{$element['props']['thankyou']}}    
-    </div>
-  </div>
-</div>

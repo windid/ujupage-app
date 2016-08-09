@@ -1,7 +1,7 @@
 <script>
 import pageItem from './pageItem.vue'
 import pageGroup from './pageGroup.vue'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {

@@ -1,12 +1,12 @@
 export default {
 
   list (success, error){
-    const url = 'project/get';
+    const url = 'dashboard/project/get';
     Vue.http.get(url).then(response => success(response.json().projects), response => error(response.json()));
   },
 
   create (project, success, error){
-    const url = 'project/add'
+    const url = 'dashboard/project/add'
     const data = {
       name: project.name
     }
@@ -14,12 +14,12 @@ export default {
   },
 
   remove (project, success, error){
-    const url = 'project/remove/' + project.id;
+    const url = 'dashboard/project/remove/' + project.id;
     Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
   },
 
   rename (project, name, success, error){
-    const url = 'project/mod';
+    const url = 'dashboard/project/mod';
     const data = {
       id: project.id,
       name: name
@@ -28,12 +28,12 @@ export default {
   },
 
   members (project, success, error){
-    const url = 'project/members/get/' + project.id;
+    const url = 'dashboard/project/members/get/' + project.id;
     Vue.http.get(url).then( response => success(response.json().users, response.json().uninvitor), response => error(response.json()) );
   },
 
   invite (member, project, success, error) {
-    const url = 'project/members/join/';
+    const url = 'dashboard/project/members/join/';
     const data = {
       project_id: project.id,
       email: member.email

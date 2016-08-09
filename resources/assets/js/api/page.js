@@ -2,12 +2,12 @@
 export default {
 
   list (groupId, success, error){
-    const url = 'page/get/' + groupId;
+    const url = 'dashboard/page/get/' + groupId;
     Vue.http.get(url).then( response => success(response.json().pages), response => error(response.json()) );
   },
 
   create (page, success, error){
-    const url = 'page/add';
+    const url = 'dashboard/page/add';
     const data = {
       group_id: page.group_id,
       name: page.name
@@ -16,12 +16,12 @@ export default {
   },
 
   remove (page, success, error){
-    const url = 'page/remove/' + page.id;
+    const url = 'dashboard/page/remove/' + page.id;
     Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );
   },
 
   rename (page, name, success, error){
-    const url = 'page/mod';
+    const url = 'dashboard/page/mod';
     const data = {
       id: page.id,
       group_id: page.group_id,
@@ -31,7 +31,7 @@ export default {
   },
 
   move (page, pageGroup, success, error){
-    const url = 'page/mod';
+    const url = 'dashboard/page/mod';
     const data = {
       id: page.id,
       group_id: pageGroup.id,
@@ -41,7 +41,7 @@ export default {
   },
 
   duplicate (page, success,error) {
-    const url = 'page/copy/' + page.id;
+    const url = 'dashboard/page/copy/' + page.id;
     Vue.http.get(url).then( response => success(response.json().page ), response => error(response.json()) );    
   }
 
