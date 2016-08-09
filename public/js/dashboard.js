@@ -2840,7 +2840,7 @@
 /* 29 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"projects\" _v-c65f2762=\"\">\n  <dropdown :show=\"showProjects\" @toggle=\"showProjects = !showProjects\" _v-c65f2762=\"\">\n    <slot _v-c65f2762=\"\">\n      <div class=\"btn btn-default current-project\" _v-c65f2762=\"\">{{currentProject.name}}</div>\n      <div data-toggle=\"dropdown\" class=\"btn btn-default dropdown-toggle\" _v-c65f2762=\"\">\n        <span class=\"caret\" _v-c65f2762=\"\"></span>\n      </div>\n    </slot>\n    <ul slot=\"dropdown-menu\" class=\"dropdown-menu projects-menu\" _v-c65f2762=\"\">\n      <li v-for=\"project in projects\" _v-c65f2762=\"\"><a href=\"javascript:;\" @click=\"switchProject(project)\" _v-c65f2762=\"\">{{project.name}}</a></li>\n      <li role=\"separator\" class=\"divider\" _v-c65f2762=\"\"></li>\n      <li _v-c65f2762=\"\"><a href=\"javascript:;\" @click=\"createProject\" _v-c65f2762=\"\"> <span class=\"glyphicon glyphicon-plus\" _v-c65f2762=\"\"></span> 新建项目</a></li>\n    </ul>\n  </dropdown>\n  <div class=\"member-item\" v-for=\"member in members\" _v-c65f2762=\"\">\n    <div class=\"member-name\" _v-c65f2762=\"\"><span class=\"badge\" _v-c65f2762=\"\">{{member.pivot.role === 'admin' ? '管理员' : '成员'}}</span> {{member.name}} </div>\n    <div class=\"member-email\" _v-c65f2762=\"\">{{member.email}}</div>\n  </div>\n  <div class=\"member-item\" v-for=\"member in invited\" _v-c65f2762=\"\">\n    <div class=\"member-name\" _v-c65f2762=\"\"><span class=\"badge\" _v-c65f2762=\"\">已邀请</span> </div>\n    <div class=\"member-email\" _v-c65f2762=\"\">{{member.email}}</div>\n  </div>\n  <div class=\"btn btn-default\" @click=\"invite\" _v-c65f2762=\"\"><span class=\"glyphicon glyphicon-plus\" _v-c65f2762=\"\"></span> 邀请新成员</div>\n</div>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"projects\" _v-c65f2762=\"\">\n  <dropdown :show=\"showProjects\" @toggle=\"showProjects = !showProjects\" _v-c65f2762=\"\">\n    <slot _v-c65f2762=\"\">\n      <div class=\"btn btn-default current-project\" _v-c65f2762=\"\">{{currentProject.name}}</div>\n      <div data-toggle=\"dropdown\" class=\"btn btn-default dropdown-toggle\" _v-c65f2762=\"\">\n        <span class=\"caret\" _v-c65f2762=\"\"></span>\n      </div>\n    </slot>\n    <ul slot=\"dropdown-menu\" class=\"dropdown-menu projects-menu\" _v-c65f2762=\"\">\n      <li v-for=\"project in projects\" _v-c65f2762=\"\"><a href=\"javascript:;\" @click=\"switchProject(project)\" _v-c65f2762=\"\">{{project.name}}</a></li>\n      <li role=\"separator\" class=\"divider\" _v-c65f2762=\"\"></li>\n      <!-- <li><a href=\"javascript:;\" @click=\"createProject\"> <span class=\"glyphicon glyphicon-plus\"></span> 新建项目</a></li> -->\n    </ul>\n  </dropdown>\n  <div class=\"member-item\" v-for=\"member in members\" _v-c65f2762=\"\">\n    <div class=\"member-name\" _v-c65f2762=\"\"><span class=\"badge\" _v-c65f2762=\"\">{{member.pivot.role === 'admin' ? '管理员' : '成员'}}</span> {{member.name}} </div>\n    <div class=\"member-email\" _v-c65f2762=\"\">{{member.email}}</div>\n  </div>\n  <div class=\"member-item\" v-for=\"member in invited\" _v-c65f2762=\"\">\n    <div class=\"member-name\" _v-c65f2762=\"\"><span class=\"badge\" _v-c65f2762=\"\">已邀请</span> </div>\n    <div class=\"member-email\" _v-c65f2762=\"\">{{member.email}}</div>\n  </div>\n  <div class=\"btn btn-default\" @click=\"invite\" _v-c65f2762=\"\"><span class=\"glyphicon glyphicon-plus\" _v-c65f2762=\"\"></span> 邀请新成员</div>\n</div>\n";
 
 /***/ },
 /* 30 */
@@ -3140,7 +3140,7 @@
 /* 39 */
 /***/ function(module, exports) {
 
-	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<transition name=\"bounce\" mode=\"out-in\" _v-3ebaa217=\"\">\n  <div class=\"page-item\" _v-3ebaa217=\"\">\n    <div class=\"page-item-header\" _v-3ebaa217=\"\">\n      <div class=\"page-item-name\" _v-3ebaa217=\"\"><a :href=\"'/editor/'+pageItem.id\" _v-3ebaa217=\"\">{{pageItem.name}}</a></div>\n      <div class=\"page-item-url\" _v-3ebaa217=\"\">\n        <a v-if=\"pageItem.url\" :href=\"'http://www.juyepage.com/'+pageItem.url\" _v-3ebaa217=\"\">www.juyepage.com/{{pageItem.url}}</a>\n        <span v-else=\"\" _v-3ebaa217=\"\">未发布</span>\n      </div>\n    </div>\n    <div class=\"page-item-body\" _v-3ebaa217=\"\"></div>\n    <div class=\"page-item-footer\" _v-3ebaa217=\"\">\n      <div class=\"btn-group fr\" _v-3ebaa217=\"\">\n        <div class=\"btn btn-default btn-sm\" _v-3ebaa217=\"\">商机 <span class=\"glyphicon glyphicon-user\" _v-3ebaa217=\"\"></span></div>\n        <div class=\"btn btn-default btn-sm\" _v-3ebaa217=\"\">分析 <span class=\"glyphicon glyphicon-signal\" _v-3ebaa217=\"\"></span></div>\n        <dropdown :show=\"showMenu\" dir=\"up\" @toggle=\"showMenu = !showMenu\" _v-3ebaa217=\"\">\n          <slot _v-3ebaa217=\"\">\n            <div class=\"btn btn-default btn-sm dropdown-toggle\" data-toggle=\"dropdown\" _v-3ebaa217=\"\">\n              <span class=\"glyphicon glyphicon-cog\" _v-3ebaa217=\"\"></span> <span class=\"caret\" _v-3ebaa217=\"\"></span>\n            </div>\n          </slot>\n          <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right page-menu\" _v-3ebaa217=\"\">\n            <div v-if=\"moving\" class=\"move-to-group-menu\" _v-3ebaa217=\"\">\n              <div class=\"move-to-group-header\" _v-3ebaa217=\"\">移动到文件夹</div>\n              <div class=\"move-to-group-body\" _v-3ebaa217=\"\">\n                <div class=\"move-to-group-item\" @click=\"moveTo(defaultPageGroup)\" _v-3ebaa217=\"\">根目录</div>\n                <div class=\"move-to-group-item\" v-for=\"pageGroup in pageGroups\" @click=\"moveTo(pageGroup)\" _v-3ebaa217=\"\">{{pageGroup.name}}</div>\n              </div>\n            </div>\n            <div v-else=\"\" class=\"btn-group-vertical\" _v-3ebaa217=\"\">\n              <div class=\"btn btn-danger btn-sm\" @click=\"remove\" _v-3ebaa217=\"\">删除 <span class=\"glyphicon glyphicon-trash\" _v-3ebaa217=\"\"></span></div>\n              <div class=\"btn btn-default btn-sm\" @click=\"rename\" _v-3ebaa217=\"\">改名 <span class=\"glyphicon glyphicon-pencil\" _v-3ebaa217=\"\"></span></div>\n              <div class=\"btn btn-default btn-sm\" @click=\"duplicate\" _v-3ebaa217=\"\">复制 <span class=\"glyphicon glyphicon-duplicate\" _v-3ebaa217=\"\"></span></div>\n              <div class=\"btn btn-default btn-sm\" @click.stop=\"move\" _v-3ebaa217=\"\">移动 <span class=\"glyphicon glyphicon-copy\" _v-3ebaa217=\"\"></span></div>\n            </div>\n          </div>\n        </dropdown>\n      </div>\n    </div>\n  </div>\n</transition>\n";
+	module.exports = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<transition name=\"bounce\" mode=\"out-in\" _v-3ebaa217=\"\">\n  <div class=\"page-item\" _v-3ebaa217=\"\">\n    <div class=\"page-item-header\" _v-3ebaa217=\"\">\n      <div class=\"page-item-name\" _v-3ebaa217=\"\"><a :href=\"'/editor/'+pageItem.id\" _v-3ebaa217=\"\">{{pageItem.name}}</a></div>\n      <div class=\"page-item-url\" _v-3ebaa217=\"\">\n        <a v-if=\"pageItem.url\" :href=\"'http://www.juyepage.com/'+pageItem.url\" _v-3ebaa217=\"\">www.juyepage.com/{{pageItem.url}}</a>\n        <span v-else=\"\" _v-3ebaa217=\"\">未发布</span>\n      </div>\n    </div>\n    <div class=\"page-item-body\" _v-3ebaa217=\"\"></div>\n    <div class=\"page-item-footer\" _v-3ebaa217=\"\">\n      <div class=\"btn-group fr\" _v-3ebaa217=\"\">\n        <!-- <div class=\"btn btn-default btn-sm\">商机 <span class=\"glyphicon glyphicon-user\"></span></div> -->\n        <!-- <div class=\"btn btn-default btn-sm\">分析 <span class=\"glyphicon glyphicon-signal\"></span></div> -->\n        <dropdown :show=\"showMenu\" dir=\"up\" @toggle=\"showMenu = !showMenu\" _v-3ebaa217=\"\">\n          <slot _v-3ebaa217=\"\">\n            <div class=\"btn btn-default btn-sm dropdown-toggle\" data-toggle=\"dropdown\" _v-3ebaa217=\"\">\n              <span class=\"glyphicon glyphicon-cog\" _v-3ebaa217=\"\"></span> <span class=\"caret\" _v-3ebaa217=\"\"></span>\n            </div>\n          </slot>\n          <div slot=\"dropdown-menu\" class=\"dropdown-menu dropdown-menu-right page-menu\" _v-3ebaa217=\"\">\n            <div v-if=\"moving\" class=\"move-to-group-menu\" _v-3ebaa217=\"\">\n              <div class=\"move-to-group-header\" _v-3ebaa217=\"\">移动到文件夹</div>\n              <div class=\"move-to-group-body\" _v-3ebaa217=\"\">\n                <div class=\"move-to-group-item\" @click=\"moveTo(defaultPageGroup)\" _v-3ebaa217=\"\">根目录</div>\n                <div class=\"move-to-group-item\" v-for=\"pageGroup in pageGroups\" @click=\"moveTo(pageGroup)\" _v-3ebaa217=\"\">{{pageGroup.name}}</div>\n              </div>\n            </div>\n            <div v-else=\"\" class=\"btn-group-vertical\" _v-3ebaa217=\"\">\n              <div class=\"btn btn-danger btn-sm\" @click=\"remove\" _v-3ebaa217=\"\">删除 <span class=\"glyphicon glyphicon-trash\" _v-3ebaa217=\"\"></span></div>\n              <div class=\"btn btn-default btn-sm\" @click=\"rename\" _v-3ebaa217=\"\">改名 <span class=\"glyphicon glyphicon-pencil\" _v-3ebaa217=\"\"></span></div>\n              <div class=\"btn btn-default btn-sm\" @click=\"duplicate\" _v-3ebaa217=\"\">复制 <span class=\"glyphicon glyphicon-duplicate\" _v-3ebaa217=\"\"></span></div>\n              <div class=\"btn btn-default btn-sm\" @click.stop=\"move\" _v-3ebaa217=\"\">移动 <span class=\"glyphicon glyphicon-copy\" _v-3ebaa217=\"\"></span></div>\n            </div>\n          </div>\n        </dropdown>\n      </div>\n    </div>\n  </div>\n</transition>\n";
 
 /***/ },
 /* 40 */
@@ -19723,7 +19723,7 @@
 	
 	var actions = _interopRequireWildcard(_actions);
 	
-	var _getters = __webpack_require__(127);
+	var _getters = __webpack_require__(128);
 	
 	var getters = _interopRequireWildcard(_getters);
 	
@@ -20435,6 +20435,10 @@
 	
 	var _getParameter2 = _interopRequireDefault(_getParameter);
 	
+	var _cookieHandler = __webpack_require__(127);
+	
+	var _cookieHandler2 = _interopRequireDefault(_cookieHandler);
+	
 	var _mutationTypes = __webpack_require__(75);
 	
 	var types = _interopRequireWildcard(_mutationTypes);
@@ -20448,9 +20452,10 @@
 	
 	  _project2.default.list(function (projects) {
 	    commit(types.LOAD_PROJECTS, { projects: projects });
-	    var getProjectId = (0, _getParameter2.default)('id');
+	    //加载默认项目，第一优先取get传递的projectId，其次是Cookie，再次是用户默认项目，如果都没有，取项目列表的第一个。
+	    var projectId = (0, _getParameter2.default)('id') || _cookieHandler2.default.get('projectId');
 	    var currentProject = projects.find(function (p) {
-	      return p.id == getProjectId;
+	      return p.id == projectId;
 	    }) || projects.find(function (p) {
 	      return p.is_default == 1;
 	    }) || projects[0];
@@ -20465,6 +20470,8 @@
 	
 	  commit(types.LOADING);
 	  commit(types.SET_CURRENT_PROJECT, { project: project });
+	  _cookieHandler2.default.set('projectId', project.id, 365);
+	
 	  loadMembers({ commit: commit }, project);
 	
 	  _pageGroup2.default.list(project.id, function (pageGroups) {
@@ -21595,6 +21602,34 @@
 
 /***/ },
 /* 127 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var cookieHandler = {
+	  get: function get(name) {
+	    var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+	    if (arr != null) return unescape(arr[2]);return null;
+	  },
+	
+	  set: function set(name, value, days) {
+	    var expires = "";
+	    if (days) {
+	      var date = new Date();
+	      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+	      expires = "; expires=" + date.toGMTString();
+	    }
+	    document.cookie = name + "=" + value + expires + "; path=/";
+	  }
+	};
+	
+	exports.default = cookieHandler;
+
+/***/ },
+/* 128 */
 /***/ function(module, exports) {
 
 	"use strict";

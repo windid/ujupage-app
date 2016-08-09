@@ -93,6 +93,7 @@ export default {
       <div v-else>A/B测试</div>
     </div>
     <ul slot="dropdown-menu" class="dropdown-menu variations-menu">
+<!--     
       <li v-for="variation in pageInfo.variations">
         <span class="variation-name" @click="switchVariation(variation.id, variation.name)">{{variation.name}}</span>
         <span class="caret-right"></span>
@@ -108,11 +109,12 @@ export default {
           <div class="btn btn-default" title="复制" @click="duplicateVariation(variation.id)"><span class="glyphicon glyphicon-duplicate"></span></div>
           <div class="btn btn-danger" title="删除" @click="removeVariation(variation.id)"><span class="glyphicon glyphicon-trash"></span></div>
         </div>
-        
       </li>
       <li @click="createVariation()">
         <span class="glyphicon glyphicon-plus"></span> 空白页
       </li>
+ -->
+      <li>本功能稍后开放</li>
     </ul>
   </dropdown>
 </template>

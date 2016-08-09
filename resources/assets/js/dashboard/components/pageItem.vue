@@ -81,8 +81,8 @@ export default {
     <div class="page-item-body"></div>
     <div class="page-item-footer">
       <div class="btn-group fr">
-        <div class="btn btn-default btn-sm">商机 <span class="glyphicon glyphicon-user"></span></div>
-        <div class="btn btn-default btn-sm">分析 <span class="glyphicon glyphicon-signal"></span></div>
+        <!-- <div class="btn btn-default btn-sm">商机 <span class="glyphicon glyphicon-user"></span></div> -->
+        <!-- <div class="btn btn-default btn-sm">分析 <span class="glyphicon glyphicon-signal"></span></div> -->
         <dropdown :show="showMenu" dir="up" @toggle="showMenu = !showMenu">
           <slot>
             <div class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">

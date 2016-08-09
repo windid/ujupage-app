@@ -2,14 +2,16 @@ import pageAPI from '../../api/page'
 import pageGroupAPI from '../../api/pageGroup'
 import projectAPI from '../../api/project'
 import getParameter from '../../utils/getParameter'
+import cookieHandler from '../../utils/cookieHandler'
 import * as types from './mutation-types'
 
 
 export const init = ({ commit }) => {
   projectAPI.list( projects => {
     commit(types.LOAD_PROJECTS, { projects });
-    const getProjectId = getParameter('id');
-    let currentProject = projects.find( p => p.id == getProjectId ) || projects.find( p => p.is_default == 1 ) || projects[0];
+    //加载默认项目，第一优先取get传递的projectId，其次是Cookie，再次是用户默认项目，如果都没有，取项目列表的第一个。
+    const projectId = getParameter('id') || cookieHandler.get('projectId');
+    let currentProject = projects.find( p => p.id == projectId ) || projects.find( p => p.is_default == 1 ) || projects[0];
     switchProject({ commit }, currentProject );
   }, data => commit(types.LOAD_FAILED, { source:'projects', err:data.err }) );
 }
@@ -17,6 +19,8 @@ export const init = ({ commit }) => {
 export const switchProject = ({ commit }, project) => {
   commit(types.LOADING);
   commit(types.SET_CURRENT_PROJECT, { project });
+  cookieHandler.set('projectId',project.id, 365);
+  
   loadMembers({ commit }, project);
 
   pageGroupAPI.list( project.id, pageGroups => {
