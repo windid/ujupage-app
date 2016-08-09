@@ -11,9 +11,12 @@ use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserActive;
+use App\Models\Project\ProjectInvite;
 
 class AuthController extends Controller {
 
+    public $projectInvite;
+    
     protected $redirectPath = '/';
     //protected $username = 'username';
 
@@ -36,7 +39,7 @@ use AuthenticatesAndRegistersUsers,
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct() {        
         $this->middleware('guest', ['except' => ['getLogout', 'getActive']]);
     }
 
@@ -49,17 +52,17 @@ use AuthenticatesAndRegistersUsers,
     protected function validator(array $data) {
         return Validator::make($data, [
                     'name' => 'required|max:255',
-                    'email' => 'required|email|max:255|unique:users',
+                    'email' => ['required', 'email', 'max:255', 'unique:users', 'regex:/^(.*)(@ujumedia.com)$/'],
                     'password' => 'required|confirmed|min:6',
+                    'i' => 'alpha_num'
         ]);
     }
 
-    /*
-      public function getRegister() {
-      //parent::getRegister();
-      return response()->json(["_csrf" => csrf_token()]);
-      }
-     */
+    
+    public function getRegister(string $i = '') {
+        return view('auth.register', ['i' => $i]);
+    }
+    
 
     public function postRegister(Request $request) {
         $validator = $this->validator($request->all());
@@ -70,9 +73,19 @@ use AuthenticatesAndRegistersUsers,
             );
         }
 
-        $user = $this->create($request->all());
-        
-        return json_encode(['auth' => $user]);        
+        $user = $this->create($request->all());        
+        Auth::guard($this->getGuard())->login($user);
+                        
+        if ($user->actived_at > 0 && $this->projectInvite) {
+            $project_id = $this->projectInvite->project_id;
+            
+            $this->projectInvite->where('project_id', $project_id)
+                                ->where('email', $this->projectInvite->email)
+                                ->delete();
+            return redirect(url('dashboard?id='.$project_id));
+        }
+        return view('auth.registerok'
+                , compact('user'));
     }
 
     /**
@@ -88,9 +101,22 @@ use AuthenticatesAndRegistersUsers,
                     'email' => $data['email'],
                     'password' => bcrypt($data['password'])
         ]);
-
+        
+        $i = request('i', '');
+        $this->projectInvite = ProjectInvite::where('i', $i)
+                                        ->where('email', $user->email)
+                                        ->first();
+        $user->actived_at = 0;
+        if ($this->projectInvite) {
+            $user->projects()->attach($this->projectInvite->project_id, ['role' => 'member']);  
+            
+            $user->actived_at = time();
+            $user->save();
+            
+            return $user;
+        }
         $token = UserActive::createNewToken();
-        if ($user) {
+        if ($user && $user->actived_at == 0) {
             Mail::send('auth.emails.active_email', ['user' => $data['name'], 'token' => $token], function ($m) use ($data, $token) {
 
                 $from = config('mail')['from'];
@@ -124,12 +150,12 @@ use AuthenticatesAndRegistersUsers,
 
                 $active->where('token', $token)->delete();
             } else {
-                return response()->json(['result' => 'false']);
+                return view('auth.active', ['error' => '激活失败']);
             }
         } else {
-            return response()->json(['result' => 'false']);
+            return view('auth.active', ['error' => '激活失败']);
         }
-        return response()->json(['result' => 'true']);
+        return view('auth.active', ['result' => '激活成功']);
     }
 
     /**
@@ -145,6 +171,7 @@ use AuthenticatesAndRegistersUsers,
       }
      * 
      */
+    
 
     /**
      * 提交登录 
@@ -158,17 +185,18 @@ use AuthenticatesAndRegistersUsers,
         ]);
 
         $credentials = $this->getCredentials($request);
-
         if (Auth::attempt($credentials, $request->has('remember'))) {
             $user = Auth::user();
             $user->token = UserActive::createNewToken();
             $user->save();
             
-            return redirect($request->get('to', '/'));
+            return redirect()->intended('/');
+            //return redirect($request->get('to', '/'));
             //return response()->json(['auth' => $user]);
         }
-
-        return response()->json(['_csrf' => csrf_token(), 'error' => $this->getFailedLoginMessage()]);
+        
+        return $this->sendFailedLoginResponse($request);
+        //return response()->json(['_csrf' => csrf_token(), 'error' => $this->getFailedLoginMessage()]);
     }
 
     /**
@@ -181,9 +209,9 @@ use AuthenticatesAndRegistersUsers,
             User::where('id', $user->id)
                     ->update(['token' => UserActive::createNewToken()]);
 
-            return response()->json(['result' => 'true']);
+            return redirect(route('auth.login'))->with('status', '登出成功');
         } else {
-            return response()->json(['result' => '找不到相关用户']);
+            return view('auth.logout', ['error' => '找不到相关用户']);
         }
     }
        

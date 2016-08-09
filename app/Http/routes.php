@@ -4,10 +4,15 @@
 Route::get('/', function(){
    return view('welcome'); 
 });
+// 表单测试获取 csrf_token
+Route::get('csrf_token', function(){
+    return csrf_token();
+});
+
 $zone = 'auth';
 Route::group(['prefix' => $zone, 'as' => $zone , 'namespace' => ucwords($zone), 'middleware' => 'web'] ,function() {
     // 注册
-    Route::get('register', ['as' => '.register', 'uses' => 'AuthController@getRegister']);
+    Route::get('register/{i?}', ['as' => '.register', 'uses' => 'AuthController@getRegister'])->where('i', '[0-9a-zA-Z]+');
     // 登录 
     Route::get('login', ['as' => '.login', 'uses' => 'AuthController@getLogin']);
     // 忘记密码
@@ -21,10 +26,6 @@ Route::group(['prefix' => $zone, 'as' => $zone , 'namespace' => ucwords($zone), 
 
 $zone = 'oauth';
 Route::group(['prefix'=> $zone, 'as' => $zone], function(){   
-    // 获取csrf
-    Route::get('csrf_token', function(){
-       return response()->json(['csrf_token' => csrf_token()]); 
-    });
     // 登录 
     Route::post('login', ['as' => '.login.post', 'uses' => 'Auth\AuthController@postLogin']);
     // 注册
@@ -46,9 +47,10 @@ Route::group(['prefix'=> $zone, 'as' => $zone], function(){
 $zone = 'editor';
 Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'middleware' => 'auth'], function(){   
     
-    Route::get('v1', ['as' => '.v1', 'uses' => 'EditorController@v1']);
+    Route::get('/{id}', ['as' => '.index', 'uses' => 'EditorController@index'])->where('id', '[0-9]+');
     // 预览        
-    Route::get('preview/{id}', ['as' => '.preview', 'uses' => 'EditorController@preview']);
+    Route::get('preview/variation/{id}', ['as' => '.previewVariation', 'uses' => 'EditorController@previewVariation'])->where('id', '[0-9]+');
+    Route::get('preview', ['as' => '.preview', 'uses' => 'EditorController@preview']);
     
     // API接口分配
     // m=editor_images@editor_upload
@@ -62,33 +64,112 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
     
     Route::group(['prefix'=>'image', 'as' => '.image'], function(){        
         // 图片列表        
-        Route::get('list/{dirname?}/{page?}/{page_size?}', ['as' => '.list', 'uses' => 'ImageController@getIndex']);
+        Route::get('list/{project_id}/{dirname?}/{page?}/{page_size?}', ['as' => '.list', 'uses' => 'ImageController@getIndex']);
+        // 文件夹列表
+        Route::get('dir/{project_id}', ['as' => '.dir', 'uses' => 'ImageController@dir']);
         // 创建文件夹
-        Route::get('dir', ['as' => '.dir', 'uses' => 'ImageController@dir']);
-        // 创建文件夹
-        Route::get('mkdir/{dirname}', ['as' => '.mkdir', 'uses' => 'ImageController@mkdir']);
+        Route::get('mkdir/{project_id}/{dirname}', ['as' => '.mkdir', 'uses' => 'ImageController@mkdir']);
         // 修改文件夹
-        Route::get('moddir/{dirname}/{mod_dirname}', ['as' => '.moddir', 'uses' => 'ImageController@moddir']);
+        Route::get('moddir/{project_id}/{dirname}/{mod_dirname}', ['as' => '.moddir', 'uses' => 'ImageController@moddir']);
         // 删除文件夹
-        Route::get('deldir/{dirname}', ['as' => '.deldir', 'uses' => 'ImageController@deldir']);
+        Route::get('deldir/{project_id}/{dirname}', ['as' => '.deldir', 'uses' => 'ImageController@deldir']);
         // 上传图片
         Route::post('upload', ['as' => '.upload', 'uses' => 'ImageController@upload']);
         // 修改图片信息
         Route::post('modimage', ['as' => '.modimage', 'uses' => 'ImageController@modimage']);
         // 删除图片
-        Route::get('delimage/{id}', ['as' => '.delimage', 'uses' => 'ImageController@delimage']);
+        Route::get('delimage/{project_id}/{id}', ['as' => '.delimage', 'uses' => 'ImageController@delimage'])->where('id', '[0-9]+');
     });
     
     Route::group(['prefix'=>'page', 'as' => '.page'], function(){        
-        // 加载        
-        Route::get('initpage/{id}', ['as' => '.initpage', 'uses' => 'PageController@initpage']);
-        // 保存版本        
-        Route::post('save', ['as' => '.save', 'uses' => 'PageController@save']);
         // 保存设置        
         Route::post('savesetting', ['as' => '.savesetting', 'uses' => 'PageController@savesetting']);
+        
+        /*
+         * PageController
+         */        
+        // 发布页面
+        Route::get('publish/{id}', ['as' => '.issue', 'uses' => 'PageController@publish']);
+        // 修改url
+        Route::get('modurl/{id}/{url}', ['as' => '.modurl', 'uses' => 'PageController@modurl']);
+                
+        /**
+         * PageVariationController
+         */
+        // 加载        
+        Route::get('variation/{id}', ['as' => '.initpage', 'uses' => 'PageVariationController@start'])->where('id', '[0-9]+');
+        // 列表
+        Route::get('variation/list/{page_id}', ['as' => '.list', 'uses' => 'PageVariationController@all'])->where('page_id', '[0-9]+');
+        // 保存版本        
+        Route::post('variation/save', ['as' => '.save', 'uses' => 'PageVariationController@save']);
+        // 删除版本
+        Route::get('variation/remove/{id}', ['as' => '.remove', 'uses' => 'PageVariationController@remove'])->where('id', '[0-9]+');
+        // 复制版本
+        Route::get('variation/duplicate/{id}', ['as' => '.duplicate', 'uses' => 'PageVariationController@duplicate'])->where('id', '[0-9]+');
+        // 新建版本
+        Route::get('variation/create/{page_id}', ['as' => '.create', 'uses' => 'PageVariationController@create'])->where('page_id', '[0-9]+');
+        // 修改版本名
+        Route::post('variation/rename', ['as' => '.rename', 'uses' => 'PageVariationController@rename']);
     });
 });
 
+$zone = 'dashboard';
+Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'middleware' => 'auth'], function(){   
+    
+    Route::get('/', ['as' => '.index', 'uses' => 'DashboardController@index']);
+    
+    Route::group(['prefix'=>'project', 'as' => '.project'], function(){
+        // 项目列表
+        Route::get('get', ['as' => '.get', 'uses' => 'ProjectController@get']);
+        
+        // 添加项目
+        Route::post('add', ['as' => '.add', 'uses' => 'ProjectController@add']);
+        // 修改项目
+        Route::post('mod', ['as' => '.mod', 'uses' => 'ProjectController@mod']);
+        // 删除项目
+        Route::get('remove/{id}', ['as' => '.remove', 'uses' => 'ProjectController@remove'])->where('id', '[0-9]+');
+        
+        // 协作人
+        Route::group(['prefix'=>'members', 'as' => '.invite'], function(){
+            // 查看该项目的协作人
+            Route::get('get/{project_id}', ['as' => '.get', 'uses' => 'InviteController@get'])->where('project_id', '[0-9]+');
+            // 删除指定的协作人
+            Route::get('remove/{project_id}/{user_id}', ['as' => '.remove', 'uses' => 'InviteController@remove'])
+                    ->where(['project_id' => '[0-9]+', 'user_id' => '[0-9]+']);
+            // 退出协作
+            Route::get('quit/{project_id}', ['as' => '.quit', 'uses' => 'InviteController@quit'])->where('project_id', '[0-9]+');
+            // 发邮件通知邀请协作
+            Route::post('join', ['as' => '.join', 'uses' => 'InviteController@join']);
+        });
+    });
+    
+    Route::group(['prefix'=>'pagegroup', 'as' => '.pagegroup'], function(){
+        // 分组列表
+        Route::get('get/{id}', ['as' => '.get', 'uses' => 'PageGroupController@get'])->where('id', '[0-9]+');
+        
+        // 添加分组
+        Route::post('add', ['as' => '.add', 'uses' => 'PageGroupController@add']);
+        // 修改分组
+        Route::post('mod', ['as' => '.mod', 'uses' => 'PageGroupController@mod']);
+        // 删除分组
+        Route::get('remove/{id}', ['as' => '.remove', 'uses' => 'PageGroupController@remove'])->where('id', '[0-9]+');
+    });
+    
+    Route::group(['prefix'=>'page', 'as' => '.page'], function(){
+        // 页面列表
+        Route::get('get/{id}', ['as' => '.get', 'uses' => 'PageController@get'])->where('id', '[0-9]+');
+        // 单个页面
+        Route::get('one/{id}', ['as' => '.one', 'uses' => 'PageController@one'])->where('id', '[0-9]+');
 
-Blade::setContentTags('[[', ']]');        // for variables and all things Blade
-Blade::setEscapedContentTags('[!!', '!!]');   // for escaped data
+        // 添加页面
+        Route::post('add', ['as' => '.add', 'uses' => 'PageController@add']);
+        // 添加页面
+        Route::get('copy/{id}', ['as' => '.copy', 'uses' => 'PageController@copy'])->where('id', '[0-9]+');
+        // 修改页面
+        Route::post('mod', ['as' => '.mod', 'uses' => 'PageController@mod']);
+        // 删除页面
+        Route::get('remove/{id}', ['as' => '.remove', 'uses' => 'PageController@remove'])->where('id', '[0-9]+');
+    });
+    
+    
+});

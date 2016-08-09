@@ -5,6 +5,8 @@ namespace App\Models\Page;
 use Illuminate\Database\Eloquent\Model;
 
 class PageVariation extends Model {
+        
+    use \Illuminate\Database\Eloquent\SoftDeletes;
     
     public $timestamps = true;
     
@@ -21,7 +23,9 @@ class PageVariation extends Model {
     public function getSettingAttribute($value) {
         return json_decode($value, true);
     }
+    /*
     public function getHtmlJsonAttribute($value) {
         return json_decode($value, true);
     }
+    */
 }

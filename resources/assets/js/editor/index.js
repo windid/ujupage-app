@@ -1,10 +1,12 @@
 import VueResource from 'vue-resource'
-import editor from '../components/editor.vue'
+import editor from './components/editor.vue'
+import '../vendor/jquery-ui/jquery-ui.js'
+import '../vendor/jquery-ui/jquery-ui.css'
+import '../../sass/editor.scss'
+
 
 Vue.use(VueResource);
-
 Vue.http.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
 
 Vue.directive('content', {
   twoWay: true,

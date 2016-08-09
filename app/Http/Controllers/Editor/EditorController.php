@@ -6,29 +6,68 @@ use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 use App\Models\Page\PageVariation;
+use App\Models\Page\Page;
+use App\Models\Page\PageGroup;
+use App\Models\Project\Project;
 
 class EditorController extends Controller {
 
     public $user;
-    public $pageVariation;
+    public $project;
+    public $pageGroup;
+    public $page;
+    public $pageVariation;    
 
     public function __construct() {
         $this->user = auth()->user();
         
         $this->pageVariation = new PageVariation;
-    }
-    
-    // editor 页面
-    public function v1() {
-        return view('editor');
+        $this->page = new Page;
+        $this->pageGroup = new PageGroup;
+        $this->project = new Project;
     }
     
     /**
-     * 预览
+     * 初始化project,grouppage,page
+     * @param int $page_id
+     * @return App\Models\Page\Pagen $page
+     */
+    private function initPGP(int $page_id) {
+        $this->page = $this->page->find($page_id);
+        if (!$this->page) {
+            return $this->err('not found variation');
+        }
+        $this->pageGroup = $this->pageGroup->find($this->page->group_id);
+        if (!$this->pageGroup) {
+            return $this->err('not found variation');
+        }
+        $this->project = $this->user->projects()->find($this->pageGroup->project_id);
+        if (!$this->project) {
+            return $this->err('not found variation');
+        }
+        
+        return $this->page;
+    }
+    
+    // editor 页面
+    public function index($id) {
+        $page = $this->initPGP($id);
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            throw new \ErrorException('not found page');
+        }        
+        $page->variations = $page->variation()->select('id', 'name')
+                ->orderBy('id', 'desc')
+                ->get()->toArray();
+        
+        return view('editor', ['page' => $page, 'project_id' => $this->project->id]);
+    }
+    
+    /**
+     * 版本预览
      * @param int $id 版本ID
      * @return string $content 页面内空
      */
-    public function preview(int $id) {
+    public function previewVariation(int $id) {
          
         $page_variation = $this->pageVariation->where('user_id', $this->user->id)
                                             ->with(['page', 'userSetting'])
@@ -38,7 +77,19 @@ class EditorController extends Controller {
         }
         
         $content = \App\Services\ParseHtml::decode($page_variation->toArray());
-        return response($content);
+        if(!$content){
+            return '页面尚未被编辑';
+        }
+        return view('preview.variation', compact('content'));
+    }
+
+    /**
+     * 页面预览 Todo:输出页面下所有Variation的id和name
+     * @param int $id Page ID
+     * @return 预览页面，在iframe中嵌套previewVariation中的版本 
+     */
+    public function preview(){
+        return view('preview.index');
     }
     
     public function api(Request $request) {
