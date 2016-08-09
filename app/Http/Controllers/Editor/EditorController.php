@@ -77,6 +77,9 @@ class EditorController extends Controller {
         }
         
         $content = \App\Services\ParseHtml::decode($page_variation->toArray());
+        if(!$content){
+            return '页面尚未被编辑';
+        }
         return view('preview.variation', compact('content'));
     }
 
@@ -85,7 +88,7 @@ class EditorController extends Controller {
      * @param int $id Page ID
      * @return 预览页面，在iframe中嵌套previewVariation中的版本 
      */
-    public function preview(int $id){
+    public function preview(){
         return view('preview.index');
     }
     

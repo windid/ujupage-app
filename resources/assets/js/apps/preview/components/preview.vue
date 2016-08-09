@@ -1,5 +1,7 @@
 <script>
 import dropdown from '../../../ui/dropdown.vue'
+import getParameter from '../../../utils/getParameter'
+import variationAPI from '../../../api/variation'
 
 export default {
   components: {
@@ -8,18 +10,30 @@ export default {
   data(){
     return {
       variations:[],
-      currentVariation: {},
+      currentVariation: false,
       version: 'mobile',
-      show: false
+      show: false,
+      loadStatus: 'loading'
     }
   },
   methods: {
     init(){
-      this.variations = [
-        {id: 130, name: '版本 A'},
-        {id: 134, name: '版本 B'}
-      ];
-      this.currentVariation = this.variations[0];
+      const getPid = parseInt(getParameter('pid'));
+      const getVid = parseInt(getParameter('vid'));
+      variationAPI.list(getPid, variations => {
+        this.variations = variations;
+          if (getVid){
+          this.currentVariation = this.variations.filter( v => v.id == getVid)[0];
+        }
+        if (!this.currentVariation){
+          this.currentVariation = this.variations[0];
+        }
+        this.loadStatus = 'done';
+      }, ()=>{});
+    },
+    switchVariation(variation){
+      this.currentVariation = variation;
+      this.show = false;
     }
   },
   created (){
@@ -37,7 +51,7 @@ export default {
         </div>
         <ul slot="dropdown-menu" class="dropdown-menu">
           <li v-for="variation in variations">
-            <a href="#" class="variation-name" @click="currentVariation = variation">{{variation.name}}</a>
+            <a href="#" class="variation-name" @click="switchVariation(variation)">{{variation.name}}</a>
           </li>
         </ul>
       </dropdown>
@@ -46,7 +60,8 @@ export default {
         <div class="btn btn-default" v-bind:class="{'active':version=='mobile'}" @click="version = 'mobile'">移动版 <span class="glyphicon glyphicon-phone"></span></div>
       </div>
     </div>
-    <div id="main">
+    <div v-if="loadStatus === 'loading'" class="loading"></div>
+    <div v-if="loadStatus === 'done'" id="main">
       <iframe v-show="version === 'pc'" class="pc-iframe" :src="'/editor/preview/variation/'+currentVariation.id" frameborder="0"></iframe>
       <div v-show="version === 'mobile'" class="mobile-preview">
                   

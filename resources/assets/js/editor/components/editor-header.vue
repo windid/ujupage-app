@@ -4,15 +4,15 @@ import { getWorkspaceData, getPage } from '../store/getters'
 import editorSettings from './editor-settings.vue'
 import colorSchemes from './color-schemes.vue'
 import pageVariations from './page-variations.vue'
-// import getParameter from '../utils/getParameter'
-// import tooltip from '../libs/vue-strap/src/tooltip.vue'
+import pageUrl from './page-url.vue'
+import pageAPI from '../../api/page'
 
 export default {
   components: {
     editorSettings,
     colorSchemes,
     pageVariations,
-    // tooltip
+    pageUrl
   },
   vuex: {
     actions: {
@@ -32,7 +32,9 @@ export default {
       saveStatus: 'saved',
       pageLoading: true,
       pageInfo: {},
-      currentVariationId: null
+      currentVariationId: null,
+      publishStatus: '发布',
+      showUrlInput: false,
     }
   },
   methods:{
@@ -61,6 +63,26 @@ export default {
       },function(response){
         console.log(response.json());
       });
+    },
+    publish: function(){
+      if (this.pageInfo.url === ''){
+        this.showUrlInput = true;
+      } else {
+        this.doPublish();
+      }
+    },
+    doPublish: function(){
+      this.publishStatus = '正在发布';
+      pageAPI.publish(this.pageInfo.pageId, data => {
+        window.location = '/dashboard';
+      }, data => {
+        this.publishStatus = '发布失败';
+      });
+
+    },
+    setUrl: function(url){
+      this.pageInfo.url = url;
+      this.doPublish();
     }
   },
   watch:{
@@ -79,6 +101,7 @@ export default {
   },
   created: function(){
     this.pageInfo = window._pageInfo;
+    this.publishStatus = (this.pageInfo.url === '') ? '发布' : '重新发布';
     this.currentVariationId = this.pageInfo.variations[0].id;
     this.loadPage(this.currentVariationId);
   }
@@ -100,12 +123,8 @@ export default {
 
     <ul class="header-holder list-inline fr">
       <li><span class="glyphicon glyphicon-question-sign"></span></li>
-      <!-- <tooltip placement="bottom" content="撤销"> -->
-        <li @click="undo" v-bind:class="{'button-disabled':workspace.undo === false}"><span class="glyphicon glyphicon-share-alt flipx"></span></li>
-      <!-- </tooltip> -->
-      <!-- <tooltip placement="bottom" content="重做"> -->
-        <li @click="redo" v-bind:class="{'button-disabled':workspace.redo === false}"><span class="glyphicon glyphicon-share-alt"></span></li>
-      <!-- </tooltip> -->
+      <li @click="undo" v-bind:class="{'button-disabled':workspace.undo === false}"><span class="glyphicon glyphicon-share-alt flipx"></span></li>
+      <li @click="redo" v-bind:class="{'button-disabled':workspace.redo === false}"><span class="glyphicon glyphicon-share-alt"></span></li>
       <li class="color-schemes"><color-schemes></color-schemes></li>
       <li @click.stop="showSettings=true">设置 <span class="glyphicon glyphicon-cog"></span></li>
       <li @click="save" :class="{'button-disabled':saveStatus !== 'unsaved'}">
@@ -114,10 +133,14 @@ export default {
         <span v-show="saveStatus === 'saved'">已保存</span>
         <span class="glyphicon glyphicon-floppy-disk"></span>
       </li>
-      <li class="preview"><a href="/editor/preview/{{pageInfo.pageId}}?vid={{currentVariationId}}" target="_blank"></a>预览 <span class="glyphicon glyphicon-eye-open"></span></li>
-      <li class="publish">发布 <span class="glyphicon glyphicon-send"></span></li>
+      <li class="preview"><a href="/editor/preview?pid={{pageInfo.pageId}}?vid={{currentVariationId}}" target="_blank"></a>预览 <span class="glyphicon glyphicon-eye-open"></span></li>
+      <li class="publish" @click="publish">
+        {{publishStatus}}
+        <span class="glyphicon glyphicon-send"></span>
+      </li>
     </ul>
     <editor-settings v-if="showSettings" :show.sync="showSettings"></editor-settings>
+    <page-url v-if="showUrlInput" :show.sync="showUrlInput" v-on:set-url="setUrl"></page-url>
     <div v-if="pageLoading" class="loading-wrapper">
       <div class="loading"></div>
     </div>

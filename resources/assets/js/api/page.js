@@ -40,9 +40,19 @@ export default {
     Vue.http.post(url, data).then( response => success(response.json()), response => error(response.json()) );
   },
 
-  duplicate (page, success,error) {
+  duplicate (page, success, error) {
     const url = 'dashboard/page/copy/' + page.id;
-    Vue.http.get(url).then( response => success(response.json().page ), response => error(response.json()) );    
+    Vue.http.get(url).then( response => success(response.json().page), response => error(response.json()) );    
+  },
+
+  publish (pageId, success, error) {
+    const url = 'page/publish/' + pageId;
+    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );    
+  },
+
+  setUrl (pageId, pageUrl, success, error) {
+    const url = 'page/modurl/' + pageId + '/' + pageUrl;
+    Vue.http.get(url).then( response => success(response.json()), response => error(response.json()) );    
   }
 
 }

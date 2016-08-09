@@ -50,7 +50,7 @@ Route::group(['prefix'=> $zone, 'as' => $zone, 'namespace' => ucwords($zone), 'm
     Route::get('/{id}', ['as' => '.index', 'uses' => 'EditorController@index'])->where('id', '[0-9]+');
     // 预览        
     Route::get('preview/variation/{id}', ['as' => '.previewVariation', 'uses' => 'EditorController@previewVariation'])->where('id', '[0-9]+');
-    Route::get('preview/{id}', ['as' => '.preview', 'uses' => 'EditorController@preview'])->where('id', '[0-9]+');
+    Route::get('preview', ['as' => '.preview', 'uses' => 'EditorController@preview']);
     
     // API接口分配
     // m=editor_images@editor_upload

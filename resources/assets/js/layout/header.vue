@@ -4,10 +4,10 @@
 
 <template>
   <div id="header">
-    <a href="/dashboard" class="logo fl"></a>
-    <ul class="nav nav-pills fr">
-    <li><a href="/account">我的帐号</a></li>
-    <li><a href="/auth/logout">退出登陆</a></li>
+    <a href="/dashboard" class="logo"></a>
+    <ul class="nav nav-pills header-nav">
+      <!-- <li><a href="/account">我的帐号</a></li> -->
+      <li><a href="/auth/logout">退出登陆</a></li>
     </ul>
   </div>
 </template>
@@ -37,7 +37,8 @@
   background-image: url($assets-server+"/img/juye-logo.png");
 }
 
-#header .nav{
+.header-nav{
   margin:7px 20px;
+  float:right;  
 }
 </style>

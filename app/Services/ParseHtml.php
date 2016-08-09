@@ -13,6 +13,10 @@ class ParseHtml {
     public static function decode($array) {
         $content = json_decode($array['html_json'],true);
 
+        if (!isset($content['colorSet'])){
+            return false;
+        }
+
         self::$color_set = $content['colorSet'];
 
         self::$page['settings'] = $content['settings'];

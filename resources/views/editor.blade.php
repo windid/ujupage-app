@@ -31,6 +31,7 @@
 <script>
   var _pageInfo = {
     pageId: {{$page['id']}},
+    url: "{{$page['url']}}",
     projectId: {{$project_id}},
     variations: [
       @foreach($page['variations'] as $variation)

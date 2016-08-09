@@ -148,7 +148,12 @@ class PageController extends Controller {
         $variations = $this->pageVariation->where('page_id', $page->id)
                 ->get()->toArray();
         foreach ($variations as $k => $v) {
-            $html = view('preview.variation', ['content' => \App\Services\ParseHtml::decode($v)])->render();
+            $content = \App\Services\ParseHtml::decode($v);
+            if (!$content){
+                $html = '';
+            } else {
+                $html = view('preview.variation', ['content' => $content])->render();
+            }
             $this->pageVariation->where('id', $v['id'])->update([
                 'html' => $html
             ]);

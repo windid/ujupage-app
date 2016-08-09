@@ -74,7 +74,7 @@ export default {
     <div class="page-item-header">
       <div class="page-item-name"><a :href="'/editor/'+pageItem.id">{{pageItem.name}}</a></div>
       <div class="page-item-url">
-        <a v-if="pageItem.url" :href="'http://'+pageItem.url">{{pageItem.url}}</a>
+        <a v-if="pageItem.url" :href="'http://www.juyepage.com/'+pageItem.url">www.juyepage.com/{{pageItem.url}}</a>
         <span v-else>未发布</span>
       </div>
     </div>
