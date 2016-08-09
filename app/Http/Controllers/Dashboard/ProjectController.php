@@ -40,7 +40,7 @@ class ProjectController extends Controller {
                 ->first();
         if (!$default_project) {
             $this->project->user_id = $this->user->id;
-            $this->project->name = "default";
+            $this->project->name = $this->user->name . "的项目";
             $this->project->is_default = 1;
             
             $this->user->projects()->save($this->project);
