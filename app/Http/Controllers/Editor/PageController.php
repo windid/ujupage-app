@@ -117,7 +117,7 @@ class PageController extends Controller {
             return $page;
         }
                 
-        $validator = validator(['url' => $url], ['url' => 'alpha_dash|required|min:3|unique:pages,url,'.$page->id]);
+        $validator = validator(['url' => $url], ['url' => 'alpha_num|required|min:3|unique:pages,url,'.$page->id]);
         if ($validator->fails()) {
             return $this->err($validator->errors()->first());
         }
