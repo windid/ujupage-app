@@ -2,13 +2,14 @@
 // --------------------------------测试表单-------------------------------------
 // 
 Route::get('/', function(){
-   return view('welcome'); 
+   return redirect(route('dashboard.index'));
 });
 // 表单测试获取 csrf_token
+/*
 Route::get('csrf_token', function(){
     return csrf_token();
 });
-
+*/
 $zone = 'auth';
 Route::group(['prefix' => $zone, 'as' => $zone , 'namespace' => ucwords($zone), 'middleware' => 'web'] ,function() {
     // 注册
