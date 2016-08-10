@@ -16,7 +16,7 @@ var Site = {
       form.validate({
         submitHandler: function() {
           $.ajax({
-            url: "http://localhost:8080/post",
+            url: "http://www.juyepage.com/post",
             dataType: "jsonp",
             jsonpCallback: "callback",
             data: form.serialize(),

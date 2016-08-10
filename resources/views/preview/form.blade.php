@@ -1,4 +1,4 @@
-<form class="element" id="element-{{$element_id}}" method="post" action="http://localhost:8080/post" msg="{{$element['props']['thankyou']}}">
+<form class="element" id="element-{{$element_id}}" method="post" action="http://www.juyepage.com/post" msg="{{$element['props']['thankyou']}}">
   <input type="hidden" name="page_id" value="{{$content['variation']['page_id']}}">
   <input type="hidden" name="variation_id" value="{{$content['variation']['id']}}">
   <input type="hidden" name="variation_name" value="{{$content['variation']['name']}}">
