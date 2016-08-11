@@ -219,11 +219,11 @@ class PageController extends Controller {
             return $page;
         }
         
-        $page->name = $request->get('name', '');        
+        $page->name = $request->get('name', $page->name);
         if ($this->pageGroup->name == '') {
             return $this->err('empty page name');
         }
-        $page->url = $request->get('url', '');
+        $page->url = $request->get('url', $page->url);
         $page->setting = $request->get('setting', '');        
         $pagegroup->pages()->save($page);
         
