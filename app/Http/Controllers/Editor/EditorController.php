@@ -69,7 +69,7 @@ class EditorController extends Controller {
      */
     public function previewVariation(int $id) {
          
-        $page_variation = $this->pageVariation->where('user_id', $this->user->id)
+        $page_variation = $this->pageVariation//->where('user_id', $this->user->id)
                                             ->with(['page', 'userSetting'])
                                             ->find($id);
         if (!$page_variation) {
