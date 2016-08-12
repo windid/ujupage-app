@@ -26,6 +26,23 @@ class EditorController extends Controller {
         $this->pageGroup = new PageGroup;
         $this->project = new Project;
     }
+    /**
+     * 初始化project,grouppage,page,pagevariation
+     * @param int $variation_id
+     * @return App\Models\Page\PageVariation $pageVariation
+     */
+    private function initPGPV(int $variation_id) {
+        $this->pageVariation = $this->pageVariation->find($variation_id);
+        if (!$this->pageVariation) {
+            return $this->err('not found variation');
+        }        
+        $this->page = $this->initPGP($this->pageVariation->page_id);                 
+        if (get_class($this->page) == 'Illuminate\Http\JsonResponse') {
+            return $this->page;
+        }
+        
+        return $this->pageVariation;
+    }
     
     /**
      * 初始化project,grouppage,page
@@ -69,9 +86,7 @@ class EditorController extends Controller {
      */
     public function previewVariation(int $id) {
          
-        $page_variation = $this->pageVariation//->where('user_id', $this->user->id)
-                                            ->with(['page', 'userSetting'])
-                                            ->find($id);
+        $page_variation = $this->initPGPV($id);
         if (!$page_variation) {
             return $this->err('找不到相关版本');
         }
