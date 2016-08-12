@@ -87,8 +87,8 @@ class EditorController extends Controller {
     public function previewVariation(int $id) {
          
         $page_variation = $this->initPGPV($id);
-        if (!$page_variation) {
-            return $this->err('找不到相关版本');
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
         }
         
         $content = \App\Services\ParseHtml::decode($page_variation->toArray());
