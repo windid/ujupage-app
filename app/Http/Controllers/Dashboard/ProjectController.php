@@ -62,7 +62,7 @@ class ProjectController extends Controller {
      *  name = 项目名称
      * }
      */    
-    public function add(Request $request) {
+    public function add(Request $request) { 
         
         $this->project->name = $request->get('name', '');
         $this->project->user_id = $this->user->id;
