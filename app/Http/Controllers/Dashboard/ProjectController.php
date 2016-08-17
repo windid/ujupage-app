@@ -43,7 +43,7 @@ class ProjectController extends Controller {
             $this->project->name = $this->user->name . "的项目";
             $this->project->is_default = 1;
             
-            $this->user->projects()->save($this->project);
+            $this->user->projects()->save($this->project, ['role' => 'admin']);
         }
         
         $projects = $this->user->projects()->get()->toArray();
