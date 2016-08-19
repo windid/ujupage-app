@@ -51,6 +51,31 @@ class InviteController extends Controller {
     }
     
     /**
+     * 查看该项目的协作人
+     * @param int $project_id 项目ID
+     * @return json {
+     *  {
+     *   id = 协作人ID
+     *   name = 协作人昵称
+     *   email = 协作人邮箱
+     *  }
+     * }
+     */
+    public function show(int $project_id) {
+        $project = $this->user->projects()->find($project_id);
+        if (!$project) {
+            return $this->err('not found project');
+        }
+        
+        return $this->dump(['users' => $project->users()->withPivot('role')
+                                                            ->get()->toArray()
+                            ,'uninvitor' => $project->invitors()
+                                                   ->get()
+                                                   ->toArray()
+                ]);
+    }
+    
+    /**
      * 删除该协作人
      * @param int $project_id 项目ID
      * @param int $user_id 协作人ID
@@ -59,6 +84,32 @@ class InviteController extends Controller {
      * }
      */
     public function remove(int $project_id, int $user_id) {
+        $project = $this->user->projects(true)->find($project_id);
+        if (!$project) {
+            return $this->err('not found project');
+        }
+        if ($project->user_id == $user_id) {
+            return $this->err('cant remove creator');
+        }
+        if ($project->pivot->role != 'admin') {
+            return $this->err('not admin role');
+        }
+        
+        $project->users()->detach($user_id);
+        
+        return $this->dump();
+    }
+    
+    /**
+     * 删除该协作人
+     * @param int $project_id 项目ID
+     * @param int $user_id 协作人ID
+     * @return json {
+     *  result = true
+     * }
+     */
+    public function destroy(Request $request, int $project_id) {
+        $user_id = $request->get('user_id', 0);
         $project = $this->user->projects(true)->find($project_id);
         if (!$project) {
             return $this->err('not found project');

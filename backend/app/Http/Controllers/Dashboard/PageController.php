@@ -87,6 +87,28 @@ class PageController extends Controller {
     }
     
     /**
+     * 获取该分组的页面
+     * @param int $group_id
+     * @return json {
+     *  {
+     *   id = 页面iD
+     *   name = 项目ID
+     *   url = 分组名称
+     *   setting = 页面设置
+     *  }
+     * }
+     */    
+    public function show(int $group_id) {
+        $pagegroup= $this->initPG($group_id);        
+        if (get_class($pagegroup) == 'Illuminate\Http\JsonResponse') {
+            return $pagegroup;
+        }
+        
+        $pages = $pagegroup->pages()->get();        
+        return $this->dump(['pages' => $pages->toArray()]);
+    }
+    
+    /**
      * 获取页面(单行)
      * @param int $page_id
      * @return json {
@@ -146,6 +168,50 @@ class PageController extends Controller {
         
         return $this->dump(['page' => $this->page->toArray()]);
     }
+    
+    
+    /**
+     * 增加页面
+     * @param int $group_id 分组ID
+     * @param string $name 页面名称
+     * @param string $url url地址
+     * @param json $setting 页设置
+     * @return json {
+     *   id = 页面iD
+     *   name = 项目ID
+     *   url = 分组名称
+     *   setting = 页面设置
+     * }
+     */
+    public function store(Request $request) {        
+        $group_id = $request->get('group_id', 0);        
+        $pagegroup= $this->initPG($group_id);        
+        if (get_class($pagegroup) == 'Illuminate\Http\JsonResponse') {
+            return $pagegroup;
+        }
+                        
+        $this->page->user_id = $this->user->id;
+        $this->page->name = $request->get('name', '');        
+        if ($this->pageGroup->name == '') {
+            return $this->err('empty page name');
+        }
+        $this->page->url = $request->get('url', '');
+        $this->page->setting = $request->get('setting', '');
+        $pagegroup->pages()->save($this->page);
+        
+        // 增加默认版本
+        $this->pageVariation->page_id = $this->page->id;
+        $this->pageVariation->user_id = $this->user->id;
+        $this->pageVariation->name = app('App\Http\Controllers\Editor\PageVariationController')
+                                                ->getVariationName(0);
+        $this->pageVariation->setting = json_encode([]);
+        $this->pageVariation->html_json = json_encode([]);
+        $this->pageVariation->save();
+        $this->page->increment('variation_history');
+        
+        return $this->dump(['page' => $this->page->toArray()]);
+    }
+    
     
     /**
      * 复制页面
@@ -231,6 +297,41 @@ class PageController extends Controller {
     }
     
     /**
+     * 修改页面信息
+     * @param int $id 页面ID
+     * @param int $group_id 分组ID
+     * @param string $name 页面名称
+     * @param string $url url地址
+     * @param json $setting 页设置
+     * @return json {
+     *  id = 分组ID
+     *  project_id = 项目ID
+     *  name = 项目名称
+     */
+    public function update(Request $request, $group_id) {    
+        $pagegroup= $this->initPG($group_id);        
+        if (get_class($pagegroup) == 'Illuminate\Http\JsonResponse') {
+            return $pagegroup;
+        }
+        
+        $page_id = $request->get('id', 0);
+        $page = $this->initPGP($page_id);
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
+        }
+        
+        $page->name = $request->get('name', $page->name);
+        if ($this->pageGroup->name == '') {
+            return $this->err('empty page name');
+        }
+        $page->url = $request->get('url', $page->url);
+        $page->setting = $request->get('setting', '');        
+        $pagegroup->pages()->save($page);
+        
+        return $this->dump(['group' => $page->toArray()]);
+    }
+    
+    /**
      * 删除页面
      * @param int $id 页面ID
      * @return json {
@@ -249,4 +350,22 @@ class PageController extends Controller {
         return $this->dump();
     }
     
+    /**
+     * 删除页面
+     * @param int $id 页面ID
+     * @return json {
+     *   result = true
+     *  }
+     */
+    public function destroy(Request $request, int $id) {
+              
+        $page = $this->initPGP($id);        
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
+        }
+        $page->variation()->delete();
+        $page->delete();
+        
+        return $this->dump();
+    }
 }

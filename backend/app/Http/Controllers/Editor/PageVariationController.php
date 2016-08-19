@@ -112,6 +112,14 @@ class PageVariationController extends Controller {
         
         return $page_variation->html_json;
     }
+    public function show(int $id = 0) {
+        $page_variation = $this->initPGPV($id);               
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
+        }
+        
+        return $page_variation->html_json;
+    }
     
     /**
      * 所有版本
@@ -163,6 +171,30 @@ class PageVariationController extends Controller {
     }
     
     /**
+     * page_save
+     * 保存版本
+     * @param int $id 版本id
+     * @param string $htmljson 页面json
+     * @return {
+     *  result : true
+     * }
+     */
+    public function update(Request $request, $page_variation_id) {    
+        $page_variation = $this->initPGPV($page_variation_id);         
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
+        }
+        if (!$request->htmljson) {
+            return $this->err('页面数据不能为空');
+        }
+        
+        $page_variation->html_json = $request->htmljson;
+        $page_variation->save();
+        
+        return $this->dump();
+    }
+    
+    /**
      * 删除版本（设为删除状态）
      * @param type $id 版本ID
      * @return {
@@ -186,6 +218,32 @@ class PageVariationController extends Controller {
         
         return $this->dump(['result' => 'success']);
     }
+    
+    /**
+     * 删除版本（设为删除状态）
+     * @param type $id 版本ID
+     * @return {
+     *  result: success
+     * }
+     */    
+    public function destroy(Request $request, $id) {
+        $page_variation = $this->initPGPV($id);         
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
+        }
+        
+        $page_variations = $this->pageVariation->where('page_id', $page_variation->page_id)
+                ->where('user_id' , $this->user->id)
+                ->count();
+        if ($page_variations <= 1) {
+            return $this->err('该页面下只有这个版本，不能删除');
+        }
+        
+        $page_variation->delete();
+        
+        return $this->dump(['result' => 'success']);
+    }
+    
     /**
      * 自动生成版本号
      * @param int $counts
@@ -251,8 +309,8 @@ class PageVariationController extends Controller {
      *  name = 版本号
      * }
      */
-    public function create(int $page_id = 0) {
-        $page = $this->initPGP($page_id); 
+    public function create(Request $request) {
+        $page = $this->initPGP($request->get('page_id', 0)); 
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
         }
