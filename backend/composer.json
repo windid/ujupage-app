@@ -9,7 +9,8 @@
         "laravel/framework": "5.2.*",
         "caouecs/laravel-lang": "~3.0",
         "johnlui/aliyun-oss": "*",
-        "intervention/image": "^2.3"
+        "intervention/image": "^2.3",
+        "symfony/dom-crawler": "^3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

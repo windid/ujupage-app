@@ -11,7 +11,10 @@ class PageGroup extends Model {
     public $timestamps = false;
     
     protected $dateFormat = 'U';
-        
+    
+    protected $hidden = ['deleted_at'];
+
+
     public function pages() {
         return $this->hasMany('App\Models\Page\Page', 'group_id');
     }

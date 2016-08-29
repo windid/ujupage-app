@@ -14,7 +14,7 @@ class Project extends Model {
     protected $dateFormat = 'U';    
     
     protected $hidden = [
-        'user_id'
+        'user_id', 'deleted_at'
     ];
     
     

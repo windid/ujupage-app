@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Image;
+namespace App\Models\Storage;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Image extends Model {
+class StorageImage extends Model {
     
     public $timestamps = true;
             

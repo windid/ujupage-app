@@ -12,6 +12,9 @@ class PageVariation extends Model {
     
     protected $dateFormat = 'U';
     
+    protected $hidden = ['deleted_at'];
+
+
     public function page() {
         return $this->hasOne('App\Models\Page\Page', 'id', 'page_id');
     }
