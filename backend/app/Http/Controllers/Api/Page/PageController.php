@@ -82,7 +82,8 @@ class PageController extends Controller {
             return $pagegroup;
         }
         
-        $pages = $pagegroup->pages()->get()->toArray();       
+        $pages = $pagegroup->pages()->get()->toArray();    
+        /*
         if (empty($pages)) {
             $request = Request::create(route('api.page.store'), 'POST', [
                 'group_id' => $pagegroup->id,
@@ -91,6 +92,7 @@ class PageController extends Controller {
             $this->store($request);
             $pages = $pagegroup->pages()->get()->toArray();
         }
+        */
         return $this->successOK($pages);
     }
     
