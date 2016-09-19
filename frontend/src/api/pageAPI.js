@@ -9,7 +9,7 @@ export default {
 
   get (pageId, success, error) {
     const page = {
-      id: 19,
+      id: 43,
       url: '',
       projectId: 9
     }
@@ -56,12 +56,12 @@ export default {
   },
 
   publish (pageId, success, error) {
-    const url = 'page/publish/' + pageId
+    const url = 'editor/page/publish/' + pageId
     Vue.http.get(url).then(response => success(response.json()), response => error(response.json()))
   },
 
-  setUrl (pageId, pageUrl, success, error) {
-    const url = 'page/modurl/' + pageId + '/' + pageUrl
+  setUrl (pageId, uri, success, error) {
+    const url = 'editor/page/modurl/' + pageId + '/' + uri
     Vue.http.get(url).then(response => success(response.json()), response => error(response.json()))
   }
 }

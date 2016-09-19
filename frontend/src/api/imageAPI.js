@@ -15,17 +15,17 @@ export default {
   * }
   */
   upload (projectId, image, success, error) {
-    const url = 'image/upload'
+    const url = 'editor/image/upload'
     Vue.http.post(url, image).then(response => success(response.json().image), response => error(response.json()))
   },
 
   remove (projectId, imageId, success, error) {
-    const url = 'image/delimage/' + projectId + '/' + imageId
+    const url = 'editor/image/delimage/' + projectId + '/' + imageId
     Vue.http.get(url).then(response => success(response.json()), response => error(response.json()))
   },
 
   modify (image, success, error) {
-    const url = 'image/modimage'
+    const url = 'editor/image/modimage'
     Vue.http.post(url, image).then(response => success(response.json()), response => error(response.json()))
   }
 }

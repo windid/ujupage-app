@@ -2,7 +2,7 @@
 import Sidebar from '../ui/Sidebar'
 import { mapGetters, mapActions } from 'vuex'
 import colorMixin from '../../mixins/colorMixin'
-import ColorPicker from './ColorPicker.vue'
+import ColorPicker from './ColorPicker'
 import { merge } from 'lodash'
 
 export default {
@@ -73,7 +73,7 @@ export default {
 <template>
   <sidebar v-if="show" :show="show" @close="setActiveSectionId(null)">
     <div slot="header">
-      <div class="btn btn-success" @click="setActiveSectionId(null)">&nbsp; 完成 &nbsp;</div>
+      <div class="btn btn-success" @click="setActiveSectionId(null)">完成</div>
       <!-- <tooltip placement="left" content="同时修改桌面版和移动版">
         <h5 class="fr"><label><input type="checkbox"> 同步</label></h5>
       </tooltip> -->

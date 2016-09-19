@@ -1,9 +1,13 @@
 import Vue from 'vue'
+import VueResource from 'vue-resource'
+Vue.use(VueResource)
+Vue.http.options.root = '/api'
+
+const project = Vue.resource('project{/id}')
 
 export default {
-  list (success, error) {
-    const url = 'dashboard/project/get'
-    Vue.http.get(url).then(response => success(response.json().projects), response => error(response.json()))
+  list (success) {
+    project.get().then(response => success(response.data))
   },
 
   create (project, success, error) {

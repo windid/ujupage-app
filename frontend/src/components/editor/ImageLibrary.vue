@@ -26,8 +26,13 @@ export default {
   },
   methods: {
     ...mapActions({
-      close: 'colseImageLibrary'
+      closeImageLibrary: 'closeImageLibrary',
+      confirm: 'confirm'
     }),
+    close () {
+      this.imageLibrary.onCancel && this.imageLibrary.onCancel()
+      this.closeImageLibrary()
+    },
     load (folder) {
       this.loadStatus = 'loading'
       imageAPI.list(this.page.projectId, folder, data => {
@@ -41,10 +46,22 @@ export default {
         this.loadStatus = 'failed'
       })
     },
+    uploadImage (e) {
+      const files = e.target.files
+      const data = new window.FormData()
+      const folder = '默认文件夹'
+      data.append('file', files[0])
+      data.append('folder', folder)
+      data.append('project_id', this.page.projectId)
+      imageAPI.upload(this.page.projectId, data, image => {
+        this.images.push(image)
+        this.loadStatus = 'loaded'
+      })
+    },
     pickImage (index) {
       if (index !== null && this.images[index]) {
         this.imageLibrary.onSelect(this.images[index])
-        this.close()
+        this.closeImageLibrary()
       }
     },
     selectImage (index) {
@@ -54,13 +71,25 @@ export default {
       this.viewingImage = merge({}, this.images[index])
       this.loadStatus = 'view'
     },
+    modifyImage (e) {
+      var image = new window.FormData(e.target)
+      imageAPI.modify(image, data => {
+        this.images[this.currentImageId] = merge(this.images[this.currentImageId], image)
+      })
+    },
     removeImage () {
-      const imageId = this.images[this.currentImageId].id
-      imageAPI.remove(this.projectId, imageId, data => {
-        const tmpIndex = this.currentImageId
-        this.currentImageId = null
-        this.images.splice(tmpIndex, 1)
-        this.loadStatus = 'loaded'
+      this.confirm({
+        header: '确定删除？',
+        content: '图片删除后将不可恢复。',
+        onConfirm: () => {
+          const imageId = this.images[this.currentImageId].id
+          imageAPI.remove(this.page.projectId, imageId, data => {
+            const tmpIndex = this.currentImageId
+            this.currentImageId = null
+            this.images.splice(tmpIndex, 1)
+            this.loadStatus = 'loaded'
+          })
+        }
       })
     }
   },
@@ -87,63 +116,80 @@ export default {
       </ul>
     </div>
     <div slot="body" class="images-wrapper">
-      <transition-group name="fade" mode="out-in">
-        <div v-show="loadStatus === 'loading'" class="loading" key="loading">
-          <div class="loading-icon"></div>
-        </div>
-        <div v-show="loadStatus === 'empty'" class="image-load-info" key="empty">
-          <p>您的图片库目前还是空的，您可以尝试上传一些。</p>
-        </div>
+      <div v-show="loadStatus === 'loading'" class="loading" key="loading">
+        <div class="loading-icon"></div>
+      </div>
+      <div v-show="loadStatus === 'empty'" class="image-load-info" key="empty">
+        <p>您的图片库目前还是空的，您可以尝试上传一些。</p>
+      </div>
 
-        <div v-show="loadStatus === 'loaded'" class="loaded" key="loaded">
-          <div v-for="(image, index) in images" class="image-item" v-bind:class="{selected: currentImageId === index}" @click="selectImage(index)" @dblclick="pickImage(index)">
-            <img :src="image.url+'@140w_140h'" :alt="image.alt" style="max-width:140px;max-height:140px">
-            <div v-show="currentImageId === index" class="image-item-operation">
-              <div class="btn btn-primary btn-sm fl" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
-              <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div>
+      <div v-show="loadStatus === 'loaded'" class="loaded" key="loaded">
+        <div v-for="(image, index) in images" class="image-item" v-bind:class="{selected: currentImageId === index}" @click="selectImage(index)" @dblclick="pickImage(index)">
+          <img :src="image.url+'@140w_140h'" :alt="image.alt" style="max-width:140px;max-height:140px">
+          <div v-show="currentImageId === index" class="image-item-operation">
+            <div class="btn btn-primary btn-sm fl" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
+            <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 大图查看&修改 -->
+      <div v-show="loadStatus === 'view'" style="height:100%" key="view">
+        <div class="images-sidebar">
+          <div @click="loadStatus = 'loaded'" class="btn btn-default btn-sm">返回</div>
+          <form action="" method="post" @submit.prevent="modifyImage">
+            <div class="modify-image-input">
+              <p>名称</p>
+              <p><input type="text" class="form-control" name="name" v-model="viewingImage.name"></p>
             </div>
+            <div class="modify-image-input">
+              <p>Alt</p>
+              <p><input type="text" class="form-control" name="alt" v-model="viewingImage.alt"></p>
+            </div>
+            <div class="modify-image-input">
+              <input type="hidden" name="project_id" :value="page.projectId">
+              <input type="hidden" name="id" :value="viewingImage.id">
+              <input type="hidden" name="folder" value="default">
+              <button type="submit" class="btn btn-success">保存修改</button> &nbsp; 
+              <div class="btn btn-danger" @click="removeImage">删除图片</div>
+            </div>
+          </form>
+        </div>
+        <div class="images-content">
+          <img :src="viewingImage.url" style="max-width:540px;">
+        </div>
+      </div>
+    </div>
+
+    <div slot="footer">
+      <div class="btn btn-primary btn-sm image-upload-button">
+        <span class="glyphicon glyphicon-cloud-upload"></span>
+        上传图片
+        <input type="file" name="files[]" class="image-upload-input" accept="image/*" @change="uploadImage">
+      </div>
+      <!-- <div v-el:image-url-editor class="fl">
+        <div v-show="!imageUrlEditing" class="btn btn-default btn-sm" @click="inputImageUrl">
+          <span class="glyphicon glyphicon-link"></span>
+          粘贴网址
+        </div>
+        <div v-show="imageUrlEditing" class="input-group input-group-sm shadow image-url-input">
+          <div class="input-group-addon"> 图片网址 </div>
+          <input v-el:image-url-input type="text" class="form-control input-text-shadow">
+          <div class="input-group-btn" @click="inputImageUrlDone">
+            <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
           </div>
         </div>
-
-        <!-- 大图查看&修改 -->
-        <div v-show="loadStatus === 'view'" style="height:100%" key="view">
-          <div class="images-sidebar">
-            <div @click="loadStatus = 'loaded'" class="btn btn-default btn-sm">返回</div>
-            <form action="" method="post" @submit.prevent="modifyImage">
-              <div class="modify-image-input">
-                <p>名称</p>
-                <p><input type="text" class="form-control" name="name" v-model="viewingImage.name"></p>
-              </div>
-              <div class="modify-image-input">
-                <p>Alt</p>
-                <p><input type="text" class="form-control" name="alt" v-model="viewingImage.alt"></p>
-              </div>
-              <div class="modify-image-input">
-                <input type="hidden" name="project_id" :value="page.projectId">
-                <input type="hidden" name="id" :value="viewingImage.id">
-                <input type="hidden" name="folder" value="default">
-                <button type="submit" class="btn btn-success">保存修改</button> &nbsp; 
-                <div class="btn btn-danger" @click="removeImage">删除图片</div>
-              </div>
-            </form>
-          </div>
-          <div class="images-content">
-            <img :src="viewingImage.url" style="max-width:540px;">
-          </div>
-        </div>
-      </transition-group>
-
+      </div> -->
+      <span v-if="currentImageId !== null">
+        名称: {{images[currentImageId].name}} &nbsp;
+        尺寸: {{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;
+      </span> 
     </div>
   </modal>
 </template>
 
 
 <style>
-
-.images-wrapper{
-  max-height:400px;
-  overflow-y: auto;
-}
 
 .images-sidebar{
   float:left;
@@ -155,7 +201,7 @@ export default {
 
 .images-content{
   left: 10px;
-  width: 560px;
+  width: 540px;
   height: 100%;
   position: relative;
   overflow: auto;

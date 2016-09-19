@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import colorMixin from '../../mixins/colorMixin.js'
-
+import $ from 'jquery'
 import ElementForm from './ElementForm'
 import ElementText from './ElementText'
 import ElementButton from './ElementButton'
@@ -39,7 +39,20 @@ export default {
     ...mapActions({
       moveSection: 'moveSection',
       removeSection: 'removeSection',
-      setActiveSectionId: 'setActiveSectionId'
+      setActiveSectionId: 'setActiveSectionId',
+      modifySection: 'modifySection'
+    })
+  },
+  mounted () {
+    const vm = this
+    $(this.$el).resizable({
+      handles: 's',
+      minHeight: 20,
+      stop: function (e, ui) {
+        const style = {}
+        style[vm.workspace.version] = { height: ui.size.height + 'px' }
+        vm.modifySection([vm.sectionId, style])
+      }
     })
   }
 }
@@ -60,7 +73,9 @@ export default {
   >
     <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">
       <!-- 页面元素组件 -->
-      <component v-for="elementId in section.elements[workspace.version]" :is="'element-' + elements[elementId].type" :element="elements[elementId]" :section-id="sectionId" :element-id="elementId" :key="elementId"></component>
+      <transition-group name="fade" tag="div">
+        <component v-for="elementId in section.elements[workspace.version]" :is="'element-' + elements[elementId].type" :element="elements[elementId]" :section-id="sectionId" :element-id="elementId" :key="elementId"></component>
+      </transition-group>
       <!-- 板块操作按钮组 -->
       <transition name="fade">
         <div class="btn-group-vertical page-section-operation" v-show="showButton" :style="{left: workspace.width + 5 + 'px'}">

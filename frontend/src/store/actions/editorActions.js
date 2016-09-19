@@ -3,6 +3,7 @@ import variationAPI from '../../api/variationAPI'
 import * as types from '../mutation-types'
 import getParameter from '../../utils/getParameter'
 import { merge } from 'lodash'
+import elementTypes from '../editorElementTypes'
 
 // 页面信息加载
 export const pageInit = ({ commit }, pageId) => {
@@ -19,8 +20,44 @@ export const pageInit = ({ commit }, pageId) => {
 // 加载编辑内容
 export const loadVariation = ({ commit }, variationId) => {
   variationAPI.get(variationId, content => {
-    commit(types.LOAD_VARIATION, { content })
+    commit(types.LOAD_VARIATION, { variationId, content })
   })
+}
+
+// 保存
+export const saveVariation = ({ commit, state }) => {
+  const content = JSON.stringify(state.editor.content)
+  variationAPI.save(state.editor.workspace.activeVariationId, content, result => {
+    commit(types.SAVE_VARIATION)
+  })
+}
+
+// 设置URL
+export const setURL = ({ commit, state }, [uri, successCb, errorCb]) => {
+  pageAPI.setUrl(state.editor.page.id, uri, data => {
+    // commit(types.SET_URL, { uri })
+    successCb(data)
+  }, data => errorCb(data.err))
+}
+
+// 发布
+export const publishPage = ({ commit, state }, successCb) => {
+  pageAPI.publish(state.editor.page.id, data => {
+    successCb(data)
+  })
+}
+
+// 添加板块
+export const addSection = ({ commit }) => {
+  const section = {
+    style: {
+      'pc': { 'background-color': '', height: '300px' },
+      'mobile': { 'background-color': '', height: '300px' }
+    },
+    elements: { 'pc': [], 'mobile': [] }
+  }
+  commit(types.ADD_SECTION, { section })
+  commit(types.SAVE_CONTENT_STATE)
 }
 
 // 调整板块次序
@@ -56,14 +93,10 @@ export const setActiveSectionId = ({ commit }, sectionId) => {
 }
 
 // 撤销
-export const undo = ({ commit }) => {
-  commit(types.UNDO)
-}
+export const undo = ({ commit }) => commit(types.UNDO)
 
 // 重做
-export const redo = ({ commit }) => {
-  commit(types.REDO)
-}
+export const redo = ({ commit }) => commit(types.REDO)
 
 // 在移动和桌面版本间切换
 export const switchVersion = ({ commit }, version) => {
@@ -84,10 +117,10 @@ export const setActiveElementId = ({ commit }, elementId) => {
 }
 
 // 删除元素
-export const removeElement = ({ commit, state }, elementId) => {
+export const removeElement = ({ commit, state }, [elementId, record = true]) => {
   const sectionIds = getSectionIds(state, elementId)
   commit(types.REMOVE_ELEMENT, { elementId, sectionIds })
-  commit(types.SAVE_CONTENT_STATE)
+  record && commit(types.SAVE_CONTENT_STATE)
 }
 
 // 移动元素
@@ -142,18 +175,42 @@ export const indexElement = ({ commit, state, getters }, [elementId, dir]) => {
 }
 
 // 修改元素
-export const modifyElement = ({ commit, state }, [elementId, newPropsObj]) => {
-  const newElement = merge({}, state.editor.content.elements[elementId], newPropsObj)
+export const modifyElement = ({ commit, state }, [elementId, newPropsObj, replace = false]) => {
+  const newElement = replace ? merge({}, newPropsObj) : merge({}, state.editor.content.elements[elementId], newPropsObj)
   commit(types.MODIFY_ELEMENT, { elementId, newElement })
   commit(types.SAVE_CONTENT_STATE)
 }
 
 // 添加元素
-export const addElement = ({ commit, state }, element) => {
+export const addElement = ({ commit, state, getters }, type) => {
   if (state.editor.content.sections.length === 0) {
-    // mutations.ADD_SECTION(state)
-    // const sectionId = 0
+    addSection({ commit })
   }
+
+  // 计算元素应该进入哪个板块，以及在板块中的高
+  const workspace = document.getElementById('main-wrapper')
+  const element = elementTypes[type]
+  const elementTopInPage = workspace.scrollTop + 100
+  let sumSectionsHeight = 0
+  let sectionHeight = 0
+  let sectionId = -1
+  const currentVersion = state.editor.workspace.version
+  const anotherVersion = state.editor.workspace.version === 'pc' ? 'mobile' : 'pc'
+  while (sumSectionsHeight < elementTopInPage) {
+    sectionId++
+    sectionHeight = parseInt(state.editor.content.sections[sectionId].style[currentVersion].height)
+    sumSectionsHeight += sectionHeight
+  }
+  const elementTop = elementTopInPage + sectionHeight - sumSectionsHeight
+  element.style[currentVersion].top = elementTop + 'px'
+  element.style[anotherVersion].top = '10px'
+
+  // 设置元素的zindex
+  element.style.pc.zIndex = getters.elementsIndex.pc.max
+  element.style.mobile.zIndex = getters.elementsIndex.mobile.max
+
+  commit(types.ADD_ELEMENT, { sectionId, element })
+  type !== 'image' && commit(types.SAVE_CONTENT_STATE)
 }
 
 // 复制元素
@@ -195,10 +252,10 @@ const getSectionIds = (state, elementId) => {
   let pcSectionId = null
   let mobileSectionId = null
   state.editor.content.sections.forEach(section => {
-    if (section.elements.pc.indexOf(elementId) > 0) {
+    if (section.elements.pc.indexOf(elementId) >= 0) {
       pcSectionId = sectionId
     }
-    if (section.elements.mobile.indexOf(elementId) > 0) {
+    if (section.elements.mobile.indexOf(elementId) >= 0) {
       mobileSectionId = sectionId
     }
     sectionId++

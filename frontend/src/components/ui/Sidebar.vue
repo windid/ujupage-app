@@ -25,7 +25,7 @@ export default {
 <template>
 
 <transition name="sidebar">
-  <div v-if="show" class="sidebar">
+  <div v-if="show" class="sidebar" @mousedown.stop>
     <div class="sidebar-header">
       <slot name="header">
       </slot>

@@ -1,18 +1,20 @@
 import pageAPI from '../../api/pageAPI'
 import pageGroupAPI from '../../api/pageGroupAPI'
 import projectAPI from '../../api/projectAPI'
+import API from '../../API'
 import getParameter from '../../utils/getParameter'
 import cookieHandler from '../../utils/cookieHandler'
 import * as types from '../mutation-types'
 
 export const init = ({ commit }) => {
-  projectAPI.list(projects => {
+  API.project.get().then(response => {
+    const projects = response.data
     commit(types.LOAD_PROJECTS, { projects })
     // 加载默认项目，第一优先取路由传递的projectId，其次是Cookie，再次是用户默认项目，如果都没有，取项目列表的第一个。
     const projectId = getParameter('id') || cookieHandler.get('projectId')
     const currentProject = projects.find(p => p.id === projectId) || projects.find(p => p.is_default === 1) || projects[0]
     switchProject({ commit }, currentProject)
-  }, data => commit(types.LOAD_FAILED, { source: 'projects', err: data.err }))
+  })
 }
 
 export const switchProject = ({ commit }, project) => {
@@ -24,19 +26,20 @@ export const switchProject = ({ commit }, project) => {
 
   loadMembers({ commit }, project)
 
-  pageGroupAPI.list(project, pageGroups => {
+  API.pageGroup.get({ projectId: project.id }).then(response => {
+    const pageGroups = response.data
     commit(types.LOAD_PAGEGROUPS, { pageGroups })
     const currentPageGroup = pageGroups.find(g => g.is_default === 1) || pageGroups[0]
     switchPageGroup({ commit }, currentPageGroup)
-  }, data => commit(types.LOAD_FAILED, { source: 'pageGroups', err: data.err }))
+  })
 }
 
 export const switchPageGroup = ({ commit }, pageGroup) => {
   commit(types.LOADING)
-  pageAPI.list(pageGroup.id, pages => {
-    commit(types.SET_CURRENT_PAGEGROUP, { pageGroup })
-    commit(types.LOAD_PAGES, { pages })
-  }, data => commit(types.LOAD_FAILED, { source: 'pages', err: data.err }))
+  commit(types.SET_CURRENT_PAGEGROUP, { pageGroup })
+  API.page.get({ groupId: pageGroup.id }).then(response => {
+    commit(types.LOAD_PAGES, { pages: response.data })
+  })
 }
 
 export const createProject = ({ commit }, project) => {
@@ -58,9 +61,13 @@ export const renameProject = ({ commit }, [project, newName]) => {
 }
 
 export const loadMembers = ({ commit }, project) => {
-  projectAPI.members(project, (members, invited) => {
-    commit(types.LOAD_MEMBERS, { members, invited })
-  }, data => commit(types.LOAD_FAILED, { source: 'loadMembers', err: data.err }))
+  API.projectMember.get({ projectId: project.id }).then(response => {
+    const members = response.data
+    commit(types.LOAD_MEMBERS, { members })
+  })
+  // projectAPI.members(project, (members, invited) => {
+  //   commit(types.LOAD_MEMBERS, { members, invited })
+  // }, data => commit(types.LOAD_FAILED, { source: 'loadMembers', err: data.err }))
 }
 
 export const inviteMember = ({ commit, state }, member) => {
@@ -83,10 +90,11 @@ export const createPageGroup = ({ commit }, pageGroup) => {
   }, data => commit(types.LOAD_FAILED, { source: 'createPageGroup', err: data.err }))
 }
 
-export const removePageGroup = ({ commit }, pageGroup) => {
-  pageGroupAPI.remove(pageGroup, data => {
+export const removePageGroup = ({ commit, state }, pageGroup) => {
+  API.pageGroup.delete({ projectId: state.projects.current.id, id: pageGroup.id }).then(response => {
+    console.log(response)
     commit(types.REMOVE_PAGEGROUP, { pageGroup })
-  }, data => commit(types.LOAD_FAILED, { source: 'removePageGroup', err: data.err }))
+  })
 }
 
 export const setEditingPageGroup = ({ commit }, pageGroup) => {
@@ -95,9 +103,9 @@ export const setEditingPageGroup = ({ commit }, pageGroup) => {
 
 export const renamePageGroup = ({ commit, state }, newName) => {
   const pageGroup = state.pageGroups.editing
-  pageGroupAPI.rename(pageGroup, newName, data => {
+  API.pageGroup.update({ projectId: state.projects.current.id, id: pageGroup.id }, { name: newName }).then(response => {
     commit(types.RENAME_PAGEGROUP, { pageGroup, newName })
-  }, data => commit(types.LOAD_FAILED, { source: 'renamePageGroup', err: data.err }))
+  })
 }
 
 export const createPage = ({ commit }, page) => {
@@ -107,21 +115,22 @@ export const createPage = ({ commit }, page) => {
 }
 
 export const removePage = ({ commit }, page) => {
-  pageAPI.remove(page, data => {
-    commit(types.REMOVE_PAGE, { page })
-  }, data => commit(types.LOAD_FAILED, { source: 'removePage', err: data.err }))
+  // API.page.delete({ pageId: page.id })
+  // pageAPI.remove(page, data => {
+  //   commit(types.REMOVE_PAGE, { page })
+  // }, data => commit(types.LOAD_FAILED, { source: 'removePage', err: data.err }))
 }
 
 export const renamePage = ({ commit }, [page, newName]) => {
-  pageAPI.rename(page, newName, data => {
+  API.page.update({ id: page.id }, { name: newName }).then(response => {
     commit(types.RENAME_PAGE, { page, newName })
-  }, data => commit(types.LOAD_FAILED, { source: 'renamePage', err: data.err }))
+  })
 }
 
 export const movePage = ({ commit }, [page, pageGroup]) => {
-  pageAPI.move(page, pageGroup, data => {
+  API.page.update({ id: page.id }, { group_id: pageGroup.id }).then(response => {
     commit(types.REMOVE_PAGE, { page })
-  }, data => commit(types.LOAD_FAILED, { source: 'movePage', err: data.err }))
+  })
 }
 
 export const duplicatePage = ({ commit }, page) => {

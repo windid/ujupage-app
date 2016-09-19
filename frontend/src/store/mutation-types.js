@@ -29,6 +29,7 @@ export const WARNING = 'WARNING'
 export const CONFIRM = 'CONFIRM'
 export const GET_INPUT = 'GET_INPUT'
 export const CLOSE_MESSAGE_BOX = 'CLOSE_MESSAGE_BOX'
+export const NEXT_MESSAGE = 'NEXT_MESSAGE'
 
 // ui - image library
 export const GET_IMAGE = 'GET_IMAGE'
@@ -44,6 +45,7 @@ export const LOAD_DONE = 'LOAD_DONE'
 
 // editor
 export const LOAD_VARIATION = 'LOAD_VARIATION'
+export const SAVE_VARIATION = 'SAVE_VARIATION'
 export const SAVE_CONTENT_STATE = 'SAVE_CONTENT_STATE'
 export const UNDO = 'UNDO'
 export const REDO = 'REDO'
