@@ -100,7 +100,8 @@ class PageController extends Controller {
      * 获取页面(单行)
      * @param int $page_id
      * @return json {
-     *  id = 页面iD
+     *  id = 页面ID
+     *  project_id = 项目ID
      *  name = 项目ID
      *  url = 分组名称
      *  setting = 页面设置
@@ -111,7 +112,7 @@ class PageController extends Controller {
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
         }
-             
+        $page['project_id'] = $this->project->id;
         return $this->successOK($page->toArray());
     }
     
@@ -261,4 +262,38 @@ class PageController extends Controller {
         return $this->successCreated($new_page->toArray());
     }
     
+    /**
+     * 发布页面
+     * @param int $id 页面ID
+     * @return {
+     *  result = true
+     * }
+     */
+    public function publish(int $page_id) {
+        $page = $this->initPGP($page_id);         
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
+        }
+        
+        $validator = validator(['url' => $page->url], ['url' => 'required']);
+        if ($validator->fails()) {
+            return $this->errorValidation($validator);
+        }
+                
+        $variations = $this->pageVariation->where('page_id', $page->id)
+                ->get()->toArray();
+        foreach ($variations as $k => $v) {
+            $content = \App\Services\ParseHtml::decode($v);
+            if (!$content){
+                $html = '';
+            } else {
+                $html = view('preview.variation', ['content' => $content])->render();
+            }
+            $this->pageVariation->where('id', $v['id'])->update([
+                'html' => $html
+            ]);
+        }
+        
+        return $this->successOK();
+    }
 }

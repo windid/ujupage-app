@@ -48,7 +48,8 @@ class PageTest extends TestCase {
      */
     public function testUpdate($page_id) {
         $response = $this->call('PUT', '/page/' . $page_id, [
-            'name' => 'NEW_Page_' . rand(100,900)
+            'name' => 'NEW_Page_' . rand(100,900),
+            'url' => 'NEWURL' . rand(100,900)
         ]);
         $this->assertJson($response->content());        
     }
@@ -60,6 +61,13 @@ class PageTest extends TestCase {
         $response = $this->call('COPY', '/page/' . $page_id . '/copy', [
             'name' => 'NEW_Page_' . rand(100,900)
         ]);
+        $this->assertJson($response->content());        
+    }
+    /**
+     * @depends testStore
+     */
+    public function testPublish($page_id) {
+        $response = $this->call('GET', '/page/' . $page_id . '/publish');
         $this->assertJson($response->content());        
     }
     

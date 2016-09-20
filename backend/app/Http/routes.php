@@ -193,6 +193,13 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
             Route::match(['copy', 'get'], 'page/{id}/copy', ['as' => '.copy', 'uses' => 'PageController@copy']);
             
             /**
+             * publish api/page/{page_id}/publish 发布页面
+             * -- page_id 页面ID
+             * @return StatusCode 200
+             */
+            Route::match(['get'], 'page/{id}/publish', ['as' => '.publish', 'uses' => 'PageController@publish']);
+            
+            /**
              * GET api/page/ 获取所有页面
              * group_id 分组ID
              * @return StatusCode 200
@@ -231,6 +238,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * @return StatusCode 200
              * @return {
              *    id 页面ID
+             *    project_id 项目ID
              *    group_id 分组ID
              *    user_id 创建者ID
              *    name 页面名称 
