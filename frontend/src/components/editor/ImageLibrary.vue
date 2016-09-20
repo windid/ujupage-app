@@ -1,6 +1,7 @@
 <script>
 import Modal from '../ui/Modal'
 import imageAPI from '../../api/imageAPI'
+import API from '../../API'
 import { mapGetters, mapActions } from 'vuex'
 import { merge } from 'lodash'
 // import eventHandler from '../../utils/eventHandler'
@@ -15,7 +16,9 @@ export default {
       loadStatus: 'loading',
       currentImageId: null,
       images: [],
-      viewingImage: {}
+      folders: [],
+      viewingImage: {},
+      currentFolder: {}
     }
   },
   computed: {
@@ -33,16 +36,16 @@ export default {
       this.imageLibrary.onCancel && this.imageLibrary.onCancel()
       this.closeImageLibrary()
     },
-    load (folder) {
+    loadImages (folderId) {
       this.loadStatus = 'loading'
-      imageAPI.list(this.page.projectId, folder, data => {
-        this.images = data.images
+      API.image.get({ folder_id: folderId, page: 1, page_size: 9999 }).then(response => {
+        this.images = response.data.images
         if (this.images.length === 0) {
           this.loadStatus = 'empty'
         } else {
           this.loadStatus = 'loaded'
         }
-      }, data => {
+      }, response => {
         this.loadStatus = 'failed'
       })
     },
@@ -53,10 +56,13 @@ export default {
       data.append('file', files[0])
       data.append('folder', folder)
       data.append('project_id', this.page.projectId)
-      imageAPI.upload(this.page.projectId, data, image => {
-        this.images.push(image)
-        this.loadStatus = 'loaded'
+      API.image.save({}, data).then(response => {
+        console.log(response.data)
       })
+      // imageAPI.upload(this.page.projectId, data, image => {
+      //   this.images.push(image)
+      //   this.loadStatus = 'loaded'
+      // })
     },
     pickImage (index) {
       if (index !== null && this.images[index]) {
@@ -96,7 +102,14 @@ export default {
   watch: {
     'imageLibrary.show': function (show) {
       if (show) {
-        this.load('default')
+        // this.loadStatus = 'loading'
+        // API.imageFolder.get({ project_id: 9 }).then(response => {
+        //   this.folders = response.data
+        //   console.log(response)
+        //   this.currentFolder = this.folders.find(f => f.is_default === 1)
+        //   this.loadImages(this.currentFolder.id)
+        // })
+        this.loadImages(0)
       }
     }
   }

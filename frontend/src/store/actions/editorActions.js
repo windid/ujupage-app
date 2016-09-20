@@ -40,11 +40,10 @@ export const saveVariation = ({ commit, state }) => {
 }
 
 // 设置URL
-export const setURL = ({ commit, state }, [uri, successCb, errorCb]) => {
-  pageAPI.setUrl(state.editor.page.id, uri, data => {
-    // commit(types.SET_URL, { uri })
-    successCb(data)
-  }, data => errorCb(data.err))
+export const setURL = ({ commit, state }, [url, successCb, errorCb]) => {
+  API.page.update({ id: state.editor.page.id }, { url: url }).then(response => {
+    successCb(response.data)
+  })
 }
 
 // 发布

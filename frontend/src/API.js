@@ -14,5 +14,9 @@ export default {
     duplicate: { method: 'GET', url: 'page/{id}/copy' }
   }),
 
-  variation: Vue.resource('pages/{pageId}/variations{/id}')
+  variation: Vue.resource('pages/{pageId}/variations{/id}'),
+
+  image: Vue.resource('storage/image{/imageId}'),
+
+  imageFolder: Vue.resource('storage/folder{/folderId}')
 }
