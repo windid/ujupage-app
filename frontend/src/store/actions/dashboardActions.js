@@ -1,5 +1,5 @@
-import pageAPI from '../../api/pageAPI'
-import pageGroupAPI from '../../api/pageGroupAPI'
+// import pageAPI from '../../api/pageAPI'
+// import pageGroupAPI from '../../api/pageGroupAPI'
 import projectAPI from '../../api/projectAPI'
 import API from '../../API'
 import getParameter from '../../utils/getParameter'
@@ -37,7 +37,7 @@ export const switchProject = ({ commit }, project) => {
 export const switchPageGroup = ({ commit }, pageGroup) => {
   commit(types.LOADING)
   commit(types.SET_CURRENT_PAGEGROUP, { pageGroup })
-  API.page.get({ groupId: pageGroup.id }).then(response => {
+  API.page.get({ group_id: pageGroup.id }).then(response => {
     commit(types.LOAD_PAGES, { pages: response.data })
   })
 }
@@ -85,14 +85,13 @@ export const quitProject = ({ commit }, project) => {
 }
 
 export const createPageGroup = ({ commit }, pageGroup) => {
-  pageGroupAPI.create(pageGroup, pageGroup => {
-    commit(types.CREATE_PAGEGROUP, { pageGroup })
-  }, data => commit(types.LOAD_FAILED, { source: 'createPageGroup', err: data.err }))
+  API.pageGroup.save({ projectId: pageGroup.projectId }, pageGroup).then(response => {
+    commit(types.CREATE_PAGEGROUP, { pageGroup: response.data })
+  })
 }
 
 export const removePageGroup = ({ commit, state }, pageGroup) => {
   API.pageGroup.delete({ projectId: state.projects.current.id, id: pageGroup.id }).then(response => {
-    console.log(response)
     commit(types.REMOVE_PAGEGROUP, { pageGroup })
   })
 }
@@ -109,16 +108,15 @@ export const renamePageGroup = ({ commit, state }, newName) => {
 }
 
 export const createPage = ({ commit }, page) => {
-  pageAPI.create(page, page => {
-    commit(types.CREATE_PAGE, { page })
-  }, data => commit(types.LOAD_FAILED, { source: 'createPage', err: data.err }))
+  API.page.save({}, page).then(response => {
+    commit(types.CREATE_PAGE, { page: response.data })
+  })
 }
 
 export const removePage = ({ commit }, page) => {
-  // API.page.delete({ pageId: page.id })
-  // pageAPI.remove(page, data => {
-  //   commit(types.REMOVE_PAGE, { page })
-  // }, data => commit(types.LOAD_FAILED, { source: 'removePage', err: data.err }))
+  API.page.delete({ id: page.id }).then(response => {
+    commit(types.REMOVE_PAGE, { page })
+  })
 }
 
 export const renamePage = ({ commit }, [page, newName]) => {
@@ -128,13 +126,14 @@ export const renamePage = ({ commit }, [page, newName]) => {
 }
 
 export const movePage = ({ commit }, [page, pageGroup]) => {
-  API.page.update({ id: page.id }, { group_id: pageGroup.id }).then(response => {
+  API.page.update({ id: page.id }, { name: page.name, group_id: pageGroup.id }).then(response => {
+    console.log(response)
     commit(types.REMOVE_PAGE, { page })
   })
 }
 
 export const duplicatePage = ({ commit }, page) => {
-  pageAPI.duplicate(page, page => {
-    commit(types.CREATE_PAGE, { page })
-  }, data => commit(types.LOAD_FAILED, { source: 'duplicatePage', err: data.err }))
+  API.page.duplicate({ id: page.id }).then(response => {
+    commit(types.CREATE_PAGE, { page: response.data })
+  })
 }

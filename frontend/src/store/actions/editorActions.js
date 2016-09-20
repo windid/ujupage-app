@@ -1,25 +1,28 @@
 import pageAPI from '../../api/pageAPI'
-import variationAPI from '../../api/variationAPI'
+// import variationAPI from '../../api/variationAPI'
+import API from '../../API'
 import * as types from '../mutation-types'
 import getParameter from '../../utils/getParameter'
 import { merge } from 'lodash'
 import elementTypes from '../editorElementTypes'
 
 // 页面信息加载
-export const pageInit = ({ commit }, pageId) => {
-  pageAPI.get(pageId, page => {
-    variationAPI.list(pageId, variations => {
-      page.variations = variations
+export const pageInit = ({ commit, state }, pageId) => {
+  API.page.get({ id: pageId }).then(response => {
+    const page = response.data
+    API.variation.get({ pageId: page.id }).then(response => {
+      page.variations = response.data
       commit(types.LOAD_PAGE, { page })
-      const variationId = getParameter('vid') || variations[0].id
-      loadVariation({ commit }, variationId)
+      const variationId = getParameter('vid') || page.variations[0].id
+      loadVariation({ commit, state }, variationId)
     })
   })
 }
 
 // 加载编辑内容
-export const loadVariation = ({ commit }, variationId) => {
-  variationAPI.get(variationId, content => {
+export const loadVariation = ({ commit, state }, variationId) => {
+  API.variation.get({ pageId: state.editor.page.id, id: variationId }).then(response => {
+    const content = JSON.parse(response.data.html_json)
     commit(types.LOAD_VARIATION, { variationId, content })
   })
 }
@@ -27,9 +30,13 @@ export const loadVariation = ({ commit }, variationId) => {
 // 保存
 export const saveVariation = ({ commit, state }) => {
   const content = JSON.stringify(state.editor.content)
-  variationAPI.save(state.editor.workspace.activeVariationId, content, result => {
+  API.variation.update({ pageId: state.editor.page.id, id: state.editor.workspace.activeVariationId }, { htmljson: content }).then(response => {
+    console.log(response, content)
     commit(types.SAVE_VARIATION)
   })
+  // variationAPI.save(state.editor.workspace.activeVariationId, content, result => {
+  //   commit(types.SAVE_VARIATION)
+  // })
 }
 
 // 设置URL
