@@ -11,7 +11,8 @@ export default {
   pageGroup: Vue.resource('projects/{projectId}/groups{/id}'),
 
   page: Vue.resource('page{/id}', {}, {
-    duplicate: { method: 'GET', url: 'page/{id}/copy' }
+    duplicate: { method: 'GET', url: 'page/{id}/copy' },
+    publish: { method: 'GET', url: 'page/{id}/publish' }
   }),
 
   variation: Vue.resource('pages/{pageId}/variations{/id}'),

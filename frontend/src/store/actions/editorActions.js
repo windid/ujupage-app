@@ -1,4 +1,4 @@
-import pageAPI from '../../api/pageAPI'
+// import pageAPI from '../../api/pageAPI'
 // import variationAPI from '../../api/variationAPI'
 import API from '../../API'
 import * as types from '../mutation-types'
@@ -31,12 +31,8 @@ export const loadVariation = ({ commit, state }, variationId) => {
 export const saveVariation = ({ commit, state }) => {
   const content = JSON.stringify(state.editor.content)
   API.variation.update({ pageId: state.editor.page.id, id: state.editor.workspace.activeVariationId }, { htmljson: content }).then(response => {
-    console.log(response, content)
     commit(types.SAVE_VARIATION)
   })
-  // variationAPI.save(state.editor.workspace.activeVariationId, content, result => {
-  //   commit(types.SAVE_VARIATION)
-  // })
 }
 
 // 设置URL
@@ -48,8 +44,8 @@ export const setURL = ({ commit, state }, [url, successCb, errorCb]) => {
 
 // 发布
 export const publishPage = ({ commit, state }, successCb) => {
-  pageAPI.publish(state.editor.page.id, data => {
-    successCb(data)
+  API.page.publish({ id: state.editor.page.id }).then(response => {
+    successCb(response.data)
   })
 }
 
