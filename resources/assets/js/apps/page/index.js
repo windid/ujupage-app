@@ -21,7 +21,12 @@ var Site = {
             jsonpCallback: "callback",
             data: form.serialize(),
             success: response => {
-              Site.showMsg(form.attr('msg'));
+              const redirect = form.attr('redirect');
+              if (redirect) {
+                window.location = redirect;
+              } else {
+                Site.showMsg(form.attr('msg'));
+              }
             },
             error: response => {
               Site.showMsg("表单提交失败，请稍后再试。");
