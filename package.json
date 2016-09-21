@@ -1,7 +1,7 @@
 {
   "private": true,
-  "name": "ujupage-frontend",
-  "version": "1.0",
+  "name": "ujupage-app",
+  "version": "1.1.0",
   "main": "index.js",
   "devDependencies": {
     "babel-core": "^6.9.1",
@@ -35,7 +35,7 @@
     "draggabilly": "^2.1.1",
     "jquery-form": "^3.50.0",
     "jquery-validation": "^1.15.1",
-    "vue": "^1.0.24",
+    "vue": "^1.0.26",
     "vue-resource": "^0.9.1",
     "vuex": "^2.0.0-rc.3"
   }
