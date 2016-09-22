@@ -137,7 +137,7 @@ export default {
 }
 
 .page-item-body{
-  height:132px;
+  height:133px;
   background:#f9f9f9;
   border-top:1px solid #eee;
   border-bottom:1px solid #eee;

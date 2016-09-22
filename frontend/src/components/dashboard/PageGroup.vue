@@ -99,7 +99,7 @@ export default {
 }
 
 .page-group-name{
-  line-height: 34px;
+  line-height: 35px;
 }
 
 .page-group-body{

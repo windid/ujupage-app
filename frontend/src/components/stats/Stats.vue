@@ -40,6 +40,5 @@ export default {
   position:relative;
   min-height:600px;
   margin-left:240px;
-  padding:15px;
 }
 </style>

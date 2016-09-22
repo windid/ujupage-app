@@ -124,7 +124,8 @@ export default {
   <modal :show="imageLibrary.show" @close="close" :width="'800px'" :height="'500px'">
     <div slot="header">
       <ul class="nav nav-pills">
-        <li><a href="#">我的图片库</a></li>
+        <li><a href="#">项目图片库</a></li>
+        <li><a href="#">个人图片库</a></li>
         <!-- <li :class="{active: currentTab === 'store'}"><a href="#" @click="currentTab = 'store'">图片商店</a></li> -->
       </ul>
     </div>
