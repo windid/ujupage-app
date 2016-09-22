@@ -36,8 +36,11 @@ class FolderController extends Controller {
             return $this->errorNotFound();
         }
         $this->project = $this->initP($this->folder->project_id);
-        if (!$this->project) {
-            return $this->errorNotFound();
+        if (get_class($this->project) == 'Illuminate\Http\JsonResponse') {
+            if ($this->folder->user_id != $this->user->id) {
+                return $this->errorNotFound();
+            }
+            $this->project->id = 0;
         }
         
         return $this->folder;
@@ -50,24 +53,37 @@ class FolderController extends Controller {
      *  dir : {dir1, dir2, dir3}
      * }
      */
-    public function index()  {
-        $project = $this->initP(request('project_id', 0));  
-        if (get_class($project) == 'Illuminate\Http\JsonResponse') {
-            return $project;
+    public function index() {
+        $project_id = request('project_id', 0);
+        if ($project_id > 0) {
+            $project = $this->initP($project_id);  
+            if (get_class($project) == 'Illuminate\Http\JsonResponse') {
+                return $project;
+            }
         }
-        $dirs = $this->folder
+        $this->folder = $this->folder
                 ->select('id', 'dirname')
-                ->where('project_id', $this->project->id)->get();
+                ->where('project_id', $project_id);
+        if ($project_id == 0) {
+            $this->folder = $this->folder
+                    ->where('user_id', $this->user->id);
+        }
+        $dirs = $this->folder->get();
         if ($dirs->count() < 1) {
             $request = Request::create(route('api.storage.folder.store'), 'POST', [
-                'project_id' => $this->project->id,
+                'project_id' => $project_id,
                 'dirname' => '默认',
                 'setdefault' => '1'
             ]);        
             $this->store($request);
-            $dirs = $this->folder
+            $this->folder = $this->folder
                     ->select('id', 'dirname')
-                    ->where('project_id', $this->project->id)->get();
+                    ->where('project_id', $project_id);
+            if ($project_id == 0) {
+                $this->folder = $this->folder
+                        ->where('user_id', $this->user->id);
+            }
+            $dirs = $this->folder->get();
         }
         
         return $this->successOK($dirs->toArray());
@@ -83,21 +99,25 @@ class FolderController extends Controller {
      * }
      */    
     public function store(Request $request)  {
-        $project = $this->initP(request('project_id', 0));  
-        if (get_class($project) == 'Illuminate\Http\JsonResponse') {
-            return $project;
+        $project_id = request('project_id', 0);
+        if ($project_id > 0) {
+            $project = $this->initP($project_id);  
+            if (get_class($project) == 'Illuminate\Http\JsonResponse') {
+                return $project;
+            }
         }
         $dirname = $request->get('dirname', '');
         if (empty($dirname)) {
             $dirname = '新建文件夹' . rand(100,900);
         }
         
+        $this->folder = new StorageFolder();
         if ($request->has('setdefault')) {
             $this->folder->is_default = 1;
         } else {
             $validator = validator(['dirname' => $dirname]
                 , [
-                    'dirname' => 'required|not_in:默认|unique:storage_folders,dirname,null,id,project_id,'.$this->project->id
+                    'dirname' => 'required|not_in:默认|unique:storage_folders,dirname,null,id,project_id,'.$project_id
                     ]);
             if ($validator->fails()) {
                 return $this->errorValidation($validator);
@@ -105,9 +125,9 @@ class FolderController extends Controller {
         }
         
         $this->folder->dirname = $dirname;
-        $this->folder->project_id = $project->id;
+        $this->folder->project_id = $project_id;
         $this->folder->user_id = $this->user->id;
-        
+//        dd($this->folder);
         $this->folder->save();
         
         return $this->successCreated(['id' => $this->folder->id, 'dirname' => $dirname]);

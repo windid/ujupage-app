@@ -19,7 +19,8 @@ class ImageController extends Controller {
     public $folder;
     public $image;
     
-    public $project;    
+    public $project;   
+    public $project_id;
     
     public function __construct() {
         $this->user = auth()->user();
@@ -37,10 +38,16 @@ class ImageController extends Controller {
         }
         
         $this->project = $this->user->projects()->find($this->folder->project_id);
-        if (!$this->project) {
-            return $this->errorNotFound();
+        if (get_class($this->project) == 'Illuminate\Http\JsonResponse') {
+            if ($this->folder->user_id != $this->user->id) {
+                return $this->errorNotFound();
+            }
+        }        
+        if ($this->project) {
+            $this->project_id = $this->project->id;
+        } else {
+            $this->project_id = 0;
         }
-        
         return $this->folder;
     }
     
@@ -51,10 +58,9 @@ class ImageController extends Controller {
         }
         
         $this->folder = $this->initPF($this->image->folder_id);
-        if (!$this->folder) {
-            return $this->folder;
-        }
-        
+        if (get_class($this->folder) == 'Illuminate\Http\JsonResponse') {            
+            return $this->errorNotFound();
+        }        
         return $this->image;
     }
     
@@ -89,12 +95,21 @@ class ImageController extends Controller {
         }
         $page = request('page', 1);
         $page_size = request('page_size', 30);
-        $images = $this->image->where('folder_id', $folder->id)
-                ->where('project_id', $this->project->id)
-                ->skip(($page - 1) * $page_size)->take($page_size)->get();
+        $this->image = $this->image->where('folder_id', $folder->id)
+                ->where('project_id', $this->project_id)
+                ->skip(($page - 1) * $page_size)->take($page_size);
+        if ($this->project_id == 0) {
+            $this->image = $this->image->where('user_id', $this->user->id);
+        }
+        $images = $this->image->get();
         
-        $total = $this->image->where('folder_id', $folder->id)
-                ->where('project_id', $this->project->id)->count();
+        
+        $this->image = $this->image->where('folder_id', $folder->id)
+                ->where('project_id', $this->project_id);        
+        if ($this->project_id == 0) {
+            $this->image = $this->image->where('user_id', $this->user->id);
+        }
+        $total = $this->image->count();   
         $result = [
             'current_page' => $page,
             'total_pages' => ceil($total / $page_size),
@@ -164,7 +179,8 @@ class ImageController extends Controller {
             
         }
         
-        $this->image->project_id = $this->project->id;
+        $this->image->project_id = $this->project_id;
+        $this->image->user_id = $this->user->id;
         $this->image->name = $file->getClientOriginalName();
 
         $this->image->alt = "";
