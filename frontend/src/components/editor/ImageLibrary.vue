@@ -12,7 +12,7 @@ export default {
   },
   data () {
     return {
-      currentTab: 'my',
+      currentTab: 'project',
       loadStatus: 'loading',
       currentImageId: null,
       images: [],
@@ -25,7 +25,10 @@ export default {
     ...mapGetters({
       'imageLibrary': 'imageLibrary',
       'page': 'editingPage'
-    })
+    }),
+    projectId () {
+      return (this.currentTab === 'project') ? this.page.project_id : 0
+    }
   },
   methods: {
     ...mapActions({
@@ -36,9 +39,18 @@ export default {
       this.imageLibrary.onCancel && this.imageLibrary.onCancel()
       this.closeImageLibrary()
     },
-    loadImages (folderId) {
+    switchTab (tab) {
       this.loadStatus = 'loading'
-      API.image.get({ folder_id: folderId, page: 1, page_size: 9999 }).then(response => {
+      this.currentTab = tab
+      API.imageFolder.get({ project_id: this.projectId }).then(response => {
+        this.folders = response.data
+        this.currentFolder = this.folders.find(f => f.is_default === 1) || this.folders[0]
+        this.loadImages(this.currentFolder)
+      })
+    },
+    loadImages (folder) {
+      // this.loadStatus = 'loading'
+      API.image.get({ folder_id: folder.id, page: 1, page_size: 9999 }).then(response => {
         this.images = response.data.images
         if (this.images.length === 0) {
           this.loadStatus = 'empty'
@@ -109,7 +121,7 @@ export default {
         //   this.currentFolder = this.folders.find(f => f.is_default === 1)
         //   this.loadImages(this.currentFolder.id)
         // })
-        this.loadImages(0)
+        this.switchTab(this.currentTab)
       }
     }
   }
@@ -124,8 +136,8 @@ export default {
   <modal :show="imageLibrary.show" @close="close" :width="'800px'" :height="'500px'">
     <div slot="header">
       <ul class="nav nav-pills">
-        <li><a href="#">项目图片库</a></li>
-        <li><a href="#">个人图片库</a></li>
+        <li :class="{active: currentTab === 'project'}" @click="switchTab('project')"><a href="javascript:;">项目图片库</a></li>
+        <li :class="{active: currentTab === 'my'}" @click="switchTab('my')"><a href="javascript:;">个人图片库</a></li>
         <!-- <li :class="{active: currentTab === 'store'}"><a href="#" @click="currentTab = 'store'">图片商店</a></li> -->
       </ul>
     </div>
