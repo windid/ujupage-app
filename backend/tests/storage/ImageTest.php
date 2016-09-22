@@ -22,6 +22,41 @@ class ImageTest extends TestCase {
         $this->folder = json_decode($response->content())[0];
     }        
     
+    public function testPersonalIndex() {
+        $response = $this->call('GET', '/storage/image', [
+            'folder_id' => 40,
+            'page' => 1,
+            'page_size' => 30
+        ]);
+//        $this->dump();
+    }
+   
+    public function testPersonalStore() {
+        $file = __DIR__. '/test_image.png';
+        $filename = 'test_image';
+        $response = $this->call('POST', '/storage/image', [
+            'folder_id' => 40,
+            //'url' => 'https://ss2.baidu.com/6ONYsjip0QIZ8tyhnq/it/u=1805069078,3902678531&fm=80'
+        ], []
+        , [
+            'file' => new UploadedFile($file, $filename, null, filesize($file), 0, true)
+        ]);
+//        $this->dump();
+        return json_decode($response->content())->id;
+    }
+    
+    /**
+     * @depends testPersonalStore
+     */
+    public function testPersonalUpdate($image_id) {
+        $response = $this->call('PUT', '/storage/image/' . $image_id, [
+            'folder_id' => 41,
+            'name' => 'abc.png',
+            'alt' => 'alt.test',
+        ]);
+    }
+    
+    
     public function testIndex() {
         $response = $this->call('GET', '/storage/image', [
             'folder_id' => $this->folder->id,
