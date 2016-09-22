@@ -62,7 +62,7 @@ class FolderController extends Controller {
             }
         }
         $this->folder = $this->folder
-                ->select('id', 'dirname')
+                ->select('id', 'dirname', 'is_default')
                 ->where('project_id', $project_id);
         if ($project_id == 0) {
             $this->folder = $this->folder
@@ -77,7 +77,7 @@ class FolderController extends Controller {
             ]);        
             $this->store($request);
             $this->folder = $this->folder
-                    ->select('id', 'dirname')
+                    ->select('id', 'dirname', 'is_default')
                     ->where('project_id', $project_id);
             if ($project_id == 0) {
                 $this->folder = $this->folder
@@ -112,6 +112,7 @@ class FolderController extends Controller {
         }
         
         $this->folder = new StorageFolder();
+        $this->folder->is_default = 0;
         if ($request->has('setdefault')) {
             $this->folder->is_default = 1;
         } else {
@@ -130,7 +131,7 @@ class FolderController extends Controller {
 //        dd($this->folder);
         $this->folder->save();
         
-        return $this->successCreated(['id' => $this->folder->id, 'dirname' => $dirname]);
+        return $this->successCreated(['id' => $this->folder->id, 'dirname' => $dirname, 'is_default' => $this->folder->is_default]);
     }
     
     

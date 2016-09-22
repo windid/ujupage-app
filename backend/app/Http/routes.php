@@ -334,6 +334,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              *  {
              *    id 目录ID
              *    dirname 目录名称
+             *    is_default 是否默认目录
              *  }
              * }
              * 
@@ -344,6 +345,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * @return {
              *    id 目录ID
              *    dirname 目录名称
+             *    is_default 是否默认目录
              * }
              * 
              * PUT api/storage/folder/{folder_id} 修改目录
