@@ -1,6 +1,15 @@
 <script>
+import DatePicker from '../ui/DatePicker'
 export default {
-  props: ['title']
+  props: ['title'],
+  components: {
+    DatePicker
+  },
+  data () {
+    return {
+      date: ''
+    }
+  }
 }
 </script>
 
@@ -13,6 +22,7 @@ export default {
         <div class="btn btn-default">桌面</div>
         <div class="btn btn-default">移动</div>
       </div>
+      <date-picker v-model="date" limit-start-date="2016/05/07" limit-end-date="2016/09/01" style="float: right"></date-picker>
     </div>
   </div>
 </template>

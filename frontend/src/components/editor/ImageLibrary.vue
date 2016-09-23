@@ -45,10 +45,10 @@ export default {
       API.imageFolder.get({ project_id: this.projectId }).then(response => {
         this.folders = response.data
         this.currentFolder = this.folders.find(f => f.is_default === 1) || this.folders[0]
-        this.loadImages(this.currentFolder)
+        this.switchFolder(this.currentFolder)
       })
     },
-    loadImages (folder) {
+    switchFolder (folder) {
       // this.loadStatus = 'loading'
       API.image.get({ folder_id: folder.id, page: 1, page_size: 9999 }).then(response => {
         this.images = response.data.images
