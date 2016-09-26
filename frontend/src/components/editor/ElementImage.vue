@@ -18,7 +18,8 @@ export default {
       linkObj: merge({}, this.element.link),
       resize: {
         // aspectRatio: true
-      }
+      },
+      draggableFromChild: true
     }
   },
   methods: {
@@ -28,9 +29,9 @@ export default {
       'getImage'
     ]),
     edit () {
-      this.getImage((image) => {
+      this.getImage([(image) => {
         this.imageObj = image
-      })
+      }])
     },
     editLink () {
       this.buttonGroup = 'link'
@@ -42,6 +43,12 @@ export default {
         this.modifyElement([this.elementId, newPropsObj])
       }
       this.buttonGroup = 'main'
+    },
+    changeButtonGroup (val) {
+      this.buttonGroup = val
+    },
+    changeDraggable (val) {
+      this.draggableFromChild = val
     }
   },
   computed: {
@@ -49,10 +56,10 @@ export default {
       workspace: 'editorWorkspace'
     }),
     draggable () {
-      return this.buttonGroup !== 'link' && this.draggableFromChild
+      return this.draggableFromChild
     },
     resizable () {
-      return (this.buttonGroup !== 'link' && this.workspace.activeElementId === this.elementId)
+      return this.workspace.activeElementId === this.elementId
     }
   },
   watch: {
@@ -79,21 +86,30 @@ export default {
       }
       this.modifyElement([this.elementId, newPropsObj])
     }
+  },
+  mounted () {
+    if (!this.element.src) {
+      this.getImage([(image) => {
+        this.imageObj = image
+      }, () => {
+        this.removeElement([this.elementId, false])
+      }])
+    }
   }
 }
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable.sync="draggable" :resize="resize" :resizable.sync="resizable">
+  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable="draggable" :resize="resize" :resizable="resizable" @change-button-group="changeButtonGroup" @change-draggable="changeDraggable">
     <div slot="content" @dblclick="edit">
       <img v-bind:src="element.src" :style="{width:'100%',height:'auto'}">
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>
-      <div class="btn btn-default" title="链接" @click="buttonGroup='link'"><span class="glyphicon glyphicon-link"></span></div>
+      <div class="btn btn-default" title="链接" @click="editLink"><span class="glyphicon glyphicon-link"></span></div>
     </template>
     <template slot="button-groups">
-      <link-editor v-show="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj"></link-editor>
+      <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
     </template>
   </element-common>
 </template>

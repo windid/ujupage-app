@@ -3,29 +3,36 @@ import { mapGetters } from 'vuex'
 
 export default {
   computed: mapGetters({
-    msg: 'messageBox'
+    msg: 'message',
+    show: 'showMessage'
   }),
+  data () {
+    return {
+      error: ''
+    }
+  },
   methods: {
     cancel () {
       if (this.msg.onCancel) {
         this.msg.onCancel()
       }
-      this.$store.dispatch('closeMessageBox')
+      this.$store.dispatch('nextMessage')
     },
     ok () {
       if (this.msg.onConfirm) {
         if (this.msg.type === 'input') {
           const val = this.$refs.msgInput.value
-          this.msg.onConfirm(val)
+          this.error = this.msg.onConfirm(val) || ''
         } else {
           this.msg.onConfirm()
         }
       }
-      this.$store.dispatch('closeMessageBox')
+      !this.error && this.$store.dispatch('nextMessage')
     }
   },
   watch: {
-    'msg.show': function (val) {
+    'show': function (val) {
+      this.error = ''
       if (val) {
         if (this.msg.type === 'input') {
           this.$nextTick(() => {
@@ -44,20 +51,28 @@ export default {
 
 <template>
 <transition name="fade">
-  <div class="message-box-mask" v-if="msg.show" tabindex="-1" @keyup.enter="ok" @keyup.esc="cancel">
-    <div class="message-box-wrapper">
-      <div class="message-box-container" :style="{width:msg.width}">
+  <div class="msg-mask" v-if="show" tabindex="-1" @keyup.enter="ok" @keyup.esc="cancel">
+    <div class="msg-wrapper">
+      <div class="msg-container" :style="{width:msg.width}">
         
-        <div class="message-box-header">
+        <div class="msg-header">
           <span class="glyphicon glyphicon-exclamation-sign"></span> {{msg.header || '提示信息'}}
         </div>
         
-        <div class="message-box-body container-fluid">
-          <input v-if="msg.type === 'input'" ref="msgInput" type="text" :placeholder="msg.header" :value="msg.content" class="form-control">
+        <div class="msg-body container-fluid">
+          <template v-if="msg.type === 'input'">
+            <div class="input-group">
+              <div class="input-group-addon">{{msg.inputAddon}}</div>
+              <input ref="msgInput" type="text" :placeholder="msg.placeholder || msg.header" :value="msg.content" class="form-control">
+            </div>
+            
+            <p v-if="msg.hint !== ''" class="msg-hint">{{msg.hint}}</p>
+            <p v-if="error !== ''" class="text-danger">{{error}}</p>
+          </template>
           <span v-else>{{msg.content}}</span>
         </div>
 
-        <div class="message-box-footer">
+        <div class="msg-footer">
           <slot name="footer">
             <button v-show="msg.type !== 'warning'" class="btn btn-default btn-sm" @click="cancel">取消</button> &nbsp;
             <button class="btn btn-primary btn-sm" @click="ok">确定</button>
@@ -70,8 +85,8 @@ export default {
 </template>
 
 
-<style>
-.message-box-mask {
+<style scoped>
+.msg-mask {
   position: fixed;
   z-index: 1100000;
   top: 0;
@@ -82,12 +97,12 @@ export default {
   display: table;
 }
 
-.message-box-wrapper {
+.msg-wrapper {
   display: table-cell;
   vertical-align: middle;
 }
 
-.message-box-container {
+.msg-container {
   position: relative;
   margin:0 auto;
   background-color: #fff;
@@ -96,20 +111,25 @@ export default {
   transition: all .3s ease;
 }
 
-.message-box-header {
+.msg-header {
   font-size: 16px;
-  padding:12px;
+  padding: 12px;
 }
 
-.message-box-body {
-  border-top:1px solid #ddd;
-  border-bottom:1px solid #ddd;
-  background: #f6f6f6;
+.msg-body {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background: #f9f9f9;
   padding:30px 12px;
 }
 
-.message-box-footer{
-  padding:12px;
+.msg-footer {
+  padding: 12px;
   text-align: right;
+}
+
+.msg-hint {
+  margin: 12px 0;
+  color: #999;
 }
 </style>

@@ -1,4 +1,6 @@
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   data () {
     return {
@@ -6,22 +8,22 @@ export default {
         {
           name: '版块',
           style: 'modal-window',
-          action: this.addSection
+          action: () => this.addSection()
         },
         {
           name: '图片',
           style: 'picture',
-          action: this.addImage
+          action: () => this.addElement('image')
         },
         {
           name: '文字',
           style: 'font',
-          action: this.addText
+          action: () => this.addElement('text')
         },
         {
           name: '按钮',
           style: 'expand',
-          action: this.addButton
+          action: () => this.addElement('button')
         },
         // {
         //   name: '视频',
@@ -41,15 +43,21 @@ export default {
         {
           name: '表单',
           style: 'edit',
-          action: this.addForm
+          action: () => this.addElement('form')
         },
         {
           name: 'HTML',
           style: 'header',
-          action: this.addHTML
+          action: () => this.addElement('html')
         }
       ]
     }
+  },
+  computed: mapGetters({
+    'workspace': 'editorWorkspace'
+  }),
+  methods: {
+    ...mapActions(['addSection', 'addElement'])
   }
 }
 

@@ -1,7 +1,6 @@
 <script>
 import PageSection from './PageSection'
 import SectionEditor from './SectionEditor'
-import ElementEditor from './ElementEditor'
 import ImageLibrary from './ImageLibrary'
 import { mapGetters } from 'vuex'
 
@@ -9,7 +8,6 @@ export default {
   components: {
     PageSection,
     SectionEditor,
-    ElementEditor,
     ImageLibrary
   },
   computed: mapGetters({
@@ -30,7 +28,6 @@ export default {
     >
     </page-section>
     <section-editor></section-editor>
-    <element-editor></element-editor>
     <image-library></image-library>
   </div>
 </template>

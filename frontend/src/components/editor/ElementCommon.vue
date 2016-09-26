@@ -170,6 +170,7 @@ export default {
     this.resizeDisable()
     if (this.workspace.activeElementId === this.elementId) {
       this.showToolbar()
+      this.resizeEnable()
     }
   }
 }
@@ -224,16 +225,15 @@ const getElementTop = (element) => {
         <div class="btn btn-default" title="移到底层" @click="indexElement([ elementId, 'bottom' ])">
           <span class="glyphicon glyphicon-circle-arrow-down"></span>
         </div>
-        <div class="btn btn-default" title="删除" @click="removeElement(elementId)">
+        <div class="btn btn-default" title="删除" @click="removeElement([elementId])">
           <span class="glyphicon glyphicon-trash"></span>
         </div>
       </div>
       <div v-show="buttonGroup === 'position'" class="btn-group el-btn-group" role="group">
-        <div class="btn btn-success">X: {{elPositionInPage.left}} &nbsp Y: {{elPositionInPage.top}}</span></div>
+        <div class="btn btn-success">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</div>
       </div>
       <slot name="button-groups"></slot>
     </div>
-    <slot name="tools"></slot>
   </div>
 </template>
 
@@ -260,55 +260,55 @@ const getElementTop = (element) => {
 }
 
 .el-toolbar {
-  position:absolute;
-  height:auto;
-  padding:0;
-  z-index:90000;
-  margin-bottom:0;
+  position: absolute;
+  height: auto;
+  padding: 0;
+  z-index: 90000;
+  margin-bottom: 0;
 }
 
 .el-toolbar.top {
-  top:-43px;
+  top: -43px;
 }
 
 .el-toolbar.bottom {
-  bottom:-43px;
+  bottom: -43px;
 }
 
 .el-toolbar.left {
-  left:-1px;
+  left: -1px;
 }
 
 .el-toolbar.right {
-  right:-1px;
+  right: -1px;
 }
 
 .el-btn-group {
   white-space: nowrap;
-  font-size:0;
+  font-size: 0;
 }
 
-.el-btn-group .btn {
-  float:none;
+.el-btn-group > .btn, .el-btn-group > .btn-group{
+  float: none;
 }
 
 .el-overlay {
-  position:absolute;
-  width:100%;
-  height:100%;
-  z-index:101000;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 101000;
 }
 
 .is-dragging {
-  z-index:100000;
-  cursor:move;
+  z-index: 100000;
+  cursor: move;
 }
 
 .resizable-e {
-  position:absolute;
-  top:50%;
-  margin-top:-5px;
-  right:-12px;
+  position: absolute;
+  top: 50%;
+  margin-top: -5px;
+  right: -12px;
   width: 0;
   height: 0;
   border-width: 5px;
@@ -317,10 +317,10 @@ const getElementTop = (element) => {
 }
 
 .resizable-w {
-  position:absolute;
-  top:50%;
-  margin-top:-5px;
-  left:-12px;
+  position: absolute;
+  top: 50%;
+  margin-top: -5px;
+  left: -12px;
   width: 0;
   height: 0;
   border-width: 5px;
@@ -329,10 +329,10 @@ const getElementTop = (element) => {
 }
 
 .resizable-s {
-  position:absolute;
-  left:50%;
-  margin-left:-5px;
-  bottom:-12px;
+  position: absolute;
+  left: 50%;
+  margin-left: -5px;
+  bottom: -12px;
   width: 0;
   height: 0;
   border-width: 5px;
@@ -341,10 +341,10 @@ const getElementTop = (element) => {
 }
 
 .resizable-n{
-  position:absolute;
-  left:50%;
-  margin-left:-5px;
-  top:-12px;
+  position: absolute;
+  left: 50%;
+  margin-left: -5px;
+  top: -12px;
   width: 0;
   height: 0;
   border-width: 5px;

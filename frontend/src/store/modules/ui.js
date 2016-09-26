@@ -1,13 +1,15 @@
 import * as types from '../mutation-types'
-import { extend } from 'lodash'
+import { merge } from 'lodash'
 
 const state = {
   messageBox: {
-    show: false,
     onCancel: false,
     onConfirm: false,
     header: '',
     content: '',
+    inputAddon: '',
+    placeholder: '',
+    hint: '',
     width: '400px',
     type: 'warning'
   },
@@ -20,50 +22,48 @@ const state = {
     loading: 'loading',
     show: false,
     onSelect: false,
+    onCancel: false,
     images: []
-  }
+  },
+  messages: []
 }
 
 const mutations = {
   // ----------------------Message Box--------------------------
   [types.WARNING] (state, { msg }) {
-    state.messageBox = extend(state.messageBox, msg)
-    state.messageBox.type = 'warning'
-    state.messageBox.show = true
+    const message = merge({}, state.messageBox, msg)
+    message.type = 'warning'
+    state.messages.push(message)
   },
   [types.CONFIRM] (state, { msg }) {
-    state.messageBox = extend(state.messageBox, msg)
-    state.messageBox.type = 'confrim'
-    state.messageBox.show = true
+    const message = merge({}, state.messageBox, msg)
+    message.type = 'confrim'
+    state.messages.push(message)
   },
   [types.GET_INPUT] (state, { msg }) {
-    state.messageBox.type = 'input'
-    state.messageBox = extend(state.messageBox, msg)
-    state.messageBox.show = true
+    const message = merge({}, state.messageBox, msg)
+    message.type = 'input'
+    state.messages.push(message)
   },
-  [types.CLOSE_MESSAGE_BOX] (state) {
-    state.messageBox = {
-      show: false,
-      onCancel: false,
-      onConfirm: false,
-      header: '',
-      content: '',
-      width: '400px',
-      type: 'warning'
-    }
+  [types.NEXT_MESSAGE] (state) {
+    state.messages.shift()
   },
+
   // --------------------Image Library------------------------
-  [types.GET_IMAGE] (state, {onSelect}) {
+  [types.GET_IMAGE] (state, { onSelect, onCancel }) {
     state.imageLibrary.onSelect = onSelect
+    state.imageLibrary.onCancel = onCancel
     state.imageLibrary.show = true
   },
   [types.CLOSE_IMAGE_LIBRARY] (state) {
     state.imageLibrary.onSelect = false
+    state.imageLibrary.onCancel = false
     state.imageLibrary.show = false
   },
   [types.LOAD_IMAGES] (state, { images }) {
     state.imageLibrary.images = images
   },
+
   // --------------------Loading Status------------------------
   [types.LOADING] (state) {
     state.load.status = 'loading'

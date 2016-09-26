@@ -1,8 +1,8 @@
 import * as types from '../mutation-types'
 import imageAPI from '../../api/imageAPI'
 
-export const closeMessageBox = ({ commit }) => {
-  commit(types.CLOSE_MESSAGE_BOX)
+export const nextMessage = ({ commit }) => {
+  commit(types.NEXT_MESSAGE)
 }
 
 export const warning = ({ commit }, msg) => {
@@ -24,11 +24,11 @@ export const loadImages = ({ commit }, [projectId, folder]) => {
   })
 }
 
-export const getImage = ({ commit }, onSelect) => {
-  commit(types.GET_IMAGE, { onSelect })
+export const getImage = ({ commit }, [onSelect, onCancel = false]) => {
+  commit(types.GET_IMAGE, { onSelect, onCancel })
 }
 
-export const colseImageLibrary = ({ commit }) => {
+export const closeImageLibrary = ({ commit }) => {
   commit(types.CLOSE_IMAGE_LIBRARY)
 }
 

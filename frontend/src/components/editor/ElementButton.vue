@@ -1,9 +1,10 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
 import ElementCommon from './ElementCommon'
 import LinkEditor from './LinkEditor'
-import { merge } from 'lodash'
-import colorMixin from '../../mixins/colorMixin.js'
+import ButtonEditor from './ButtonEditor'
+import colorMixin from '../../mixins/colorMixin'
+import { mapGetters, mapActions } from 'vuex'
+import { merge, isEqual } from 'lodash'
 
 export default {
   name: 'element-button',
@@ -12,7 +13,8 @@ export default {
   mixins: [colorMixin],
   components: {
     ElementCommon,
-    LinkEditor
+    LinkEditor,
+    ButtonEditor
   },
   data () {
     return {
@@ -20,13 +22,8 @@ export default {
       buttonGroup: 'main',
       // 是否处于编辑状态
       editing: false,
-      // 是否被修改
-      changed: false,
       // 组件实例化时将传入的element参数复制到button中，以避免直接修改store中的状态
-      button: {
-        text: this.element.text,
-        props: merge({}, this.element.props)
-      },
+      buttonElement: merge({}, this.element),
       linkObj: merge({}, this.element.link),
       // 模拟css hover伪类效果
       hover: false,
@@ -40,10 +37,10 @@ export default {
     }),
     // 编辑状态不允许拖动
     draggable () {
-      return !this.editing && this.buttonGroup !== 'link' && this.draggableFromChild
+      return this.draggableFromChild
     },
     resizable () {
-      return (!this.editing && this.buttonGroup !== 'link' && this.workspace.activeElementId === this.elementId)
+      return (!this.editing && this.workspace.activeElementId === this.elementId)
     }
   },
   methods: {
@@ -51,10 +48,15 @@ export default {
       'modifyElement'
     ]),
     edit () {
-
+      this.editing = true
+      this.buttonGroup = 'edit'
     },
     editDone () {
-
+      this.editing = false
+      this.buttonGroup = 'main'
+      if (!isEqual(this.element, this.buttonElement)) {
+        this.modifyElement([this.elementId, this.buttonElement])
+      }
     },
     editLink () {
       this.buttonGroup = 'link'
@@ -73,45 +75,64 @@ export default {
     changeDraggable (val) {
       this.draggableFromChild = val
     }
+  },
+  watch: {
+    'workspace.activeElementId': function (val) {
+      if (val !== this.elementId && this.editing) this.editDone()
+    },
+    'element': function (val) {
+      this.buttonElement = merge({}, val)
+    }
   }
 }
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group="buttonGroup" :draggable="draggable" :resize="resize" :resizable="resizable" @change-button-group="changeButtonGroup" @change-draggable="changeDraggable">
+<div>
+  <element-common 
+    :element="element" 
+    :section-id="sectionId" 
+    :element-id="elementId" 
+    :button-group="buttonGroup" 
+    :draggable="draggable" 
+    :resize="resize" 
+    :resizable="resizable" 
+    @change-button-group="changeButtonGroup" 
+    @change-draggable="changeDraggable" 
+    @drag-start="editDone"
+  >
     <div slot="content" class="element-button"
       @dblclick="edit" 
       @mouseenter = "hover = true"
       @mouseleave = "hover = false"
       :style="[
         {
-          borderRadius: button.props.borderRadius,
-          fontSize: button.props.fontSize,
-          boxShadow: button.props.boxShadow,
-          fontWeight: button.props.fontWeight,
-          borderStyle: button.props.borderStyle,
-          backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),
-          borderColor:getColor(button.props.borderColor),
-          color:getColor(button.props.color),
+          borderRadius: buttonElement.props.borderRadius,
+          fontSize: buttonElement.props.fontSize,
+          boxShadow: buttonElement.props.boxShadow,
+          fontWeight: buttonElement.props.fontWeight,
+          borderStyle: buttonElement.props.borderStyle,
+          backgroundColor: hover ? getColor(buttonElement.props.hoverColor) : getColor(buttonElement.props.backgroundColor),
+          borderColor: getColor(buttonElement.props.borderColor),
+          color: getColor(buttonElement.props.color),
         }
       ]">
-      {{button.text}}
+      {{buttonElement.text}}
     </div>
     
     <template slot="main-buttons-extend">
-      <div class="btn btn-primary" title="编辑" @click="edit">编辑</div>
+      <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
       <div class="btn btn-default" title="链接" @click="editLink"><span class="glyphicon glyphicon-link"></span></div>
     </template>
     <template slot="button-groups">
       <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">
-        <div class="btn btn-success" @click="editDone"><span class="glyphicon glyphicon-ok"></span></div>
+        <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
       </div>
-      <link-editor v-show="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
-    </template>
-    <template slot="tools">
-      <!-- <button-edit :show.sync="editing" :button.sync="button"></button-edit> -->
+      <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
     </template>
   </element-common>
+  <button-editor :show="editing" v-model="buttonElement" @edit-done="editDone"></button-editor>
+</div>
 </template>
 
 <style>

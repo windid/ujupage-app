@@ -18,16 +18,75 @@ export default {
   computed: mapGetters({
     workspace: 'editorWorkspace',
     undoButton: 'undoButton',
-    redoButton: 'redoButton'
+    redoButton: 'redoButton',
+    saveStatus: 'saveStatus',
+    page: 'editingPage'
   }),
   methods: {
     ...mapActions({
       undo: 'undo',
       redo: 'redo',
       switchVersion: 'switchVersion',
-      switchVariation: 'switchVariation'
-    })
+      saveVariation: 'saveVariation',
+      confirm: 'confirm',
+      getInput: 'getInput',
+      warning: 'warning',
+      setURL: 'setURL',
+      publishPage: 'publishPage'
+    }),
+    publish () {
+      this.saveNotice()
+      if (!this.page.url) {
+        this.getInput({
+          header: '为您的页面选定一个URL地址',
+          inputAddon: 'http://www.juyepage.com/',
+          placeholder: '自定义url',
+          hint: '可由数字、英文字母组成，至少3位以上。',
+          onConfirm: (val) => {
+            if (val.length < 3) {
+              return '自定义url地址不能少于3位'
+            }
+            this.setURL([val, () => {
+              this.doPublish()
+            }, (error) => {
+              this.warning({
+                header: '发布失败',
+                content: error,
+                onConfirm: () => {
+                  this.publish()
+                }
+              })
+            }])
+          }
+        })
+      } else {
+        this.doPublish()
+      }
+    },
+    doPublish () {
+      this.publishPage(() => {
+        this.warning({
+          header: '恭喜！页面发布成功',
+          content: '点击确定将返回主面板',
+          onConfirm: () => {
+            this.$router.push('/')
+          }
+        })
+      })
+    },
+    saveNotice () {
+      if (!this.saveStatus) {
+        this.confirm({
+          header: '是否先保存？',
+          content: '您修改了页面，建议保存之后再发布。',
+          onConfirm: () => {
+            this.saveVariation()
+          }
+        })
+      }
+    }
   }
+
 }
 </script>
 
@@ -39,12 +98,14 @@ export default {
         <span class="glyphicon glyphicon-home"></span>
       </router-link>
     </div>
+
     <ab-test></ab-test>
+
     <div class="btn-group">
-      <div class="btn btn-default" :class="{active: workspace.version === 'pc'}" @click="switchVersion('pc')">
+      <div class="btn btn-default" :class="{ active: workspace.version === 'pc' }" @click="switchVersion('pc')">
         桌面版 <span class="glyphicon glyphicon-blackboard"></span>
       </div>
-      <div class="btn btn-default" :class="{active: workspace.version === 'mobile'}" @click="switchVersion('mobile')">
+      <div class="btn btn-default" :class="{ active: workspace.version === 'mobile' }" @click="switchVersion('mobile')">
         移动版 <span class="glyphicon glyphicon-phone"></span>
       </div>
     </div>
@@ -56,10 +117,10 @@ export default {
         </div>
       </div>
       <div class="btn-group">
-        <div class="btn btn-default" :class="{disabled: !undoButton}" @click="undo">
+        <div class="btn btn-default" :class="{ disabled: !undoButton }" @click="undo">
           <span class="glyphicon glyphicon-share-alt flipx"></span>
         </div>
-        <div class="btn btn-default" :class="{disabled: !redoButton}" @click="redo">
+        <div class="btn btn-default" :class="{ disabled: !redoButton }" @click="redo">
           <span class="glyphicon glyphicon-share-alt"></span>
         </div>
       </div>
@@ -68,9 +129,9 @@ export default {
 
       <div class="btn-group">
         <div class="btn btn-default" @click="showSettings = true">设置 <span class="glyphicon glyphicon-cog"></span></div>
-        <div class="btn btn-default">保存 <span class="glyphicon glyphicon-floppy-disk"></span></div>
+        <div class="btn btn-default" :class="{ disabled: saveStatus }" @click="saveVariation">保存 <span class="glyphicon glyphicon-floppy-disk"></span></div>
         <div class="btn btn-default">预览 <span class="glyphicon glyphicon-eye-open"></span></div>
-        <div class="btn btn-primary">发布 <span class="glyphicon glyphicon-send"></span></div>
+        <div class="btn btn-primary" @click="publish">发布 <span class="glyphicon glyphicon-send"></span></div>
       </div>
     </div>
     <transition name="fade">

@@ -12,10 +12,10 @@ export default {
     Vue.http.get(url).then(response => success(response.json()), response => error(response.json()))
   },
 
-  save (variation, success, error) {
-    const url = 'editor/page/variation/save?id=' + variation.id
+  save (variationId, content, success, error) {
+    const url = 'editor/page/variation/save?id=' + variationId
     const data = {
-      htmljson: variation.content
+      htmljson: content
     }
     Vue.http.post(url, data).then(response => success(response.json()), response => error(response.json()))
   }

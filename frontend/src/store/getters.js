@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash'
+
 export const allPages = state => state.pages.all
 export const allProjects = state => state.projects.all
 export const currentProject = state => state.projects.current
@@ -9,7 +11,8 @@ export const defaultPageGroup = state => state.pageGroups.default
 export const editingPageGroup = state => state.pageGroups.editing
 
 // ui
-export const messageBox = state => state.ui.messageBox
+export const message = state => (state.ui.messages[0] || {})
+export const showMessage = state => state.ui.messages.length > 0
 export const load = state => state.ui.load
 export const imageLibrary = state => state.ui.imageLibrary
 
@@ -48,3 +51,4 @@ export const elementsIndex = state => {
 
 export const undoButton = state => state.editor.history.index > 0
 export const redoButton = state => state.editor.history.states.length > state.editor.history.index + 1
+export const saveStatus = state => isEqual(state.editor.content, state.editor.history.saved)

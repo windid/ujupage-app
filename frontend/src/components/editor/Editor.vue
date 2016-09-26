@@ -13,13 +13,6 @@ export default {
   created () {
     this.$store.dispatch('pageInit', this.$route.params.pageId)
   }
-  // beforeRouteEnter (route, redirect, next) {
-  //   // console.log(this)
-  //   // this.$store.dispatch('pageInit', [ route.params.pageId, next ])
-  //   next(vm => {
-  //     console.log(vm)
-  //   })
-  // }
 }
 
 </script>
@@ -27,21 +20,40 @@ export default {
 <template>
   <div @mousedown="$store.dispatch('setActiveElementId', '')">
   	<editor-header></editor-header>
-    <div class="main-wrapper">
+    <div id="main-wrapper">
       <editor-toolbar></editor-toolbar>
       <editor-workspace></editor-workspace>
   </div>
 </template>
 
 <style>
-.main-wrapper {
+#main-wrapper {
   height: auto;
-  position:absolute;
-  bottom:0;
-  top:50px;
-  left:0;
-  right:0;
-  min-width:980px;
-  overflow:auto;
+  position: absolute;
+  bottom: 0;
+  top: 50px;
+  left: 0;
+  right: 0;
+  min-width: 980px;
+  overflow: auto;
+}
+
+.dropdown-menu-narrow{
+  min-width:52px;
+}
+
+.dropdown-menu-narrow li{
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  line-height: 32px;
+  cursor: pointer;
+}
+
+.dropdown-menu-narrow li:last-child{
+  border: 0;
+}
+
+.dropdown-menu-narrow li.selected, .dropdown-menu-narrow li:hover{
+  background-color:#eee;
 }
 </style>

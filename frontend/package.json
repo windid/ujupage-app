@@ -17,10 +17,11 @@
     "draggabilly": "^2.1.1",
     "jquery": "^1.12.3",
     "jquery-ui": "^1.12.0",
+    "moment": "^2.15.1",
     "nprogress": "^0.2.0",
-    "vue": "^2.0.0-rc.4",
-    "vue-resource": "^0.9.3",
-    "vue-router": "^2.0.0-rc.4",
+    "vue": "^2.0.0-rc.6",
+    "vue-resource": "^1.0.2",
+    "vue-router": "^2.0.0-rc.5",
     "vuex": "^2.0.0-rc.5"
   },
   "devDependencies": {
@@ -80,7 +81,7 @@
     "vue-html-loader": "^1.0.0",
     "vue-loader": "^9.4.0",
     "vue-style-loader": "^1.0.0",
-    "vue-template-compiler": "^2.0.0-rc.4",
+    "vue-template-compiler": "^2.0.0-rc.6",
     "webpack": "^1.12.2",
     "webpack-dev-middleware": "^1.4.0",
     "webpack-hot-middleware": "^2.6.0",

@@ -27,7 +27,8 @@ const state = {
   // 历史记录，用于撤销重做
   history: {
     states: [],
-    index: 0
+    index: 0,
+    saved: {}
   }
 }
 
@@ -36,7 +37,7 @@ const mutations = {
     state.page = merge({}, page)
   },
 
-  [types.LOAD_VARIATION] (state, { content }) {
+  [types.LOAD_VARIATION] (state, { variationId, content }) {
     const defaultContent = {
       settings: {
         seo: {
@@ -63,9 +64,15 @@ const mutations = {
       sections: [],
       elements: {}
     }
+    state.workspace.activeVariationId = variationId
     state.content = merge({}, defaultContent, content)
-    state.history.states = [merge({}, content)]
+    state.history.states = [merge({}, state.content)]
     state.history.index = 0
+    state.history.saved = merge({}, state.content)
+  },
+
+  [types.SAVE_VARIATION] (state) {
+    state.history.saved = merge({}, state.content)
   },
 
   // 保存历史记录
@@ -116,7 +123,7 @@ const mutations = {
 
   // 添加板块
   [types.ADD_SECTION] (state, { section }) {
-
+    state.content.sections.push(section)
   },
 
   // 移动板块
@@ -146,15 +153,13 @@ const mutations = {
 
   // 修改元素
   [types.MODIFY_ELEMENT] (state, { elementId, newElement }) {
-    console.log(newElement)
     Vue.set(state.content.elements, elementId, merge({}, newElement))
-    console.log(state.content.elements[elementId])
   },
 
   // 添加元素
-  [types.ADD_ELEMENT] (state, { sectionId, newElement }) {
+  [types.ADD_ELEMENT] (state, { sectionId, element }) {
     const elementId = randomChar(8)
-    Vue.set(state.content.elements, elementId, newElement)
+    Vue.set(state.content.elements, elementId, element)
 
     state.content.sections[sectionId]['elements']['pc'].push(elementId)
     state.content.sections[sectionId]['elements']['mobile'].push(elementId)
@@ -173,7 +178,6 @@ const mutations = {
       state.content.sections[sectionIds['mobile']]['elements']['mobile'].push(elementId)
     }
     state.workspace.activeElementId = elementId
-    console.log('I love TT')
   },
 
   [types.MOVE_ELEMENT] (state, { elementId, newElement, sectionId, newSectionId }) {
