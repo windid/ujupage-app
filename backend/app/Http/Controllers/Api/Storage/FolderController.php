@@ -163,16 +163,16 @@ class FolderController extends Controller {
             return $folder;
         }
                 
-        $mod_dirname = $request->get('mod_dirname', '');
-        $validator = validator(['mod_dirname' => $mod_dirname]
+        $dirname = $request->get('dirname', '');
+        $validator = validator(['dirname' => $dirname]
                 , [
-                    'mod_dirname' => 'required|not_in:默认|unique:storage_folders,dirname,null,id,project_id,'.$this->project->id
+                    'dirname' => 'required|not_in:默认|unique:storage_folders,dirname,null,id,project_id,'.$this->project->id
                     ]);
         if ($validator->fails()) {
             return $this->errorValidation($validator);
         }        
                 
-        $folder->dirname = $mod_dirname;
+        $folder->dirname = $dirname;
         $folder->save();
                 
         return $this->successCreated();
