@@ -325,6 +325,28 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
             Route::resource('pages.variations', 'VariationController');   
         });
         
+        Route::group(['namespace' => 'Report', 'prefix' => 'report'], function(){
+            
+            /**
+            * GET api/report/$page_id/gather 获取转化汇总
+            * @param int $page_id
+            * @param int $start_date
+            * @param int $end_date
+            * @return {
+            *  {
+            *      name 版本名称
+            *      page_id
+            *      variation_id
+            *      total_visitors 访客总数
+            *      total_conversions 转化总数
+            *      cv 转化率
+            *      quota 流量分配
+            *  }
+            * }
+            */            
+            Route::match(['get'], 'overview/{id}/gather', ['as' => '.gather', 'uses' => 'OverviewController@gather']);
+        });
+        
         Route::group(['namespace' => 'Storage', 'prefix' => 'storage'], function(){
             /**
              * GET api/storage/folder 获取所有目录
@@ -421,6 +443,8 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * @return StatusCode 204
              */
             Route::resource('image', 'ImageController'); //?folder_id=1            
-        });                
+        });            
+        
+        
     });
 });
