@@ -17,7 +17,7 @@ export default {
 
   variation: Vue.resource('pages/{pageId}/variations{/id}'),
 
-  image: Vue.resource('storage/image{/imageId}'),
+  image: Vue.resource('storage/image{/id}'),
 
-  imageFolder: Vue.resource('storage/folder{/folderId}')
+  imageFolder: Vue.resource('storage/folder{/id}')
 }

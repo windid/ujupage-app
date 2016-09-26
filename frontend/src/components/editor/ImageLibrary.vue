@@ -74,6 +74,20 @@ export default {
         }
       })
     },
+    renameFolder (folder) {
+      // const vm = this
+      this.getInput({
+        header: '请输入新文件夹名',
+        inputAddon: '<span class="glyphicon glyphicon-folder-close"></span>',
+        content: folder.dirname,
+        onConfirm (val) {
+          folder.dirname = val
+          API.imageFolder.update({ id: folder.id }, folder).then(response => {
+            console.log(response)
+          })
+        }
+      })
+    },
     uploadImage (e) {
       const files = e.target.files
       const data = new window.FormData()
@@ -160,8 +174,13 @@ export default {
         <div class="images-sidebar">
           <div class="list-group">
             <a v-for="(folder, index) in folders" class="list-group-item" href="javascript:;" :class="{ 'selected': folder === currentFolder }" @click="switchFolder(folder)">
-              <span class="glyphicon glyphicon-folder-close"></span> &nbsp; {{folder.dirname}}
-              <span class="badge">15</span>
+              &nbsp;
+              <span class="folder-name"><span class="glyphicon glyphicon-folder-close"></span> {{folder.dirname}}</span>
+              <span class="badge">{{folder.total_image}}</span>
+              <div class="btn-group">
+                <div class="btn btn-default" title="重命名" @click="renameFolder(folder)"><span class="glyphicon glyphicon-pencil"></span></div>
+                <div class="btn btn-danger" title="删除" @click="removeFolder(folder)"><span class="glyphicon glyphicon-trash"></span></div>
+              </div>
             </a>
           </div>
           <div class="btn btn-default" @click="addFolder">新建文件夹 + </div>
@@ -317,7 +336,9 @@ export default {
   margin-top:20px;
 }
 
-.list-group-item {
+.folder-name {
+  float: left;
+  max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -335,6 +356,17 @@ export default {
   background: #337ab7;
   width: 8px;
   height: 100%;
+}
+
+.list-group-item > .btn-group {
+  display: none;
+  position: absolute;
+  right: -40px;
+  top: 3px;
+}
+
+.list-group-item:hover > .btn-group {
+  display: block;
 }
 
 </style>
