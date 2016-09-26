@@ -1,25 +1,22 @@
 <template>
-  <div class="dropdown">
-    <div class="input-group" v-on:click="clickDatePicker">
-      <input class="datepicker form-control" v-model="currentDate"/>
-      <input v-model="dateStartInt" name="dateStartInt" id="dateStartInt" hidden="true" />
-      <input v-model="dateEndInt" name="dateEndInt" id="dateEndInt" hidden="true" />
-      <span class="input-group-btn">
-        <button class="btn btn-default"><i class="glyphicon" v-bind:class="{'glyphicon-menu-up': clicked, 'glyphicon-menu-down': !clicked}"></i></button>
-      </span>
+  <dropdown :show="show" @toggle="show=!show">
+    <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      <div>
+        <span>{{currentDate}}</span>
+         &nbsp; <span class="glyphicon" :class="show ? 'glyphicon-menu-up' : 'glyphicon-menu-down'"></span>
+      </div>
     </div>
-
-    <div class="datepicker-box" v-show="showDatePickerBox">
-      <div class="datepicker-select-area">
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(0)">今天</button>
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(1)">昨天</button>
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(7)">7日</button>
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(14)">14日</button>
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(30)">30日</button>
+    <div slot="dropdown-menu" class="dropdown-menu" :class="{'dropdown-menu-right':position === 'right'}">
+      <div class="datepicker-select-area btn-group">
+        <button type="button" class="btn btn-default" @click="quickSelect(0)">今天</button>
+        <button type="button" class="btn btn-default" @click="quickSelect(1)">昨天</button>
+        <button type="button" class="btn btn-default" @click="quickSelect(7)">最近7天</button>
+        <button type="button" class="btn btn-default" @click="quickSelect(14)">最近14天</button>
+        <button type="button" class="btn btn-default" @click="quickSelect(30)">最近30天</button>
       </div>
       <div class="datepicker-selectDates">
         <div class="ctrl ctrl-left" >
-          <a v-on:click="prevMonth()" class="btn btn-default glyphicon glyphicon-chevron-left"></a>
+          <a @click="prevMonth()" class="btn btn-default glyphicon glyphicon-chevron-left"></a>
         </div>
         <div class="datepicker-dates">
           <div v-for="dates in selectDates">
@@ -33,7 +30,7 @@
                 <li>五</li>
                 <li>六</li>
                 <template v-for="date in dates.dates">   
-                  <li v-if="canSelectDate(date)" v-on:click="selectDate($event, date.month + '-' + date.date, date.indexMonth, date.indexDate)" 
+                  <li v-if="canSelectDate(date)" @click="selectDate($event, date.month + '-' + date.date, date.indexMonth, date.indexDate)" 
                     class="active" 
                     :class="{'selected': date.selected}">
                       {{date.date ? date.date : "&nbsp;"}}
@@ -44,26 +41,30 @@
           </div>
         </div>
         <div class="ctrl ctrl-right">
-          <a v-on:click="nextMonth()" class="btn btn-default glyphicon glyphicon-chevron-right"></a>
+          <a @click="nextMonth()" class="btn btn-default glyphicon glyphicon-chevron-right"></a>
         </div>  
       </div>
       <div class="selected-dates-buttons">        
-        <button type="button" class="btn btn-primary btn-sm" v-on:click="dump()">确认</button>
-        <button type="button" class="btn btn-default btn-sm" v-on:click="cacnel()">取消</button>
+        <button type="button" class="btn btn-primary btn-sm" @click="dump()">确定</button>
+        <button type="button" class="btn btn-default btn-sm" @click="cacnel()">取消</button>
       </div>
     </div>
-  </div>
+  </dropdown>
 </template>
 
 <script>
 import moment from 'moment'
+import Dropdown from './Dropdown'
 import 'moment/locale/zh-cn'
 // import '../assets/css/bootstrap.min.css'
 
 export default {
+  components: {
+    Dropdown
+  },
   data () {
     return {
-      clicked: false,
+      show: false,
       year: moment().year(),
       month: moment().month() + 1,
       date: moment().date(),
@@ -86,7 +87,6 @@ export default {
     }
   },
   mounted () {
-    console.clear()
     if (this.limitStartDate !== 0) {
       this.limitStartDateInt = moment(this.limitStartDate).format('YYYYMMDD')
     }
@@ -94,7 +94,6 @@ export default {
       this.limitEndDateInt = moment(this.limitEndDate).format('YYYYMMDD')
     }
 
-    console.log(this.limitStartDateInt, this.limitEndDateInt)
     this.currentDate = moment().format(this.formatToDate)
     this.currentDateToInt = moment().format(this.formatToInt)
 
@@ -110,11 +109,9 @@ export default {
       default: function () {
         return '2200-01-01'
       }
-    }
-  },
-  computed: {
-    showDatePickerBox: function () {
-      return this.$data.clicked
+    },
+    position: {
+      default: 'left'
     }
   },
   watch: {
@@ -129,7 +126,7 @@ export default {
       }
     },
     clickDatePicker: function () {
-      this.$data.clicked = !this.$data.clicked
+      this.show = false
     },
     setMonths: function () {
       const selectDates = []
@@ -234,14 +231,14 @@ export default {
                               ' 至 ' + moment(this.selectedEndDate, this.formatToInt).format(this.formatToDate)
       }
 
-      this.$data.dateStartInt = this.selectedStartDate
-      this.$data.dateEndInt = this.selectedEndDate
-      this.$emit('input', '{startDate: ' + this.$data.dateStartInt + ', endDate: this. ' + this.$data.dateEndInt + '}')
+      this.dateStartInt = this.selectedStartDate
+      this.dateEndInt = this.selectedEndDate
+      this.$emit('input', '{startDate: ' + this.dateStartInt + ', endDate: this. ' + this.dateEndInt + '}')
 
       this.cacnel()
     },
     cacnel: function () {
-      this.clicked = false
+      this.show = false
       this.setMonths()
 
       this.selectedStartDate = 0
@@ -265,8 +262,7 @@ export default {
   box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .datepicker-select-area {
-  padding: 5px 5px;
-  border-bottom: 1px solid rgba(0,0,0, .15);
+  margin: 5px;
 }
 .datepicker-selectDates {
 }

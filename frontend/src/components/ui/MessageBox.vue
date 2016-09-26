@@ -62,7 +62,7 @@ export default {
         <div class="msg-body container-fluid">
           <template v-if="msg.type === 'input'">
             <div class="input-group">
-              <div class="input-group-addon">{{msg.inputAddon}}</div>
+              <div class="input-group-addon" v-html="msg.inputAddon"></div>
               <input ref="msgInput" type="text" :placeholder="msg.placeholder || msg.header" :value="msg.content" class="form-control">
             </div>
             

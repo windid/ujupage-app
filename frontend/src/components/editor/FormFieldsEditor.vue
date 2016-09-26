@@ -177,7 +177,7 @@ export default {
 
 .form-field-label {
   float:left;
-  max-width: 100px;
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

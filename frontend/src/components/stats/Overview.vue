@@ -28,7 +28,7 @@ export default {
             <td>版本 A</td>
             <td><strong>18.2%</strong></td>
             <td>345245</td>
-            <td>4466</td>
+            <td>44656</td>
             <td>
               <div class="input-group">
                 <input type="number" class="form-control">

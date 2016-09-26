@@ -22,7 +22,7 @@ export default {
         <div class="btn btn-default">桌面</div>
         <div class="btn btn-default">移动</div>
       </div>
-      <date-picker v-model="date" limit-start-date="2016/05/07" limit-end-date="2016/09/01" style="float: right"></date-picker>
+      <date-picker v-model="date" limit-start-date="2016/05/07" limit-end-date="2016/09/01" position="right"></date-picker>
     </div>
   </div>
 </template>
