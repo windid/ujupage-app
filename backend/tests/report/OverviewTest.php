@@ -10,12 +10,11 @@ class OverviewTest extends TestCase {
         parent::setUp();
         $this->be(User::where('email', 'heyufa@ujumedia.com')->first());
                 
-        $this->page_id = 53;
+        $this->page_id = 34;
     }        
         
     public function testGather() {
-        $response = $this->call('GET', '/report/' . $this->page_id . '/gather');
-        $this->dump();
+        $response = $this->call('GET', '/report/overview/' . $this->page_id . '/gather');
         $this->assertJson($response->content());     
         
     }
