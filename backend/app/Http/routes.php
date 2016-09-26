@@ -325,6 +325,38 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
             Route::resource('pages.variations', 'VariationController');   
         });
         
+        Route::group(['namespace' => 'Report', 'prefix' => 'report'], function(){
+            
+            /**
+            * 获取转化汇总
+            * @param int $page_id
+            * @param int $start_date
+            * @param int $end_date
+            * @return {
+            *  variations: {
+            *      {
+            *        name 版本名称
+            *        page_id
+            *        variation_id
+            *        total_visitors 访客总数
+            *        total_conversions 转化总数
+            *        cv 转化率
+            *        quota 流量分配  
+            *      }
+            *  }
+            *  gather_date: {
+            *    {
+            *      report_date 日期
+            *      total_visitors 访客总数
+            *      total_conversions 转化数
+            *      cv 转化率
+            *    }
+            *  }
+            * }
+            */            
+            Route::match(['get'], 'overview/{page_id}/gather', ['as' => '.overview.gather', 'uses' => 'OverviewController@gather']);
+        });
+        
         Route::group(['namespace' => 'Storage', 'prefix' => 'storage'], function(){
             /**
              * GET api/storage/folder 获取所有目录
@@ -335,6 +367,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              *    id 目录ID
              *    dirname 目录名称
              *    is_default 是否默认目录
+             *    total_image 图片数量
              *  }
              * }
              * 
@@ -421,6 +454,8 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * @return StatusCode 204
              */
             Route::resource('image', 'ImageController'); //?folder_id=1            
-        });                
+        });            
+        
+        
     });
 });

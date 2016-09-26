@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Storage\StorageFolder;
+use App\Models\Storage\StorageImage;
 use App\Models\Project\Project;
 
 class FolderController extends Controller {
@@ -13,11 +14,13 @@ class FolderController extends Controller {
     
     public $folder;    
     public $project;    
+    public $image;
     
     public function __construct() {
         $this->user = auth()->user();
         
-        $this->folder = new StorageFolder();        
+        $this->image = new StorageImage;
+        $this->folder = new StorageFolder;        
         $this->project = new Project;
     }
     
@@ -85,8 +88,18 @@ class FolderController extends Controller {
             }
             $dirs = $this->folder->get();
         }
+        $dirs = $dirs->toArray();
+        if ($dirs) {
+            foreach ($dirs as $k => $v) {
+                $this->image = $this->image->where('folder_id', $v['id'])->where('project_id', $project_id);     
+                if ($project_id == 0) {
+                    $this->image = $this->image->where('user_id', $this->user->id);
+                }
+                $dirs[$k]['total_image'] = $this->image->count();
+            }
+        }
         
-        return $this->successOK($dirs->toArray());
+        return $this->successOK($dirs);
     }
     
     /**
