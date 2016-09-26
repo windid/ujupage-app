@@ -367,6 +367,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              *    id 目录ID
              *    dirname 目录名称
              *    is_default 是否默认目录
+             *    total_image 图片数量
              *  }
              * }
              * 
