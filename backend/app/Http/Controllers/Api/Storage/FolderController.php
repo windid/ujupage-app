@@ -59,7 +59,7 @@ class FolderController extends Controller {
     public function index() {
         $project_id = request('project_id', 0);
         if ($project_id > 0) {
-            $project = $this->initP($project_id);  
+            $project = $this->initP($project_id);
             if (get_class($project) == 'Illuminate\Http\JsonResponse') {
                 return $project;
             }
@@ -91,14 +91,14 @@ class FolderController extends Controller {
         $dirs = $dirs->toArray();
         if ($dirs) {
             foreach ($dirs as $k => $v) {
-                $this->image = $this->image->where('folder_id', $v['id'])->where('project_id', $project_id);     
+                $image = $this->image;
+                $image = $image->where('folder_id', $v['id'])->where('project_id', $project_id);     
                 if ($project_id == 0) {
-                    $this->image = $this->image->where('user_id', $this->user->id);
+                    $image = $image->where('user_id', $this->user->id);
                 }
-                $dirs[$k]['total_image'] = $this->image->count();
+                $dirs[$k]['total_image'] = $image->count();
             }
         }
-        
         return $this->successOK($dirs);
     }
     
