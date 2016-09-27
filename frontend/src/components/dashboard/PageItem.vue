@@ -82,7 +82,7 @@ export default {
         <div class="btn btn-default btn-sm" @click="$router.push('/leads/' + pageItem.id)">
           商机 <span class="glyphicon glyphicon-user"></span>
         </div>
-        <div class="btn btn-default btn-sm" @click="$router.push('/stats/' + pageItem.id)">
+        <div class="btn btn-default btn-sm" @click="$router.push('/stats/' + pageItem.id + '/overview')">
           分析 <span class="glyphicon glyphicon-signal"></span>
         </div>
         <dropdown :show="showMenu" dir="up" @toggle="showMenu = !showMenu">

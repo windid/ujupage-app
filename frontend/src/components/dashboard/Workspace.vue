@@ -73,7 +73,7 @@ export default {
 }
 
 .page-list-item {
-  transition: all .5s;
+  transition: all .4s;
   display: inline-block;
 }
 

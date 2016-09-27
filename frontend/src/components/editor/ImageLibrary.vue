@@ -1,10 +1,17 @@
 <script>
+import Vue from 'vue'
 import Modal from '../ui/Modal'
 import imageAPI from '../../api/imageAPI'
 import API from '../../API'
 import { mapGetters, mapActions } from 'vuex'
 import { merge } from 'lodash'
 // import eventHandler from '../../utils/eventHandler'
+
+Vue.filter('imageThumbs', function (value) {
+  const arr = value.split('.')
+  const ext = arr[arr.length - 1]
+  return value + '@140w_140h.' + ext
+})
 
 export default {
   components: {
@@ -18,7 +25,8 @@ export default {
       images: [],
       folders: [],
       viewingImage: {},
-      currentFolder: {}
+      currentFolder: {},
+      uploading: []
     }
   },
   computed: {
@@ -34,8 +42,14 @@ export default {
     ...mapActions({
       closeImageLibrary: 'closeImageLibrary',
       confirm: 'confirm',
-      getInput: 'getInput'
+      getInput: 'getInput',
+      warning: 'warning'
     }),
+    getThumbs (imageSrc) {
+      const arr = imageSrc.split('.')
+      const ext = arr[arr.length - 1]
+      return imageSrc + '@140w_140h.' + ext
+    },
     close () {
       this.imageLibrary.onCancel && this.imageLibrary.onCancel()
       this.closeImageLibrary()
@@ -51,6 +65,8 @@ export default {
     },
     switchFolder (folder) {
       this.currentFolder = folder
+      this.viewingImage = {}
+      this.currentImageId = null
       API.image.get({ folder_id: folder.id, page: 1, page_size: 9999 }).then(response => {
         this.images = response.data.images
         this.mainStatus = 'imageList'
@@ -69,39 +85,64 @@ export default {
             project_id: vm.projectId
           }
           API.imageFolder.save({}, data).then(response => {
-            vm.folders.push(response.data)
+            const folder = response.data
+            folder.total_image = 0
+            vm.folders.push(folder)
           })
         }
       })
     },
     renameFolder (folder) {
-      // const vm = this
+      const vm = this
       this.getInput({
         header: '请输入新文件夹名',
         inputAddon: '<span class="glyphicon glyphicon-folder-close"></span>',
         content: folder.dirname,
         onConfirm (val) {
-          folder.dirname = val
-          API.imageFolder.update({ id: folder.id }, folder).then(response => {
-            console.log(response)
+          API.imageFolder.update({ id: folder.id }, { dirname: val }).then(response => {
+            folder.dirname = val
+          }, response => {
+            if (response.status === 422) {
+              vm.warning({
+                content: '文件夹名称不合法'
+              })
+            }
+          })
+        }
+      })
+    },
+    removeFolder (folder) {
+      const vm = this
+      this.confirm({
+        header: '确定删除？',
+        content: '文件夹「' + folder.dirname + '」内的图片也将同时被全部删除。',
+        onConfirm () {
+          API.imageFolder.delete({ id: folder.id }).then(response => {
+            vm.folders.splice(vm.folders.indexOf(folder), 1)
+            vm.images = []
           })
         }
       })
     },
     uploadImage (e) {
       const files = e.target.files
+      if (files.length === 0) return
       const data = new window.FormData()
-      const folder = '默认文件夹'
       data.append('file', files[0])
-      data.append('folder', folder)
-      data.append('project_id', this.page.projectId)
+      data.append('folder_id', this.currentFolder.id)
+      data.append('project_id', this.projectId)
+      this.uploading.push('1')
       API.image.save({}, data).then(response => {
-        console.log(response.data)
+        this.uploading.pop()
+        this.images.push(response.data)
+        this.currentFolder.total_image ++
+      }, response => {
+        this.warning({
+          header: '上传失败',
+          content: '图片格式不对或超过了10M'
+        })
+        this.uploading.pop()
       })
-      // imageAPI.upload(this.page.projectId, data, image => {
-      //   this.images.push(image)
-      //   this.mainStatus = 'imageList'
-      // })
     },
     pickImage (index) {
       if (index !== null && this.images[index]) {
@@ -141,13 +182,6 @@ export default {
   watch: {
     'imageLibrary.show': function (show) {
       if (show) {
-        // this.mainStatus = 'loading'
-        // API.imageFolder.get({ project_id: 9 }).then(response => {
-        //   this.folders = response.data
-        //   console.log(response)
-        //   this.currentFolder = this.folders.find(f => f.is_default === 1)
-        //   this.loadImages(this.currentFolder.id)
-        // })
         this.switchTab(this.currentTab)
       }
     }
@@ -157,7 +191,7 @@ export default {
 </script>
 
 <template>
-  <modal :show="imageLibrary.show" @close="close" width="880px" height="600px">
+  <modal :show="imageLibrary.show" @close="close" width="860px" height="600px">
     <div slot="header">
       <ul class="nav nav-pills">
         <li :class="{active: currentTab === 'project'}" @click="switchTab('project')"><a href="javascript:;">项目图片库</a></li>
@@ -175,9 +209,9 @@ export default {
           <div class="list-group">
             <a v-for="(folder, index) in folders" class="list-group-item" href="javascript:;" :class="{ 'selected': folder === currentFolder }" @click="switchFolder(folder)">
               &nbsp;
-              <span class="folder-name"><span class="glyphicon glyphicon-folder-close"></span> {{folder.dirname}}</span>
+              <span class="folder-name"><span :class="'glyphicon glyphicon-folder-' + (folder === currentFolder ? 'open' : 'close')"></span> &nbsp; {{folder.dirname}}</span>
               <span class="badge">{{folder.total_image}}</span>
-              <div class="btn-group">
+              <div class="btn-group" v-if="folder.is_default === 0">
                 <div class="btn btn-default" title="重命名" @click="renameFolder(folder)"><span class="glyphicon glyphicon-pencil"></span></div>
                 <div class="btn btn-danger" title="删除" @click="removeFolder(folder)"><span class="glyphicon glyphicon-trash"></span></div>
               </div>
@@ -186,14 +220,20 @@ export default {
           <div class="btn btn-default" @click="addFolder">新建文件夹 + </div>
         </div>
         <div class="images-content">
-          <div v-for="(image, index) in images" class="image-item" v-bind:class="{selected: currentImageId === index}" @click="selectImage(index)" @dblclick="pickImage(index)">
-            <img :src="image.url+'@140w_140h'" :alt="image.alt" style="max-width:140px;max-height:140px">
+          <div v-for="(image, index) in images" class="image-item" v-bind:class="{selected: currentImageId === index}" @click="selectImage(index)" @dblclick="pickImage(index)" :key="index">
+            <img :src="getThumbs(image.url)" :alt="image.alt" style="max-width:140px;max-height:140px">
             <div v-show="currentImageId === index" class="image-item-operation">
               <div class="btn btn-primary btn-sm fl" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
               <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div>
             </div>
           </div>
-          <div v-if="images.length === 0">这个文件夹中暂时还没有图片。</div>
+          <div v-for="item in uploading" class="image-uploading" :key="'uploading' + item">
+            <div class="loading">
+              <div class="loading-icon small"></div>
+            </div>
+            <div>图片上传中</div>
+          </div>
+          <div v-if="images.length === 0" key="empty">这个文件夹中暂时还没有图片。</div>
         </div>
       </div>
 
@@ -220,7 +260,7 @@ export default {
           </form>
         </div>
         <div class="images-content">
-          <img :src="viewingImage.url" style="max-width:540px;">
+          <img :src="viewingImage.url" style="max-width:610px;">
         </div>
       </div>
     </div>
@@ -268,25 +308,23 @@ export default {
 }
 
 .images-content{
-  left: 10px;
-  width: 540px;
-  height: 100%;
   position: relative;
-  overflow: auto;
+  margin-left: 210px;
+  width: calc(100% - 210px);
 }
 
-.image-item{
+.image-item, .image-uploading{
   position: relative;
   float:left;
   width:146px;
   padding: 3px;
-  margin: 2px;
+  margin: 3px;
   height:146px;
   text-align: center;
   cursor: pointer;
 }
 
-.image-item:hover{
+.image-item:hover, .image-uploading{
   outline: 1px solid #ccc;
   background-color: #fff;
 }
