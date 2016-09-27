@@ -8,7 +8,7 @@ class FolderTest extends TestCase {
     
     protected function setUp() {
         parent::setUp();
-        $this->be(User::where('email', 'heyufa@ujumedia.com')->first());
+        $this->be(User::where('email', 'xiewendong@ujumedia.com')->first());
                 
         $response = $this->call('GET', '/project');        
         $this->project = json_decode($response->content())[0];
@@ -17,9 +17,9 @@ class FolderTest extends TestCase {
    
     public function testPersonalIndex() {
         $response = $this->call('GET', '/storage/folder', [
-            'project_id' => 0
+            'project_id' => 9
         ]);
-       // $this->dump();
+       $this->dump();
     }
     
     public function testPersonalStore() {
