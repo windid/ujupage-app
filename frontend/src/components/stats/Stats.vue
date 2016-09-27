@@ -14,12 +14,7 @@ export default {
   },
   data () {
     return {
-      modules: ['overview', 'conversion']
-    }
-  },
-  computed: {
-    module () {
-      return this.modules.indexOf(this.$route.params.module) > 0 ? this.$route.params.module : 'overview'
+
     }
   }
 }
@@ -30,7 +25,7 @@ export default {
   <div>
     <navbar></navbar>
     <transition name="fade" mode="out-in">
-      <component :is="module" class="workspace"></component>
+      <component :is="$route.params.module" class="workspace"></component>
     </transition>
   </div>
 </template>

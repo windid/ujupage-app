@@ -7,9 +7,9 @@ export default {
 <template>
   <div class="navbar">
     <div class="list-group">
-      <router-link class="list-group-item" active-class="active" to="/stats/19/overview">概览</router-link>
-      <router-link class="list-group-item" active-class="active" to="/stats/19/conversion">转化详情</router-link>
-      <router-link class="list-group-item" active-class="active" to="/stats/19/source">流量来源</router-link>
+      <router-link class="list-group-item" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'overview'}, query: $route.query }">概览</router-link>
+      <router-link class="list-group-item" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'conversion'}, query: $route.query }">转化详情</router-link>
+      <router-link class="list-group-item" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'source'}, query: $route.query }">流量来源</router-link>
     </div>
   </div>
 </template>

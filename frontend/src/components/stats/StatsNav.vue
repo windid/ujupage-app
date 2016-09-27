@@ -7,7 +7,9 @@ export default {
   },
   data () {
     return {
-      date: ''
+      date: '',
+      version: 'all',
+      query: this.$route.query
     }
   }
 }
@@ -18,11 +20,12 @@ export default {
     <h1>{{title}}</h1>
     <div class="data-filter">
       <div class="btn-group">
-        <div class="btn btn-default">全部</div>
-        <div class="btn btn-default">桌面</div>
-        <div class="btn btn-default">移动</div>
+        <div class="btn btn-default" :class="{active: version === 'all'}" @click="version = 'all'">全部</div>
+        <div class="btn btn-default" :class="{active: version === 'pc'}" @click="version = 'pc'">桌面</div>
+        <div class="btn btn-default" :class="{active: version === 'mobile'}" @click="version = 'mobile'">移动</div>
       </div>
-      <date-picker v-model="date" limit-start-date="2016/05/07" limit-end-date="2016/09/01" position="right"></date-picker>
+      <date-picker v-model="date" limit-start-date="2016-05-07" limit-end-date="2016-09-01" position="right"></date-picker>
+      {{date}}
     </div>
   </div>
 </template>

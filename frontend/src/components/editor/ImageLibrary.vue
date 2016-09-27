@@ -1,11 +1,9 @@
 <script>
 import Vue from 'vue'
 import Modal from '../ui/Modal'
-import imageAPI from '../../api/imageAPI'
 import API from '../../API'
 import { mapGetters, mapActions } from 'vuex'
 import { merge } from 'lodash'
-// import eventHandler from '../../utils/eventHandler'
 
 Vue.filter('imageThumbs', function (value) {
   const arr = value.split('.')
@@ -21,7 +19,7 @@ export default {
     return {
       currentTab: 'project',
       mainStatus: 'loading',
-      currentImageId: null,
+      currentImageIndex: null,
       images: [],
       folders: [],
       viewingImage: {},
@@ -66,7 +64,7 @@ export default {
     switchFolder (folder) {
       this.currentFolder = folder
       this.viewingImage = {}
-      this.currentImageId = null
+      this.currentImageIndex = null
       API.image.get({ folder_id: folder.id, page: 1, page_size: 9999 }).then(response => {
         this.images = response.data.images
         this.mainStatus = 'imageList'
@@ -151,29 +149,37 @@ export default {
       }
     },
     selectImage (index) {
-      this.currentImageId = index
+      this.currentImageIndex = index
     },
     viewImage (index) {
       this.viewingImage = merge({}, this.images[index])
       this.mainStatus = 'view'
     },
     modifyImage (e) {
-      var image = new window.FormData(e.target)
-      imageAPI.modify(image, data => {
-        this.images[this.currentImageId] = merge(this.images[this.currentImageId], image)
+      const data = {
+        folder_id: this.currentFolder.id,
+        alt: e.target.alt.value,
+        name: e.target.name.value
+      }
+      API.image.update({ id: this.viewingImage.id }, data).then(response => {
+        this.images[this.currentImageIndex] = merge(this.images[this.currentImageIndex], data)
       })
+      // imageAPI.modify(image, data => {
+      //   this.images[this.currentImageIndex] = merge(this.images[this.currentImageIndex], image)
+      // })
     },
     removeImage () {
       this.confirm({
         header: '确定删除？',
         content: '图片删除后将不可恢复。',
         onConfirm: () => {
-          const imageId = this.images[this.currentImageId].id
-          imageAPI.remove(this.page.projectId, imageId, data => {
-            const tmpIndex = this.currentImageId
-            this.currentImageId = null
+          const imageId = this.images[this.currentImageIndex].id
+          API.image.delete({ id: imageId }).then(response => {
+            const tmpIndex = this.currentImageIndex
+            this.currentImageIndex = null
             this.images.splice(tmpIndex, 1)
             this.mainStatus = 'imageList'
+            this.currentFolder.total_image --
           })
         }
       })
@@ -220,9 +226,9 @@ export default {
           <div class="btn btn-default" @click="addFolder">新建文件夹 + </div>
         </div>
         <div class="images-content">
-          <div v-for="(image, index) in images" class="image-item" v-bind:class="{selected: currentImageId === index}" @click="selectImage(index)" @dblclick="pickImage(index)" :key="index">
+          <div v-for="(image, index) in images" class="image-item" v-bind:class="{selected: currentImageIndex === index}" @click="selectImage(index)" @dblclick="pickImage(index)" :key="index">
             <img :src="getThumbs(image.url)" :alt="image.alt" style="max-width:140px;max-height:140px">
-            <div v-show="currentImageId === index" class="image-item-operation">
+            <div v-show="currentImageIndex === index" class="image-item-operation">
               <div class="btn btn-primary btn-sm fl" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
               <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div>
             </div>
@@ -251,9 +257,6 @@ export default {
               <p><input type="text" class="form-control" name="alt" v-model="viewingImage.alt"></p>
             </div>
             <div class="modify-image-input">
-              <input type="hidden" name="project_id" :value="page.projectId">
-              <input type="hidden" name="id" :value="viewingImage.id">
-              <input type="hidden" name="folder" value="default">
               <button type="submit" class="btn btn-success">保存修改</button> &nbsp; 
               <div class="btn btn-danger" @click="removeImage">删除图片</div>
             </div>
@@ -284,9 +287,9 @@ export default {
           </div>
         </div>
       </div> -->
-      <span v-if="currentImageId !== null">
-        名称: {{images[currentImageId].name}} &nbsp;
-        尺寸: {{images[currentImageId].width}} X {{images[currentImageId].height}} &nbsp;
+      <span v-if="currentImageIndex !== null">
+        名称: {{images[currentImageIndex].name}} &nbsp;
+        尺寸: {{images[currentImageIndex].width}} X {{images[currentImageIndex].height}} &nbsp;
       </span> 
     </div>
   </modal>

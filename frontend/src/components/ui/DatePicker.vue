@@ -233,7 +233,7 @@ export default {
 
       this.dateStartInt = this.selectedStartDate
       this.dateEndInt = this.selectedEndDate
-      this.$emit('input', '{startDate: ' + this.dateStartInt + ', endDate: this. ' + this.dateEndInt + '}')
+      this.$emit('input', '{startDate: ' + this.dateStartInt + ', endDate: ' + this.dateEndInt + '}')
 
       this.cacnel()
     },

@@ -22,8 +22,7 @@ const router = new VueRouter({
       children: [
         { path: '', name: 'dashboard', component: Dashboard },
         { path: '/account', name: 'account', component: Account },
-        { path: '/stats/:pageId', component: Stats },
-        { path: '/stats/:pageId/:module', component: Stats }
+        { path: '/stats/:pageId/:module', name: 'stats', component: Stats }
       ]
     }
   ]
