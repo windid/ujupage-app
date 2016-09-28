@@ -354,7 +354,8 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
             *  }
             * }
             */            
-            Route::match(['get'], 'overview/{page_id}/gather', ['as' => '.overview.gather', 'uses' => 'OverviewController@gather']);
+            // Route::match(['get'], 'overview/{page_id}/gather', ['as' => '.overview.gather', 'uses' => 'OverviewController@gather']);
+            Route::resource('overview', 'OverviewController');
         });
         
         Route::group(['namespace' => 'Storage', 'prefix' => 'storage'], function(){

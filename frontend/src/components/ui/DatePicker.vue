@@ -6,13 +6,12 @@
          &nbsp; <span class="glyphicon" :class="show ? 'glyphicon-menu-up' : 'glyphicon-menu-down'"></span>
       </div>
     </div>
-    <div slot="dropdown-menu" class="dropdown-menu" :class="{'dropdown-menu-right':position === 'right'}">
+    <div slot="dropdown-menu" class="dropdown-menu datepicker-box" :class="{'dropdown-menu-right':position === 'right'}">
       <div class="datepicker-select-area btn-group">
-        <button type="button" class="btn btn-default" @click="quickSelect(0)">今天</button>
-        <button type="button" class="btn btn-default" @click="quickSelect(1)">昨天</button>
-        <button type="button" class="btn btn-default" @click="quickSelect(7)">最近7天</button>
-        <button type="button" class="btn btn-default" @click="quickSelect(14)">最近14天</button>
-        <button type="button" class="btn btn-default" @click="quickSelect(30)">最近30天</button>
+        <div class="btn btn-default" :class="{active: activeDateRange === 0}" @click="quickSelect(0)">今天</div>
+        <div class="btn btn-default" :class="{active: activeDateRange === 1}" @click="quickSelect(1)">昨天</div>
+        <div class="btn btn-default" :class="{active: activeDateRange === 7}" @click="quickSelect(7)">最近7天</div>
+        <div class="btn btn-default" :class="{active: activeDateRange === 30}" @click="quickSelect(30)">最近30天</div>
       </div>
       <div class="datepicker-selectDates">
         <div class="ctrl ctrl-left" >
@@ -35,18 +34,18 @@
                     :class="{'selected': date.selected}">
                       {{date.date ? date.date : "&nbsp;"}}
                   </li>
-                  <li v-else>{{date.date ? date.date : "&nbsp;"}}</li>
+                  <li v-if="!canSelectDate(date)">{{date.date ? date.date : "&nbsp;"}}</li>
                 </template>
             </ul>
           </div>
         </div>
         <div class="ctrl ctrl-right">
           <a @click="nextMonth()" class="btn btn-default glyphicon glyphicon-chevron-right"></a>
-        </div>  
+        </div>
       </div>
-      <div class="selected-dates-buttons">        
+      <div class="selected-dates-buttons">
         <button type="button" class="btn btn-primary btn-sm" @click="dump()">确定</button>
-        <button type="button" class="btn btn-default btn-sm" @click="cacnel()">取消</button>
+        <button type="button" class="btn btn-default btn-sm" @click="cancel()">取消</button>
       </div>
     </div>
   </dropdown>
@@ -62,43 +61,6 @@ export default {
   components: {
     Dropdown
   },
-  data () {
-    return {
-      show: false,
-      year: moment().year(),
-      month: moment().month() + 1,
-      date: moment().date(),
-      formatToDate: 'YYYY年MM月DD日',
-      formatToInt: 'YYYYMMDD',
-      currentDate: '',
-      currentDateToInt: 0,
-
-      selectLastMonth: moment().format('YYYY-MM'),
-      selectDates: [],
-
-      selectedStartDate: 0,
-      selectedEndDate: 0,
-
-      dateStartInt: 0,
-      dateEndInt: 0,
-
-      limitStartDateInt: 0,
-      limitEndDateInt: 0
-    }
-  },
-  mounted () {
-    if (this.limitStartDate !== 0) {
-      this.limitStartDateInt = moment(this.limitStartDate).format('YYYYMMDD')
-    }
-    if (this.limitEndDate !== 0) {
-      this.limitEndDateInt = moment(this.limitEndDate).format('YYYYMMDD')
-    }
-
-    this.currentDate = moment().format(this.formatToDate)
-    this.currentDateToInt = moment().format(this.formatToInt)
-
-    this.setMonths()
-  },
   props: {
     limitStartDate: {
       default: function () {
@@ -112,10 +74,70 @@ export default {
     },
     position: {
       default: 'left'
+    },
+    value: {
+      require: true,
+      type: Object
+    },
+    dateFormat: {
+      default: 'YYYY-MM-DD'
     }
   },
+  data () {
+    return {
+      show: false,
+      year: moment().year(),
+      month: moment().month() + 1,
+      date: moment().date(),
+      formatToInt: 'YYYYMMDD',
+      currentDateToInt: 0,
+
+      selectLastMonth: moment().format('YYYY-MM'),
+      selectDates: [],
+
+      startDate: this.value.startDate || moment().format(this.dateFormat),
+      endDate: this.value.endDate || moment().format(this.dateFormat),
+
+      selectedStartDate: 0,
+      selectedEndDate: 0,
+
+      limitStartDateInt: 0,
+      limitEndDateInt: 0
+    }
+  },
+  computed: {
+    currentDate () {
+      if (this.startDate === this.endDate) {
+        return this.startDate
+      } else {
+        return this.startDate + ' 至 ' + this.endDate
+      }
+    },
+    activeDateRange () {
+      if (this.startDate === this.endDate && this.startDate === moment().format(this.dateFormat)) {
+        return 0
+      } else if (this.endDate === moment().add(-1, 'days').format(this.dateFormat)) {
+        return moment(this.endDate, this.dateFormat).diff(moment(this.startDate, this.dateFormat), 'days') + 1
+      }
+    }
+  },
+  mounted () {
+    if (this.limitStartDate !== 0) {
+      this.limitStartDateInt = moment(this.limitStartDate).format('YYYYMMDD')
+    }
+    if (this.limitEndDate !== 0) {
+      this.limitEndDateInt = moment(this.limitEndDate).format('YYYYMMDD')
+    }
+
+    this.currentDateToInt = moment().format(this.formatToInt)
+
+    this.setMonths()
+  },
   watch: {
-    'selectLastMonth': function () { this.setMonths() }
+    'selectLastMonth': function () { this.setMonths() },
+    'show': function (val) {
+      if (!val) this.cancel()
+    }
   },
   methods: {
     canSelectDate: function (date) {
@@ -124,9 +146,6 @@ export default {
       } else {
         return false
       }
-    },
-    clickDatePicker: function () {
-      this.show = false
     },
     setMonths: function () {
       const selectDates = []
@@ -176,18 +195,11 @@ export default {
     },
     quickSelect: function (dayCounts) {
       if (dayCounts === 0) {
-        this.selectedStartDate = this.currentDateToInt
-        this.selectedEndDate = this.currentDateToInt
-        this.currentDate = moment(this.currentDateToInt, this.formatToInt).format(this.formatToDate)
+        this.selectedStartDate = moment().format(this.formatToInt)
+        this.selectedEndDate = moment().format(this.formatToInt)
       } else {
-        this.selectedStartDate = moment(this.currentDateToInt, this.formatToInt).add(-dayCounts, 'days').format(this.formatToInt)
-        this.selectedEndDate = moment(this.currentDateToInt, this.formatToInt).add(-1, 'days').format(this.formatToInt)
-        if (this.selectedStartDate === this.selectedEndDate) {
-          this.currentDate = moment(this.selectedEndDate, this.formatToInt).format(this.formatToDate)
-        } else {
-          this.currentDate = moment(this.selectedStartDate, this.formatToInt).format(this.formatToDate) +
-                                ' 至 ' + moment(this.selectedEndDate, this.formatToInt).format(this.formatToDate)
-        }
+        this.selectedStartDate = moment().add(-dayCounts, 'days').format(this.formatToInt)
+        this.selectedEndDate = moment().add(-1, 'days').format(this.formatToInt)
       }
       this.dump()
     },
@@ -224,25 +236,16 @@ export default {
       }
     },
     dump: function () {
-      if (this.selectedStartDate === this.selectedEndDate) {
-        this.currentDate = moment(this.selectedEndDate, this.formatToInt).format(this.formatToDate)
-      } else {
-        this.currentDate = moment(this.selectedStartDate, this.formatToInt).format(this.formatToDate) +
-                              ' 至 ' + moment(this.selectedEndDate, this.formatToInt).format(this.formatToDate)
-      }
-
-      this.dateStartInt = this.selectedStartDate
-      this.dateEndInt = this.selectedEndDate
-      this.$emit('input', '{startDate: ' + this.dateStartInt + ', endDate: ' + this.dateEndInt + '}')
-
-      this.cacnel()
+      this.startDate = moment(this.selectedStartDate, this.formatToInt).format(this.dateFormat)
+      this.endDate = moment(this.selectedEndDate, this.formatToInt).format(this.dateFormat)
+      this.$emit('input', { startDate: this.startDate, endDate: this.endDate })
+      this.cancel()
     },
-    cacnel: function () {
-      this.show = false
-      this.setMonths()
-
+    cancel: function () {
       this.selectedStartDate = 0
       this.selectedEndDate = 0
+      this.show = false
+      this.setMonths()
     }
   }
 }

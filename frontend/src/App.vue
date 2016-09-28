@@ -22,7 +22,13 @@ export default {
 </template>
 
 <style>
+
+#app, .page {
+  height: 100%;
+}
+
 .main-wrapper {
+  height: calc(100% - 50px);
   position: relative;
   top: 50px;
 }

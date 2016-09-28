@@ -4,6 +4,12 @@ import StatsNav from './StatsNav'
 export default {
   components: {
     StatsNav
+  },
+  props: ['report'],
+  filters: {
+    percentage (val) {
+      return (Math.round(val * 1000) / 10.0).toString() + '%'
+    }
   }
 }
 
@@ -24,23 +30,11 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>版本 A</td>
-            <td><strong>18.2%</strong></td>
-            <td>345245</td>
-            <td>44656</td>
-            <td>
-              <div class="input-group">
-                <input type="number" class="form-control">
-                <div class="input-group-addon">%</div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>版本 B</td>
-            <td><strong>10.2%</strong></td>
-            <td>1312222</td>
-            <td>1322</td>
+          <tr v-for="variation in report.variations">
+            <td>{{variation.name}}</td>
+            <td><strong>{{variation.cv | percentage}}</strong></td>
+            <td>{{variation.total_visitors}}</td>
+            <td>{{variation.total_conversions}}</td>
             <td>
               <div class="input-group">
                 <input type="number" class="form-control">
@@ -62,8 +56,7 @@ export default {
         <thead>
           <tr>
             <th width="120px">时间</th>
-            <th>版本 A</th>
-            <th>版本 B</th>
+            <th v-for="variation in report.variations">{{variation.name}}</th>
             <th>总计</th>
           </tr>
         </thead>

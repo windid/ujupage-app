@@ -1,5 +1,7 @@
 <script>
 import DatePicker from '../ui/DatePicker'
+import moment from 'moment'
+
 export default {
   props: ['title'],
   components: {
@@ -7,9 +9,36 @@ export default {
   },
   data () {
     return {
-      date: '',
-      version: 'all',
-      query: this.$route.query
+      limitEndDate: moment().format('YYYY-MM-DD')
+    }
+  },
+  methods: {
+    newQuery (key, value) {
+      return {
+        ...this.$route.query,
+        [key]: value
+      }
+    }
+  },
+  computed: {
+    date: {
+      get () {
+        return {
+          startDate: this.$route.query.sd || moment().add(-7, 'days').format('YYYY-MM-DD'),
+          endDate: this.$route.query.ed || moment().add(-1, 'days').format('YYYY-MM-DD')
+        }
+      },
+      set (val) {
+        const query = {
+          ...this.$route.query,
+          'sd': val.startDate,
+          'ed': val.endDate
+        }
+        this.$router.push({
+          path: this.$route.path,
+          query: query
+        })
+      }
     }
   }
 }
@@ -20,12 +49,11 @@ export default {
     <h1>{{title}}</h1>
     <div class="data-filter">
       <div class="btn-group">
-        <div class="btn btn-default" :class="{active: version === 'all'}" @click="version = 'all'">全部</div>
-        <div class="btn btn-default" :class="{active: version === 'pc'}" @click="version = 'pc'">桌面</div>
-        <div class="btn btn-default" :class="{active: version === 'mobile'}" @click="version = 'mobile'">移动</div>
+        <router-link class="btn btn-default" :class="{active: !$route.query.ver}" :to="{ path: $route.path, query: newQuery('ver', '') }" tag="div">全部</router-link>
+        <router-link class="btn btn-default" :class="{active: $route.query.ver === 'pc'}" :to="{ path: $route.path, query: newQuery('ver', 'pc') }" tag="div">桌面</router-link>
+        <router-link class="btn btn-default" :class="{active: $route.query.ver === 'mobile'}" :to="{ path: $route.path, query: newQuery('ver', 'mobile') }" tag="div">移动</router-link>
       </div>
-      <date-picker v-model="date" limit-start-date="2016-05-07" limit-end-date="2016-09-01" position="right"></date-picker>
-      {{date}}
+      <date-picker v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>
     </div>
   </div>
 </template>

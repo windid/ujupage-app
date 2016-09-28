@@ -19,5 +19,7 @@ export default {
 
   image: Vue.resource('storage/image{/id}'),
 
-  imageFolder: Vue.resource('storage/folder{/id}')
+  imageFolder: Vue.resource('storage/folder{/id}'),
+
+  report: Vue.resource('report/{module}/{pageId}')
 }

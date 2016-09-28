@@ -81,8 +81,8 @@ class OverviewController extends Controller {
      *  }
      * }
      */
-    public function gather(int $page_id) {        
-        $page = $this->initPGP($page_id);        
+    public function show(int $page_id) {
+        $page = $this->initPGP($page_id);
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
         }
@@ -109,7 +109,7 @@ class OverviewController extends Controller {
                 ->whereBetween($a.'.report_date', [$start_date, $end_date])
                 ->where($a.'.page_id', $page_id)
                 ->groupBy($a.'.report_date')
-                ->orderBy($a.'.report_date')->get()->toArray();            
+                ->orderBy($a.'.report_date')->get()->toArray();
         }        
         
         $overviews['gather_date'] = $this->overview
