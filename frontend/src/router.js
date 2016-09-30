@@ -16,32 +16,20 @@ const ResetPassword = resolve => require(['./components/auth/ResetPassword.vue']
 import Home from './components/common/Home'
 import Login from './components/auth/Login'
 
-const requireAuth = (route, redirect, next) => {
-  if (store.getters.isLogin) {
-    console.log(redirect)
-    redirect({
-      path: '/login',
-      query: { redirect: route.fullPath }
-    })
-  } else {
-    next()
-  }
-}
-
 const router = new VueRouter({
   mode: 'history',
   base: __dirname,
   routes: [
-    { path: '/editor/:pageId', name: 'editor', component: Editor, beforeEnter: requireAuth },
+    { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requireAuth: true, init: 'pageInit' }},
     { path: '/login', name: 'login', component: Login },
     { path: '/register', name: 'register', component: Register },
     { path: '/password', name: 'password', component: Password },
     { path: '/reset', name: 'resetpassword', component: ResetPassword },
-    { path: '/', name: 'home', component: Home, beforeEnter: requireAuth,
+    { path: '/', name: 'home', component: Home,
       children: [
-        { path: '', name: 'dashboard', component: Dashboard },
-        { path: '/account', name: 'account', component: Account },
-        { path: '/stats/:pageId/:module', name: 'stats', component: Stats }
+        { path: '', name: 'dashboard', component: Dashboard, meta: { requireAuth: true, init: 'dashboardInit' }},
+        { path: '/account', name: 'account', component: Account, meta: { requireAuth: true }},
+        { path: '/stats/:pageId/:module', name: 'stats', component: Stats, meta: { requireAuth: true }}
       ]
     }
   ]
@@ -49,13 +37,28 @@ const router = new VueRouter({
 
 NProgress.configure({ showSpinner: false })
 
-// router.beforeEach((route, redirect, next) => {
-//   NProgress.start()
-//   next()
-// })
+router.beforeEach((to, from, next) => {
+  NProgress.start()
+  store.dispatch('loading')
+  if (to.meta.requireAuth && !store.getters.isLogin) {
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath }
+    })
+  } else {
+    if (to.meta.init) {
+      store.dispatch(to.meta.init, [to, () => {
+        next()
+      }])
+    } else {
+      next()
+    }
+  }
+})
 
-// router.afterEach((route, redirect, next) => {
-//   NProgress.done()
-// })
+router.afterEach((to, from, next) => {
+  NProgress.done()
+  store.dispatch('loadingDone')
+})
 
 export default router
