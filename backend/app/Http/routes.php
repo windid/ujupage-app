@@ -1,7 +1,4 @@
 <?php
-Route::get('csrf_token', function(){
-   return csrf_token(); 
-});
 Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], function(){
     
     /**

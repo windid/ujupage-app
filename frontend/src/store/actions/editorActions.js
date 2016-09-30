@@ -1,12 +1,10 @@
-// import pageAPI from '../../api/pageAPI'
-// import variationAPI from '../../api/variationAPI'
 import API from '../../API'
 import * as types from '../mutation-types'
 import getParameter from '../../utils/getParameter'
 import { merge } from 'lodash'
 import elementTypes from '../editorElementTypes'
 
-// 页面信息加载
+// 数据初始化，在路由中调用
 export const pageInit = ({ commit, state }, [route, callback = false]) => {
   const pageId = route.params.pageId
   API.page.get({ id: pageId }).then(response => {

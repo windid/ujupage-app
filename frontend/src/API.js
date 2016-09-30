@@ -27,5 +27,14 @@ export default {
     current: { method: 'GET', url: 'account/current' }
   }),
 
-  auth: Vue.resource('auth{/id}')
+  auth: {
+    save (parms, data) {
+      const url = 'auth/login'
+      return Vue.http.post(url, data)
+    },
+    delete (params, data) {
+      const url = 'auth/logout'
+      return Vue.http.get(url)
+    }
+  }
 }
