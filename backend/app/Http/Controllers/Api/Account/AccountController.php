@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AccountController extends Controller{
     public function current(){
-        $account = ['user_id' => '2', 'email' => 'xiewendong@ujumedia.com'];
+        $account = ['id' => '2', 'email' => 'xiewendong@ujumedia.com'];
         return $this->successOK($account);
     }
 }

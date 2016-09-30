@@ -9,17 +9,20 @@ export const requireLogin = ({ commit }) => {
 
 }
 
-export const login = ({ commit }, [email, password, success, error]) => {
+export const login = ({ commit }, [email, password, remember, success, error]) => {
   API.auth.save({}, {
     email: email,
     password: password
   }).then(response => {
-    // const user = response.data
-    const user = {
-      userId: 2,
-      email: 'xiewendong@ujumedia.com'
-    }
+    const user = response.data
     commit(types.LOAD_USER, { user })
     success()
   }, response => error(response.data.error))
+}
+
+export const logout = ({ commit }, success) => {
+  API.auth.delete().then(response => {
+    commit(types.LOAD_USER, { user: null })
+    success()
+  })
 }

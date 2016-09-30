@@ -12,12 +12,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      login: 'login'
-    }),
+    ...mapActions(['login']),
     formSubmit (e) {
       const email = e.target.email.value
       const password = e.target.password.value
+      const remember = e.target.remember.checked
       if (!email) {
         this.error = '请输入您的用户名'
         return
@@ -26,8 +25,8 @@ export default {
         this.error = '请输入您的密码'
         return
       }
-      this.login([email, password, () => {
-        // this.$router.replace(this.$route.query.redirect || '/')
+      this.login([email, password, remember, () => {
+        this.$router.replace(this.$route.query.redirect || '/')
       }, (error) => {
         console.log(error)
         this.error = error

@@ -21,10 +21,19 @@ const router = new VueRouter({
   base: __dirname,
   routes: [
     { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requireAuth: true, init: 'pageInit' }},
-    { path: '/login', name: 'login', component: Login },
+    { path: '/login', name: 'login', component: Login,
+      beforeEnter (to, from, next) {
+        if (store.getters.isLogin) next('/')
+      }
+    },
+    { path: '/logout',
+      beforeEnter (to, from, next) {
+        store.dispatch('logout', () => next('/login'))
+      }
+    },
     { path: '/register', name: 'register', component: Register },
     { path: '/password', name: 'password', component: Password },
-    { path: '/reset', name: 'resetpassword', component: ResetPassword },
+    { path: '/resetpassword', name: 'resetpassword', component: ResetPassword },
     { path: '/', name: 'home', component: Home,
       children: [
         { path: '', name: 'dashboard', component: Dashboard, meta: { requireAuth: true, init: 'dashboardInit' }},
