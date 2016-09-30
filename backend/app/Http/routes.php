@@ -1,4 +1,5 @@
 <?php
+
 Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], function(){
     
     /**
@@ -46,7 +47,12 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
          * password 密码
          * @return StatusCode 201
          */
-        Route::post('login', ['as' => '.login.post', 'uses' => 'AuthController@postLogin']); // 登录                 
+        Route::post('login', ['as' => '.login.post', 'uses' => 'AuthController@postLogin']); // 登录
+        /**
+         * POST api/auth/logout 退出
+         * @return StatusCode 200
+         */
+        Route::get('logout', ['as' => '.logout', 'uses' => 'AuthController@getLogout']); //退出
     });
     
     Route::group(['middleware' => 'auth'], function(){

@@ -5,7 +5,7 @@ use \App\User;
 class AuthTest extends TestCase {
     
     public $user_email = 'heyufa@ujumedia.com';
-  
+  /*
     public function testRegister() {
         $response = $this->call('POST', '/auth/register'
                 , [
@@ -44,13 +44,14 @@ class AuthTest extends TestCase {
                 ]);
         $this->assertEquals(201, $response->getStatusCode());
     }
-    
+    */
     public function testLogin() {
         $response = $this->call('POST', '/auth/login'
                 , [
                     'email' => $this->user_email,
                     'password' => '12345678'
                 ]);
+        $this->dump();
         $this->assertEquals(201, $response->getStatusCode());
     }
     
