@@ -1,5 +1,7 @@
 import { isEqual } from 'lodash'
 
+export const isLogin = state => !!state.user.current
+
 export const allPages = state => state.pages.all
 export const allProjects = state => state.projects.all
 export const currentProject = state => state.projects.current

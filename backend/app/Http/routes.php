@@ -455,7 +455,12 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * @return StatusCode 204
              */
             Route::resource('image', 'ImageController'); //?folder_id=1            
-        });            
+        });
+
+        Route::group(['namespace' => 'Account'], function(){
+            Route::get('account/current', 'AccountController@current');
+            Route::resource('account', 'AccountController');
+        });
         
         
     });

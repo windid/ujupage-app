@@ -1,5 +1,3 @@
-// import pageAPI from '../../api/pageAPI'
-// import pageGroupAPI from '../../api/pageGroupAPI'
 import projectAPI from '../../api/projectAPI'
 import API from '../../API'
 import getParameter from '../../utils/getParameter'
@@ -65,9 +63,6 @@ export const loadMembers = ({ commit }, project) => {
     const members = response.data
     commit(types.LOAD_MEMBERS, { members })
   })
-  // projectAPI.members(project, (members, invited) => {
-  //   commit(types.LOAD_MEMBERS, { members, invited })
-  // }, data => commit(types.LOAD_FAILED, { source: 'loadMembers', err: data.err }))
 }
 
 export const inviteMember = ({ commit, state }, member) => {

@@ -21,5 +21,11 @@ export default {
 
   imageFolder: Vue.resource('storage/folder{/id}'),
 
-  report: Vue.resource('report/{module}/{pageId}')
+  report: Vue.resource('report/{module}/{pageId}'),
+
+  account: Vue.resource('account{/id}', {}, {
+    current: { method: 'GET', url: 'account/current' }
+  }),
+
+  auth: Vue.resource('auth{/id}')
 }

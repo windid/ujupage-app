@@ -60,7 +60,6 @@ export default {
     'style': {
       handler: function (newStyle, oldStyle) {
         if (oldStyle.pc && newStyle.pc) {
-          console.log(newStyle)
           this.modifySection([this.workspace.activeSectionId, newStyle])
         }
       },

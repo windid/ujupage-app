@@ -25,13 +25,11 @@ export default {
         
         <div class="modal-header">
           <button type="button" class="close fr" aria-label="Close" @click="$emit('close')"><span aria-hidden="true">&times;</span></button>
-          <slot name="header">
-          </slot>
+          <slot name="header"></slot>
         </div>
         
         <div class="modal-body container-fluid">
-          <slot name="body">
-          </slot>
+          <slot name="body"></slot>
         </div>
 
         <div class="modal-footer">
