@@ -2,6 +2,23 @@
 Route::get('csrf_token', function(){
    return csrf_token(); 
 });
+
+Route::get('tmpform/login', function() {
+    return view('form/login');
+});
+Route::get('tmpform', function() {
+    date_default_timezone_set('PRC');
+    $username = Request::input('username');
+    $password = Request::input('password');
+    if ($username != 'form4956' || $password != 'form968554') {
+        return redirect('tmpform/login');
+    }
+    
+    $forms = DB::table('page_forms')->where('page_id', 40)->select('fields', 'created_at')->orderBy('id', 'desc')->get();
+//    dd($forms);
+    return view('form/index', compact('forms'));
+});
+
 Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], function(){
     
     /**
@@ -49,7 +66,12 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
          * password 密码
          * @return StatusCode 201
          */
-        Route::post('login', ['as' => '.login.post', 'uses' => 'AuthController@postLogin']); // 登录                 
+        Route::post('login', ['as' => '.login.post', 'uses' => 'AuthController@postLogin']); // 登录
+        /**
+         * POST api/auth/logout 退出
+         * @return StatusCode 200
+         */
+        Route::get('logout', ['as' => '.logout', 'uses' => 'AuthController@getLogout']); //退出
     });
     
     Route::group(['middleware' => 'auth'], function(){

@@ -181,7 +181,7 @@ use AuthenticatesAndRegistersUsers,
     public function postLogin(Request $request) {
         
         $validator = $this->validate($request, [
-            $this->loginUsername() => 'required', 'password' => 'required',
+            $this->loginUsername() => 'required|exists:users,email', 'password' => 'required',
         ]);
         if ($validator->fails()) {
             return $this->errorValidation($validator);
@@ -194,8 +194,25 @@ use AuthenticatesAndRegistersUsers,
             $user->save();
             
             //return redirect()->intended('/');
-            return $this->successCreated();
+            return $this->successCreated(['id' => $user->id, 'email' => $user->email]);
         }
-        return $this->errorNotFound();
+        
+        return $this->errorUnauthorized();
+    }
+    
+    /**
+     * 退出登录
+     */
+    public function getLogout(Request $request) {
+        $user = Auth::user();
+        if ($user) {
+            Auth::logout();
+            User::where('id', $user->id)
+                    ->update(['token' => UserActive::createNewToken()]);
+
+            return $this->success();
+        } else {
+            return $this->errorNotFound();
+        }
     }
 }
