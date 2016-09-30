@@ -23,7 +23,7 @@ const router = new VueRouter({
     { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requireAuth: true, init: 'pageInit' }},
     { path: '/login', name: 'login', component: Login,
       beforeEnter (to, from, next) {
-        if (store.getters.isLogin) next('/')
+        store.getters.isLogin ? next('/') : next()
       }
     },
     { path: '/logout',
@@ -47,14 +47,14 @@ const router = new VueRouter({
 NProgress.configure({ showSpinner: false })
 
 router.beforeEach((to, from, next) => {
-  NProgress.start()
-  store.dispatch('loading')
   if (to.meta.requireAuth && !store.getters.isLogin) {
     next({
       path: '/login',
       query: { redirect: to.fullPath }
     })
   } else {
+    NProgress.start()
+    store.dispatch('loading')
     if (to.meta.init) {
       store.dispatch(to.meta.init, [to, () => {
         next()
