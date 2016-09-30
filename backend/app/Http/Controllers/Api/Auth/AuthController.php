@@ -210,7 +210,7 @@ use AuthenticatesAndRegistersUsers,
             User::where('id', $user->id)
                     ->update(['token' => UserActive::createNewToken()]);
 
-            return $this->success();
+            return $this->successOK();
         } else {
             return $this->errorNotFound();
         }

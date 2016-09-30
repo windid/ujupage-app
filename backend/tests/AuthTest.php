@@ -51,7 +51,7 @@ class AuthTest extends TestCase {
                     'email' => $this->user_email,
                     'password' => '12345678'
                 ]);
-        $this->dump();
+        $this->seeCookie('laravel_session');
         $this->assertEquals(201, $response->getStatusCode());
     }
     
