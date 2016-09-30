@@ -53,7 +53,7 @@ export default {
 </script>
 
 <template>
-  <div class="page-group" @click="switchPageGroup(pageGroup)">
+  <div class="page-group" @click="switchPageGroup([pageGroup])">
     <div class="page-group-header">
       <div class="page-group-name">
         <div v-if="editing" class="input-group" @click.stop>

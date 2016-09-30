@@ -14,10 +14,20 @@ export default {
   },
   methods: {
     newQuery (key, value) {
+      console.log(this.$route, key)
       return {
         ...this.$route.query,
         [key]: value
       }
+    },
+    switchVersion (ver) {
+      this.$router.push({
+        path: this.$route.path,
+        query: {
+          ...this.$route.query,
+          'ver': ver
+        }
+      })
     }
   },
   computed: {
@@ -49,9 +59,9 @@ export default {
     <h1>{{title}}</h1>
     <div class="data-filter">
       <div class="btn-group">
-        <router-link class="btn btn-default" :class="{active: !$route.query.ver}" :to="{ path: $route.path, query: newQuery('ver', '') }" tag="div">全部</router-link>
-        <router-link class="btn btn-default" :class="{active: $route.query.ver === 'pc'}" :to="{ path: $route.path, query: newQuery('ver', 'pc') }" tag="div">桌面</router-link>
-        <router-link class="btn btn-default" :class="{active: $route.query.ver === 'mobile'}" :to="{ path: $route.path, query: newQuery('ver', 'mobile') }" tag="div">移动</router-link>
+        <div class="btn btn-default" :class="{ active: !$route.query.ver }" @click="switchVersion('')">全部</div>
+        <div class="btn btn-default" :class="{ active: $route.query.ver === 'pc' }" @click="switchVersion('pc')">桌面</div>
+        <div class="btn btn-default" :class="{ active: $route.query.ver === 'mobile' }" @click="switchVersion('mobile')">移动</div>
       </div>
       <date-picker v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>
     </div>

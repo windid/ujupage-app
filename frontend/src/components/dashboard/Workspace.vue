@@ -24,7 +24,7 @@ export default {
       this.$store.dispatch('createPageGroup', pageGroup)
     },
     goToDefault () {
-      this.$store.dispatch('switchPageGroup', this.defaultPageGroup)
+      this.$store.dispatch('switchPageGroup', [this.defaultPageGroup])
     },
     createPage () {
       this.$store.dispatch('getInput', {

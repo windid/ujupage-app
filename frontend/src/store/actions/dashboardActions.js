@@ -33,7 +33,6 @@ export const switchProject = ({ commit }, [project, callback = false]) => {
 }
 
 export const switchPageGroup = ({ commit }, [pageGroup, callback = false]) => {
-  commit(types.LOADING)
   commit(types.SET_CURRENT_PAGEGROUP, { pageGroup })
   API.page.get({ group_id: pageGroup.id }).then(response => {
     commit(types.LOAD_PAGES, { pages: response.data })

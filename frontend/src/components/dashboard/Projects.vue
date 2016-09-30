@@ -32,7 +32,7 @@ export default {
       })
     },
     switchProject (project) {
-      this.$store.dispatch('switchProject', project)
+      this.$store.dispatch('switchProject', [project])
       this.showProjects = false
     },
     invite () {
