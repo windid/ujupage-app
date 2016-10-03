@@ -55,7 +55,6 @@
 import moment from 'moment'
 import Dropdown from './Dropdown'
 import 'moment/locale/zh-cn'
-// import '../assets/css/bootstrap.min.css'
 
 export default {
   components: {
@@ -122,6 +121,11 @@ export default {
     }
   },
   mounted () {
+    if (this.value.startDate) {
+      this.selectLastMonth = moment(this.value.startDate).add(+2, 'months').format('YYYY-MM')
+      this.selectedStartDate = moment(this.value.startDate).format(this.formatToInt)
+      this.selectedEndDate = moment(this.value.endDate).format(this.formatToInt)
+    }
     if (this.limitStartDate !== 0) {
       this.limitStartDateInt = moment(this.limitStartDate).format('YYYYMMDD')
     }
@@ -171,7 +175,12 @@ export default {
             if (this.limitStartDateInt <= fulldateint && fulldateint <= this.limitEndDateInt) {
               disable = false
             }
-            selectDates[y].dates[s] = { date: d, selected: false, month: month, indexMonth: y, indexDate: s, fullDateInt: fulldateint, disable: disable }
+            var selected = false
+            if (this.selectedStartDate !== 0 && this.selectedEndDate !== 0 &&
+                this.selectedStartDate <= fulldateint && this.selectedEndDate >= fulldateint) {
+              selected = true
+            }
+            selectDates[y].dates[s] = { date: d, selected: selected, month: month, indexMonth: y, indexDate: s, fullDateInt: fulldateint, disable: disable }
             d++
           } else {
             if (d === 1) {
@@ -207,16 +216,16 @@ export default {
       var s = moment(date, 'YYYY-MM-DD').format(this.formatToInt)
       if (this.selectedStartDate === 0) {
         this.selectedStartDate = s
-      } else if (this.selectedStartDate >= s) {
+        this.selectedEndDate = s
+      } else if (this.selectedStartDate > s) {
         this.selectedEndDate = this.selectedStartDate
         this.selectedStartDate = s
       } else if (this.selectedEndDate === 0 || this.selectedEndDate < s) {
         this.selectedEndDate = s
-      } else if (this.selectedStartDate < s && this.selectedEndDate > s) {
-        this.setMonths()
-
+      } else if (this.selectedStartDate <= s && this.selectedEndDate >= s) {
         this.selectedStartDate = s
-        this.selectedEndDate = 0
+        this.selectedEndDate = s
+        this.setMonths()
       }
       this.selectDates[m].dates[d].selected = true
       this.$root.$set(this.selectDates, m, this.selectDates[m])
