@@ -121,7 +121,7 @@ class OverviewController extends Controller {
             }
             $overviews['variations'][] = $variations[$k];
         }
-        dd($overviews);
+        
         foreach ($overviews['variations'] as $k => $v) {
             $overviews['variations'][$k]['dates'] = $this->overview
                 ->select($a.'.report_date', \DB::RAW('SUM(visitors) AS total_visitors'),  \DB::RAW('SUM(conversions) AS total_conversions')
