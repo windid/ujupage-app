@@ -81,7 +81,8 @@ export const quitProject = ({ commit }, project) => {
 
 export const createPageGroup = ({ commit }, pageGroup) => {
   API.pageGroup.save({ projectId: pageGroup.projectId }, pageGroup).then(response => {
-    commit(types.CREATE_PAGEGROUP, { pageGroup: response.data })
+    const pageGroup = response.data
+    commit(types.CREATE_PAGEGROUP, { pageGroup })
   })
 }
 
