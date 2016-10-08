@@ -1,26 +1,35 @@
 import Vue from 'vue'
-import router from './router'
-import VueResource from 'vue-resource'
 import store from './store'
+import router from './router'
 import App from './App'
+import API from './API'
+import cookieHandler from './utils/cookieHandler'
 import './sass/bootstrap.scss'
 
-Vue.use(VueResource)
-Vue.http.options.root = '/api'
+API.account.current().then(response => {
+  store.dispatch('loadUser', response.data)
+  AppInit()
+}, response => {
+  AppInit()
+})
 
-Vue.http.interceptors.push((request, next) => {
-  store.dispatch('loading')
-  next((response) => {
-    if (response.ok) {
-      store.dispatch('loadingDone')
+const AppInit = () => {
+  Vue.http.interceptors.push((request, next) => {
+    var xsrfToken = cookieHandler.get('XSRF-TOKEN')
+    if (xsrfToken) {
+      request.headers.map['X-XSRF-TOKEN'] = [xsrfToken]
     }
+    next((response) => {
+      if (response.status === 401) {
+        store.dispatch('requireLogin')
+      }
+    })
   })
-})
-
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
-})
+  /* eslint-disable no-new */
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    render: h => h(App)
+  })
+}

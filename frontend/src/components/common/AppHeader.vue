@@ -16,7 +16,7 @@ export default {
       <ul class="nav nav-pills header-nav">
         <li><router-link to="/help">帮助</router-link></li>
         <li><router-link to="/account">我的帐号</router-link></li>
-        <li><a href="/auth/logout">退出登陆</a></li>
+        <li><router-link to="/logout">退出登陆</router-link></li>
       </ul>
     </template>
   </div>

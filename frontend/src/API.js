@@ -17,7 +17,24 @@ export default {
 
   variation: Vue.resource('pages/{pageId}/variations{/id}'),
 
-  image: Vue.resource('storage/image{/imageId}'),
+  image: Vue.resource('storage/image{/id}'),
 
-  imageFolder: Vue.resource('storage/folder{/folderId}')
+  imageFolder: Vue.resource('storage/folder{/id}'),
+
+  report: Vue.resource('report/{module}/{pageId}'),
+
+  account: Vue.resource('account{/id}', {}, {
+    current: { method: 'GET', url: 'account/current' }
+  }),
+
+  auth: {
+    save (parms, data) {
+      const url = 'auth/login'
+      return Vue.http.post(url, data)
+    },
+    delete (params, data) {
+      const url = 'auth/logout'
+      return Vue.http.get(url)
+    }
+  }
 }

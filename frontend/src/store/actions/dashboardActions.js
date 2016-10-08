@@ -1,23 +1,21 @@
-// import pageAPI from '../../api/pageAPI'
-// import pageGroupAPI from '../../api/pageGroupAPI'
 import projectAPI from '../../api/projectAPI'
 import API from '../../API'
 import getParameter from '../../utils/getParameter'
 import cookieHandler from '../../utils/cookieHandler'
 import * as types from '../mutation-types'
 
-export const init = ({ commit }) => {
+export const dashboardInit = ({ commit }, [route, callback = false]) => {
   API.project.get().then(response => {
     const projects = response.data
     commit(types.LOAD_PROJECTS, { projects })
     // 加载默认项目，第一优先取路由传递的projectId，其次是Cookie，再次是用户默认项目，如果都没有，取项目列表的第一个。
     const projectId = getParameter('id') || cookieHandler.get('projectId')
     const currentProject = projects.find(p => p.id === projectId) || projects.find(p => p.is_default === 1) || projects[0]
-    switchProject({ commit }, currentProject)
+    switchProject({ commit }, [currentProject, callback])
   })
 }
 
-export const switchProject = ({ commit }, project) => {
+export const switchProject = ({ commit }, [project, callback = false]) => {
   // commit(types.LOADING)
   commit(types.EMPTY_PAGEGROUPS)
   commit(types.EMPTY_PAGES)
@@ -30,15 +28,15 @@ export const switchProject = ({ commit }, project) => {
     const pageGroups = response.data
     commit(types.LOAD_PAGEGROUPS, { pageGroups })
     const currentPageGroup = pageGroups.find(g => g.is_default === 1) || pageGroups[0]
-    switchPageGroup({ commit }, currentPageGroup)
+    switchPageGroup({ commit }, [currentPageGroup, callback])
   })
 }
 
-export const switchPageGroup = ({ commit }, pageGroup) => {
-  commit(types.LOADING)
+export const switchPageGroup = ({ commit }, [pageGroup, callback = false]) => {
   commit(types.SET_CURRENT_PAGEGROUP, { pageGroup })
   API.page.get({ group_id: pageGroup.id }).then(response => {
     commit(types.LOAD_PAGES, { pages: response.data })
+    if (callback) callback()
   })
 }
 
@@ -65,9 +63,6 @@ export const loadMembers = ({ commit }, project) => {
     const members = response.data
     commit(types.LOAD_MEMBERS, { members })
   })
-  // projectAPI.members(project, (members, invited) => {
-  //   commit(types.LOAD_MEMBERS, { members, invited })
-  // }, data => commit(types.LOAD_FAILED, { source: 'loadMembers', err: data.err }))
 }
 
 export const inviteMember = ({ commit, state }, member) => {

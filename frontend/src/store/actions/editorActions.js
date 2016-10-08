@@ -1,29 +1,29 @@
-// import pageAPI from '../../api/pageAPI'
-// import variationAPI from '../../api/variationAPI'
 import API from '../../API'
 import * as types from '../mutation-types'
 import getParameter from '../../utils/getParameter'
 import { merge } from 'lodash'
 import elementTypes from '../editorElementTypes'
 
-// 页面信息加载
-export const pageInit = ({ commit, state }, pageId) => {
+// 数据初始化，在路由中调用
+export const pageInit = ({ commit, state }, [route, callback = false]) => {
+  const pageId = route.params.pageId
   API.page.get({ id: pageId }).then(response => {
     const page = response.data
     API.variation.get({ pageId: page.id }).then(response => {
       page.variations = response.data
       commit(types.LOAD_PAGE, { page })
       const variationId = getParameter('vid') || page.variations[0].id
-      loadVariation({ commit, state }, variationId)
+      loadVariation({ commit, state }, [variationId, callback])
     })
   })
 }
 
 // 加载编辑内容
-export const loadVariation = ({ commit, state }, variationId) => {
+export const loadVariation = ({ commit, state }, [variationId, callback = false]) => {
   API.variation.get({ pageId: state.editor.page.id, id: variationId }).then(response => {
     const content = JSON.parse(response.data.html_json)
     commit(types.LOAD_VARIATION, { variationId, content })
+    if (callback) callback()
   })
 }
 

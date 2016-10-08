@@ -1,3 +1,6 @@
+// user
+export const LOAD_USER = 'LOAD_USER'
+
 // projects
 export const LOAD_PROJECTS = 'LOAD_PROJECTS'
 export const CREATE_PROJECT = 'CREATE_PROJECT'

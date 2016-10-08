@@ -9,9 +9,6 @@ export default {
     EditorHeader,
     EditorToolbar,
     EditorWorkspace
-  },
-  created () {
-    this.$store.dispatch('pageInit', this.$route.params.pageId)
   }
 }
 

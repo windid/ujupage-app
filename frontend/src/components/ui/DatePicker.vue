@@ -1,25 +1,21 @@
 <template>
-  <div class="dropdown">
-    <div class="input-group" v-on:click="clickDatePicker">
-      <input class="datepicker form-control" v-model="currentDate"/>
-      <input v-model="dateStartInt" name="dateStartInt" id="dateStartInt" hidden="true" />
-      <input v-model="dateEndInt" name="dateEndInt" id="dateEndInt" hidden="true" />
-      <span class="input-group-btn">
-        <button class="btn btn-default"><i class="glyphicon" v-bind:class="{'glyphicon-menu-up': clicked, 'glyphicon-menu-down': !clicked}"></i></button>
-      </span>
+  <dropdown :show="show" @toggle="show=!show">
+    <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      <div>
+        <span>{{currentDate}}</span>
+         &nbsp; <span class="glyphicon" :class="show ? 'glyphicon-menu-up' : 'glyphicon-menu-down'"></span>
+      </div>
     </div>
-
-    <div class="datepicker-box" v-show="showDatePickerBox">
-      <div class="datepicker-select-area">
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(0)">今天</button>
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(1)">昨天</button>
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(7)">7日</button>
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(14)">14日</button>
-        <button type="button" class="btn btn-default" v-on:click="quickSelect(30)">30日</button>
+    <div slot="dropdown-menu" class="dropdown-menu datepicker-box" :class="{'dropdown-menu-right':position === 'right'}">
+      <div class="datepicker-select-area btn-group">
+        <div class="btn btn-default" :class="{active: activeDateRange === 0}" @click="quickSelect(0)">今天</div>
+        <div class="btn btn-default" :class="{active: activeDateRange === 1}" @click="quickSelect(1)">昨天</div>
+        <div class="btn btn-default" :class="{active: activeDateRange === 7}" @click="quickSelect(7)">最近7天</div>
+        <div class="btn btn-default" :class="{active: activeDateRange === 30}" @click="quickSelect(30)">最近30天</div>
       </div>
       <div class="datepicker-selectDates">
         <div class="ctrl ctrl-left" >
-          <a v-on:click="prevMonth()" class="btn btn-default glyphicon glyphicon-chevron-left"></a>
+          <a @click="prevMonth()" class="btn btn-default glyphicon glyphicon-chevron-left"></a>
         </div>
         <div class="datepicker-dates">
           <div v-for="dates in selectDates">
@@ -33,72 +29,36 @@
                 <li>五</li>
                 <li>六</li>
                 <template v-for="date in dates.dates">   
-                  <li v-if="canSelectDate(date)" v-on:click="selectDate($event, date.month + '-' + date.date, date.indexMonth, date.indexDate)" 
+                  <li v-if="canSelectDate(date)" @click="selectDate($event, date.month + '-' + date.date, date.indexMonth, date.indexDate)" 
                     class="active" 
                     :class="{'selected': date.selected}">
                       {{date.date ? date.date : "&nbsp;"}}
                   </li>
-                  <li v-else>{{date.date ? date.date : "&nbsp;"}}</li>
+                  <li v-if="!canSelectDate(date)">{{date.date ? date.date : "&nbsp;"}}</li>
                 </template>
             </ul>
           </div>
         </div>
         <div class="ctrl ctrl-right">
-          <a v-on:click="nextMonth()" class="btn btn-default glyphicon glyphicon-chevron-right"></a>
-        </div>  
+          <a @click="nextMonth()" class="btn btn-default glyphicon glyphicon-chevron-right"></a>
+        </div>
       </div>
-      <div class="selected-dates-buttons">        
-        <button type="button" class="btn btn-primary btn-sm" v-on:click="dump()">确认</button>
-        <button type="button" class="btn btn-default btn-sm" v-on:click="cacnel()">取消</button>
+      <div class="selected-dates-buttons">
+        <button type="button" class="btn btn-primary btn-sm" @click="dump()">确定</button>
+        <button type="button" class="btn btn-default btn-sm" @click="cancel()">取消</button>
       </div>
     </div>
-  </div>
+  </dropdown>
 </template>
 
 <script>
 import moment from 'moment'
+import Dropdown from './Dropdown'
 import 'moment/locale/zh-cn'
-// import '../assets/css/bootstrap.min.css'
 
 export default {
-  data () {
-    return {
-      clicked: false,
-      year: moment().year(),
-      month: moment().month() + 1,
-      date: moment().date(),
-      formatToDate: 'YYYY年MM月DD日',
-      formatToInt: 'YYYYMMDD',
-      currentDate: '',
-      currentDateToInt: 0,
-
-      selectLastMonth: moment().format('YYYY-MM'),
-      selectDates: [],
-
-      selectedStartDate: 0,
-      selectedEndDate: 0,
-
-      dateStartInt: 0,
-      dateEndInt: 0,
-
-      limitStartDateInt: 0,
-      limitEndDateInt: 0
-    }
-  },
-  mounted () {
-    console.clear()
-    if (this.limitStartDate !== 0) {
-      this.limitStartDateInt = moment(this.limitStartDate).format('YYYYMMDD')
-    }
-    if (this.limitEndDate !== 0) {
-      this.limitEndDateInt = moment(this.limitEndDate).format('YYYYMMDD')
-    }
-
-    console.log(this.limitStartDateInt, this.limitEndDateInt)
-    this.currentDate = moment().format(this.formatToDate)
-    this.currentDateToInt = moment().format(this.formatToInt)
-
-    this.setMonths()
+  components: {
+    Dropdown
   },
   props: {
     limitStartDate: {
@@ -110,15 +70,78 @@ export default {
       default: function () {
         return '2200-01-01'
       }
+    },
+    position: {
+      default: 'left'
+    },
+    value: {
+      require: true,
+      type: Object
+    },
+    dateFormat: {
+      default: 'YYYY-MM-DD'
+    }
+  },
+  data () {
+    return {
+      show: false,
+      year: moment().year(),
+      month: moment().month() + 1,
+      date: moment().date(),
+      formatToInt: 'YYYYMMDD',
+      currentDateToInt: 0,
+
+      selectLastMonth: moment().format('YYYY-MM'),
+      selectDates: [],
+
+      startDate: this.value.startDate || moment().format(this.dateFormat),
+      endDate: this.value.endDate || moment().format(this.dateFormat),
+
+      selectedStartDate: 0,
+      selectedEndDate: 0,
+
+      limitStartDateInt: 0,
+      limitEndDateInt: 0
     }
   },
   computed: {
-    showDatePickerBox: function () {
-      return this.$data.clicked
+    currentDate () {
+      if (this.startDate === this.endDate) {
+        return this.startDate
+      } else {
+        return this.startDate + ' 至 ' + this.endDate
+      }
+    },
+    activeDateRange () {
+      if (this.startDate === this.endDate && this.startDate === moment().format(this.dateFormat)) {
+        return 0
+      } else if (this.endDate === moment().add(-1, 'days').format(this.dateFormat)) {
+        return moment(this.endDate, this.dateFormat).diff(moment(this.startDate, this.dateFormat), 'days') + 1
+      }
     }
   },
+  mounted () {
+    if (this.value.startDate) {
+      this.selectLastMonth = moment(this.value.startDate).add(+2, 'months').format('YYYY-MM')
+      this.selectedStartDate = moment(this.value.startDate).format(this.formatToInt)
+      this.selectedEndDate = moment(this.value.endDate).format(this.formatToInt)
+    }
+    if (this.limitStartDate !== 0) {
+      this.limitStartDateInt = moment(this.limitStartDate).format('YYYYMMDD')
+    }
+    if (this.limitEndDate !== 0) {
+      this.limitEndDateInt = moment(this.limitEndDate).format('YYYYMMDD')
+    }
+
+    this.currentDateToInt = moment().format(this.formatToInt)
+
+    this.setMonths()
+  },
   watch: {
-    'selectLastMonth': function () { this.setMonths() }
+    'selectLastMonth': function () { this.setMonths() },
+    'show': function (val) {
+      if (!val) this.cancel()
+    }
   },
   methods: {
     canSelectDate: function (date) {
@@ -127,9 +150,6 @@ export default {
       } else {
         return false
       }
-    },
-    clickDatePicker: function () {
-      this.$data.clicked = !this.$data.clicked
     },
     setMonths: function () {
       const selectDates = []
@@ -155,7 +175,12 @@ export default {
             if (this.limitStartDateInt <= fulldateint && fulldateint <= this.limitEndDateInt) {
               disable = false
             }
-            selectDates[y].dates[s] = { date: d, selected: false, month: month, indexMonth: y, indexDate: s, fullDateInt: fulldateint, disable: disable }
+            var selected = false
+            if (this.selectedStartDate !== 0 && this.selectedEndDate !== 0 &&
+                this.selectedStartDate <= fulldateint && this.selectedEndDate >= fulldateint) {
+              selected = true
+            }
+            selectDates[y].dates[s] = { date: d, selected: selected, month: month, indexMonth: y, indexDate: s, fullDateInt: fulldateint, disable: disable }
             d++
           } else {
             if (d === 1) {
@@ -179,18 +204,11 @@ export default {
     },
     quickSelect: function (dayCounts) {
       if (dayCounts === 0) {
-        this.selectedStartDate = this.currentDateToInt
-        this.selectedEndDate = this.currentDateToInt
-        this.currentDate = moment(this.currentDateToInt, this.formatToInt).format(this.formatToDate)
+        this.selectedStartDate = moment().format(this.formatToInt)
+        this.selectedEndDate = moment().format(this.formatToInt)
       } else {
-        this.selectedStartDate = moment(this.currentDateToInt, this.formatToInt).add(-dayCounts, 'days').format(this.formatToInt)
-        this.selectedEndDate = moment(this.currentDateToInt, this.formatToInt).add(-1, 'days').format(this.formatToInt)
-        if (this.selectedStartDate === this.selectedEndDate) {
-          this.currentDate = moment(this.selectedEndDate, this.formatToInt).format(this.formatToDate)
-        } else {
-          this.currentDate = moment(this.selectedStartDate, this.formatToInt).format(this.formatToDate) +
-                                ' 至 ' + moment(this.selectedEndDate, this.formatToInt).format(this.formatToDate)
-        }
+        this.selectedStartDate = moment().add(-dayCounts, 'days').format(this.formatToInt)
+        this.selectedEndDate = moment().add(-1, 'days').format(this.formatToInt)
       }
       this.dump()
     },
@@ -198,16 +216,16 @@ export default {
       var s = moment(date, 'YYYY-MM-DD').format(this.formatToInt)
       if (this.selectedStartDate === 0) {
         this.selectedStartDate = s
-      } else if (this.selectedStartDate >= s) {
+        this.selectedEndDate = s
+      } else if (this.selectedStartDate > s) {
         this.selectedEndDate = this.selectedStartDate
         this.selectedStartDate = s
       } else if (this.selectedEndDate === 0 || this.selectedEndDate < s) {
         this.selectedEndDate = s
-      } else if (this.selectedStartDate < s && this.selectedEndDate > s) {
-        this.setMonths()
-
+      } else if (this.selectedStartDate <= s && this.selectedEndDate >= s) {
         this.selectedStartDate = s
-        this.selectedEndDate = 0
+        this.selectedEndDate = s
+        this.setMonths()
       }
       this.selectDates[m].dates[d].selected = true
       this.$root.$set(this.selectDates, m, this.selectDates[m])
@@ -227,25 +245,16 @@ export default {
       }
     },
     dump: function () {
-      if (this.selectedStartDate === this.selectedEndDate) {
-        this.currentDate = moment(this.selectedEndDate, this.formatToInt).format(this.formatToDate)
-      } else {
-        this.currentDate = moment(this.selectedStartDate, this.formatToInt).format(this.formatToDate) +
-                              ' 至 ' + moment(this.selectedEndDate, this.formatToInt).format(this.formatToDate)
-      }
-
-      this.$data.dateStartInt = this.selectedStartDate
-      this.$data.dateEndInt = this.selectedEndDate
-      this.$emit('input', '{startDate: ' + this.$data.dateStartInt + ', endDate: this. ' + this.$data.dateEndInt + '}')
-
-      this.cacnel()
+      this.startDate = moment(this.selectedStartDate, this.formatToInt).format(this.dateFormat)
+      this.endDate = moment(this.selectedEndDate, this.formatToInt).format(this.dateFormat)
+      this.$emit('input', { startDate: this.startDate, endDate: this.endDate })
+      this.cancel()
     },
-    cacnel: function () {
-      this.clicked = false
-      this.setMonths()
-
+    cancel: function () {
       this.selectedStartDate = 0
       this.selectedEndDate = 0
+      this.show = false
+      this.setMonths()
     }
   }
 }
@@ -265,8 +274,7 @@ export default {
   box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .datepicker-select-area {
-  padding: 5px 5px;
-  border-bottom: 1px solid rgba(0,0,0, .15);
+  margin: 5px;
 }
 .datepicker-selectDates {
 }

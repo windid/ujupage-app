@@ -77,7 +77,7 @@ class PageController extends Controller {
      * }
      */    
     public function index() {
-        $pagegroup= $this->initPG(request('group_id', 0));        
+        $pagegroup = $this->initPG(request('group_id', 0));        
         if (get_class($pagegroup) == 'Illuminate\Http\JsonResponse') {
             return $pagegroup;
         }

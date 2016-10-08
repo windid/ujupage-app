@@ -188,7 +188,7 @@ use AuthenticatesAndRegistersUsers,
         }
 
         $credentials = $this->getCredentials($request);
-        if (Auth::attempt($credentials, $request->has('remember'))) {
+        if (Auth::attempt($credentials, ($request->has('remember') && $request->get('remember') == 'true'))) {
             $user = Auth::user();
             $user->token = UserActive::createNewToken();
             $user->save();

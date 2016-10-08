@@ -1,23 +1,4 @@
 <?php
-Route::get('csrf_token', function(){
-   return csrf_token(); 
-});
-
-Route::get('tmpform/login', function() {
-    return view('form/login');
-});
-Route::get('tmpform', function() {
-    date_default_timezone_set('PRC');
-    $username = Request::input('username');
-    $password = Request::input('password');
-    if ($username != 'form4956' || $password != 'form968554') {
-        return redirect('tmpform/login');
-    }
-    
-    $forms = DB::table('page_forms')->where('page_id', 40)->select('fields', 'created_at')->orderBy('id', 'desc')->get();
-//    dd($forms);
-    return view('form/index', compact('forms'));
-});
 
 Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], function(){
     
@@ -376,7 +357,8 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
             *  }
             * }
             */            
-            Route::match(['get'], 'overview/{page_id}/gather', ['as' => '.overview.gather', 'uses' => 'OverviewController@gather']);
+            // Route::match(['get'], 'overview/{page_id}/gather', ['as' => '.overview.gather', 'uses' => 'OverviewController@gather']);
+            Route::resource('overview', 'OverviewController');
         });
         
         Route::group(['namespace' => 'Storage', 'prefix' => 'storage'], function(){
@@ -476,7 +458,12 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * @return StatusCode 204
              */
             Route::resource('image', 'ImageController'); //?folder_id=1            
-        });            
+        });
+
+        Route::group(['namespace' => 'Account'], function(){
+            Route::get('account/current', 'AccountController@current');
+            Route::resource('account', 'AccountController');
+        });
         
         
     });
