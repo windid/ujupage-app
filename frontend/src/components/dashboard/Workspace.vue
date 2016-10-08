@@ -1,7 +1,7 @@
 <script>
 import PageItem from './PageItem.vue'
 import PageGroup from './PageGroup.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -16,17 +16,23 @@ export default {
     defaultPageGroup: 'defaultPageGroup'
   }),
   methods: {
-    createPageGroup () {
+    ...mapActions([
+      'createPage',
+      'switchPageGroup',
+      'createPageGroup',
+      'getInput'
+    ]),
+    newPageGroup () {
       const pageGroup = {
         name: '新建文件夹',
         projectId: this.currentProject.id
       }
-      this.$store.dispatch('createPageGroup', pageGroup)
+      this.createPageGroup(pageGroup)
     },
     goToDefault () {
       this.$store.dispatch('switchPageGroup', [this.defaultPageGroup])
     },
-    createPage () {
+    newPage () {
       this.$store.dispatch('getInput', {
         header: '请输入页面名称',
         onConfirm: (val) => {
@@ -34,7 +40,8 @@ export default {
             name: val || '未命名页面',
             group_id: this.currentPageGroup.id
           }
-          this.$store.dispatch('createPage', page)
+          this.createPage(page)
+          // this.$store.dispatch('createPage', page)
         }
       })
     }
@@ -46,8 +53,8 @@ export default {
   <div id="workspace">
     <div>
       <div class="workspace-nav">
-        <div class="btn btn-primary" @click="createPage">新建着陆页 <span class="glyphicon glyphicon-file"></span></div>
-        <div v-show="currentPageGroup.is_default === 1" class="btn btn-default" title="新建文件夹" @click="createPageGroup"><span class="glyphicon glyphicon-plus"></span> <span class="glyphicon glyphicon-folder-open"></span></div>
+        <div class="btn btn-primary" @click="newPage">新建着陆页 <span class="glyphicon glyphicon-file"></span></div>
+        <div v-show="currentPageGroup.is_default === 1" class="btn btn-default" title="新建文件夹" @click.stop="newPageGroup"><span class="glyphicon glyphicon-plus"></span> <span class="glyphicon glyphicon-folder-open"></span></div>
         <div v-show="currentPageGroup.name !== 'default'" class="btn btn-default" @click="goToDefault()"><span class="glyphicon glyphicon-level-up"></span> 返回上层</div>
       </div>
       <transition-group name="page-list" mode="out-in" tag="div">

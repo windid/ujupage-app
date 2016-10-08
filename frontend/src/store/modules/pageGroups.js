@@ -1,5 +1,5 @@
 import * as types from '../mutation-types'
-import Vue from 'vue'
+// import Vue from 'vue'
 
 const state = {
   all: [],
@@ -18,9 +18,7 @@ const mutations = {
   },
   [types.CREATE_PAGEGROUP] (state, { pageGroup }) {
     state.all.push(pageGroup)
-    Vue.nextTick(() => {
-      state.editing = pageGroup
-    })
+    state.editing = pageGroup
   },
   [types.REMOVE_PAGEGROUP] (state, { pageGroup }) {
     state.all.splice(state.all.indexOf(pageGroup), 1)

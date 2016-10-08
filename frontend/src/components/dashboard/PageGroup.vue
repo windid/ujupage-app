@@ -1,6 +1,5 @@
 <script>
 import { mapActions } from 'vuex'
-import { extend } from 'lodash'
 
 export default {
   props: {
@@ -13,12 +12,13 @@ export default {
       return this.$store.getters.editingPageGroup === this.pageGroup
     }
   },
-  methods: extend(mapActions([
-    'removePageGroup',
-    'switchPageGroup',
-    'setEditingPageGroup',
-    'renamePageGroup'
-  ]), {
+  methods: {
+    ...mapActions([
+      'removePageGroup',
+      'switchPageGroup',
+      'setEditingPageGroup',
+      'renamePageGroup'
+    ]),
     rename (e) {
       if (!this.editing) {
         return
@@ -38,7 +38,7 @@ export default {
         }
       })
     }
-  }),
+  },
   watch: {
     'editing': function (val) {
       if (val) {
