@@ -82,16 +82,22 @@ class OverviewController extends Controller {
      * }
      */
     public function show(int $page_id) {
+//        for ($i=0;$i<=23;$i++) {
+//            $this->overview->insert(['page_id' => 12, 'variation_id' => 19, 'ver' => 'pc', 'report_date' => date('Y-m-d'), 'report_hour' => $i, 'visitors' => rand(100,1000), 'conversions' => rand(10,100)]);
+//            $this->overview->insert(['page_id' => 12, 'variation_id' => 19, 'ver' => 'mobile', 'report_date' => date('Y-m-d'), 'report_hour' => $i, 'visitors' => rand(100,1000), 'conversions' => rand(10,100)]);
+//        }
+        
         $page = $this->initPGP($page_id);
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
         }
         $start_date = \Request::input('start_date', date('Y-m-d', strtotime('-7 day')));
-        $end_date = \Request::input('start_date', date('Y-m-d', strtotime('-1 day')));
+        $end_date = \Request::input('end_date', date('Y-m-d', strtotime('-1 day')));
         
         $a = $this->overview->getTable();
         $b = $this->pageVariation->getTable();
         $overviews = [];
+        
         $overviews['variations'] = $this->overview
                 ->select($b.'.name', $a.'.page_id', $a.'.variation_id', \DB::RAW('SUM(visitors) AS total_visitors'),  \DB::RAW('SUM(conversions) AS total_conversions')
                         , \DB::RAW('(SUM(conversions) / SUM(visitors)) AS cv'), $b.'.quota')
