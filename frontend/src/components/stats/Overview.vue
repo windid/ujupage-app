@@ -79,26 +79,3 @@ export default {
     </div>
   </div>
 </template>
-
-<style>
-.stats-content {
-  padding: 15px;
-}
-
-.report td, .report th {
-  line-height: 35px !important;
-  text-align: center;
-}
-
-.report th {
-  background: #eee;
-  border-bottom-width: 1px !important;
-  text-align: center;
-}
-
-.report td:first-child, .report th:first-child {
-  text-align: left;
-}
-
-
-</style>

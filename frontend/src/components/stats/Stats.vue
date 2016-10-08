@@ -4,6 +4,7 @@ import API from '../../API'
 import Navbar from './Navbar'
 import Overview from './Overview'
 import Conversion from './Conversion'
+import Campaign from './Campaign'
 import moment from 'moment'
 
 export default {
@@ -12,7 +13,8 @@ export default {
     AppHeader,
     Navbar,
     Overview,
-    Conversion
+    Conversion,
+    Campaign
   },
   data () {
     return {
@@ -36,11 +38,11 @@ export default {
     }
   },
   mounted () {
-    this.getReportData()
+    // this.getReportData()
   },
   watch: {
     '$route': function () {
-      this.getReportData()
+      // this.getReportData()
     }
   }
 }
@@ -61,10 +63,35 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style>
 .workspace{
   position:relative;
   height:100%;
   margin-left:240px;
+}
+
+.stats-content {
+  padding: 15px;
+}
+
+.report td, .report th {
+  line-height: 35px !important;
+  text-align: center;
+}
+
+.report th {
+  background: #eee;
+  border-bottom-width: 1px !important;
+  text-align: center;
+}
+
+.report td:first-child, .report th:first-child {
+  text-align: left;
+}
+
+.title-remark {
+  padding: 10px;
+  font-size: 12px;
+  color: #aaa;
 }
 </style>

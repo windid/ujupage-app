@@ -3,6 +3,7 @@ import Auth from './Auth'
 import { mapActions } from 'vuex'
 
 export default {
+  name: 'Login',
   components: {
     Auth
   },

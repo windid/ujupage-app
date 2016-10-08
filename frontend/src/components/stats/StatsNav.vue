@@ -1,15 +1,18 @@
 <script>
 import DatePicker from '../ui/DatePicker'
+import Dropdown from '../ui/Dropdown'
 import moment from 'moment'
 
 export default {
   props: ['title'],
   components: {
-    DatePicker
+    DatePicker,
+    Dropdown
   },
   data () {
     return {
-      limitEndDate: moment().format('YYYY-MM-DD')
+      limitEndDate: moment().format('YYYY-MM-DD'),
+      showVariations: false
     }
   },
   methods: {
@@ -63,6 +66,16 @@ export default {
         <div class="btn btn-default" :class="{ active: $route.query.ver === 'pc' }" @click="switchVersion('pc')">桌面</div>
         <div class="btn btn-default" :class="{ active: $route.query.ver === 'mobile' }" @click="switchVersion('mobile')">移动</div>
       </div>
+      <dropdown :show="showVariations" @toggle="showVariations=!showVariations">
+        <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          全部版本
+          &nbsp; <span class="glyphicon" :class="showVariations ? 'glyphicon-menu-up' : 'glyphicon-menu-down'"></span>
+        </div>
+        <ul slot="dropdown-menu" class="dropdown-menu">
+          <li><a href="">全部版本</a></li>
+          <li><a href="">版本 A</a></li>
+        </ul>
+      </dropdown>
       <date-picker v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>
     </div>
   </div>
@@ -85,5 +98,9 @@ export default {
 
 .data-filter {
   float: right;
+}
+
+.data-filter > .btn-group {
+  margin-left: 12px;
 }
 </style>
