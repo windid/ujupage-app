@@ -67,7 +67,7 @@ export default {
 }
 
 .sidebar-enter-active, .sidebar-leave-active {
-  transition: all .4s;
+  transition: all .3s;
 }
 
 .sidebar-enter, .sidebar-leave-active {

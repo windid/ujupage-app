@@ -49,6 +49,7 @@ export const LOAD_DONE = 'LOAD_DONE'
 // editor
 export const LOAD_VARIATION = 'LOAD_VARIATION'
 export const SAVE_VARIATION = 'SAVE_VARIATION'
+export const CREATE_VARIATION = 'CREATE_VARIATION'
 export const SAVE_CONTENT_STATE = 'SAVE_CONTENT_STATE'
 export const UNDO = 'UNDO'
 export const REDO = 'REDO'

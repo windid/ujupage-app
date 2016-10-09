@@ -14,7 +14,7 @@ const state = {
     // 被选中的元素id
     activeElementId: '',
     // 编辑状态中的AB测试版本
-    activeVariationId: null,
+    activeVariation: null,
     // 保存状态
     saveStatus: 'saved'
   },
@@ -37,7 +37,7 @@ const mutations = {
     state.page = merge({}, page)
   },
 
-  [types.LOAD_VARIATION] (state, { variationId, content }) {
+  [types.LOAD_VARIATION] (state, { variation, content }) {
     const defaultContent = {
       settings: {
         seo: {
@@ -64,15 +64,21 @@ const mutations = {
       sections: [],
       elements: {}
     }
-    state.workspace.activeVariationId = variationId
+    state.workspace.activeVariation = variation
     state.content = merge({}, defaultContent, content)
     state.history.states = [merge({}, state.content)]
     state.history.index = 0
     state.history.saved = merge({}, state.content)
   },
 
+  // 保存
   [types.SAVE_VARIATION] (state) {
     state.history.saved = merge({}, state.content)
+  },
+
+  // 创建新的AB测试版本
+  [types.CREATE_VARIATION] (state, { variation }) {
+    state.page.variations.push(variation)
   },
 
   // 保存历史记录

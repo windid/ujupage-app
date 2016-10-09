@@ -11,11 +11,13 @@ export default {
   pageGroup: Vue.resource('projects/{projectId}/groups{/id}'),
 
   page: Vue.resource('page{/id}', {}, {
-    duplicate: { method: 'GET', url: 'page/{id}/copy' },
-    publish: { method: 'GET', url: 'page/{id}/publish' }
+    duplicate: { method: 'POST', url: 'page/{id}/copy' },
+    publish: { method: 'PUT', url: 'page/{id}/publish' }
   }),
 
-  variation: Vue.resource('pages/{pageId}/variations{/id}'),
+  variation: Vue.resource('pages/{pageId}/variations{/id}', {}, {
+    duplicate: { method: 'POST', url: 'pages/{pageId}/variations{/id}/copy' }
+  }),
 
   image: Vue.resource('storage/image{/id}'),
 

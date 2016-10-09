@@ -140,7 +140,7 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
 .flipx {
   -moz-transform:scaleX(-1);
   -webkit-transform:scaleX(-1);
@@ -184,6 +184,4 @@ export default {
 .editor-header .btn-group{
   margin:7px;
 }
-
-
 </style>

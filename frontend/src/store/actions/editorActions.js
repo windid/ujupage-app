@@ -13,17 +13,34 @@ export const editorInit = ({ commit, state }, [route, callback = false]) => {
       page.variations = response.data
       commit(types.LOAD_PAGE, { page })
       const variationId = getParameter('vid') || page.variations[0].id
-      loadVariation({ commit, state }, [variationId, callback])
+      const variation = page.variations.find(v => v.id === variationId)
+      loadVariation({ commit, state }, [variation, callback])
     })
   })
 }
 
 // 加载编辑内容
-export const loadVariation = ({ commit, state }, [variationId, callback = false]) => {
-  API.variation.get({ pageId: state.editor.page.id, id: variationId }).then(response => {
+export const loadVariation = ({ commit, state }, [variation, callback = false]) => {
+  API.variation.get({ pageId: state.editor.page.id, id: variation.id }).then(response => {
     const content = JSON.parse(response.data.html_json)
-    commit(types.LOAD_VARIATION, { variationId, content })
+    commit(types.LOAD_VARIATION, { variation, content })
     if (callback) callback()
+  })
+}
+
+export const createVariation = ({ commit, state }) => {
+  API.variation.save({ pageId: state.editor.page.id }, {}).then(response => {
+    const variation = response.data
+    commit(types.CREATE_VARIATION, { variation })
+    loadVariation({ commit, state }, [variation])
+  })
+}
+
+export const duplicateVariation = ({ commit, state }, variation) => {
+  API.variation.duplicate({ pageId: state.editor.page.id, id: variation.id }, {}).then(response => {
+    const variation = response.data
+    commit(types.CREATE_VARIATION, { variation })
+    loadVariation({ commit, state }, [variation])
   })
 }
 

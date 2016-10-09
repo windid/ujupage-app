@@ -43,7 +43,7 @@ export default {
             <td>{{variation.total_conversions}}</td>
             <td>
               <div class="input-group">
-                <input type="number" class="form-control">
+                <input type="number" class="form-control" :value="variation.quota">
                 <div class="input-group-addon">%</div>
               </div>
             </td>

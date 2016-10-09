@@ -64,10 +64,10 @@ export const elementsIndex = state => {
   }
   const elements = state.editor.content.elements
   for (const elementId in elements) {
-    zIndex.pc.max = (elements[elementId].style.pc.zIndex > zIndex.pc.max) ? elements[elementId].style.pc.zIndex : zIndex.pc.max
-    zIndex.pc.min = (elements[elementId].style.pc.zIndex < zIndex.pc.min) ? elements[elementId].style.pc.zIndex : zIndex.pc.min
-    zIndex.mobile.max = (elements[elementId].style.mobile.zIndex > zIndex.mobile.max) ? elements[elementId].style.mobile.zIndex : zIndex.mobile.max
-    zIndex.mobile.min = (elements[elementId].style.mobile.zIndex < zIndex.mobile.min) ? elements[elementId].style.mobile.zIndex : zIndex.mobile.min
+    zIndex.pc.max = Math.max(elements[elementId].style.pc.zIndex, zIndex.pc.max)
+    zIndex.pc.min = Math.max(elements[elementId].style.pc.zIndex, zIndex.pc.min)
+    zIndex.mobile.max = Math.max(elements[elementId].style.mobile.zIndex, zIndex.mobile.max)
+    zIndex.mobile.min = Math.max(elements[elementId].style.mobile.zIndex, zIndex.mobile.min)
   }
   return zIndex
 }
