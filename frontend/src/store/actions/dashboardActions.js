@@ -129,7 +129,7 @@ export const movePage = ({ commit }, [page, pageGroup]) => {
 }
 
 export const duplicatePage = ({ commit }, page) => {
-  API.page.duplicate({ id: page.id }).then(response => {
+  API.page.duplicate({ id: page.id }, {}).then(response => {
     commit(types.CREATE_PAGE, { page: response.data })
   })
 }
