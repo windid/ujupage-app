@@ -58,7 +58,7 @@ class PageTest extends TestCase {
      * @depends testStore
      */
     public function testCopy($page_id) {
-        $response = $this->call('COPY', '/page/' . $page_id . '/copy', [
+        $response = $this->call('POST', '/page/' . $page_id . '/copy', [
             'name' => 'NEW_Page_' . rand(100,900)
         ]);
         $this->assertJson($response->content());        
