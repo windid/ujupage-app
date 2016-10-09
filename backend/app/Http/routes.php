@@ -193,7 +193,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              *   updated_at 更新时间
              * }
              */
-            Route::match(['copy', 'get'], 'page/{id}/copy', ['as' => '.copy', 'uses' => 'PageController@copy']);
+            Route::match(['post'], 'page/{id}/copy', ['as' => '.copy', 'uses' => 'PageController@copy']);
             
             /**
              * publish api/page/{page_id}/publish 发布页面
