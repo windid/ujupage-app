@@ -225,7 +225,7 @@ class PageController extends Controller {
      *   setting = 页面设置
      * }
      */
-    public function copy(int $page_id) {   
+    public function copy(Request $request, int $page_id) {   
         $page = $this->initPGP($page_id);        
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
