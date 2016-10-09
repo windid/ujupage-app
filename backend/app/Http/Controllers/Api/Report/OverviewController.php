@@ -82,10 +82,10 @@ class OverviewController extends Controller {
      * }
      */
     public function show(int $page_id) {
-//        for ($i=0;$i<=23;$i++) {
-//            $this->overview->insert(['page_id' => 12, 'variation_id' => 19, 'ver' => 'pc', 'report_date' => date('Y-m-d'), 'report_hour' => $i, 'visitors' => rand(100,1000), 'conversions' => rand(10,100)]);
-//            $this->overview->insert(['page_id' => 12, 'variation_id' => 19, 'ver' => 'mobile', 'report_date' => date('Y-m-d'), 'report_hour' => $i, 'visitors' => rand(100,1000), 'conversions' => rand(10,100)]);
-//        }
+        // for ($i=0;$i<=23;$i++) {
+        //  $this->overview->insert(['page_id' => 12, 'variation_id' => 19, 'ver' => 'pc', 'report_date' => date('Y-m-d'), 'report_hour' => $i, 'visitors' => rand(100,1000), 'conversions' => rand(10,100)]);
+        //  $this->overview->insert(['page_id' => 12, 'variation_id' => 19, 'ver' => 'mobile', 'report_date' => date('Y-m-d'), 'report_hour' => $i, 'visitors' => rand(100,1000), 'conversions' => rand(10,100)]);
+        // }
         
         $page = $this->initPGP($page_id);
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
@@ -97,15 +97,30 @@ class OverviewController extends Controller {
         $a = $this->overview->getTable();
         $b = $this->pageVariation->getTable();
         $overviews = [];
+        $variations = $this->pageVariation->where('page_id', $page_id)
+                ->select('id', 'name', 'quota', 'page_id')
+                ->get()->toArray();
         
-        $overviews['variations'] = $this->overview
-                ->select($b.'.name', $a.'.page_id', $a.'.variation_id', \DB::RAW('SUM(visitors) AS total_visitors'),  \DB::RAW('SUM(conversions) AS total_conversions')
-                        , \DB::RAW('(SUM(conversions) / SUM(visitors)) AS cv'), $b.'.quota')
-                ->leftJoin($b , $a . '.variation_id' , '=' , $b . '.id')
-                ->whereBetween($a.'.report_date', [$start_date, $end_date])
-                ->where($a.'.page_id', $page_id)
-                ->groupBy($a.'.variation_id')
-                ->orderBy($a.'.variation_id')->get()->toArray();
+        foreach ($variations as $k => $v) {
+            $overview = $this->overview
+                    ->select($a.'.page_id', $a.'.variation_id', \DB::RAW('SUM(visitors) AS total_visitors'),  \DB::RAW('SUM(conversions) AS total_conversions')
+                            , \DB::RAW('(SUM(conversions) / SUM(visitors)) AS cv'))
+                    ->leftJoin($b , $a . '.variation_id' , '=' , $b . '.id')
+                    ->whereBetween($a.'.report_date', [$start_date, $end_date])
+                    ->where($a.'.variation_id', $v['id'])
+                    ->groupBy($a.'.variation_id')
+                    ->orderBy($a.'.variation_id')->first();
+            if (!$overview) {
+                $variations[$k]['page_id'] = $v['page_id'];
+                $variations[$k]['variation_id'] = $v['id'];
+                $variations[$k]['total_visitors'] = 0;
+                $variations[$k]['total_conversions'] = 0;
+                $variations[$k]['cv'] = 0;
+            } else {
+                $variations[$k] = array_merge($variations[$k], $overview->toArray());
+            }
+            $overviews['variations'][] = $variations[$k];
+        }
         
         foreach ($overviews['variations'] as $k => $v) {
             $overviews['variations'][$k]['dates'] = $this->overview
