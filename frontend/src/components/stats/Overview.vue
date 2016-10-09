@@ -1,5 +1,6 @@
 <script>
 import StatsNav from './StatsNav'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -10,6 +11,11 @@ export default {
     percentage (val) {
       return (Math.round(val * 1000) / 10.0).toString() + '%'
     }
+  },
+  computed: {
+    ...mapGetters({
+      'page': 'statsPage'
+    })
   }
 }
 

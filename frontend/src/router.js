@@ -20,7 +20,7 @@ const router = new VueRouter({
   mode: 'history',
   base: __dirname,
   routes: [
-    { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requireAuth: true, init: 'pageInit' }},
+    { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requireAuth: true, preFetch: 'editorInit' }},
     { path: '/login', name: 'login', component: Login,
       beforeEnter (to, from, next) {
         store.getters.isLogin ? next('/') : next()
@@ -36,9 +36,9 @@ const router = new VueRouter({
     { path: '/resetpassword', name: 'resetpassword', component: ResetPassword },
     { path: '/', name: 'home', component: Home,
       children: [
-        { path: '', name: 'dashboard', component: Dashboard, meta: { requireAuth: true, init: 'dashboardInit' }},
+        { path: '', name: 'dashboard', component: Dashboard, meta: { requireAuth: true, preFetch: 'dashboardInit' }},
         { path: '/account', name: 'account', component: Account, meta: { requireAuth: true }},
-        { path: '/stats/:pageId/:module', name: 'stats', component: Stats, meta: { requireAuth: true }}
+        { path: '/stats/:pageId/:module', name: 'stats', component: Stats, meta: { requireAuth: true, preFetch: 'statsInit' }}
       ]
     }
   ]
@@ -55,8 +55,8 @@ router.beforeEach((to, from, next) => {
   } else {
     NProgress.start()
     store.dispatch('loading')
-    if (to.meta.init) {
-      store.dispatch(to.meta.init, [to, () => {
+    if (to.meta.preFetch) {
+      store.dispatch(to.meta.preFetch, [to, () => {
         next()
       }])
     } else {

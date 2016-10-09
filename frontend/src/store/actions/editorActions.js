@@ -5,7 +5,7 @@ import { merge } from 'lodash'
 import elementTypes from '../editorElementTypes'
 
 // 数据初始化，在路由中调用
-export const pageInit = ({ commit, state }, [route, callback = false]) => {
+export const editorInit = ({ commit, state }, [route, callback = false]) => {
   const pageId = route.params.pageId
   API.page.get({ id: pageId }).then(response => {
     const page = response.data

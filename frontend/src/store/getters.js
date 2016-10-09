@@ -1,29 +1,50 @@
 import { isEqual } from 'lodash'
 
+// user
 export const isLogin = state => !!state.user.current
 
-export const allPages = state => state.pages.all
-export const allProjects = state => state.projects.all
-export const currentProject = state => state.projects.current
-export const projectMembers = state => state.projects.members
-export const projectMembersInvited = state => state.projects.invited
-export const allPageGroups = state => state.pageGroups.all.filter(p => p.is_default !== 1)
-export const currentPageGroup = state => state.pageGroups.current
-export const defaultPageGroup = state => state.pageGroups.default
-export const editingPageGroup = state => state.pageGroups.editing
+// stats
+export const statsPage = state => state.stats.page
+
+// dashboard
+export const allPages = state => state.dashboard.pages
+
+export const allProjects = state => state.dashboard.projects
+
+export const currentProject = state => state.dashboard.currentProject
+
+export const projectMembers = state => state.dashboard.projectMembers
+
+export const projectMembersInvited = state => state.dashboard.projectMembersInvited
+
+export const allPageGroups = state => state.dashboard.pageGroups.filter(p => p.is_default !== 1)
+
+export const currentPageGroup = state => state.dashboard.currentPageGroup
+
+export const defaultPageGroup = state => state.dashboard.defaultPageGroup
+
+export const editingPageGroup = state => state.dashboard.editingPageGroup
 
 // ui
 export const message = state => (state.ui.messages[0] || {})
+
 export const showMessage = state => state.ui.messages.length > 0
+
 export const load = state => state.ui.load
+
 export const imageLibrary = state => state.ui.imageLibrary
 
 // editor
 export const editorWorkspace = state => state.editor.workspace
+
 export const editorSettings = state => state.editor.content.settings
+
 export const editorSections = state => state.editor.content.sections
+
 export const editorElements = state => state.editor.content.elements
+
 export const editorColorSet = state => state.editor.content.colorSet
+
 export const editingPage = state => state.editor.page
 
 export const editorHeight = state => {
@@ -52,5 +73,7 @@ export const elementsIndex = state => {
 }
 
 export const undoButton = state => state.editor.history.index > 0
+
 export const redoButton = state => state.editor.history.states.length > state.editor.history.index + 1
+
 export const saveStatus = state => isEqual(state.editor.content, state.editor.history.saved)

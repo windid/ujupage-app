@@ -12,12 +12,12 @@ export default {
   data () {
     return {
       limitEndDate: moment().format('YYYY-MM-DD'),
-      showVariations: false
+      showVariations: false,
+      page: this.$store.getters.statsPage
     }
   },
   methods: {
     newQuery (key, value) {
-      console.log(this.$route, key)
       return {
         ...this.$route.query,
         [key]: value
@@ -31,9 +31,24 @@ export default {
           'ver': ver
         }
       })
+    },
+    switchVariation (variation) {
+      variation = variation || { id: 0, name: '全部版本' }
+      this.$router.push({
+        path: this.$route.path,
+        query: {
+          ...this.$route.query,
+          'vid': variation.id
+        }
+      })
+      this.showVariations = false
     }
   },
   computed: {
+    variationName () {
+      const variation = this.page.variations.filter(v => parseInt(v.id) === parseInt(this.$route.query.vid))[0]
+      return variation ? variation.name : '全部版本'
+    },
     date: {
       get () {
         return {
@@ -59,7 +74,7 @@ export default {
 
 <template>
   <div class="stats-nav">
-    <h1>{{title}}</h1>
+    <h1>{{title}} - {{page.name}}</h1>
     <div class="data-filter">
       <div class="btn-group">
         <div class="btn btn-default" :class="{ active: !$route.query.ver }" @click="switchVersion('')">全部</div>
@@ -68,12 +83,12 @@ export default {
       </div>
       <dropdown :show="showVariations" @toggle="showVariations=!showVariations">
         <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-          全部版本
+          {{variationName}}
           &nbsp; <span class="glyphicon" :class="showVariations ? 'glyphicon-menu-up' : 'glyphicon-menu-down'"></span>
         </div>
         <ul slot="dropdown-menu" class="dropdown-menu">
-          <li><a href="">全部版本</a></li>
-          <li><a href="">版本 A</a></li>
+          <li :class="{active: !$route.query.vid}"><a href="javascript:;" @click="switchVariation(null)">全部版本</a></li>
+          <li v-for="variation in page.variations" :class="{active: $route.query.vid === variation.id}"><a href="javascript:;" @click="switchVariation(variation)">{{variation.name}}</a></li>
         </ul>
       </dropdown>
       <date-picker v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>

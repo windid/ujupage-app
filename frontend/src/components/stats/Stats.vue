@@ -26,7 +26,8 @@ export default {
     getReportData () {
       const params = {
         ...this.$route.params,
-        ver: this.$route.query.ver,
+        ver: this.$route.query.ver || '',
+        variation_id: this.$route.query.vid || 0,
         start_date: this.$route.query.sd || moment().add(-7, 'days').format('YYYY-MM-DD'),
         end_date: this.$route.query.ed || moment().add(-1, 'days').format('YYYY-MM-DD')
       }
@@ -38,11 +39,11 @@ export default {
     }
   },
   mounted () {
-    // this.getReportData()
+    this.getReportData()
   },
   watch: {
     '$route': function () {
-      // this.getReportData()
+      this.getReportData()
     }
   }
 }
@@ -53,18 +54,18 @@ export default {
   <div>
     <navbar></navbar>
     <transition name="fade" mode="out-in">
-      <div v-if="loading" class="workspace">
+      <div v-if="loading" class="stats">
         <div class="loading">
           <div class="loading-icon"></div>
         </div>
       </div>
-      <component v-else :is="$route.params.module" :report="report" class="workspace"></component>
+      <component v-else :is="$route.params.module" :report="report" class="stats"></component>
     </transition>
   </div>
 </template>
 
 <style>
-.workspace{
+.stats{
   position:relative;
   height:100%;
   margin-left:240px;
