@@ -18,21 +18,25 @@ export default {
   },
   data () {
     return {
-      loading: false,
+      loading: true,
       report: {}
     }
   },
-  methods: {
-    getReportData () {
-      const params = {
+  computed: {
+    params () {
+      return {
         ...this.$route.params,
         ver: this.$route.query.ver || '',
         variation_id: this.$route.query.vid || 0,
         start_date: this.$route.query.sd || moment().add(-7, 'days').format('YYYY-MM-DD'),
         end_date: this.$route.query.ed || moment().add(-1, 'days').format('YYYY-MM-DD')
       }
+    }
+  },
+  methods: {
+    getReportData () {
       this.loading = true
-      API.report.get(params).then(response => {
+      API.report.get(this.params).then(response => {
         this.report = response.data
         this.loading = false
       })
@@ -59,7 +63,7 @@ export default {
           <div class="loading-icon"></div>
         </div>
       </div>
-      <component v-else :is="$route.params.module" :report="report" class="stats"></component>
+      <component v-if="!loading" :is="$route.params.module" :report="report" :params="params" class="stats"></component>
     </transition>
   </div>
 </template>
