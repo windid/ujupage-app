@@ -129,6 +129,7 @@ class OverviewController extends Controller {
                 ->leftJoin($b , $a . '.variation_id' , '=' , $b . '.id')
                 ->whereBetween($a.'.report_date', [$start_date, $end_date])
                 ->where($a.'.page_id', $page_id)
+                ->where($a.'.variation_id', $v['id'])
                 ->groupBy($a.'.report_date')
                 ->orderBy($a.'.report_date')->get()->toArray();
         }        
