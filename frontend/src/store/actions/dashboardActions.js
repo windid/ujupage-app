@@ -66,8 +66,8 @@ export const loadMembers = ({ commit }, project) => {
 }
 
 export const inviteMember = ({ commit, state }, member) => {
-  projectAPI.invite(member, state.projects.current, member => {
-    loadMembers({ commit }, state.projects.current)
+  projectAPI.invite(member, state.dashboard.currentProject, member => {
+    loadMembers({ commit }, state.dashboard.currentProject)
   }, data => commit(types.LOAD_FAILED, { source: 'inviteMember', err: data.err }))
 }
 
@@ -87,7 +87,7 @@ export const createPageGroup = ({ commit }, pageGroup) => {
 }
 
 export const removePageGroup = ({ commit, state }, pageGroup) => {
-  API.pageGroup.delete({ projectId: state.projects.current.id, id: pageGroup.id }).then(response => {
+  API.pageGroup.delete({ projectId: state.dashboard.currentPageGroup.id, id: pageGroup.id }).then(response => {
     commit(types.REMOVE_PAGEGROUP, { pageGroup })
   })
 }
@@ -98,7 +98,7 @@ export const setEditingPageGroup = ({ commit }, pageGroup) => {
 
 export const renamePageGroup = ({ commit, state }, newName) => {
   const pageGroup = state.pageGroups.editing
-  API.pageGroup.update({ projectId: state.projects.current.id, id: pageGroup.id }, { name: newName }).then(response => {
+  API.pageGroup.update({ projectId: state.dashboard.currentProject.id, id: pageGroup.id }, { name: newName }).then(response => {
     commit(types.RENAME_PAGEGROUP, { pageGroup, newName })
   })
 }

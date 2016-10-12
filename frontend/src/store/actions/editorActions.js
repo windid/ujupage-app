@@ -13,7 +13,8 @@ export const editorInit = ({ commit, state }, [route, callback = false]) => {
       page.variations = response.data
       commit(types.LOAD_PAGE, { page })
       const variationId = getParameter('vid') || page.variations[0].id
-      const variation = page.variations.find(v => v.id === variationId)
+      // const variation = page.variations.find(v => v.id === variationId)
+      const variation = page.variations.filter(v => v.id === variationId)[0]
       loadVariation({ commit, state }, [variation, callback])
     })
   })
@@ -44,10 +45,25 @@ export const duplicateVariation = ({ commit, state }, variation) => {
   })
 }
 
+export const renameVariation = ({ commit, state }, [variation, newName]) => {
+  API.variation.update({ pageId: state.editor.page.id, id: variation.id }, { name: newName }).then(response => {
+    commit(types.RENAME_VARIATION, { variation, newName })
+  })
+}
+
+export const removeVariation = ({ commit, state }, variation) => {
+  API.variation.delete({ pageId: state.editor.page.id, id: variation.id }).then(response => {
+    commit(types.REMOVE_VARIATION, { variation })
+    if (variation.id === state.editor.workspace.activeVariation.id) {
+      loadVariation({ commit, state }, [state.editor.page.variations[0]])
+    }
+  })
+}
+
 // 保存
 export const saveVariation = ({ commit, state }) => {
   const content = JSON.stringify(state.editor.content)
-  API.variation.update({ pageId: state.editor.page.id, id: state.editor.workspace.activeVariationId }, { htmljson: content }).then(response => {
+  API.variation.update({ pageId: state.editor.page.id, id: state.editor.workspace.activeVariation.id }, { htmljson: content }).then(response => {
     commit(types.SAVE_VARIATION)
   })
 }

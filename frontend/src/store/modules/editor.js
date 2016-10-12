@@ -81,6 +81,15 @@ const mutations = {
     state.page.variations.push(variation)
   },
 
+  [types.REMOVE_VARIATION] (state, { variation }) {
+    state.page.variations.splice(state.page.variations.indexOf(variation), 1)
+  },
+
+  [types.RENAME_VARIATION] (state, { variation, newName }) {
+    variation.name = newName
+    state.workspace.activeVariation.id === variation.id && (state.workspace.activeVariation = variation)
+  },
+
   // 保存历史记录
   [types.SAVE_CONTENT_STATE] (state) {
     state.history.index++

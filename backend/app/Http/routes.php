@@ -200,7 +200,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * -- page_id 页面ID
              * @return StatusCode 200
              */
-            Route::get('page/{id}/publish', ['as' => '.publish', 'uses' => 'PageController@publish']);
+            Route::put('page/{id}/publish', ['as' => '.publish', 'uses' => 'PageController@publish']);
             
             /**
              * GET api/page/ 获取所有页面
@@ -274,7 +274,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              *   name 版本名称
              * }
              */
-            Route::match(['copy', 'get'], 'pages/{page_id}/variations/{variation_id}/copy', ['as' => '.copy', 'uses' => 'VariationController@copy']);
+            Route::post('pages/{page_id}/variations/{variation_id}/copy', ['as' => '.copy', 'uses' => 'VariationController@copy']);
             
             /**
              * GET api/pages/{page_id}/variations 获取所有版本

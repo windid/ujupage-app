@@ -9,7 +9,7 @@ export default {
     <div class="list-group">
       <router-link class="list-group-item" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'overview'}, query: $route.query }">概览</router-link>
       <router-link class="list-group-item" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'conversion'}, query: $route.query }">转化详情</router-link>
-      <router-link class="list-group-item" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'campaign'}, query: $route.query }">广告流量</router-link>
+      <router-link class="list-group-item" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'campaign'}, query: $route.query }">渠道分析</router-link>
     </div>
   </div>
 </template>

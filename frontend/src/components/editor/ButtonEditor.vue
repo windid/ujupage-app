@@ -58,10 +58,6 @@ export default {
   max-width: 106px;
 }
 
-.input-group-btn > .btn{
-  font-size: 15px;
-}
-
 .corner-radius-input {
   float: right;
   max-width: 120px;

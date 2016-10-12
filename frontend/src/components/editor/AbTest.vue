@@ -15,19 +15,50 @@ export default {
     ...mapActions([
       'loadVariation',
       'createVariation',
-      'duplicateVariation'
+      'duplicateVariation',
+      'removeVariation',
+      'renameVariation',
+      'getInput',
+      'confirm',
+      'warning'
     ]),
     rename (variation) {
-
+      this.getInput({
+        header: '请输入新的版本名',
+        content: variation.name,
+        onConfirm: (val) => {
+          this.renameVariation([variation, val])
+        }
+      })
     },
     duplicate (variation) {
       this.duplicateVariation(variation)
+      this.show = false
     },
     remove (variation) {
-
+      if (this.page.variations.length === 1) {
+        this.warning({
+          header: '删除保护',
+          content: '您不能删除唯一的版本，因为页面至少要保留一个版本。'
+        })
+        return
+      }
+      this.confirm({
+        header: '确定删除？',
+        content: '「' + variation.name + '」将被删除，其流量配额将按比例分配给其他版本',
+        onConfirm: () => {
+          this.removeVariation(variation)
+          this.show = false
+        }
+      })
     },
     create () {
       this.createVariation()
+      this.show = false
+    },
+    switchVariation (variation) {
+      this.loadVariation([variation])
+      this.show = false
     }
   },
   computed: {
@@ -49,8 +80,8 @@ export default {
       </div>
     </div>
     <ul slot="dropdown-menu" class="dropdown-menu variations-menu">
-      <li v-for="variation in page.variations">
-        <span class="variation-name" @click="loadVariation([variation])">{{variation.name}}</span>
+      <li v-for="variation in page.variations" :class="{ active: variation.id === workspace.activeVariation.id }">
+        <span class="variation-name" @click="switchVariation(variation)">{{variation.name}}</span>
         <span class="caret-right"></span>
         <div class="btn-group">
           <div class="btn btn-default" title="重命名" @click="rename(variation)"><span class="glyphicon glyphicon-pencil"></span></div>
@@ -88,6 +119,10 @@ export default {
   line-height: 34px;
   padding: 0 14px;
   cursor: pointer;
+}
+
+.variations-menu > li.active{
+  background: #eee;
 }
 
 .variations-menu > li:hover{

@@ -78,41 +78,41 @@ export default {
 </template>
 
 <style>
-.page-group{
+.page-group {
   background: #f9f9f9;
   cursor: pointer;
   width: 200px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  float:left;
-  margin:10px;
+  float: left;
+  margin: 10px;
   box-shadow: 0 0 8px #ddd;
 }
 
-.page-group-header{
-  position:relative;
-  padding:10px;
-  font-weight:bold;
+.page-group-header {
+  position: relative;
+  padding: 10px;
+  font-weight: bold;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.page-group-name{
+.page-group-name {
   line-height: 35px;
 }
 
-.page-group-body{
-  height:136px;
-  font-size:100px;
-  color:#ccc;
+.page-group-body {
+  height: 136px;
+  font-size: 100px;
+  color: #ccc;
   text-align: center;
-  background:#f9f9f9;
+  background: #f9f9f9;
 }
 
-.page-group-footer{
-  height:50px;
+.page-group-footer {
+  height: 50px;
   text-align: right;
-  padding:10px;
+  padding: 10px;
 }
 </style>
