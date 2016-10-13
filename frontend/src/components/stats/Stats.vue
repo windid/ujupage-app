@@ -18,7 +18,7 @@ export default {
   },
   data () {
     return {
-      loading: true,
+      loading: false,
       report: {}
     }
   },
@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     getReportData () {
-      this.loading = true
+      // this.loading = true
       API.report.get(this.params).then(response => {
         this.report = response.data
         this.loading = false
