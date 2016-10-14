@@ -4,7 +4,11 @@ import getParameter from '../../utils/getParameter'
 import cookieHandler from '../../utils/cookieHandler'
 import * as types from '../mutation-types'
 
-export const dashboardInit = ({ commit }, [route, callback = false]) => {
+export const dashboardInit = ({ commit, state }, [route, callback = false]) => {
+  if (state.dashboard.projects.length > 0) {
+    if (callback) callback()
+    return
+  }
   API.project.get().then(response => {
     const projects = response.data
     commit(types.LOAD_PROJECTS, { projects })

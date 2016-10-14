@@ -1,6 +1,6 @@
 <script>
 import Modal from '../ui/Modal.vue'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { merge } from 'lodash'
 
 export default {
@@ -13,20 +13,40 @@ export default {
       require: true
     }
   },
+  computed: {
+    ...mapGetters({
+      editorSettings: 'editorSettings',
+      elements: 'editorElements'
+    })
+  },
   data () {
     return {
       currentTab: 'seo',
-      settings: {},
+      settings: merge({}, this.$store.getters.editorSettings),
       goals: []
     }
   },
-  computed: {
-    ...mapGetters({
-      editorSettings: 'editorSettings'
-    })
+  methods: {
+    ...mapActions(['saveSettings']),
+    save () {
+      this.saveSettings(this.settings)
+      this.$emit('close')
+    }
   },
   created () {
-    this.settings = merge({}, this.editorSettings)
+    console.log(this.settings)
+    let formsInPage = false
+    for (const elementId in this.elements) {
+      if (this.elements[elementId].type === 'form') {
+        formsInPage = true
+      }
+      if (this.elements[elementId].link && this.elements[elementId].link.url) {
+        this.goals.push(this.elements[elementId].link.url)
+      }
+    }
+    if (formsInPage) {
+      this.goals.push('form')
+    }
   }
 }
 
@@ -77,12 +97,10 @@ export default {
     <div v-show="currentTab === 'goal'">
       <form class="form-horizontal">
         <div class="form-group">
-          <label class="col-sm-2 control-label">转化目标</label>
-          <div class="col-sm-10">
-            <select class="form-control" v-model="settings.goals.first">
-              <option value="">请选择转化目标</option>
-              <option v-for="goal in goals" :value="goal">{{(goal === 'form') ? '表单提交' : '[链接] ' + goal}}</option>
-            </select>
+          <div class="col-sm-offset-1 col-sm-10" v-for="(goal, index) in goals">
+            <input type="checkbox" :id="'goal-' + index" :value="goal" v-model="settings.goals">
+            <label v-if="goal === 'form'" :for="'goal-' + index">表单提交成功</label>          
+            <label v-if="goal !== 'form'" :for="'goal-' + index">链接：{{goal}}</label>          
           </div>
         </div>
       </form>
@@ -109,6 +127,9 @@ export default {
         </div>
       </form>
     </div>
+  </div>
+  <div slot="footer">
+    <button class="btn btn-success btn-sm" @click="save">完成</button>
   </div>
 </modal>
 </template>

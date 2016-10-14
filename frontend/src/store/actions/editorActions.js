@@ -29,6 +29,7 @@ export const loadVariation = ({ commit, state }, [variation, callback = false]) 
   })
 }
 
+// 新建版本
 export const createVariation = ({ commit, state }) => {
   API.variation.save({ pageId: state.editor.page.id }, {}).then(response => {
     const variation = response.data
@@ -37,6 +38,7 @@ export const createVariation = ({ commit, state }) => {
   })
 }
 
+// 复制版本
 export const duplicateVariation = ({ commit, state }, variation) => {
   API.variation.duplicate({ pageId: state.editor.page.id, id: variation.id }, {}).then(response => {
     const variation = response.data
@@ -45,12 +47,14 @@ export const duplicateVariation = ({ commit, state }, variation) => {
   })
 }
 
+// 重命名版本
 export const renameVariation = ({ commit, state }, [variation, newName]) => {
   API.variation.update({ pageId: state.editor.page.id, id: variation.id }, { name: newName }).then(response => {
     commit(types.RENAME_VARIATION, { variation, newName })
   })
 }
 
+// 删除版本
 export const removeVariation = ({ commit, state }, variation) => {
   API.variation.delete({ pageId: state.editor.page.id, id: variation.id }).then(response => {
     commit(types.REMOVE_VARIATION, { variation })
@@ -58,6 +62,11 @@ export const removeVariation = ({ commit, state }, variation) => {
       loadVariation({ commit, state }, [state.editor.page.variations[0]])
     }
   })
+}
+
+// 保存设置
+export const saveSettings = ({ commit }, settings) => {
+  commit(types.SAVE_SETTINGS, { settings })
 }
 
 // 保存
@@ -86,8 +95,8 @@ export const publishPage = ({ commit, state }, successCb) => {
 export const addSection = ({ commit }) => {
   const section = {
     style: {
-      'pc': { 'background-color': '', height: '300px' },
-      'mobile': { 'background-color': '', height: '300px' }
+      'pc': { 'background-color': '', height: '500px' },
+      'mobile': { 'background-color': '', height: '500px' }
     },
     elements: { 'pc': [], 'mobile': [] }
   }

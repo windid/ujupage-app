@@ -45,9 +45,7 @@ const mutations = {
           keywords: '',
           description: ''
         },
-        goals: {
-          first: ''
-        },
+        goals: [],
         code: {
           header: '',
           bodyIn: '',
@@ -81,13 +79,20 @@ const mutations = {
     state.page.variations.push(variation)
   },
 
+  // 删除AB测试版本
   [types.REMOVE_VARIATION] (state, { variation }) {
     state.page.variations.splice(state.page.variations.indexOf(variation), 1)
   },
 
+  // 重命名AB测试版本
   [types.RENAME_VARIATION] (state, { variation, newName }) {
     variation.name = newName
     state.workspace.activeVariation.id === variation.id && (state.workspace.activeVariation = variation)
+  },
+
+  // 保存设置
+  [types.SAVE_SETTINGS] (state, { settings }) {
+    state.content.settings = settings
   },
 
   // 保存历史记录
