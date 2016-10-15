@@ -8,6 +8,9 @@ export default {
     AppHeader,
     Navbar,
     Workspace
+  },
+  mounted () {
+    document.title = '控制面板 - 聚页'
   }
 }
 

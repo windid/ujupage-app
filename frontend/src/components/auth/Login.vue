@@ -33,6 +33,9 @@ export default {
         this.error = error
       }])
     }
+  },
+  mounted () {
+    document.title = '登陆 - 聚页'
   }
 }
 

@@ -3,6 +3,9 @@ import Auth from './Auth'
 export default {
   components: {
     Auth
+  },
+  mounted () {
+    document.title = '修改密码 - 聚页'
   }
 }
 

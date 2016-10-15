@@ -4,7 +4,7 @@ import API from '../../API'
 import Navbar from './Navbar'
 import Overview from './Overview'
 import Conversion from './Conversion'
-import Campaign from './Campaign'
+import Traffic from './Traffic'
 import moment from 'moment'
 
 export default {
@@ -14,7 +14,7 @@ export default {
     Navbar,
     Overview,
     Conversion,
-    Campaign
+    Traffic
   },
   data () {
     return {
@@ -44,6 +44,7 @@ export default {
   },
   mounted () {
     this.getReportData()
+    document.title = this.$store.getters.statsPage.name + ' - 分析 - 聚页'
   },
   watch: {
     '$route': function () {

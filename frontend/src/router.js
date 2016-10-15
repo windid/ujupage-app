@@ -20,7 +20,6 @@ const router = new VueRouter({
   mode: 'history',
   base: __dirname,
   routes: [
-    { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requireAuth: true, preFetch: 'editorInit' }},
     { path: '/login', name: 'login', component: Login,
       beforeEnter (to, from, next) {
         store.getters.isLogin ? next('/') : next()
@@ -34,11 +33,12 @@ const router = new VueRouter({
     { path: '/register', name: 'register', component: Register },
     { path: '/password', name: 'password', component: Password },
     { path: '/resetpassword', name: 'resetpassword', component: ResetPassword },
-    { path: '/', name: 'home', component: Home,
+    { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
+    { path: '/', name: 'home', component: Home, meta: { requiresAuth: true },
       children: [
-        { path: '', name: 'dashboard', component: Dashboard, meta: { requireAuth: true, preFetch: 'dashboardInit' }},
-        { path: '/account', name: 'account', component: Account, meta: { requireAuth: true }},
-        { path: '/stats/:pageId/:module', name: 'stats', component: Stats, meta: { requireAuth: true, preFetch: 'statsInit' }}
+        { path: '', name: 'dashboard', component: Dashboard, meta: { preFetch: 'dashboardInit' }},
+        { path: '/account', name: 'account', component: Account },
+        { path: '/stats/:pageId/:module', name: 'stats', component: Stats, meta: { preFetch: 'statsInit' }}
       ]
     }
   ]
@@ -47,7 +47,7 @@ const router = new VueRouter({
 NProgress.configure({ showSpinner: false })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requireAuth && !store.getters.isLogin) {
+  if (to.matched.some(record => record.meta.requiresAuth) && !store.getters.isLogin) {
     next({
       path: '/login',
       query: { redirect: to.fullPath }

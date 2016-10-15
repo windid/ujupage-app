@@ -20,7 +20,7 @@ export default {
         <li><a href="#">广告内容</a></li>
         <li><a href="#">关键词</a></li>
       </ul>
-      <div class="source-content">
+      <div class="traffic-content">
         <table class="report table table-bordered table-hover">
           <thead>
             <tr>
@@ -46,7 +46,7 @@ export default {
 </template>
 
 <style>
-.source-content {
+.traffic-content {
   border: 1px solid #ddd;
   border-top: 0;
   border-bottom-right-radius: 5px;

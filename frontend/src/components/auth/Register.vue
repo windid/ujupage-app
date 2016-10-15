@@ -3,6 +3,9 @@ import Auth from './Auth'
 export default {
   components: {
     Auth
+  },
+  mounted () {
+    document.title = '注册 - 聚页'
   }
 }
 

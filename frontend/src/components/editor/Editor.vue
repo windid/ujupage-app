@@ -9,6 +9,9 @@ export default {
     EditorHeader,
     EditorToolbar,
     EditorWorkspace
+  },
+  mounted () {
+    document.title = this.$store.getters.editingPage.name + ' - 编辑 - 聚页'
   }
 }
 
