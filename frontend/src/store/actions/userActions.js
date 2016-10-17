@@ -12,12 +12,13 @@ export const requireLogin = ({ commit }) => {
 export const login = ({ commit }, [email, password, remember, success, error]) => {
   API.auth.save({}, {
     email: email,
-    password: password
+    password: password,
+    remember: remember
   }).then(response => {
     const user = response.data
     commit(types.LOAD_USER, { user })
     success()
-  }, response => error(response.data.error))
+  }, response => error(response))
 }
 
 export const logout = ({ commit }, success) => {
@@ -25,4 +26,26 @@ export const logout = ({ commit }, success) => {
     commit(types.LOAD_USER, { user: null })
     success()
   })
+}
+
+export const register = ({ commit }, [user, success, error]) => {
+  API.user.save({}, user).then(response => {
+    const user = response.data
+    commit(types.LOAD_USER, { user })
+    success()
+  }, response => error(response))
+}
+
+export const getPassword = ({ commit }, [email, success, error]) => {
+  API.user.getPassword({}, { email: email }).then(response => {
+    success()
+  }, response => error(response))
+}
+
+export const resetPassword = ({ commit }) => {
+
+}
+
+export const activeEmail = ({ commit }) => {
+
 }

@@ -30,13 +30,24 @@ export default {
   }),
 
   auth: {
-    save (parms, data) {
+    save (params, data) {
       const url = 'auth/login'
       return Vue.http.post(url, data)
     },
     delete (params, data) {
       const url = 'auth/logout'
       return Vue.http.get(url)
+    }
+  },
+
+  user: {
+    save (params, data) {
+      const url = 'auth/register'
+      return Vue.http.post(url, data)
+    },
+    getPassword (params, data) {
+      const url = 'auth/password/forget'
+      return Vue.http.post(url, data)
     }
   }
 }

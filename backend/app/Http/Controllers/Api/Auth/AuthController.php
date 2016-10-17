@@ -52,8 +52,8 @@ use AuthenticatesAndRegistersUsers,
     protected function validator(array $data) {
         return Validator::make($data, [
                     'name' => 'required|max:255',
-                    'email' => ['required', 'email', 'max:255', 'unique:users', 'regex:/^(.*)(@ujumedia.com)$/'],
-                    'password' => 'required|confirmed|min:6',
+                    'email' => ['required', 'email', 'max:255', 'unique:users'],
+                    'password' => 'required|min:6',
                     'i' => 'alpha_num'
         ]);
     }

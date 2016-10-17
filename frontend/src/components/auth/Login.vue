@@ -19,7 +19,7 @@ export default {
       const password = e.target.password.value
       const remember = e.target.remember.checked
       if (!email) {
-        this.error = '请输入您的用户名'
+        this.error = '请输入您的电子邮件'
         return
       }
       if (!password) {
@@ -28,9 +28,18 @@ export default {
       }
       this.login([email, password, remember, () => {
         this.$router.replace(this.$route.query.redirect || '/')
-      }, (error) => {
-        console.log(error)
-        this.error = error
+      }, (response) => {
+        switch (response.status) {
+          case 401:
+            this.error = '密码错误！'
+            break
+          case 422:
+            this.error = '帐号错误！'
+            break
+          default:
+            this.error = '登陆失败！'
+            break
+        }
       }])
     }
   },
@@ -55,6 +64,7 @@ export default {
       <div class="form-group">
         <label><input type="checkbox" name="remember" value="1" /> 在本机保持我的登陆状态</label>
       </div>
+      <p class="auth-error bg-danger" v-show="!!error">{{error}}</p>
       <div class="form-group">
         <input type="submit" value="登陆" class="btn btn-primary btn-lg form-control input-lg" />  
       </div>

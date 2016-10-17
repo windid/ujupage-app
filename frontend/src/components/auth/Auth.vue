@@ -34,6 +34,11 @@
 
 }
 
+.auth-error {
+  padding: 8px;
+  border-radius: 5px;
+}
+
 .auth-extra {
   text-align: center;
   color: #bbb;

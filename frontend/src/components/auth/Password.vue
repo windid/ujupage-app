@@ -1,8 +1,34 @@
 <script>
 import Auth from './Auth'
+import { mapActions } from 'vuex'
+
 export default {
   components: {
     Auth
+  },
+  data () {
+    return {
+      error: '',
+      emailSent: false
+    }
+  },
+  methods: {
+    ...mapActions(['getPassword']),
+    formSubmit (e) {
+      const email = e.target.email.value
+      const emailPattern = /^[A-Za-z0-9]+([-_.][A-Za-z0-9]+)*@([A-Za-z0-9]+[-.])+[A-Za-z0-9]{2,5}$/
+      if (!emailPattern.test(email)) {
+        this.error = '请输入正确的邮箱地址'
+        return
+      }
+      this.getPassword([email, () => {
+        this.emailSent = true
+      }, (response) => {
+        if (response.status === 404) {
+          this.error = '您输入的邮箱尚未注册。'
+        }
+      }])
+    }
   },
   mounted () {
     document.title = '密码重设 - 聚页'
@@ -15,14 +41,18 @@ export default {
 <auth>
   <span slot="title">密码重设</span>
   <div slot="content">
-    <form action="" method="post">
+    <form v-if="!emailSent" action="" @submit.prevent="formSubmit" method="post">
       <div class="form-group">
         <input class="form-control input-lg" type="text" name="email" value="" placeholder="邮箱"/>        
       </div>
+      <p class="auth-error bg-danger" v-show="!!error">{{error}}</p>
       <div class="form-group">
         <input type="submit" value="发送密码重设邮件" class="btn btn-primary btn-lg form-control input-lg" />  
       </div>
     </form>
+    <p class="auth-info bg-info" v-if="emailSent">
+      一封包含密码重置链接的验证邮件已经发送到您的注册邮箱，请按照邮件中的说明进行下一步的操作。
+    </p>
   </div>
   <p slot="extra">
     已经有聚页账户？

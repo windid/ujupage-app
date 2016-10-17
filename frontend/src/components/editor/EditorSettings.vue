@@ -34,7 +34,6 @@ export default {
     }
   },
   created () {
-    console.log(this.settings)
     let formsInPage = false
     for (const elementId in this.elements) {
       if (this.elements[elementId].type === 'form') {
