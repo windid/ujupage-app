@@ -2,7 +2,7 @@ import * as types from '../mutation-types'
 import API from '../../API'
 
 export const loadUser = ({ commit }, user) => {
-  commit(types.LOAD_USER, { user })
+  commit(types.LOG_IN, { user })
 }
 
 export const requireLogin = ({ commit }) => {
@@ -16,14 +16,14 @@ export const login = ({ commit }, [email, password, remember, success, error]) =
     remember: remember
   }).then(response => {
     const user = response.data
-    commit(types.LOAD_USER, { user })
+    commit(types.LOG_IN, { user })
     success()
   }, response => error(response))
 }
 
 export const logout = ({ commit }, success) => {
   API.auth.delete().then(response => {
-    commit(types.LOAD_USER, { user: null })
+    commit(types.LOG_OUT)
     success()
   })
 }

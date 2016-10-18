@@ -17,6 +17,12 @@ const mutations = {
     state.projects = projects
   },
 
+  [types.LOG_OUT] (state) {
+    state.projects = []
+    state.pageGroups = []
+    state.pages = []
+  },
+
   [types.SET_CURRENT_PROJECT] (state, { project }) {
     state.currentProject = project
   },

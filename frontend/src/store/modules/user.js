@@ -5,8 +5,11 @@ const state = {
 }
 
 const mutations = {
-  [types.LOAD_USER] (state, { user }) {
+  [types.LOG_IN] (state, { user }) {
     state.current = user
+  },
+  [types.LOG_OUT] (state) {
+    state.current = null
   }
 }
 
