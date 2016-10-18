@@ -69,7 +69,7 @@ export default {
         <input type="submit" value="登陆" class="btn btn-primary btn-lg form-control input-lg" />  
       </div>
     </form>
-    <div><router-link to="/password">忘记密码？</router-link></div>
+    <div><router-link to="/forgetpassword">忘记密码？</router-link></div>
   </div>
   <p slot="extra">
     还没有聚页账户？

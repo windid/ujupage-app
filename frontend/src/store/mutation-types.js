@@ -48,6 +48,7 @@ export const LOAD_FAILED = 'LOAD_FAILED'
 export const LOAD_DONE = 'LOAD_DONE'
 
 // editor
+export const LOAD_PAGE = 'LOAD_PAGE'
 export const LOAD_VARIATION = 'LOAD_VARIATION'
 export const SAVE_VARIATION = 'SAVE_VARIATION'
 export const CREATE_VARIATION = 'CREATE_VARIATION'

@@ -10,7 +10,7 @@ const Dashboard = resolve => require(['./components/dashboard/Dashboard.vue'], r
 const Account = resolve => require(['./components/account/Account.vue'], resolve)
 const Stats = resolve => require(['./components/stats/Stats.vue'], resolve)
 const Register = resolve => require(['./components/auth/Register.vue'], resolve)
-const Password = resolve => require(['./components/auth/Password.vue'], resolve)
+const ForgetPassword = resolve => require(['./components/auth/ForgetPassword.vue'], resolve)
 const ResetPassword = resolve => require(['./components/auth/ResetPassword.vue'], resolve)
 
 import Home from './components/common/Home'
@@ -31,8 +31,8 @@ const router = new VueRouter({
       }
     },
     { path: '/register', name: 'register', component: Register },
-    { path: '/password', name: 'password', component: Password },
-    { path: '/resetpassword', name: 'resetpassword', component: ResetPassword },
+    { path: '/forgetpassword', name: 'forgetpassword', component: ForgetPassword },
+    { path: '/resetpassword/:token', name: 'resetpassword', component: ResetPassword },
     { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
     { path: '/', name: 'home', component: Home, meta: { requiresAuth: true },
       children: [
