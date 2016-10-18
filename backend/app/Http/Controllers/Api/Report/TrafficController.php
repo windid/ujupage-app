@@ -9,17 +9,16 @@ use App\Models\Page\PageVariation;
 use App\Models\Page\PageGroup;
 use App\Models\Project\Project;
 
-use App\Models\Report\ReportConversion;
-use App\Models\Report\ReportOverview;
+use App\Models\Report\ReportSource;
 
-class ConversionController extends Controller {
+class TrafficController extends Controller {
     
     public $user;
     public $page;
     public $pageVariation;
     public $pageGroup;
     public $project;
-    public $conversion;
+    public $source;
     
     public function __construct() {
         $this->user = auth()->user();
@@ -29,8 +28,7 @@ class ConversionController extends Controller {
         $this->pageGroup = new PageGroup;
         $this->project = new Project;
         
-        $this->conversion = new ReportConversion;
-        $this->overview = new ReportOverview;
+        $this->source = new ReportSource;
     }
     
     /**
@@ -57,26 +55,18 @@ class ConversionController extends Controller {
     }
     
     /**
-     * 获取转化详情
+     * 获取流量分析
      * @param int $page_id
      * @param int $start_date
      * @param int $end_date
      * @return {
-     *  0: { 非转化事件
+     *  utm_key: {
      *      {
-     *        goal_type 转化类型
-     *        goal_desc 转化目标
-     *        goals 转化次数
-     *        goals_percent 转化率
+     *        dimension_value 值
+     *        visitors 访客量
+     *        conversions 转化量
+     *        conversion_percent 转化率
      *      }
-     *  }
-     *  1: { 转化事件
-     *    {
-     *        goal_type 转化类型
-     *        goal_desc 转化目标
-     *        goals 转化次数
-     *        goals_percent 转化率
-     *    }
      *  }
      * }
      */
@@ -89,21 +79,18 @@ class ConversionController extends Controller {
         $start_date = \Request::input('start_date', date('Y-m-d', strtotime('-7 day')));
         $end_date = \Request::input('end_date', date('Y-m-d', strtotime('-1 day')));
         
-        $conversions = [];
-        $visitors = intval(($this->overview->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
-                        ->select(\DB::raw('SUM(visitors) AS visitors'))->first())['visitors']);
+        $traffics = [];
         
-        $conversions[] = $this->conversion->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
-                        ->where('goal', '0')
-                        ->groupBy('goal_desc')
-                        ->select('goal_type', 'goal_desc', \DB::raw('SUM(goals) AS goals'), \DB::raw('SUM(goals) / ' . $visitors . ' * 100 AS goals_percent'))
-                        ->get();
-        $conversions[] = $this->conversion->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
-                        ->where('goal', '1')
-                        ->groupBy('goal_desc')
-                        ->select('goal_type', 'goal_desc', \DB::raw('SUM(goals) AS goals'), \DB::raw('SUM(goals) / ' . $visitors . ' * 100 AS goals_percent'))
-                        ->get();
-                
-        return $this->successOK($conversions);
+        $dimension = $this->source->groupBy('dimension')->lists('dimension');
+
+        foreach ($dimension as $v) {
+            $traffics[$v] = $this->source->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
+                            ->where('dimension', $v)
+                            ->groupBy('dimension_value')
+                            ->select('dimension_value', 'visitors', 'conversions', \DB::raw('conversions / visitors AS conversion_percent'))
+                            ->get();
+        }
+        
+        return $this->successOK($traffics);
     }
 }
