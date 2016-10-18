@@ -359,6 +359,48 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
             */            
             // Route::match(['get'], 'overview/{page_id}/gather', ['as' => '.overview.gather', 'uses' => 'OverviewController@gather']);
             Route::resource('overview', 'OverviewController');
+            
+            /**
+            * GET api/report/conversion/{page_id} 获取转化详情
+            * @param int $start_date
+            * @param int $end_date
+            * @return {
+            *  0: { 非转化事件
+            *      {
+            *        goal_type 转化类型
+            *        goal_desc 转化目标
+            *        goals 转化次数
+            *        goals_percent 转化率
+            *      }
+            *  }
+            *  1: { 转化事件
+            *    {
+            *        goal_type 转化类型
+            *        goal_desc 转化目标
+            *        goals 转化次数
+            *        goals_percent 转化率
+            *    }
+            *  }
+            * }
+            */
+            Route::resource('conversion', 'ConversionController');
+            
+            /**
+            * GET api/report/traffic/{page_id} 获取流量分析
+            * @param int $start_date
+            * @param int $end_date
+            * @return {
+            *  utm_key: {
+            *      {
+            *        dimension_value 值
+            *        visitors 访客量
+            *        conversions 转化量
+            *        conversion_percent 转化率
+            *      }
+            *  }
+            * }
+            */
+            Route::resource('traffic', 'TrafficController');
         });
         
         Route::group(['namespace' => 'Storage', 'prefix' => 'storage'], function(){
