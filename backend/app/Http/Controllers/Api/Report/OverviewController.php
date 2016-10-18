@@ -142,6 +142,11 @@ class OverviewController extends Controller {
                 ->whereBetween($a.'.report_date', [$start_date, $end_date])
                 ->where($a.'.page_id', $page_id)
                 ->where($a.'.variation_id', $v['id'])
+                ->where(function ($query) use ($ver){
+                    if ($ver != '') {
+                        return $query->where('ver', $ver);
+                    }
+                })
                 ->groupBy($a.'.report_date')
                 ->orderBy($a.'.report_date')->get()->toArray();
         }        
@@ -152,6 +157,16 @@ class OverviewController extends Controller {
                 ->leftJoin($b , $a . '.variation_id' , '=' , $b . '.id')
                 ->whereBetween($a.'.report_date', [$start_date, $end_date])
                 ->where($a.'.page_id', $page_id)
+                ->where(function ($query) use ($variation_id){
+                    if ($variation_id > 0) {
+                        return $query->where('variation_id', $variation_id);
+                    }
+                })
+                ->where(function ($query) use ($ver){
+                    if ($ver != '') {
+                        return $query->where('ver', $ver);
+                    }
+                })
                 ->groupBy($a.'.report_date')
                 ->orderBy($a.'.report_date')->get()->toArray();
                 
