@@ -89,17 +89,47 @@ class ConversionController extends Controller {
         $start_date = \Request::input('start_date', date('Y-m-d', strtotime('-7 day')));
         $end_date = \Request::input('end_date', date('Y-m-d', strtotime('-1 day')));
         
+        $ver = \Request::input('ver', '');
+        $variation_id = \Request::input('variation_id', 0);
+        
         $conversions = [];
         $visitors = intval(($this->overview->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
+                        ->where(function ($query) use ($variation_id, $ver){
+                            if ($variation_id > 0) {
+                                $query = $query->where('variation_id', $variation_id);
+                            }
+                            if ($ver != '') {
+                                $query = $query->where('ver', $ver);
+                            }
+                            return $query;
+                        })
                         ->select(\DB::raw('SUM(visitors) AS visitors'))->first())['visitors']);
         
         $conversions[] = $this->conversion->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
                         ->where('goal', '0')
+                        ->where(function ($query) use ($variation_id, $ver){
+                            if ($variation_id > 0) {
+                                $query = $query->where('variation_id', $variation_id);
+                            }
+                            if ($ver != '') {
+                                $query = $query->where('ver', $ver);
+                            }
+                            return $query;
+                        })
                         ->groupBy('goal_desc')
                         ->select('goal_type', 'goal_desc', \DB::raw('SUM(goals) AS goals'), \DB::raw('SUM(goals) / ' . $visitors . ' * 100 AS goals_percent'))
                         ->get();
         $conversions[] = $this->conversion->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
                         ->where('goal', '1')
+                        ->where(function ($query) use ($variation_id, $ver){
+                            if ($variation_id > 0) {
+                                $query = $query->where('variation_id', $variation_id);
+                            }
+                            if ($ver != '') {
+                                $query = $query->where('ver', $ver);
+                            }
+                            return $query;
+                        })
                         ->groupBy('goal_desc')
                         ->select('goal_type', 'goal_desc', \DB::raw('SUM(goals) AS goals'), \DB::raw('SUM(goals) / ' . $visitors . ' * 100 AS goals_percent'))
                         ->get();

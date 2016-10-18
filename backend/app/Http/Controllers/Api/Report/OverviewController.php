@@ -93,11 +93,18 @@ class OverviewController extends Controller {
         }
         $start_date = \Request::input('start_date', date('Y-m-d', strtotime('-7 day')));
         $end_date = \Request::input('end_date', date('Y-m-d', strtotime('-1 day')));
+        $ver = \Request::input('ver', '');
+        $variation_id = \Request::input('variation_id', 0);
         
         $a = $this->overview->getTable();
         $b = $this->pageVariation->getTable();
         $overviews = [];
         $variations = $this->pageVariation->where('page_id', $page_id)
+                ->where(function ($query) use ($variation_id){
+                    if ($variation_id > 0) {
+                        return $query->where('id', $variation_id);
+                    }
+                })
                 ->select('id', 'name', 'quota', 'page_id')
                 ->get()->toArray();
         
@@ -108,6 +115,11 @@ class OverviewController extends Controller {
                     ->leftJoin($b , $a . '.variation_id' , '=' , $b . '.id')
                     ->whereBetween($a.'.report_date', [$start_date, $end_date])
                     ->where($a.'.variation_id', $v['id'])
+                    ->where(function ($query) use ($ver){
+                        if ($ver != '') {
+                            return $query->where('ver', $ver);
+                        }
+                    })
                     ->groupBy($a.'.variation_id')
                     ->orderBy($a.'.variation_id')->first();
             if (!$overview) {

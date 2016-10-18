@@ -79,6 +79,9 @@ class TrafficController extends Controller {
         $start_date = \Request::input('start_date', date('Y-m-d', strtotime('-7 day')));
         $end_date = \Request::input('end_date', date('Y-m-d', strtotime('-1 day')));
         
+        $ver = \Request::input('ver', '');
+        $variation_id = \Request::input('variation_id', 0);
+        
         $traffics = [];
         
         $dimension = $this->source->groupBy('dimension')->lists('dimension');
@@ -86,6 +89,15 @@ class TrafficController extends Controller {
         foreach ($dimension as $v) {
             $traffics[$v] = $this->source->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
                             ->where('dimension', $v)
+                            ->where(function ($query) use ($variation_id, $ver){
+                                if ($variation_id > 0) {
+                                    $query = $query->where('variation_id', $variation_id);
+                                }
+                                if ($ver != '') {
+                                    $query = $query->where('ver', $ver);
+                                }
+                                return $query;
+                            })
                             ->groupBy('dimension_value')
                             ->select('dimension_value', 'visitors', 'conversions', \DB::raw('conversions / visitors AS conversion_percent'))
                             ->get();
