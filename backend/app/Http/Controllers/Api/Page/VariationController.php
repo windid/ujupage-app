@@ -291,11 +291,24 @@ class VariationController extends Controller {
      * @param int $variation_id 版本ID
      * @param int $page 页码
      * @param int $page_size 每页条数
-     * @return [
-     *   {
-     *     
+     * @return {
+     *   current_page : 1,
+     *   total_pages : 18,
+     *   total_pageforms : 600,
+     *   page_size : 30 ，
+     *   pageforms: {
+     *     [
+     *       id               表单ID
+     *       page_id          页面ID
+     *       variation_id     版本ID
+     *       variation_name   版本名称
+     *       fields: {        字段
+     *         *: *
+     *       }
+     *       created_at       提交时间
+     *     ]
      *   }
-     * ]
+     * }
      */
     public function leads($page_id, $variation_id) {
         $page_variation = $this->initPGPV($variation_id);         
