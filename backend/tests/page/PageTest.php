@@ -15,7 +15,7 @@ class PageTest extends TestCase {
         $this->project = json_decode($response->content())[0];
         $response = $this->call('GET', '/projects/' . $this->project->id . '/groups');
         $this->group = json_decode($response->content())[0];
-    }        
+    }
     
     public function testIndex() {
         $response = $this->call('GET', '/page', [

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Page\PageVariation;
 use App\Models\Page\Page;
 use App\Models\Page\PageGroup;
+use App\Models\Page\PageForm;
 
 class VariationController extends Controller {
     
@@ -282,5 +283,46 @@ class VariationController extends Controller {
         $this->page->increment('variation_history');
         
         return $this->successCreated(['id' => $copy_variation->id, 'name'=> $copy_variation->name]);
+    }
+    
+    /**
+     * 用户提交表单数据
+     * @param int $page_id 页面ID
+     * @param int $variation_id 版本ID
+     * @param int $page 页码
+     * @param int $page_size 每页条数
+     * @return [
+     *   {
+     *     
+     *   }
+     * ]
+     */
+    public function leads($page_id, $variation_id) {
+        $page_variation = $this->initPGPV($variation_id);         
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
+        }
+        
+        $page = request('page', 1);
+        $page_size = request('page_size', 30);
+        
+        $pageForm = new PageForm;
+        $pageforms = $pageForm->where('variation_id', $variation_id)->skip(($page - 1) * $page_size)->take($page_size)
+                ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'created_at')
+                ->get()->toArray();
+        foreach ($pageforms as $k => $v) {
+            $pageforms[$k]['fields'] = json_decode($v['fields'], true);
+            $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
+        }
+        $total = $pageForm->where('variation_id', $variation_id)->count();
+        $result = [
+            'current_page' => $page,
+            'total_pages' => ceil($total / $page_size),
+            'total_pageforms' => $total,
+            'page_size' => $page_size,
+            'pageforms' => $pageforms
+        ];                
+        
+        return $this->successOK($result);
     }
 }

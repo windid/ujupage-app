@@ -275,6 +275,16 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * }
              */
             Route::post('pages/{page_id}/variations/{variation_id}/copy', ['as' => '.copy', 'uses' => 'VariationController@copy']);
+            /**
+             * GET api/pages/{page_id}/variations/{variation_id}/leads 用户提交表单数据
+             * -- page_id 页面ID
+             * -- variation_id 版本ID
+             * @return {
+             *  id = 版本ID,
+             *  name = 版本号
+             * }
+             */
+            Route::get('pages/{page_id}/variations/{variation_id}/leads', ['as' => '.leads', 'uses' => 'VariationController@leads']);
             
             /**
              * GET api/pages/{page_id}/variations 获取所有版本
