@@ -1,12 +1,12 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import colorMixin from '../../mixins/colorMixin.js'
-import $ from 'jquery'
 import ElementForm from './ElementForm'
 import ElementText from './ElementText'
 import ElementButton from './ElementButton'
 import ElementHtml from './ElementHtml'
 import ElementImage from './ElementImage'
+import resizer from '../ui/OnesideResizer'
 
 export default {
   props: ['sectionId', 'section'],
@@ -16,7 +16,8 @@ export default {
     ElementText,
     ElementButton,
     ElementHtml,
-    ElementImage
+    ElementImage,
+    resizer
   },
   data () {
     return {
@@ -33,6 +34,10 @@ export default {
     },
     showButton () {
       return this.mouseHere && this.workspace.activeSectionId === null || this.workspace.activeSectionId === this.sectionId
+    },
+    height: function () {
+      const height = this.section.style[this.workspace.version]['height']
+      return parseInt(height.replace(/px$/, ''))
     }
   },
   methods: {
@@ -41,26 +46,21 @@ export default {
       removeSection: 'removeSection',
       setActiveSectionId: 'setActiveSectionId',
       modifySection: 'modifySection'
-    })
+    }),
+    resizeHeight: function (size) {
+      const style = {}
+      style[this.workspace.version] = { height: size + 'px' }
+      this.modifySection([this.sectionId, style])
+    }
   },
   mounted () {
-    const vm = this
-    $(this.$el).resizable({
-      handles: 's',
-      minHeight: 20,
-      stop: function (e, ui) {
-        const style = {}
-        style[vm.workspace.version] = { height: ui.size.height + 'px' }
-        vm.modifySection([vm.sectionId, style])
-      }
-    })
   }
 }
 </script>
 
 <template>
   <div  
-    class="section" 
+    class="section"
     :style="{
       height: section.style[workspace.version]['height'],
       backgroundColor: getColor(section.style[workspace.version]['background-color']),
@@ -91,7 +91,8 @@ export default {
         </div>
       </transition>
     </div>
-    <div class="section-line"></div>
+    <div class="section-line" rel="ruler"></div>
+    <resizer :size="height" :resize="resizeHeight" :side="'bottom'" :min-size="60"></resizer>
   </div>
 </template>
 
