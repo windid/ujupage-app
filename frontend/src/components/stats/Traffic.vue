@@ -4,38 +4,51 @@ import StatsNav from './StatsNav'
 export default {
   components: {
     StatsNav
+  },
+  props: ['report'],
+  filters: {
+    percentage (val) {
+      return (Math.round(val * 10) / 10.0).toString() + '%'
+    }
+  },
+  data () {
+    return {
+      tabs: {
+        'utm_campaign': '广告系列',
+        'utm_source': '来源',
+        'utm_medium': '媒介',
+        'utm_content': '广告内容',
+        'utm_term': '关键词'
+      },
+      currentTab: 'utm_campaign'
+    }
   }
 }
 
 </script>
 <template>
   <div>
-    <stats-nav title="流量分析"></stats-nav>
+    <stats-nav title="流量来源"></stats-nav>
     <div class="stats-content">
       <ul class="nav nav-tabs" role="tablist">
-        <li><a href="#">广告系列</a></li>
-        <li class="active"><a href="#">来源</a></li>
-        <li><a href="#">媒介</a></li>
-        <li><a href="#">来源 / 媒介</a></li>
-        <li><a href="#">广告内容</a></li>
-        <li><a href="#">关键词</a></li>
+        <li v-for="(tabName, tab) in tabs" :class="{ active: tab === currentTab }"><a href="javascript:;" @click="currentTab = tab">{{tabName}}</a></li>
       </ul>
       <div class="traffic-content">
         <table class="report table table-bordered table-hover">
           <thead>
             <tr>
-              <th>来源</th>
+              <th>{{tabs[currentTab]}}</th>
               <th width="120px">转化率</th>
               <th width="120px">转化次数</th>
               <th width="120px">访客数</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>sdf</td>
-              <td>sdf</td>
-              <td>sdf</td>
-              <td>sdf</td>
+            <tr v-for="rowData in report[currentTab]">
+              <td>{{rowData.dimension_value || '未设置'}}</td>
+              <td>{{rowData.conversion_percent | percentage}}</td>
+              <td>{{rowData.conversions}}</td>
+              <td>{{rowData.visitors}}</td>
             </tr>
           </tbody>
         </table>

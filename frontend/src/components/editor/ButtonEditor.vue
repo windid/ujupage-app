@@ -8,9 +8,9 @@ export default {
     Sidebar,
     FormButtonEditor
   },
-  data () {
-    return {
-      button: this.value
+  computed: {
+    button () {
+      return { ...this.value }
     }
   }
 }

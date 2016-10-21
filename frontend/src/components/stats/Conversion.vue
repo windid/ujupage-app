@@ -5,7 +5,20 @@ export default {
   components: {
     StatsNav
   },
-  props: ['report']
+  props: ['report'],
+  filters: {
+    percentage (val) {
+      return (Math.round(val * 10) / 10.0).toString() + '%'
+    }
+  },
+  computed: {
+    goalData () {
+      return this.report[1]
+    },
+    notGoalData () {
+      return this.report[0]
+    }
+  }
 }
 
 </script>
@@ -15,7 +28,7 @@ export default {
     <stats-nav title="转化详情"></stats-nav>
     <div class="stats-content">
       <h4>转化事件</h4>
-      <table class="report table table-bordered table-hover">
+      <table v-if="goalData.length > 0" class="report table table-bordered table-hover">
         <thead>
           <tr>
             <th width="120px">转化类型</th>
@@ -25,46 +38,37 @@ export default {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>事件</td>
-            <td>表单提交成功</td>
-            <td>123</td>
-            <td>12.3%</td>
-          </tr>
-          <tr>
-            <td>外链/下载</td>
-            <td>http://test.com</td>
-            <td>356</td>
-            <td>31.6%</td>
+          <tr v-for="goal in goalData">
+            <td>{{goal.goal_type}}</td>
+            <td>{{goal.goal_desc}}</td>
+            <td>{{goal.goals}}</td>
+            <td>{{goal.goals_percent | percentage}}</td>
           </tr>
         </tbody>
       </table>
+      <p v-else class="text-warning">报告期内没有转化数据。</p>
 
-      <h4>非转化事件<span class="title-remark">(未被定义为转化的用户交互行为)</span></h4>
-      <table class="report table table-bordered table-hover">
-        <thead>
-          <tr>
-            <th width="120px">事件类型</th>
-            <th>事件描述</th>
-            <th width="120px">发生次数</th>
-            <th width="120px">发生率</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>事件</td>
-            <td>表单提交失败</td>
-            <td>84</td>
-            <td>10.1%</td>
-          </tr>
-          <tr>
-            <td>外链/下载</td>
-            <td>http://test.com/haha</td>
-            <td>356</td>
-            <td>15%</td>
-          </tr>
-        </tbody>
-      </table>
+      <template v-if="notGoalData.length > 0">
+        <h4>非转化事件<span class="title-remark">(未被定义为转化的用户交互行为)</span></h4>
+        <table class="report table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th width="120px">事件类型</th>
+              <th>事件描述</th>
+              <th width="120px">发生次数</th>
+              <th width="120px">发生率</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="goal in notGoalData">
+              <td>{{goal.goal_type}}</td>
+              <td>{{goal.goal_desc}}</td>
+              <td>{{goal.goals}}</td>
+              <td>{{goal.goals_percent | percentage}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </template>
     </div>
   </div>
 </template>
