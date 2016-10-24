@@ -20,10 +20,17 @@ class VariationTest extends TestCase {
         $this->page = json_decode($response->content())[0];
     }        
     
+    public function testPageforms() {
+        $response = $this->call('GET', '/pages/5/variations/21/leads', [            
+        ]);
+        
+        $this->dump();
+    }
+    
     public function testIndex() {
         $response = $this->call('GET', '/pages/' . $this->page->id . '/variations');
         $this->assertJson($response->content());
-//        $this->dump();
+        $this->dump();
     }
     
     public function testStore() {
