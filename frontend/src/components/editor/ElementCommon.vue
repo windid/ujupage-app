@@ -1,14 +1,15 @@
 <script>
-import Draggabilly from 'draggabilly'
 import { mapGetters, mapActions } from 'vuex'
 import $ from 'jquery'
 import 'jquery-ui/ui/widgets/resizable'
 import 'jquery-ui/themes/base/resizable.css'
 
 import { merge } from 'lodash'
+import mouseDrag from '../../mixins/mouseDrag'
 
 export default {
   name: 'element-common',
+  mixins: [mouseDrag],
   // 接受父组件传参，element元素属性, sectionId:板块ID, elementId:元素ID
   props: {
     element: {
@@ -47,7 +48,12 @@ export default {
       draggie: null,
       resizeConfig: {},
       dragging: false,
-      resizing: false
+      resizing: false,
+      startTop: 0,
+      startPosLeft: 0,
+      startPosTop: 0,
+      horizontalMost: [0, 0],
+      verticalMost: [0, 0]
     }
   },
   computed: mapGetters({
@@ -73,41 +79,50 @@ export default {
 
       this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX
     },
+    computeMoveMost (movement) {
+      const getMin = (v, range) => {
+        const i = v < 0 ? 0 : 1
+        return [Math.max, Math.min][i](range[i], v)
+      }
+      return {
+        x: getMin(movement.x, this.horizontalMost),
+        y: getMin(movement.y, this.verticalMost)
+      }
+    },
+    dragBegin () {
+      var style = window.getComputedStyle(this.$el)
+      const getSize = (key) => parseInt(style[key].replace(/px$/, ''))
+      this.startPosLeft = getSize('left')
+      this.startPosTop = getSize('top')
+      this.setActiveElementId(this.elementId)
+      this.$emit('drag-start')
 
+      const self = this.$el.getBoundingClientRect()
+      const box = document.getElementById('content-area').getBoundingClientRect()
+      this.horizontalMost = [box.left - self.left, box.right - self.right]
+      this.verticalMost = [box.top - self.top, box.bottom - self.bottom]
+      this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
+    },
+    dragMove (movement) {
+      if (this.buttonGroup !== 'position') {
+        this.$emit('change-button-group', 'position')
+      }
+      const move = this.computeMoveMost(movement)
+      this.$el.style.left = `${this.startPosLeft + move.x}px`
+      this.$el.style.top = `${this.startPosTop + move.y}px`
+    },
+    dragEnd (movement) {
+      this.dragging = false
+      this.$emit('change-button-group', 'main')
+      const move = this.computeMoveMost(movement)
+      this.elPositionInPage.left = this.startPosLeft + move.x
+      this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
+      this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
+    },
     dragEnable () {
-      this.draggie = new Draggabilly(this.$el, {
-        containment: '#content-area'
-      })
-      let startTop = 0
-      const vm = this
-
-      this.draggie.on('dragEnd', function (event) {
-        vm.dragging = false
-        vm.$emit('change-button-group', 'main')
-        const position = $(this.element).position()
-        vm.elPositionInPage.left = position.left
-        vm.elPositionInPage.top = startTop + position.top
-        vm.moveElement([vm.sectionId, vm.elementId, vm.elPositionInPage, vm.$el.offsetHeight])
-      })
-
-      this.draggie.on('dragStart', function () {
-        vm.dragging = true
-        vm.setActiveElementId(vm.elementId)
-        vm.$emit('drag-start')
-        startTop = getElementTop(vm.$el) - 50 - vm.$el.offsetTop
-      })
-
-      this.draggie.on('dragMove', function () {
-        if (this.buttonGroup !== 'position') {
-          vm.$emit('change-button-group', 'position')
-        }
-        const position = $(this.element).position()
-        vm.elPositionInPage.left = position.left
-        vm.elPositionInPage.top = startTop + position.top
-      })
+      // calbacks
     },
     dragDisable () {
-      this.draggie.destroy()
       this.updateStyle()
       // this.$el.style.top = this.element.style[this.workspace.version].top
       // this.$el.style.left = this.element.style[this.workspace.version].left
@@ -165,7 +180,6 @@ export default {
     }
   },
   mounted () {
-    this.dragEnable()
     this.resizeInit()
     this.resizeDisable()
     if (this.workspace.activeElementId === this.elementId) {
@@ -190,7 +204,7 @@ const getElementTop = (element) => {
 </script>
 
 <template>
-  <div class="element" @click="setActiveElementId(elementId)" @mousedown.stop 
+  <div class="element" @click="setActiveElementId(elementId)" @mousedown.stop="onDragBegin"
     :style="{
       left: element.style[workspace.version].left,
       top: element.style[workspace.version].top,
