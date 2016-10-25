@@ -226,7 +226,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
             *   }
             * }
             */
-            Route::get('pages/{page_id}/leads', ['as' => '.leads', 'uses' => 'VariationController@leads']);
+            Route::get('page/{page_id}/leads', ['as' => '.leads', 'uses' => 'PageController@leads']);
             /**
              * GET api/page/ 获取所有页面
              * group_id 分组ID
