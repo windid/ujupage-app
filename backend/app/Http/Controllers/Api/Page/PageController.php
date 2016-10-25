@@ -9,6 +9,7 @@ use App\Models\Page\Page;
 use App\Models\Page\PageVariation;
 use App\Models\Page\PageGroup;
 use App\Models\Project\Project;
+use App\Models\Page\PageForm;
 
 class PageController extends Controller {
     
@@ -338,7 +339,7 @@ class PageController extends Controller {
             $pageforms[$k]['fields'] = json_decode($v['fields'], true);
             $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
         }
-        $total = $pageForm->where('variation_id', $variation_id)->count();
+        $total = $pageForm->where('page_id', $page->id)->count();
         $result = [
             'current_page' => $curpage,
             'total_pages' => ceil($total / $page_size),
