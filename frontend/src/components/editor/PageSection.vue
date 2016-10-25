@@ -47,10 +47,16 @@ export default {
       setActiveSectionId: 'setActiveSectionId',
       modifySection: 'modifySection'
     }),
-    resizeHeight: function (size) {
-      const style = {}
-      style[this.workspace.version] = { height: size + 'px' }
-      this.modifySection([this.sectionId, style])
+    resizeHeight (saveToStore) {
+      return (size) => {
+        const style = {}
+        style[this.workspace.version] = { height: size + 'px' }
+        if (saveToStore) {
+          this.modifySection([this.sectionId, style])
+        } else {
+          this.$el.style.height = size + 'px'
+        }
+      }
     }
   },
   mounted () {
@@ -92,7 +98,7 @@ export default {
       </transition>
     </div>
     <div class="section-line" rel="ruler"></div>
-    <resizer :size="height" :resize="resizeHeight" :side="'bottom'" :min-size="60"></resizer>
+    <resizer :size="height" :resize="resizeHeight(true)" :resizing="resizeHeight(false)" :side="'bottom'" :min-size="60"></resizer>
   </div>
 </template>
 

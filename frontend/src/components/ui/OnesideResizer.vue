@@ -1,18 +1,10 @@
-<template>
-<div class='resize-handle'
-  v-bind:style='style'
-  style='position: absolute'
-  @mousedown='dragStart'
-  @dblclick='resetSize'
-  v-bind:class='"resize-handle-"+side'>
-</div>
-</template>
-
 <script>
+import { onDocument, onceDocument } from 'vue-mixins'
+
 export default {
   mixins: [
-    require('vue-mixins/onDocument'),
-    require('vue-mixins/onceDocument')],
+    onDocument,
+    onceDocument],
   props: {
     'offset': {
       type: Number,
@@ -43,6 +35,10 @@ export default {
       required: true
     },
     'resize': {
+      type: Function,
+      require: true
+    },
+    'resizing': {
       type: Function,
       require: true
     }
@@ -133,11 +129,24 @@ export default {
         newSize = this.maxSize
       }
       oldSize = this.size
-      this.resize(newSize)
+      this.resizing(newSize)
       this.$emit('resize', this.size, oldSize, this)
     },
     dragEnd: function (e) {
       e.preventDefault()
+      var moved, newSize, pos
+      pos = this.horizontal ? e.clientX : e.clientY
+      moved = pos - this.startPos
+      if (!this.plus) {
+        moved = -moved
+      }
+      newSize = this.startSize + moved
+      if (newSize < this.minSize) {
+        newSize = this.minSize
+      } else if (newSize > this.maxSize) {
+        newSize = this.maxSize
+      }
+      this.resize(newSize)
       document.body.style.cursor = this.oldCursor
       if (typeof this.removeMoveListener === 'function') {
         this.removeMoveListener()
@@ -163,3 +172,13 @@ export default {
   }
 }
 </script>
+
+<template>
+<div class='resize-handle'
+  v-bind:style='style'
+  style='position: absolute'
+  @mousedown='dragStart'
+  @dblclick='resetSize'
+  v-bind:class='"resize-handle-"+side'>
+</div>
+</template>
