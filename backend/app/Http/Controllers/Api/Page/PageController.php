@@ -296,4 +296,57 @@ class PageController extends Controller {
         
         return $this->successOK();
     }
+    
+    /**
+     * 用户提交表单数据
+     * @param int $page_id 页面ID
+     * @param int $page 页码
+     * @param int $page_size 每页条数
+     * @return {
+     *   current_page : 1,
+     *   total_pages : 18,
+     *   total_pageforms : 600,
+     *   page_size : 30 ，
+     *   pageforms: {
+     *     [
+     *       id               表单ID
+     *       page_id          页面ID
+     *       variation_id     版本ID
+     *       variation_name   版本名称
+     *       fields: {        字段
+     *         *: *
+     *       }
+     *       created_at       提交时间
+     *     ]
+     *   }
+     * }
+     */
+    public function leads(int $page_id) {
+        $page = $this->initPGP($page_id);         
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
+        }
+        
+        $curpage = request('page', 1);
+        $page_size = request('page_size', 30);
+        
+        $pageForm = new PageForm;
+        $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
+                ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'created_at')
+                ->get()->toArray();
+        foreach ($pageforms as $k => $v) {
+            $pageforms[$k]['fields'] = json_decode($v['fields'], true);
+            $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
+        }
+        $total = $pageForm->where('variation_id', $variation_id)->count();
+        $result = [
+            'current_page' => $curpage,
+            'total_pages' => ceil($total / $page_size),
+            'total_pageforms' => $total,
+            'page_size' => $page_size,
+            'pageforms' => $pageforms
+        ];                
+        
+        return $this->successOK($result);
+    }
 }

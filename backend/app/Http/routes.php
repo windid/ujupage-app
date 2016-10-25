@@ -201,7 +201,32 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * @return StatusCode 200
              */
             Route::put('page/{id}/publish', ['as' => '.publish', 'uses' => 'PageController@publish']);
-            
+            /**
+             * GET api/pages/{page_id}/leads 用户提交表单数据
+             * -- page_id 页面ID
+            * page 页码
+            * page_size 每页条数
+            * @return StatusCode 200
+            * @return {
+            *   current_page : 1,
+            *   total_pages : 18,
+            *   total_pageforms : 600,
+            *   page_size : 30 ，
+            *   pageforms: {
+            *     [
+            *       id               表单ID
+            *       page_id          页面ID
+            *       variation_id     版本ID
+            *       variation_name   版本名称
+            *       fields: {        字段
+            *         *: *
+            *       }
+            *       created_at       提交时间
+            *     ]
+            *   }
+            * }
+            */
+            Route::get('pages/{page_id}/leads', ['as' => '.leads', 'uses' => 'VariationController@leads']);
             /**
              * GET api/page/ 获取所有页面
              * group_id 分组ID
@@ -275,33 +300,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * }
              */
             Route::post('pages/{page_id}/variations/{variation_id}/copy', ['as' => '.copy', 'uses' => 'VariationController@copy']);
-            /**
-             * GET api/pages/{page_id}/variations/{variation_id}/leads 用户提交表单数据
-             * -- page_id 页面ID
-             * -- variation_id 版本ID
-            * page 页码
-            * page_size 每页条数
-            * @return StatusCode 200
-            * @return {
-            *   current_page : 1,
-            *   total_pages : 18,
-            *   total_pageforms : 600,
-            *   page_size : 30 ，
-            *   pageforms: {
-            *     [
-            *       id               表单ID
-            *       page_id          页面ID
-            *       variation_id     版本ID
-            *       variation_name   版本名称
-            *       fields: {        字段
-            *         *: *
-            *       }
-            *       created_at       提交时间
-            *     ]
-            *   }
-            * }
-            */
-            Route::get('pages/{page_id}/variations/{variation_id}/leads', ['as' => '.leads', 'uses' => 'VariationController@leads']);
+            
             
             /**
              * GET api/pages/{page_id}/variations 获取所有版本
