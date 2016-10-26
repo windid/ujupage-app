@@ -12,7 +12,8 @@ export default {
 
   page: Vue.resource('page{/id}', {}, {
     duplicate: { method: 'POST', url: 'page/{id}/copy' },
-    publish: { method: 'PUT', url: 'page/{id}/publish' }
+    publish: { method: 'PUT', url: 'page/{id}/publish' },
+    leads: { method: 'GET', url: 'page/{id}/leads' }
   }),
 
   variation: Vue.resource('pages/{pageId}/variations{/id}', {}, {

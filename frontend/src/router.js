@@ -9,6 +9,7 @@ const Editor = resolve => require(['./components/editor/Editor.vue'], resolve)
 const Dashboard = resolve => require(['./components/dashboard/Dashboard.vue'], resolve)
 const Account = resolve => require(['./components/account/Account.vue'], resolve)
 const Stats = resolve => require(['./components/stats/Stats.vue'], resolve)
+const Leads = resolve => require(['./components/leads/Leads.vue'], resolve)
 const Register = resolve => require(['./components/auth/Register.vue'], resolve)
 const ForgetPassword = resolve => require(['./components/auth/ForgetPassword.vue'], resolve)
 const ResetPassword = resolve => require(['./components/auth/ResetPassword.vue'], resolve)
@@ -38,6 +39,7 @@ const router = new VueRouter({
       children: [
         { path: '', name: 'dashboard', component: Dashboard, meta: { preFetch: 'dashboardInit' }},
         { path: '/account', name: 'account', component: Account },
+        { path: '/leads/:pageId', name: 'leads', component: Leads },
         { path: '/stats/:pageId/:module', name: 'stats', component: Stats, meta: { preFetch: 'statsInit' }}
       ]
     }

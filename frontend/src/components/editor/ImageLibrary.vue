@@ -197,7 +197,7 @@ export default {
 </script>
 
 <template>
-  <modal :show="imageLibrary.show" @close="close" width="860px" height="600px">
+  <modal :show="imageLibrary.show" @close="close" width="1020px" height="600px">
     <div slot="header">
       <ul class="nav nav-pills">
         <li :class="{active: currentTab === 'project'}" @click="switchTab('project')"><a href="javascript:;">项目图片库</a></li>

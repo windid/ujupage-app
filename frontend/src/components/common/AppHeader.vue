@@ -46,7 +46,8 @@ export default {
 }
 
 .header > .breadcrumb {
-  margin: 5px 15px;
+  margin: 6px 0 0 80px;
+  background: transparent;
 }
 
 .logo {
@@ -54,7 +55,7 @@ export default {
   height: 20px;
   width: 70px;
   float: left;
-  margin: 14px 17px;
+  margin: 14px 20px;
   background-image: url("../../assets/img/logo.png");
 }
 
