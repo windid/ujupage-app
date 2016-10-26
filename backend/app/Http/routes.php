@@ -228,6 +228,33 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
             */
             Route::get('page/{page_id}/leads', ['as' => '.leads', 'uses' => 'PageController@leads']);
             /**
+             * GET api/pages/{page_id}/leads 用户提交表单数据
+             * -- page_id 页面ID
+            * page 页码
+            * page_size 每页条数
+            * @return StatusCode 200
+            * @return {
+            *   current_page : 1,
+            *   total_pages : 18,
+            *   total_pageforms : 600,
+            *   page_size : 30 ，
+            *   pageforms: {
+            *     [
+            *       id               表单ID
+            *       page_id          页面ID
+            *       variation_id     版本ID
+            *       variation_name   版本名称
+            *       fields: {        字段
+            *         *: *
+            *       }
+            *       created_at       提交时间
+            *     ]
+            *   }
+            * }
+            */
+            Route::get('page/{page_id}/leadscvs', ['as' => '.leadscvs', 'uses' => 'PageController@leadscvs']);
+            
+            /**
              * GET api/page/ 获取所有页面
              * group_id 分组ID
              * @return StatusCode 200

@@ -350,4 +350,74 @@ class PageController extends Controller {
         
         return $this->successOK($result);
     }
+    
+    /**
+     * 下载用户提交表单数据 cvs
+     * @param int $page_id 页面ID
+     * @return 
+     *       variation_name   版本名称
+     *       created_at       提交时间
+     *       fields 
+     */
+    public function leadscvs(int $page_id) {
+        $page = $this->initPGP($page_id);         
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
+        }
+        
+        $pageForm = new PageForm;
+        $pageforms = $pageForm->where('page_id', $page->id)
+                ->select('variation_name', 'fields', 'created_at')
+                ->get()->toArray();
+        
+        $fields = [];
+        foreach ($pageforms as $k => $v) {
+            $pageforms[$k]['fields'] = json_decode($v['fields'], true);
+            $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
+            
+            foreach ($pageforms[$k]['fields'] as $kk => $vv) {
+                if (!isset($fields[$kk])) {
+                    $fields[$kk] = 0;
+                }
+                if ($kk == '名称') {
+                    $fields[$kk]++;
+                }
+                $fields[$kk]++;
+            }
+        }
+        arsort($fields);
+        $fields_val = ['版本名', '提交时间'];
+        foreach ($fields as $k => $v) {
+            $fields_val[] = $k;
+        }
+         $fields_val = array_flip($fields_val);
+        // dd($fields, $fields_val);
+        $fields_count = count($fields_val);
+        $values = [];
+        foreach ($pageforms as $k => $v) {
+            $str = $v['variation_name'] . ',' . $v['created_at'];
+            $order = [];
+            
+            foreach ($v['fields'] as $kk => $vv) {
+                $order[$fields_val[$kk]] = $vv;
+            }
+            ksort($order);
+            // dd(implode(',', $order));
+            $pre_index = 1;
+            foreach ($order as $k => $v) {
+                $pad = $k - $pre_index;
+                $str .= str_repeat(',', $pad) . $v;
+                $pre_index = $k;
+            }
+            $values[] = $str;
+        }        
+        
+        header("Content-type:text/csv");
+        header("Content-Disposition:attachment;filename=商机".date('YmdHis') . '.csv');
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Expires:0'); 
+        header('Pragma:public');
+        echo iconv('utf-8', 'gb2312', implode(",", array_flip($fields_val))) . "\n";
+        echo iconv('utf-8', 'gb2312', implode("\n" ,$values));exit;
+    }
 }
