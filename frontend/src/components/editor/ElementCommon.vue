@@ -1,15 +1,15 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import $ from 'jquery'
-import 'jquery-ui/ui/widgets/resizable'
-import 'jquery-ui/themes/base/resizable.css'
 
-import { merge } from 'lodash'
 import mouseDrag from '../../mixins/mouseDrag'
+import resizer from '../ui/OnesideResizer'
 
 export default {
   name: 'element-common',
   mixins: [mouseDrag],
+  components: {
+    resizer
+  },
   // 接受父组件传参，element元素属性, sectionId:板块ID, elementId:元素ID
   props: {
     element: {
@@ -46,14 +46,19 @@ export default {
       elPositionInPage: { left: 0, top: 0 },
       clickOnThisElement: false,
       draggie: null,
-      resizeConfig: {},
+      resizeConfig: {
+        handles: 'e',
+        aspectRatio: false
+      },
       dragging: false,
       resizing: false,
       startTop: 0,
       startPosLeft: 0,
       startPosTop: 0,
       horizontalMost: [0, 0],
-      verticalMost: [0, 0]
+      verticalMost: [0, 0],
+      widthMost: 0,
+      heightMost: 0
     }
   },
   computed: mapGetters({
@@ -110,6 +115,8 @@ export default {
       const move = this.computeMoveMost(movement)
       this.$el.style.left = `${this.startPosLeft + move.x}px`
       this.$el.style.top = `${this.startPosTop + move.y}px`
+      this.elPositionInPage.left = this.startPosLeft + move.x
+      this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
     },
     dragEnd (movement) {
       this.dragging = false
@@ -127,36 +134,59 @@ export default {
       // this.$el.style.top = this.element.style[this.workspace.version].top
       // this.$el.style.left = this.element.style[this.workspace.version].left
     },
-    resizeInit () {
-      const vm = this
-      const defaultResize = {
-        handles: 'e',
-        aspectRatio: false
+    hasResizer (handle) {
+      let handles
+      if (this.resize && this.resize.handles) {
+        handles = this.resize.handles
+      } else {
+        handles = 'e'
       }
-      this.resizeConfig = merge({}, defaultResize, this.resize)
-      let vmDraggable = vm.draggable
-      $(this.$el).resizable({
-        handles: this.resizeConfig.handles,
-        aspectRatio: this.resizeConfig.aspectRatio,
-        containment: $('#content-area'),
-        start () {
-          vm.resizing = true
-          vmDraggable = vm.draggable
-          vm.$emit('change-draggable', false)
-        },
-        stop (e, ui) {
-          vm.resizing = false
-          vm.$emit('change-draggable', vmDraggable)
-          vm.resizeElement([vm.elementId, ui.size])
-          // vm.updateStyle()
+      return handles.indexOf(handle) > -1
+    },
+    resizeStart (direction) {
+      return () => {
+        const self = this.$el.getBoundingClientRect()
+        const box = document.getElementById('content-area').getBoundingClientRect()
+        if (direction === 'e') {
+          this.widthMost = box.right - self.left
+        } else if (direction === 'w') {
+          this.widthMost = self.right - box.left
+        } else if (direction === 'n') {
+          this.heightMost = self.bottom - box.top
+        } else if (direction === 's') {
+          this.heightMost = box.bottom - self.top
+        } else {
+          console.log('i am else')
         }
-      })
+      }
+    },
+    resizeAction (direction, saveToStore) {
+      return (size) => {
+        if (direction === 'n' || direction === 's') {
+          size = Math.min(this.heightMost, size)
+          this.$el.style.height = `${size}px`
+        } else if (direction === 'e' || direction === 'w') {
+          size = Math.min(this.widthMost, size)
+          this.$el.style.width = `${size}px`
+        }
+        if (saveToStore) {
+          // resize ends
+          this.resizing = false
+          this.$emit('change-draggable', true)
+          // commit to vuex store
+          this.resizeElement([this.elementId, {
+            width: parseInt(this.$el.style.width),
+            height: parseInt(this.$el.style.height)
+          }])
+        } else {
+          this.resizing = true
+          this.$emit('change-draggable', false)
+        }
+      }
     },
     resizeEnable () {
-      $(this.$el).resizable('enable')
     },
     resizeDisable () {
-      $(this.$el).resizable('disable')
     },
     updateStyle () {
       for (const prop in this.element.style[this.workspace.version]) {
@@ -180,7 +210,6 @@ export default {
     }
   },
   mounted () {
-    this.resizeInit()
     this.resizeDisable()
     if (this.workspace.activeElementId === this.elementId) {
       this.showToolbar()
@@ -222,10 +251,10 @@ const getElementTop = (element) => {
       <slot name="content"></slot>
     </div>
     <template v-if="resizable">
-      <div class="resizable-w" v-if="resizeConfig.handles && resizeConfig.handles.indexOf('w') > -1"></div>
-      <div class="resizable-e" v-if="resizeConfig.handles && resizeConfig.handles.indexOf('e') > -1"></div>
-      <div class="resizable-n" v-if="resizeConfig.handles && resizeConfig.handles.indexOf('n') > -1"></div>
-      <div class="resizable-s" v-if="resizeConfig.handles && resizeConfig.handles.indexOf('s') > -1"></div>
+      <resizer class="resizable-n" v-if="this.hasResizer('n')" :autoStyle="false" :resizeStart="resizeStart('n')" :resize="resizeAction('n', true)" :resizing="resizeAction('n', false)" :side="'top'" />
+      <resizer class="resizable-e" v-if="this.hasResizer('e')" :autoStyle="false" :resizeStart="resizeStart('e')" :resize="resizeAction('e', true)" :resizing="resizeAction('e', false)" :side="'right'" />
+      <resizer class="resizable-s" v-if="this.hasResizer('s')" :autoStyle="false" :resizeStart="resizeStart('s')" :resize="resizeAction('s', true)" :resizing="resizeAction('s', false)" :side="'bottom'" />
+      <resizer class="resizable-w" v-if="this.hasResizer('w')" :autoStyle="false" :resizeStart="resizeStart('w')" :resize="resizeAction('w', true)" :resizing="resizeAction('w', false)" :side="'left'" />
     </template>
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
