@@ -26,6 +26,8 @@ export default {
   },
   methods: {
     onDragBegin (e) {
+      e.stopPropagation()
+      e.preventDefault()
       if (!this.draggable) return
       this.windowOldCursor = document.documentElement.style.cursor
       document.documentElement.style.cursor = 'move'
