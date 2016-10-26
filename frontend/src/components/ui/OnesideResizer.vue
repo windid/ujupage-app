@@ -1,11 +1,6 @@
 <script>
-import { onDocument, onceDocument } from 'vue-mixins'
-
 export default {
   name: 'oneside-resizer',
-  mixins: [
-    onDocument,
-    onceDocument],
   props: {
     'offset': {
       type: Number,
@@ -107,8 +102,8 @@ export default {
           this.oldCursor = null
         }
         document.body.style.cursor = this.style.cursor
-        this.removeMoveListener = this.onDocument('mousemove', this.drag)
-        this.removeEndListener = this.onceDocument('mouseup', this.dragEnd)
+        document.addEventListener('mousemove', this.drag)
+        document.addEventListener('mouseup', this.dragEnd)
         this.$emit('resize-start', this.getSize(), this)
       }
     },
@@ -149,12 +144,8 @@ export default {
       }
       this.resize(newSize)
       document.body.style.cursor = this.oldCursor
-      if (typeof this.removeMoveListener === 'function') {
-        this.removeMoveListener()
-      }
-      if (typeof this.removeEndListener === 'function') {
-        this.removeEndListener()
-      }
+      document.removeEventListener('mousemove', this.drag)
+      document.removeEventListener('mouseup', this.dragEnd)
       this.$emit('resize-end', this.getSize(), this)
       return true
     }
