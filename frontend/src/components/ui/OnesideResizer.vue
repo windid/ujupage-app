@@ -2,6 +2,7 @@
 import { onDocument, onceDocument } from 'vue-mixins'
 
 export default {
+  name: 'oneside-resizer',
   mixins: [
     onDocument,
     onceDocument],
@@ -32,7 +33,11 @@ export default {
     },
     'size': {
       type: Number,
-      required: true
+      required: false
+    },
+    'resizeStart': {
+      type: Function,
+      required: false
     },
     'resize': {
       type: Function,
@@ -41,6 +46,10 @@ export default {
     'resizing': {
       type: Function,
       require: true
+    },
+    'autoStyle': {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -51,6 +60,7 @@ export default {
       return this.side === 'right' || this.side === 'bottom'
     },
     style: function () {
+      if (!this.autoStyle) return ({})
       var style
       if (this.horizontal) {
         style = {
@@ -72,28 +82,20 @@ export default {
     }
   },
   methods: {
-    resetSize: function (e) {
-      var oldSize
-      if (!e.defaultPrevented) {
-        e.preventDefault()
-        if (this.defaultSize > -1) {
-          oldSize = this.size
-          if (this.defaultSize < this.minSize) {
-            this.size = this.minSize
-          } else if (this.defaultSize > this.maxSize) {
-            this.size = this.maxSize
-          } else {
-            this.size = this.defaultSize
-          }
-          this.$emit('resize', this.size, oldSize, this)
-          this.$emit('reset-size')
-        }
+    getSize () {
+      if (this.size == null) {
+        const style = window.getComputedStyle(this.$parent.$el)
+        return parseInt(this.horizontal ? style.width : style.height)
       }
+      return this.size
     },
     dragStart: function (e) {
       if (!e.defaultPrevented) {
         e.preventDefault()
-        this.startSize = this.size
+        if (this.resizeStart && typeof this.resizeStart === 'function') {
+          this.resizeStart()
+        }
+        this.startSize = this.getSize()
         if (this.horizontal) {
           this.startPos = e.clientX
         } else {
@@ -107,11 +109,11 @@ export default {
         document.body.style.cursor = this.style.cursor
         this.removeMoveListener = this.onDocument('mousemove', this.drag)
         this.removeEndListener = this.onceDocument('mouseup', this.dragEnd)
-        this.$emit('resize-start', this.size, this)
+        this.$emit('resize-start', this.getSize(), this)
       }
     },
     drag: function (e) {
-      var moved, newSize, oldSize, pos
+      var moved, newSize, pos
       e.preventDefault()
       if (this.horizontal) {
         pos = e.clientX
@@ -128,9 +130,8 @@ export default {
       } else if (newSize > this.maxSize) {
         newSize = this.maxSize
       }
-      oldSize = this.size
+      // oldSize = this.getSize()
       this.resizing(newSize)
-      this.$emit('resize', this.size, oldSize, this)
     },
     dragEnd: function (e) {
       e.preventDefault()
@@ -154,18 +155,18 @@ export default {
       if (typeof this.removeEndListener === 'function') {
         this.removeEndListener()
       }
-      this.$emit('resize-end', this.size, this)
+      this.$emit('resize-end', this.getSize(), this)
       return true
     }
   },
   watch: {
     'minSize': function (val) {
-      if (this.size < val) {
+      if (this.getSize() < val) {
         this.size = val
       }
     },
     'maxSize': function (val) {
-      if (this.size > val) {
+      if (this.getSize() > val) {
         this.size = val
       }
     }
@@ -176,9 +177,93 @@ export default {
 <template>
 <div class='resize-handle'
   v-bind:style='style'
-  style='position: absolute'
-  @mousedown='dragStart'
-  @dblclick='resetSize'
+  style='stle'
+  @mousedown.stop='dragStart'
   v-bind:class='"resize-handle-"+side'>
 </div>
 </template>
+
+<style>
+  .resize-handle {
+    position: absolute;
+  }
+  .resize-handle-left,
+  .resize-handle-right {
+    cursor: ew-resize;
+  }
+  .resize-handle-top,
+  .resize-handle-bottom {
+    cursor: ns-resize;
+  }
+  /* stles copy from jquery-ui */
+  .ui-resizable {
+	  position: relative;
+  }
+  .ui-resizable-handle {
+    position: absolute;
+    font-size: 0.1px;
+    display: block;
+    -ms-touch-action: none;
+    touch-action: none;
+  }
+  .ui-resizable-disabled .ui-resizable-handle,
+  .ui-resizable-autohide .ui-resizable-handle {
+    display: none;
+  }
+  .ui-resizable-n {
+    cursor: n-resize;
+    height: 7px;
+    width: 100%;
+    top: -5px;
+    left: 0;
+  }
+  .ui-resizable-s {
+    cursor: s-resize;
+    height: 7px;
+    width: 100%;
+    bottom: -5px;
+    left: 0;
+  }
+  .ui-resizable-e {
+    cursor: e-resize;
+    width: 7px;
+    right: -5px;
+    top: 0;
+    height: 100%;
+  }
+  .ui-resizable-w {
+    cursor: w-resize;
+    width: 7px;
+    left: -5px;
+    top: 0;
+    height: 100%;
+  }
+  .ui-resizable-se {
+    cursor: se-resize;
+    width: 12px;
+    height: 12px;
+    right: 1px;
+    bottom: 1px;
+  }
+  .ui-resizable-sw {
+    cursor: sw-resize;
+    width: 9px;
+    height: 9px;
+    left: -5px;
+    bottom: -5px;
+  }
+  .ui-resizable-nw {
+    cursor: nw-resize;
+    width: 9px;
+    height: 9px;
+    left: -5px;
+    top: -5px;
+  }
+  .ui-resizable-ne {
+    cursor: ne-resize;
+    width: 9px;
+    height: 9px;
+    right: -5px;
+    top: -5px;
+  }
+</style>
