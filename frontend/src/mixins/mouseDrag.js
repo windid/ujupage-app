@@ -26,11 +26,9 @@ export default {
   },
   methods: {
     onDragBegin (e) {
-      e.stopPropagation()
-      e.preventDefault()
       if (!this.draggable) return
-      this.windowOldCursor = document.documentElement.style.cursor
-      document.documentElement.style.cursor = 'move'
+      this.windowOldCursor = document.body.style.cursor
+      document.body.style.cursor = 'move'
       this.dragStartX = e.clientX
       this.dragStartY = e.clientY
       this.dragBegin({})
@@ -44,11 +42,13 @@ export default {
       this.dragMove({ x, y })
     },
     onDragEnd (e) {
-      document.documentElement.style.cursor = this.windowOldCursor
+      document.body.style.cursor = this.windowOldCursor
       const x = e.clientX - this.dragStartX
       const y = e.clientY - this.dragStartY
       this.dragging = false
-      this.dragEnd({ x, y })
+      if (x !== 0 && y !== 0) {
+        this.dragEnd({ x, y })
+      }
       document.removeEventListener('mousemove', this.onDragMove)
       document.removeEventListener('mouseup', this.onDragEnd)
     },
