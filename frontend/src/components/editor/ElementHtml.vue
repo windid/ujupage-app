@@ -3,7 +3,7 @@ import ElementCommon from './ElementCommon'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'element-button',
+  name: 'element-html',
   // 接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID
   props: ['element', 'sectionId', 'elementId'],
   components: {

@@ -39,7 +39,9 @@ export default {
       const x = e.clientX - this.dragStartX
       const y = e.clientY - this.dragStartY
       this.dragging = true
-      this.dragMove({ x, y })
+      if (x !== 0 && y !== 0) {
+        this.dragMove({ x, y })
+      }
     },
     onDragEnd (e) {
       document.body.style.cursor = this.windowOldCursor
