@@ -49,6 +49,7 @@ export default {
       if (this.editing) return
 
       this.editing = true
+      this.changeDraggable(false)
       this.buttonGroup = 'edit'
       this.$nextTick(() => {
         const contentBox = this.$refs.content
@@ -63,6 +64,7 @@ export default {
       this.editing = false
       this.buttonGroup = 'main'
       this.textElement.content = this.$refs.content.innerHTML
+      this.changeDraggable(true)
 
       if (!isEqual(this.element, this.textElement)) {
         this.modifyElement([this.elementId, this.textElement])

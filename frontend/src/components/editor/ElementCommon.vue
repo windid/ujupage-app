@@ -143,44 +143,38 @@ export default {
       return handles.indexOf(handle) > -1
     },
     resizeStart (direction) {
-      return () => {
-        const self = this.$el.getBoundingClientRect()
-        const box = document.getElementById('content-area').getBoundingClientRect()
-        if (direction === 'e') {
-          this.widthMost = box.right - self.left
-        } else if (direction === 'w') {
-          this.widthMost = self.right - box.left
-        } else if (direction === 'n') {
-          this.heightMost = self.bottom - box.top
-        } else if (direction === 's') {
-          this.heightMost = box.bottom - self.top
-        } else {
-          console.log('i am else')
-        }
+      const self = this.$el.getBoundingClientRect()
+      const box = document.getElementById('content-area').getBoundingClientRect()
+      if (direction === 'right') {
+        this.widthMost = box.right - self.left
+      } else if (direction === 'left') {
+        this.widthMost = self.right - box.left
+      } else if (direction === 'top') {
+        this.heightMost = self.bottom - box.top
+      } else if (direction === 'bottom') {
+        this.heightMost = box.bottom - self.top
       }
     },
-    resizeAction (direction, saveToStore) {
-      return (size) => {
-        if (direction === 'n' || direction === 's') {
-          size = Math.min(this.heightMost, size)
-          this.$el.style.height = `${size}px`
-        } else if (direction === 'e' || direction === 'w') {
-          size = Math.min(this.widthMost, size)
-          this.$el.style.width = `${size}px`
-        }
-        if (saveToStore) {
-          // resize ends
-          this.resizing = false
-          this.$emit('change-draggable', true)
-          // commit to vuex store
-          this.resizeElement([this.elementId, {
-            width: parseInt(this.$el.style.width),
-            height: parseInt(this.$el.style.height)
-          }])
-        } else {
-          this.resizing = true
-          this.$emit('change-draggable', false)
-        }
+    resizeAction (direction, saveToStore, size) {
+      if (direction === 'top' || direction === 'bottom') {
+        size = Math.min(this.heightMost, size)
+        this.$el.style.height = `${size}px`
+      } else if (direction === 'left' || direction === 'right') {
+        size = Math.min(this.widthMost, size)
+        this.$el.style.width = `${size}px`
+      }
+      if (saveToStore) {
+        // resize ends
+        this.resizing = false
+        this.$emit('change-draggable', true)
+        // commit to vuex store
+        this.resizeElement([this.elementId, {
+          width: parseInt(this.$el.style.width),
+          height: parseInt(this.$el.style.height)
+        }])
+      } else {
+        this.resizing = true
+        this.$emit('change-draggable', false)
       }
     },
     resizeEnable () {
@@ -250,10 +244,10 @@ const getElementTop = (element) => {
       <slot name="content"></slot>
     </div>
     <template v-if="resizable">
-      <resizer class="resizable-n" v-if="this.hasResizer('n')" :autoStyle="false" :resizeStart="resizeStart('n')" :resize="resizeAction('n', true)" :resizing="resizeAction('n', false)" :side="'top'" />
-      <resizer class="resizable-e" v-if="this.hasResizer('e')" :autoStyle="false" :resizeStart="resizeStart('e')" :resize="resizeAction('e', true)" :resizing="resizeAction('e', false)" :side="'right'" />
-      <resizer class="resizable-s" v-if="this.hasResizer('s')" :autoStyle="false" :resizeStart="resizeStart('s')" :resize="resizeAction('s', true)" :resizing="resizeAction('s', false)" :side="'bottom'" />
-      <resizer class="resizable-w" v-if="this.hasResizer('w')" :autoStyle="false" :resizeStart="resizeStart('w')" :resize="resizeAction('w', true)" :resizing="resizeAction('w', false)" :side="'left'" />
+      <resizer class="resizable-n" v-if="this.hasResizer('n')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'top'" />
+      <resizer class="resizable-e" v-if="this.hasResizer('e')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'right'" />
+      <resizer class="resizable-s" v-if="this.hasResizer('s')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'bottom'" />
+      <resizer class="resizable-w" v-if="this.hasResizer('w')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'left'" />
     </template>
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
