@@ -30,18 +30,6 @@ export default {
       type: Number,
       required: false
     },
-    'resizeStart': {
-      type: Function,
-      required: false
-    },
-    'resize': {
-      type: Function,
-      require: true
-    },
-    'resizing': {
-      type: Function,
-      require: true
-    },
     'autoStyle': {
       type: Boolean,
       default: true
@@ -87,9 +75,6 @@ export default {
     dragStart: function (e) {
       if (!e.defaultPrevented) {
         e.preventDefault()
-        if (this.resizeStart && typeof this.resizeStart === 'function') {
-          this.resizeStart()
-        }
         this.startSize = this.getSize()
         if (this.horizontal) {
           this.startPos = e.clientX
@@ -104,7 +89,7 @@ export default {
         document.body.style.cursor = this.style.cursor
         document.addEventListener('mousemove', this.drag)
         document.addEventListener('mouseup', this.dragEnd)
-        this.$emit('resize-start', this.getSize(), this)
+        this.$emit('resize-start', this.side)
       }
     },
     drag: function (e) {
@@ -125,8 +110,7 @@ export default {
       } else if (newSize > this.maxSize) {
         newSize = this.maxSize
       }
-      // oldSize = this.getSize()
-      this.resizing(newSize)
+      this.$emit('resizing', this.side, false, newSize)
     },
     dragEnd: function (e) {
       e.preventDefault()
@@ -142,11 +126,10 @@ export default {
       } else if (newSize > this.maxSize) {
         newSize = this.maxSize
       }
-      this.resize(newSize)
       document.body.style.cursor = this.oldCursor
       document.removeEventListener('mousemove', this.drag)
       document.removeEventListener('mouseup', this.dragEnd)
-      this.$emit('resize-end', this.getSize(), this)
+      this.$emit('resize-end', this.side, true, newSize)
       return true
     }
   },
@@ -169,6 +152,7 @@ export default {
 <div class='resize-handle'
   v-bind:style='style'
   style='stle'
+  @click.stop
   @mousedown.stop='dragStart'
   v-bind:class='"resize-handle-"+side'>
 </div>
