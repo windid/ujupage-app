@@ -130,7 +130,7 @@ export default {
       <div class="btn-group">
         <div class="btn btn-default" @click="showSettings = true">设置 <span class="glyphicon glyphicon-cog"></span></div>
         <div class="btn btn-default" :class="{ disabled: saveStatus }" @click="saveVariation">保存 <span class="glyphicon glyphicon-floppy-disk"></span></div>
-        <div class="btn btn-default">预览 <span class="glyphicon glyphicon-eye-open"></span></div>
+        <router-link class="btn btn-default" tag="div" :to="'/preview/' + page.id + '/' + workspace.activeVariation.id">预览 <span class="glyphicon glyphicon-eye-open"></span></router-link>
         <div class="btn btn-primary" @click="publish">发布 <span class="glyphicon glyphicon-send"></span></div>
       </div>
     </div>

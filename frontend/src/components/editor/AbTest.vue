@@ -57,7 +57,7 @@ export default {
       this.show = false
     },
     switchVariation (variation) {
-      this.loadVariation([variation])
+      this.$router.push({ name: 'editor', params: { pageId: this.$route.params.pageId, variationId: variation.id }})
       this.show = false
     }
   },
