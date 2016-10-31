@@ -39,7 +39,7 @@ const router = new VueRouter({
     { path: '/resetpassword/:token', name: 'resetpassword', component: ResetPassword },
     { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
     { path: '/editor/:pageId/:variationId', name: 'editor', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
-    { path: '/preview/:pageId/:variationId', name: 'preview', components: Preview, meta: { requiresAuth: true }},
+    { path: '/preview/:pageId/:variationId', name: 'preview', component: Preview, meta: { requiresAuth: true }},
     { path: '/', name: 'home', component: Home, meta: { requiresAuth: true },
       children: [
         { path: '', name: 'dashboard', component: Dashboard, meta: { preFetch: 'dashboardInit' }},

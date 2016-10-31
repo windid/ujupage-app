@@ -21,7 +21,6 @@ export default {
     getLeads () {
       this.loading = true
       API.page.leads({ id: this.$route.params.pageId, current_page: this.currentPage, page_size: this.pageSize }).then(response => {
-        console.log(response)
         this.leadsCount = response.data.total_pageforms
         this.leads = response.data.pageforms
         this.loading = false
@@ -57,7 +56,8 @@ export default {
     <h1>商机列表 - {{page.name}} &nbsp; 
       <div class="btn btn-default" @click="download"><span class="glyphicon glyphicon-save"></span></div>
     </h1>
-    <table class="table table-bordered table-striped table-hover">
+    <p v-if="leads.length === 0">该页面暂无表单提交数据</p>
+    <table v-if="leads.length > 0" class="table table-bordered table-striped table-hover">
       <thead>
         <tr>
           <th>表单数据</th>
@@ -76,8 +76,8 @@ export default {
       </tbody>
     </table>
     <el-pagination
-      @sizechange="changeSize"
-      @currentchange="changeCurrentPage"
+      @size-change="changeSize"
+      @current-change="changeCurrentPage"
       layout="total, sizes, prev, pager, next"
       :page-sizes="[20, 50, 100]"
       :page-size="pageSize"
