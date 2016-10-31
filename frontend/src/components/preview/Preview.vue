@@ -42,7 +42,7 @@ export default {
 <div>
   <preview-header v-if="!loading" :current-variation="currentVariation" :variations="variations" :page="page" :version="version" @switch-version="switchVersion"></preview-header>
 
-  <iframe v-if="version === 'pc' && !loading" class="pc-iframe" :src="'/api/editor/preview/variation/'+currentVariation.id" frameborder="0"></iframe>
+  <iframe v-if="version === 'pc' && !loading" class="pc-iframe" :src="'/api/pages/' + page.id + '/variations/' + currentVariation.id + '/preview'" frameborder="0"></iframe>
   <div v-if="version === 'mobile' && !loading" class="mobile-preview">           
     <div class="marvel-device iphone6 silver">
         <div class="top-bar"></div>
@@ -54,8 +54,8 @@ export default {
         <div class="screen"></div>
         <div class="home"></div>
         <div class="bottom-bar"></div>
-        <iframe class="mobile-iframe" :src="'/api/editor/preview/variation/'+currentVariation.id" frameborder="0"></iframe>
-    </div>        
+        <iframe class="mobile-iframe" :src="'/api/pages/' + page.id + '/variations/' + currentVariation.id + '/preview'" frameborder="0"></iframe>
+    </div>
   </div>
 </div>
 </template>
@@ -70,7 +70,7 @@ export default {
 }
 .mobile-preview{
   position: relative;
-  top:20px;
+  top:10px;
   width: 100%;
   text-align:center;
 }
