@@ -413,7 +413,7 @@ class PageController extends Controller {
         }        
         
         header("Content-type:text/csv");
-        header("Content-Disposition:attachment;filename=商机".date('YmdHis') . '.csv');
+        header("Content-Disposition:attachment;filename=".$page->name."_商机".date('YmdHis') . '.csv');
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
         header('Expires:0'); 
         header('Pragma:public');

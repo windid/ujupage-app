@@ -327,6 +327,13 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * }
              */
             Route::post('pages/{page_id}/variations/{variation_id}/copy', ['as' => '.copy', 'uses' => 'VariationController@copy']);
+            /**
+             * GET api/pages/{page_id}/variations/{variation_id}/preivew 预览
+             * -- page_id 页面ID
+             * -- variation_id 版本ID
+             * @return string html内容
+             */
+            Route::get('pages/{page_id}/variations/{variation_id}/preview', ['as' => '.preview', 'uses' => 'VariationController@preview']);
             
             
             /**

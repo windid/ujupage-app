@@ -284,5 +284,22 @@ class VariationController extends Controller {
         return $this->successCreated(['id' => $copy_variation->id, 'name'=> $copy_variation->name]);
     }
     
-    
+    /**
+     * 版本预览
+     * @param int $id 版本ID
+     * @return string $content 页面内容
+     */
+    public function preview($page_id, $variation_id) {
+         
+        $page_variation = $this->initPGPV($variation_id);
+        if (get_class($page_variation) == 'Illuminate\Http\JsonResponse') {
+            return $page_variation;
+        }
+        
+        $content = \App\Services\ParseHtml::decode($page_variation->toArray());
+        if(!$content){
+            return '页面尚未被编辑';
+        }
+        return view('preview.variation', compact('content'));
+    }
 }
