@@ -8,6 +8,19 @@ import ElementHtml from './ElementHtml'
 import ElementImage from './ElementImage'
 import resizer from '../ui/OnesideResizer'
 
+function getOffset (el) {
+  const box = el.getBoundingClientRect()
+  return {
+    top: box.top + window.pageYOffset - document.documentElement.clientTop,
+    left: box.left + window.pageXOffset - document.documentElement.clientLeft
+  }
+}
+
+function scrollDown () {
+  const el = document.getElementById('main-wrapper')
+  el.scrollTop = el.scrollHeight + 100
+}
+
 export default {
   props: ['sectionId', 'section'],
   mixins: [colorMixin],
@@ -48,12 +61,21 @@ export default {
       modifySection: 'modifySection'
     }),
     resizeHeight (direction, saveToStore, size) {
+      const elementTop = getOffset(this.$el).top
+      const elementHeight = this.$el.clientHeight
+      const windowHeight = window.innerHeight
+      const windowScrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
+      if ((windowHeight + windowScrollTop) <= (elementTop + elementHeight)) {
+        scrollDown()
+      }
       const style = {}
       style[this.workspace.version] = { height: size + 'px' }
       if (saveToStore) {
         this.modifySection([this.sectionId, style])
+        scrollDown()
       } else {
         this.$el.style.height = size + 'px'
+        scrollDown()
       }
     }
   },
