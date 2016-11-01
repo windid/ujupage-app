@@ -41,6 +41,7 @@ export default {
   created () {
     API.page.get({ id: this.$route.params.pageId }).then(response => {
       this.page = response.data
+      document.title = this.page.name + ' - 商机 - 聚页'
     })
     this.getLeads()
   }

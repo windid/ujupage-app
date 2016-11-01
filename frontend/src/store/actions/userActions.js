@@ -31,7 +31,7 @@ export const logout = ({ commit }, success) => {
 export const register = ({ commit }, [user, success, error]) => {
   API.user.save({}, user).then(response => {
     const user = response.data
-    commit(types.LOAD_USER, { user })
+    commit(types.LOG_IN, { user })
     success()
   }, response => error(response))
 }
@@ -42,8 +42,16 @@ export const getPassword = ({ commit }, [email, success, error]) => {
   }, response => error(response))
 }
 
-export const resetPassword = ({ commit }) => {
-
+export const resetPassword = ({ commit }, [token, password, success, error]) => {
+  API.user.resetPassword({}, {
+    token: token,
+    password: password,
+    password_confirmation: password
+  }).then(response => {
+    success()
+  }, response => {
+    error(response)
+  })
 }
 
 export const activeEmail = ({ commit }) => {

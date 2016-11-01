@@ -13,6 +13,7 @@ const Account = resolve => require(['./components/account/Account.vue'], resolve
 const Stats = resolve => require(['./components/stats/Stats.vue'], resolve)
 const Leads = resolve => require(['./components/leads/Leads.vue'], resolve)
 const Register = resolve => require(['./components/auth/Register.vue'], resolve)
+const Active = resolve => require(['./components/auth/Active.vue'], resolve)
 const ForgetPassword = resolve => require(['./components/auth/ForgetPassword.vue'], resolve)
 const ResetPassword = resolve => require(['./components/auth/ResetPassword.vue'], resolve)
 
@@ -35,6 +36,7 @@ const router = new VueRouter({
       }
     },
     { path: '/register', name: 'register', component: Register },
+    { path: '/active', name: 'active', component: Active },
     { path: '/forgetpassword', name: 'forgetpassword', component: ForgetPassword },
     { path: '/resetpassword/:token', name: 'resetpassword', component: ResetPassword },
     { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
@@ -55,6 +57,7 @@ NProgress.configure({ showSpinner: false })
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth) && !store.getters.isLogin) {
+    console.log(store.state.user)
     next({
       path: '/login',
       query: { redirect: to.fullPath }

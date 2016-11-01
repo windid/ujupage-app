@@ -32,24 +32,22 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
 .workspace{
   position:relative;
-}
-
-#content-area{
-  position:absolute;
-  left:50%;
-}
-
-/* 禁止文本选择 */
-body{
+  /* 禁止文本选择 */
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  margin-bottom: 30px;
+}
+
+#content-area{
+  position:absolute;
+  left:50%;
 }
 
 </style>

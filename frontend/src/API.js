@@ -49,6 +49,10 @@ export default {
     getPassword (params, data) {
       const url = 'auth/password/forget'
       return Vue.http.post(url, data)
+    },
+    resetPassword (params, data) {
+      const url = 'auth/password/reset'
+      return Vue.http.post(url, data)
     }
   }
 }
