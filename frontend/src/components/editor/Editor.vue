@@ -35,6 +35,7 @@ export default {
   left: 0;
   right: 0;
   min-width: 980px;
+  margin-bottom: 20px;
   overflow: auto;
 }
 
