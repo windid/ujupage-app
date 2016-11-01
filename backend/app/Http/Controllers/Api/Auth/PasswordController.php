@@ -88,21 +88,23 @@ class PasswordController extends Controller
     {
         $validator = $this->validate($request, [
             'token' => 'required',
-            'email' => 'required|email',
+            // 'email' => 'required|email',
             'password' => 'required|confirmed|min:6',
         ]);
         if ($validator->fails()){
             return $this->errorValidation($validator);
         }
-
+        $password_token = \App\Models\User\PasswordReset::where('token', $request->token)->first();
+        
         $credentials = $request->only(
-            'email', 'password', 'password_confirmation', 'token'
+            'password', 'password_confirmation', 'token'
         );
+        $credentials['email'] = $password_token['email'];
         
         $response = Password::reset($credentials, function ($user, $password) {
             $this->resetPassword($user, $password);
         });
-
+        
         switch ($response) {
             case Password::PASSWORD_RESET:
                 return $this->successCreated();
