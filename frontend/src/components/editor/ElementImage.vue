@@ -101,8 +101,8 @@ export default {
 
 <template>
   <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable="draggable" :resize="resize" :resizable="resizable" @change-button-group="changeButtonGroup" @change-draggable="changeDraggable">
-    <div slot="content" @dblclick="edit">
-      <img v-bind:src="element.src" :style="{width:'100%',height:'auto'}">
+    <div slot="content" @dblclick="edit" @mousedown.prevent>
+      <img v-bind:src="element.src" :style="{width:'100%',height:'auto'}" @mousedown.prevent>
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>
