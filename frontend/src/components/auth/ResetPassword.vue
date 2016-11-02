@@ -60,10 +60,10 @@ export default {
       </div>
     </form>
     <p class="auth-info bg-info" v-if="success">
-      密码重设成功！请记住您的新密码，现在您可以<router-link to="/login">登陆</router-link>。
+      密码重设成功！请记住您的新密码，现在您可以<a href="/">登陆</a>。
     </p>
   </div>
-  <p slot="extra">
+  <p v-if="!success" slot="extra">
     已经有聚页账户？
     <router-link to="/login">登陆</router-link>
   </p>

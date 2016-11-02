@@ -53,8 +53,8 @@ var webpackConfig = {
 }
 
 elixir(function(mix) {
-  mix.webpack('editor/index.js', webpackConfig, './public/js/editor.js');
-  mix.webpack('apps/preview/index.js', webpackConfig, './public/js/preview.js');
-  mix.webpack('dashboard/index.js', webpackConfig, './public/js/dashboard.js');
-  mix.webpack('apps/page/index.js', webpackConfig ,'./public/js/page.js');
+  // mix.webpack('editor/index.js', webpackConfig, './public/js/editor.js');
+  // mix.webpack('apps/preview/index.js', webpackConfig, './public/js/preview.js');
+  // mix.webpack('dashboard/index.js', webpackConfig, './public/js/dashboard.js');
+  mix.webpack('apps/page/index.js', webpackConfig ,'../public/js/page.js');
 });

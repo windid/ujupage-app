@@ -32,11 +32,8 @@
     "webpack": "^1.13.0"
   },
   "dependencies": {
-    "draggabilly": "^2.1.1",
+    "jquery": "^1.12.3",
     "jquery-form": "^3.50.0",
-    "jquery-validation": "^1.15.1",
-    "vue": "^1.0.26",
-    "vue-resource": "^0.9.1",
-    "vuex": "^2.0.0-rc.3"
+    "jquery-validation": "^1.15.1"
   }
 }

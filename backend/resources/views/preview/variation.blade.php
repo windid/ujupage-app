@@ -198,8 +198,8 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
   <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>
   <script src="{{asset('js/page.js')}}"></script>
   <script>
-      JuyeTracker.init({{$content['variation']['page_id']}}, {{$content['variation']['id']}});
-    </script>
+    JuyeTracker.init({{$content['variation']['page_id']}}, {{$content['variation']['id']}});
+  </script>
   <script>
     {!! $content['settings']['code']['bodyIn'] !!}
   </script>

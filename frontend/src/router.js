@@ -57,7 +57,6 @@ NProgress.configure({ showSpinner: false })
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth) && !store.getters.isLogin) {
-    console.log(store.state.user)
     next({
       path: '/login',
       query: { redirect: to.fullPath }
