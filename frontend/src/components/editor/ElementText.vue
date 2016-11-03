@@ -8,6 +8,43 @@ import TextAlign from './TextAlign'
 import { mapGetters, mapActions } from 'vuex'
 import { merge, isEqual } from 'lodash'
 
+function execCommand (...args) {
+  const selection = document.getSelection()
+  if (selection.toString().length > 0) {
+    document.execCommand(...args)
+  }
+}
+
+function saveSelection () {
+  if (window.getSelection) {
+    var sel = window.getSelection()
+    if (sel.getRangeAt && sel.rangeCount) {
+      var ranges = []
+      for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+        ranges.push(sel.getRangeAt(i))
+      }
+      return ranges
+    }
+  } else if (document.selection && document.selection.createRange) {
+    return document.selection.createRange()
+  }
+  return null
+}
+
+function restoreSelection (savedSel) {
+  if (savedSel) {
+    if (window.getSelection) {
+      var sel = window.getSelection()
+      sel.removeAllRanges()
+      for (let i = 0, len = savedSel.length; i < len; ++i) {
+        sel.addRange(savedSel[i])
+      }
+    } else if (document.selection && savedSel.select) {
+      savedSel.select()
+    }
+  }
+}
+
 export default {
   props: ['element', 'sectionId', 'elementId'],
   mixins: [colorMixin],
@@ -26,7 +63,10 @@ export default {
       editing: false,
       textElement: merge({}, this.element),
       resize: {},
-      draggableFromChild: true
+      draggableFromChild: true,
+      addingLink: false,
+      linkAddress: '',
+      userSelection: null
     }
   },
   computed: {
@@ -40,6 +80,9 @@ export default {
     resizable () {
       return (!this.editing && this.workspace.activeElementId === this.elementId)
     }
+  },
+  mounted () {
+    this.$refs.content.innerHTML = this.textElement.content
   },
   methods: {
     ...mapActions([
@@ -69,12 +112,44 @@ export default {
       if (!isEqual(this.element, this.textElement)) {
         this.modifyElement([this.elementId, this.textElement])
       }
+      this.addingLink = false
     },
     changeButtonGroup (val) {
       this.buttonGroup = val
     },
     changeDraggable (val) {
       this.draggableFromChild = val
+    },
+    styleColor (color) {
+      execCommand('foreColor', false, color)
+    },
+    styleText (action) {
+      execCommand(action, false)
+    },
+    link () {
+      this.linkAddress = ''
+      this.userSelection = saveSelection()
+      this.addingLink = true
+      setTimeout(() => {
+        this.$refs.linkAddressInput.focus()
+      }, 10)
+    },
+    addLink () {
+      this.addingLink = false
+      setTimeout(() => {
+        restoreSelection(this.userSelection)
+        this.$refs.content.focus()
+        if (this.linkAddress) {
+          execCommand('createLink', false, this.linkAddress)
+        }
+      }, 10)
+    },
+    cancelLink () {
+      this.addingLink = false
+      setTimeout(() => {
+        restoreSelection(this.userSelection)
+        this.$refs.content.focus()
+      }, 10)
     },
     merge: merge
   },
@@ -112,25 +187,31 @@ export default {
         cursor: editing ? 'text' : 'pointer',
         color: getColor(textElement.fontStyle.color)
       })"
-      v-html="textElement.content"
     >
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click="edit">编辑</div>
     </template>
     <template slot="button-groups">
-      <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group">
+      <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group">
         <color-picker v-model="textElement.fontStyle.color">
           <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="颜色" ><span class="glyphicon glyphicon-text-color" :style="{color:getColor(textElement.fontStyle.color)}"></span> <span class="caret"></span></div>
         </color-picker>
         <font-size v-model="textElement.fontStyle.fontSize"></font-size>
         <line-height v-model="textElement.fontStyle.lineHeight"></line-height>
         <text-align v-model="textElement.fontStyle.textAlign"></text-align>
-        <!-- <div class="btn btn-default" title="加粗">B</div>
-        <div class="btn btn-default" title="斜体"><i>I</i></div>
-        <div class="btn btn-default" title="下划线"><u>U</u></div>
-        <div class="btn btn-default" title="链接"><span class="glyphicon glyphicon-link"></span></div> -->
+        <div class="btn btn-default" title="加粗" @click="styleText('bold')">B</div>
+        <div class="btn btn-default" title="斜体" @click="styleText('italic')"><i>I</i></div>
+        <div class="btn btn-default" title="下划线" @click="styleText('underline')"><u>U</u></div>
+        <div class="btn btn-default" title="链接" @click="link"><span class="glyphicon glyphicon-link"></span></div>
         <div class="btn btn-success" title="完成编辑" @click="editDone">完成</div>
+      </div>
+      <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline">
+        <div class="btn-group">
+          <input type="text" class="form-control" placeholder="所要添加的链接地址" v-model="linkAddress" ref="linkAddressInput"></input>
+        </div>
+        <button type="submit" class="btn btn-default" @click.stop="cancelLink">取消</button>
+        <button type="submit" class="btn btn-success" @click.stop="addLink">添加</button>
       </div>
     </template>
   </element-common>
