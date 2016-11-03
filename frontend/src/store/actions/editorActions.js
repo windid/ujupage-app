@@ -84,7 +84,7 @@ export const setURL = ({ commit, state }, [url, successCb, errorCb]) => {
 
 // 发布
 export const publishPage = ({ commit, state }, successCb) => {
-  API.page.publish({ id: state.editor.page.id }).then(response => {
+  API.page.publish({ id: state.editor.page.id }, {}).then(response => {
     successCb(response.data)
   })
 }

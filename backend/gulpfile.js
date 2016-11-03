@@ -15,11 +15,11 @@ require('laravel-elixir-webpack');
 
 elixir(function(mix) {
   //bootstrap sass单独打包
-  mix.sass('bootstrap.scss');
+  mix.sass('bootstrap.scss', '../public/css/bootstrap.css');
   //编辑器
   // mix.sass('editor.scss');
   //用户认证（登陆、注册等）
-  mix.sass('auth.scss');
+  // mix.sass('auth.scss');
   //app全站通用css
   // mix.sass('global.scss');
 

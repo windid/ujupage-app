@@ -1,5 +1,6 @@
-import validation from 'jquery-validation'
-import validationMsgZh from 'jquery-validation/dist/localization/messages_zh'
+// import $ from 'jquery'
+import 'jquery-validation'
+import 'jquery-validation/dist/localization/messages_zh'
 
 var Site = {
 
@@ -76,7 +77,7 @@ $( document ).ready(function() {
 (function () {
   function Tracker () {
     this.expireDateTime = null
-    this.trackUrl = 'http://ujupage.cn-hangzhou.sls.aliyuncs.com/logstores/stats/track.gif?APIVersion=0.6.0'
+    this.trackUrl = '//ujupage.cn-hangzhou.log.aliyuncs.com/logstores/stats/track.gif?APIVersion=0.6.0'
     this.commonParams = {}
   }
 
