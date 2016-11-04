@@ -181,6 +181,7 @@ export default {
       class="element-text-content" 
       ref="content" slot="content" 
       @dblclick="edit" 
+      @click.prevent
       :contenteditable="editing" 
       spellcheck="false" 
       :style="merge({}, textElement.fontStyle, {
