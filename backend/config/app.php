@@ -210,7 +210,7 @@ return [
     /*************************************
      *          阿里云OSS
      **************************************/
-    'imgCdnServer' => '//s1.ujustatic.com',
+    'imgCdnServer' => '//s1.ujustatic.com', 
     'ossServer' => 'http://img-cn-hangzhou.aliyuncs.com', //青岛为 http://oss-cn-qingdao.aliyuncs.com
     'ossServerInternal' => 'http://oss-cn-hangzhou-internal.aliyuncs.com', //青岛为 http://oss-cn-qingdao-internal.aliyuncs.com
     'AccessKeyId' => '47JncEvhoM2SJTFj',
