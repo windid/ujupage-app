@@ -233,15 +233,21 @@ export default {
 
 .form-createlinks input {
   height: 33px;
+  border-radius: 4px 0 0 4px;
+  border-right: none !important;
 }
 
-.form-createlinks input,
 .form-createlinks button {
   border-radius: 0;
+}
+
+.form-createlinks button:last-child {
+  border-radius: 0 4px 4px 0;
 }
 
 .form-createlinks input:focus {
   outline: none;
   box-shadow: none;
+  border: 1px solid #ccc;
 }
 </style>
