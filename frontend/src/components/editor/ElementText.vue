@@ -207,7 +207,7 @@ export default {
         <div class="btn btn-default" title="链接" @click="link"><span class="glyphicon glyphicon-link"></span></div>
         <div class="btn btn-success" title="完成编辑" @click="editDone">完成</div>
       </div>
-      <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline">
+      <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks">
         <div class="btn-group">
           <input type="text" class="form-control" placeholder="所要添加的链接地址" v-model="linkAddress" ref="linkAddressInput"></input>
         </div>
@@ -225,5 +225,23 @@ export default {
 
 .element-text-content p{
   margin:0;
+}
+
+.form-createlinks .btn-group {
+  box-shadow: none;
+}
+
+.form-createlinks input {
+  height: 33px;
+}
+
+.form-createlinks input,
+.form-createlinks button {
+  border-radius: 0;
+}
+
+.form-createlinks input:focus {
+  outline: none;
+  box-shadow: none;
 }
 </style>
