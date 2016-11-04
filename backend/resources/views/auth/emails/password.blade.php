@@ -1,0 +1,1 @@
+点击链接重设密码: {{ url('resetpassword/'.$token) }}

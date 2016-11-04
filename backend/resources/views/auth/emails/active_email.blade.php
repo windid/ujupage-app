@@ -1,0 +1,1 @@
+点击链接激活: {{ url('active/'.$token) }}
