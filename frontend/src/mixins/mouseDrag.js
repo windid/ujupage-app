@@ -26,6 +26,7 @@ export default {
   },
   methods: {
     onDragBegin (e) {
+      if (window.getSelection && window.getSelection().toString().length > 0) return
       if (!this.draggable) return
       this.windowOldCursor = document.body.style.cursor
       document.body.style.cursor = 'move'
