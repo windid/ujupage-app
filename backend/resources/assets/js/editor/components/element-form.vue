@@ -214,9 +214,9 @@ export default {
             boxShadow: button.props.boxShadow,
             fontWeight: button.props.fontWeight,
             borderStyle: button.props.borderStyle,
-            backgroundColor: hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),
-            borderColor: getColor(button.props.borderColor),
-            color: getColor(button.props.color),
+            backgroundColor:hover ? getColor(button.props.hoverColor) : getColor(button.props.backgroundColor),
+            borderColor:getColor(button.props.borderColor),
+            color:getColor(button.props.color),
           }
         ]">
         {{button.text}}
