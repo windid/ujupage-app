@@ -83,6 +83,12 @@ export default {
   },
   mounted () {
     this.$refs.content.innerHTML = this.textElement.content
+    this.$refs.content.addEventListener('dragstart', function (e) {
+      if (e.target.nodeName.toUpperCase() === 'A') {
+        e.preventDefault()
+        return false
+      }
+    })
   },
   methods: {
     ...mapActions([
