@@ -45,6 +45,25 @@ function restoreSelection (savedSel) {
   }
 }
 
+function detectSelection (el) {
+  const r = {
+    link: false
+  }
+  if (window.getSelection) {
+    var sel = window.getSelection()
+    var nodes = el.getElementsByTagName('*')
+    Array.prototype.forEach.call(nodes, (e) => {
+      // 检查是否包含 <a> 标签
+      if (e.tagName === 'A') {
+        if (sel.containsNode(e, true)) {
+          r.link = true
+        }
+      }
+    })
+  }
+  return r
+}
+
 export default {
   props: ['element', 'sectionId', 'elementId'],
   mixins: [colorMixin],
@@ -134,6 +153,10 @@ export default {
     },
     link () {
       this.linkAddress = ''
+      if (detectSelection(this.$el).link) {
+        execCommand('unlink', false)
+        return
+      }
       this.userSelection = saveSelection()
       this.addingLink = true
       setTimeout(() => {
