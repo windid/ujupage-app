@@ -102,18 +102,7 @@ export default {
     }
   },
   mounted () {
-    const self = this
     this.$refs.content.innerHTML = this.textElement.content
-    this.$refs.content.addEventListener('dragstart', function (e) {
-      if (e.target.nodeName.toUpperCase() === 'A') {
-        e.preventDefault()
-        return false
-      }
-    })
-    this.$refs.content.addEventListener('mouseup', function (e) {
-      const l = detectSelection(self.$refs.content).link
-      self.linkSelected = l
-    })
   },
   methods: {
     ...mapActions([
@@ -161,6 +150,7 @@ export default {
       this.linkAddress = ''
       if (detectSelection(this.$el).link) {
         execCommand('unlink', false)
+        this.linkSelected = false
         return
       }
       this.userSelection = saveSelection()
@@ -185,6 +175,16 @@ export default {
         restoreSelection(this.userSelection)
         this.$refs.content.focus()
       }, 10)
+    },
+    contentDragStart (e) {
+      if (e.target.nodeName.toUpperCase() === 'A') {
+        e.preventDefault()
+        return false
+      }
+    },
+    contentMouseUp (e) {
+      const l = detectSelection(this.$refs.content).link
+      this.linkSelected = l
     },
     merge: merge
   },
@@ -217,6 +217,8 @@ export default {
       ref="content" slot="content" 
       @dblclick="edit" 
       @click.prevent
+      @dragstart="contentDragStart"
+      @mouseup="contentMouseUp"
       :contenteditable="editing" 
       spellcheck="false" 
       :style="merge({}, textElement.fontStyle, {
