@@ -45,6 +45,25 @@ function restoreSelection (savedSel) {
   }
 }
 
+function detectSelection (el) {
+  const r = {
+    link: false
+  }
+  if (window.getSelection) {
+    var sel = window.getSelection()
+    var nodes = el.getElementsByTagName('*')
+    Array.prototype.forEach.call(nodes, (e) => {
+      // 检查是否包含 <a> 标签
+      if (e.tagName === 'A') {
+        if (sel.containsNode(e, true)) {
+          r.link = true
+        }
+      }
+    })
+  }
+  return r
+}
+
 export default {
   props: ['element', 'sectionId', 'elementId'],
   mixins: [colorMixin],
@@ -66,7 +85,8 @@ export default {
       draggableFromChild: true,
       addingLink: false,
       linkAddress: '',
-      userSelection: null
+      userSelection: null,
+      linkSelected: false
     }
   },
   computed: {
@@ -82,7 +102,18 @@ export default {
     }
   },
   mounted () {
+    const self = this
     this.$refs.content.innerHTML = this.textElement.content
+    this.$refs.content.addEventListener('dragstart', function (e) {
+      if (e.target.nodeName.toUpperCase() === 'A') {
+        e.preventDefault()
+        return false
+      }
+    })
+    this.$refs.content.addEventListener('mouseup', function (e) {
+      const l = detectSelection(self.$refs.content).link
+      self.linkSelected = l
+    })
   },
   methods: {
     ...mapActions([
@@ -128,6 +159,10 @@ export default {
     },
     link () {
       this.linkAddress = ''
+      if (detectSelection(this.$el).link) {
+        execCommand('unlink', false)
+        return
+      }
       this.userSelection = saveSelection()
       this.addingLink = true
       setTimeout(() => {
@@ -204,7 +239,7 @@ export default {
         <div class="btn btn-default" title="加粗" @click="styleText('bold')">B</div>
         <div class="btn btn-default" title="斜体" @click="styleText('italic')"><i>I</i></div>
         <div class="btn btn-default" title="下划线" @click="styleText('underline')"><u>U</u></div>
-        <div class="btn btn-default" title="链接" @click="link"><span class="glyphicon glyphicon-link"></span></div>
+        <div class="btn btn-default" title="链接" @click="link"><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></div>
         <div class="btn btn-success" title="完成编辑" @click="editDone">完成</div>
       </div>
       <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks">
@@ -249,5 +284,9 @@ export default {
   outline: none;
   box-shadow: none;
   border: 1px solid #ccc;
+}
+
+.glyphicon.unlink {
+  text-decoration: line-through;
 }
 </style>
