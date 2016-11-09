@@ -232,7 +232,8 @@ export default {
       <div class="btn btn-primary" title="编辑" @click="edit">编辑</div>
     </template>
     <template slot="button-groups">
-      <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group">
+      <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group"
+      @mousedown.prevent>
         <color-picker v-model="textElement.fontStyle.color">
           <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="颜色" ><span class="glyphicon glyphicon-text-color" :style="{color:getColor(textElement.fontStyle.color)}"></span> <span class="caret"></span></div>
         </color-picker>
@@ -245,7 +246,8 @@ export default {
         <div class="btn btn-default" title="链接" @click="link"><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></div>
         <div class="btn btn-success" title="完成编辑" @click="editDone">完成</div>
       </div>
-      <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks">
+      <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks"
+      @mousedown.prevent>
         <div class="btn-group">
           <input type="text" class="form-control" placeholder="所要添加的链接地址" v-model="linkAddress" ref="linkAddressInput"></input>
         </div>
