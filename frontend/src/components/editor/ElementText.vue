@@ -194,6 +194,7 @@ export default {
     },
     'element': function (val) {
       this.textElement = merge({}, val)
+      this.$refs.content.innerHTML = this.textElement.content
     }
   }
 }
