@@ -290,9 +290,9 @@ class PageController extends Controller {
             } else {
                 $html = view('preview.variation', ['content' => $content])->render();
             }
-            $this->pageVariation->where('id', $v['id'])->update([
-                'html' => $html
-            ]);
+            $pageVariation = $this->pageVariation->find($v['id']);
+            $pageVariation->html = $html;
+            $pageVariation->save();
         }
         
         return $this->successOK();
