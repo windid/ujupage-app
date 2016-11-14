@@ -166,6 +166,7 @@ export default {
         this.$refs.content.focus()
         if (this.linkAddress) {
           execCommand('createLink', false, this.linkAddress)
+          this.linkSelected = true
         }
       }, 10)
     },

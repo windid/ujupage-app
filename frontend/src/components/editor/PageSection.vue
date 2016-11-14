@@ -53,11 +53,15 @@ export default {
       setActiveSectionId: 'setActiveSectionId',
       modifySection: 'modifySection'
     }),
+    resizeStart (size) {
+      this.$refs.ruler.classList.add('active')
+    },
     resizeHeight (direction, saveToStore, size, moved) {
       const style = {}
       style[this.workspace.version] = { height: size + 'px' }
       if (saveToStore) {
         this.modifySection([this.sectionId, style])
+        this.$refs.ruler.classList.remove('active')
       } else {
         this.$el.style.height = size + 'px'
         scrollDown(moved)
@@ -102,8 +106,8 @@ export default {
         </div>
       </transition>
     </div>
-    <div class="section-line" rel="ruler"></div>
-    <resizer :size="height" @resize-end="resizeHeight" @resizing="resizeHeight" :side="'bottom'" :min-size="60"></resizer>
+    <div class="section-line" ref="ruler"></div>
+    <resizer :size="height" @resize-start="resizeStart" @resize-end="resizeHeight" @resizing="resizeHeight" :side="'bottom'" :min-size="60"></resizer>
   </div>
 </template>
 
@@ -136,6 +140,10 @@ export default {
   border-bottom: 1px dashed #03ddff;
   height: 1px;
   bottom: -1px;
+}
+
+.section-line.active {
+    border-bottom: 1px dashed #ff6a6a;
 }
 </style>
 
