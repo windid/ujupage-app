@@ -1,6 +1,13 @@
 <script>
 function hasScrollToBottom (e) {
-  return e.toElement === document.querySelector('html')
+  if (e.toElement) {
+    return e.toElement === document.querySelector('html')
+  } else if (e.target) {
+    /* firefox */
+    return e.target === document
+  } else {
+    return false
+  }
 }
 
 export default {
@@ -110,8 +117,10 @@ export default {
       } else {
         pos = e.clientY
       }
+      // 离始点的移动距离
       moved = pos - this.startPos
-      if (e.toElement === document.querySelector('html')) {
+      const outOfWindow = hasScrollToBottom(e)
+      if (outOfWindow) {
         this.extraOffset += 2
       }
       moved += this.extraOffset
@@ -121,10 +130,10 @@ export default {
       let offset = moved - this.prevPosition
       this.prevPosition = moved
 
-      if (hasScrollToBottom(e)) {
+      if (outOfWindow) {
         offset += 1
       } else {
-        offset -= 1
+        offset = null
       }
       newSize = this.startSize + moved
       if (newSize < this.minSize) {

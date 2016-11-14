@@ -11,7 +11,9 @@ import resizer from '../ui/OnesideResizer'
 function scrollDown (offset) {
   const el = document.getElementById('main-wrapper')
   // scrollHeight
-  el.scrollTop = el.scrollTop + offset
+  if (offset !== null) {
+    el.scrollTop = el.scrollTop + offset
+  }
 }
 
 export default {
