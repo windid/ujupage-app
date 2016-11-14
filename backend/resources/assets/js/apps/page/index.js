@@ -1,5 +1,6 @@
-import validation from 'jquery-validation'
-import validationMsgZh from 'jquery-validation/dist/localization/messages_zh'
+// import $ from 'jquery'
+import 'jquery-validation'
+import 'jquery-validation/dist/localization/messages_zh'
 
 var Site = {
 
@@ -27,8 +28,11 @@ var Site = {
               } else {
                 Site.showMsg(form.attr('msg') || '表单提交成功')
               }
+              const goal = form.attr('data-goal')
+              JuyeTracker.trackEvent(['表单', '提交', '成功'], goal)
             },
             error: response => {
+              JuyeTracker.trackEvent(['表单', '提交', '失败'], 0)
               Site.showMsg('表单提交失败，请稍后再试。')
             }
           })
@@ -64,16 +68,16 @@ var Site = {
     msgBox.show()
   }
 
-}
+};
 
 $( document ).ready(function() {
   Site.init()
-})
+});
 
 (function () {
   function Tracker () {
     this.expireDateTime = null
-    this.trackUrl = 'http://ujupage.cn-hangzhou.sls.aliyuncs.com/logstores/stats/track.gif?APIVersion=0.6.0'
+    this.trackUrl = '//ujupage.cn-hangzhou.log.aliyuncs.com/logstores/stats/track.gif?APIVersion=0.6.0'
     this.commonParams = {}
   }
 
@@ -112,8 +116,9 @@ $( document ).ready(function() {
       for (var i in links) {
         if (links[i].hostname) {
           addEvent(links[i], 'click', function () {
-            params['goal'] = 1
+            params['goal'] = this.dataset.goal || 0
             params['target'] = this.href
+            console.log(params)
             tracker.sendRequest(params, 200)
           })
         }

@@ -25,7 +25,6 @@ export default {
     },
     buttonGroup: {
       type: String,
-      twoWay: true,
       default: 'main'
     },
     draggable: {

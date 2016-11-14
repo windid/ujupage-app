@@ -4,7 +4,7 @@ import router from './router'
 import App from './App'
 import API from './API'
 import cookieHandler from './utils/cookieHandler'
-import './sass/bootstrap.scss'
+import './style/bootstrap.scss'
 
 API.account.current().then(response => {
   store.dispatch('loadUser', response.data)
@@ -25,6 +25,7 @@ const AppInit = () => {
       }
     })
   })
+
   /* eslint-disable no-new */
   new Vue({
     el: '#app',

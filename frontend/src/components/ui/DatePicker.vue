@@ -54,7 +54,6 @@
 <script>
 import moment from 'moment'
 import Dropdown from './Dropdown'
-import 'moment/locale/zh-cn'
 
 export default {
   components: {

@@ -1,4 +1,4 @@
-import projectAPI from '../../api/projectAPI'
+// import projectAPI from '../../api/projectAPI'
 import API from '../../API'
 import getParameter from '../../utils/getParameter'
 import cookieHandler from '../../utils/cookieHandler'
@@ -44,23 +44,23 @@ export const switchPageGroup = ({ commit }, [pageGroup, callback = false]) => {
   })
 }
 
-export const createProject = ({ commit }, project) => {
-  projectAPI.create(project, project => {
-    commit(types.CREATE_PROJECT, { project })
-  }, data => commit(types.LOAD_FAILED, { source: 'createProject', err: data.err }))
-}
+// export const createProject = ({ commit }, project) => {
+//   projectAPI.create(project, project => {
+//     commit(types.CREATE_PROJECT, { project })
+//   }, data => commit(types.LOAD_FAILED, { source: 'createProject', err: data.err }))
+// }
 
-export const removeProject = ({ commit }, project) => {
-  projectAPI.remove(project, data => {
-    commit(types.REMOVE_PROJECT, { project })
-  }, data => commit(types.LOAD_FAILED, { source: 'removeProject', err: data.err }))
-}
+// export const removeProject = ({ commit }, project) => {
+//   projectAPI.remove(project, data => {
+//     commit(types.REMOVE_PROJECT, { project })
+//   }, data => commit(types.LOAD_FAILED, { source: 'removeProject', err: data.err }))
+// }
 
-export const renameProject = ({ commit }, [project, newName]) => {
-  projectAPI.rename(project, newName, data => {
-    commit(types.RENAME_PROJECT, { project, newName })
-  }, data => commit(types.LOAD_FAILED, { source: 'renameProject', err: data.err }))
-}
+// export const renameProject = ({ commit }, [project, newName]) => {
+//   projectAPI.rename(project, newName, data => {
+//     commit(types.RENAME_PROJECT, { project, newName })
+//   }, data => commit(types.LOAD_FAILED, { source: 'renameProject', err: data.err }))
+// }
 
 export const loadMembers = ({ commit }, project) => {
   API.projectMember.get({ projectId: project.id }).then(response => {
@@ -69,11 +69,11 @@ export const loadMembers = ({ commit }, project) => {
   })
 }
 
-export const inviteMember = ({ commit, state }, member) => {
-  projectAPI.invite(member, state.dashboard.currentProject, member => {
-    loadMembers({ commit }, state.dashboard.currentProject)
-  }, data => commit(types.LOAD_FAILED, { source: 'inviteMember', err: data.err }))
-}
+// export const inviteMember = ({ commit, state }, member) => {
+//   projectAPI.invite(member, state.dashboard.currentProject, member => {
+//     loadMembers({ commit }, state.dashboard.currentProject)
+//   }, data => commit(types.LOAD_FAILED, { source: 'inviteMember', err: data.err }))
+// }
 
 export const removeMember = ({ commit }, member, project) => {
 

@@ -41,11 +41,7 @@ class ParseHtml {
             self::parseElement($element_id, $element);
         }
 
-        // print_r($content['elements']);
-
-        // print_r(self::$elements);
-
-        // print_r(self::$page);
+        // dd(self::$page);
 
         return self::$page;
     }
@@ -66,35 +62,6 @@ class ParseHtml {
         self::$page['style']['pc']['content']['height'] .= "px";
         self::$page['style']['mobile']['content']['height'] += $section['style']['mobile']['height'];
         self::$page['style']['mobile']['content']['height'] .= "px";
-
-        // self::$elements['pc'] = array_merge(self::$elements['pc'], $section['elements']['pc']);
-        // self::$elements['mobile'] = array_merge(self::$elements['mobile'], $section['elements']['mobile']);
-
-        // foreach ($section['elements'] as $element_id => $element) {
-
-        //     self::parseElement($element_id, $element);
-
-        //     switch ($element['type']) {
-        //         case 'text':
-        //             self::parseElementText($element_id, $element);
-        //             break;
-        //         case 'image':
-        //             self::parseElementImage($element_id, $element);
-        //             break;
-        //         case 'form':
-        //             self::parseElementForm($element_id, $element);
-        //             break;
-        //         case 'button':
-        //             self::parseElementButton($element_id, $element);
-        //             break;
-        //         case 'html':
-        //             self::parseElementHTML($element_id, $element);
-        //             break;
-        //         default:
-        //             # code...
-        //             break;
-        //     }
-        // }
     }
 
     protected static function parseElement($element_id, $element){
@@ -113,6 +80,9 @@ class ParseHtml {
             self::$page['style']['mobile']['element-'.$element_id] = array("display"=>"none");
         }
 
+        if (isset($element['link']) && in_array($element['link']['url'], self::$page['settings']['goals'])){
+            self::$page['elements'][$element_id]['link']['goal'] = 1;
+        }
 
         switch ($element['type']) {
             case 'text':
@@ -145,6 +115,8 @@ class ParseHtml {
 
     protected static function parseElementForm($element_id, $element){
         self::$page['style']['common']['element-'.$element_id." label"] = self::parseStyles(['color'=>$element['props']['labelColor']]);
+        self::$page['elements'][$element_id]['props']['goal'] = in_array('form', self::$page['settings']['goals']) ? 1 : 0;
+        
         $hover_color = self::getColor($element['button']['props']['hoverColor']);
         unset ($element['button']['props']['hoverColor']);
         self::$page['style']['common']['element-'.$element_id."-button"] = self::parseStyles($element['button']['props']);

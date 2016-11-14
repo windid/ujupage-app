@@ -1,6 +1,5 @@
 import API from '../../API'
 import * as types from '../mutation-types'
-import getParameter from '../../utils/getParameter'
 import { merge } from 'lodash'
 import elementTypes from '../editorElementTypes'
 
@@ -12,9 +11,8 @@ export const editorInit = ({ commit, state }, [route, callback = false]) => {
     API.variation.get({ pageId: page.id }).then(response => {
       page.variations = response.data
       commit(types.LOAD_PAGE, { page })
-      const variationId = getParameter('vid') || page.variations[0].id
-      // const variation = page.variations.find(v => v.id === variationId)
-      const variation = page.variations.filter(v => v.id === variationId)[0]
+      const variationId = route.params.variationId || page.variations[0].id
+      const variation = page.variations.find(v => v.id === parseInt(variationId))
       loadVariation({ commit, state }, [variation, callback])
     })
   })
@@ -86,7 +84,7 @@ export const setURL = ({ commit, state }, [url, successCb, errorCb]) => {
 
 // 发布
 export const publishPage = ({ commit, state }, successCb) => {
-  API.page.publish({ id: state.editor.page.id }).then(response => {
+  API.page.publish({ id: state.editor.page.id }, {}).then(response => {
     successCb(response.data)
   })
 }

@@ -1,5 +1,4 @@
 <script>
-import AppHeader from '../common/AppHeader'
 import API from '../../API'
 import Navbar from './Navbar'
 import Overview from './Overview'
@@ -10,7 +9,6 @@ import moment from 'moment'
 export default {
   name: 'Stats',
   components: {
-    AppHeader,
     Navbar,
     Overview,
     Conversion,

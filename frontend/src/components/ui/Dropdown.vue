@@ -22,7 +22,7 @@
         toggle.addEventListener('click', this.toggleDropdown)
       }
       this._closeEvent = eventHandler.listen(window, 'click', (e) => {
-        if (!el.contains(e.target) && this.show) {
+        if ((!el.contains(e.target) || e.target.nodeName.toLowerCase() === 'a') && this.show) {
           this.toggleDropdown(e)
         }
       })

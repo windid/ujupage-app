@@ -30,10 +30,6 @@
   text-align: center;
 }
 
-.auth-content {
-
-}
-
 .auth-error {
   padding: 8px;
   border-radius: 5px;

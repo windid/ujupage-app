@@ -12,7 +12,8 @@ export default {
 
   page: Vue.resource('page{/id}', {}, {
     duplicate: { method: 'POST', url: 'page/{id}/copy' },
-    publish: { method: 'PUT', url: 'page/{id}/publish' }
+    publish: { method: 'PUT', url: 'page/{id}/publish' },
+    leads: { method: 'GET', url: 'page/{id}/leads' }
   }),
 
   variation: Vue.resource('pages/{pageId}/variations{/id}', {}, {
@@ -47,6 +48,10 @@ export default {
     },
     getPassword (params, data) {
       const url = 'auth/password/forget'
+      return Vue.http.post(url, data)
+    },
+    resetPassword (params, data) {
+      const url = 'auth/password/reset'
       return Vue.http.post(url, data)
     }
   }
