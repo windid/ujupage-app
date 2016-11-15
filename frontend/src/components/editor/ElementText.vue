@@ -102,18 +102,7 @@ export default {
     }
   },
   mounted () {
-    const self = this
     this.$refs.content.innerHTML = this.textElement.content
-    this.$refs.content.addEventListener('dragstart', function (e) {
-      if (e.target.nodeName.toUpperCase() === 'A') {
-        e.preventDefault()
-        return false
-      }
-    })
-    this.$refs.content.addEventListener('mouseup', function (e) {
-      const l = detectSelection(self.$refs.content).link
-      self.linkSelected = l
-    })
   },
   methods: {
     ...mapActions([
@@ -161,6 +150,7 @@ export default {
       this.linkAddress = ''
       if (detectSelection(this.$el).link) {
         execCommand('unlink', false)
+        this.linkSelected = false
         return
       }
       this.userSelection = saveSelection()
@@ -176,6 +166,7 @@ export default {
         this.$refs.content.focus()
         if (this.linkAddress) {
           execCommand('createLink', false, this.linkAddress)
+          this.linkSelected = true
         }
       }, 10)
     },
@@ -186,6 +177,16 @@ export default {
         this.$refs.content.focus()
       }, 10)
     },
+    contentDragStart (e) {
+      if (e.target.nodeName.toUpperCase() === 'A') {
+        e.preventDefault()
+        return false
+      }
+    },
+    contentMouseUp (e) {
+      const l = detectSelection(this.$refs.content).link
+      this.linkSelected = l
+    },
     merge: merge
   },
   watch: {
@@ -194,6 +195,7 @@ export default {
     },
     'element': function (val) {
       this.textElement = merge({}, val)
+      this.$refs.content.innerHTML = this.textElement.content
     }
   }
 }
@@ -217,6 +219,8 @@ export default {
       ref="content" slot="content" 
       @dblclick="edit" 
       @click.prevent
+      @dragstart="contentDragStart"
+      @mouseup="contentMouseUp"
       :contenteditable="editing" 
       spellcheck="false" 
       :style="merge({}, textElement.fontStyle, {
@@ -229,7 +233,8 @@ export default {
       <div class="btn btn-primary" title="编辑" @click="edit">编辑</div>
     </template>
     <template slot="button-groups">
-      <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group">
+      <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group"
+      @mousedown.prevent>
         <color-picker v-model="textElement.fontStyle.color">
           <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="颜色" ><span class="glyphicon glyphicon-text-color" :style="{color:getColor(textElement.fontStyle.color)}"></span> <span class="caret"></span></div>
         </color-picker>
@@ -242,7 +247,8 @@ export default {
         <div class="btn btn-default" title="链接" @click="link"><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></div>
         <div class="btn btn-success" title="完成编辑" @click="editDone">完成</div>
       </div>
-      <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks">
+      <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks"
+      @mousedown.prevent>
         <div class="btn-group">
           <input type="text" class="form-control" placeholder="所要添加的链接地址" v-model="linkAddress" ref="linkAddressInput"></input>
         </div>
