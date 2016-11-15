@@ -80,8 +80,7 @@ export default {
 <style>
 
 .projects{
-  border-bottom:1px solid #ddd;
-  height:60%;
+  height:90%;
   padding:20px;
   overflow-y: auto;
 }
