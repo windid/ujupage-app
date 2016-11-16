@@ -29,7 +29,8 @@ export default {
       hover: false,
       resize: {},
       draggableFromChild: true,
-      imageObj: {}
+      imageObj: {},
+      hasPopup: false
     }
   },
   computed: {
@@ -48,6 +49,7 @@ export default {
     ...mapActions([
       'modifyElement',
       'removeElement',
+      'resizeElement',
       'getImage'
     ]),
     edit () {
@@ -79,7 +81,9 @@ export default {
       this.draggableFromChild = val
     },
     selectImage () {
+      this.hasPopup = true
       this.getImage([(image) => {
+        this.hasPopup = false
         this.imageObj = image
       }])
     },
@@ -89,14 +93,40 @@ export default {
   },
   watch: {
     'workspace.activeElementId': function (val) {
+      if (this.hasPopup) {
+        return
+      }
       if (val !== this.elementId && this.editing) this.editDone()
     },
     'element': function (val) {
       this.buttonElement = merge({}, val)
     },
-    'imageObj': function (val) {
-      if (val && val.url) {
-        this.buttonElement.imageObj = val
+    'imageObj': function (newImage) {
+      const self = this
+      if (newImage && newImage.url) {
+        // adjust size
+        const pcWidth = (newImage.width > 960) ? 960 : newImage.width
+        const mobileWidth = (newImage.width > 360) ? 360 : newImage.width
+        const pcLeft = (960 - pcWidth) / 2
+        const mobileLeft = (360 - mobileWidth) / 2
+        const style = {
+          'pc': {
+            width: pcWidth + 'px',
+            height: undefined,
+            left: pcLeft + 'px'
+          },
+          'mobile': {
+            width: mobileWidth + 'px',
+            height: undefined,
+            left: mobileLeft + 'px'
+          }
+        }
+        // commit to store
+        this.buttonElement.imageObj = newImage
+        this.buttonElement.style = style
+        if (!isEqual(this.element, this.buttonElement)) {
+          this.modifyElement([self.elementId, this.buttonElement, true])
+        }
       }
     }
   }
@@ -118,7 +148,7 @@ export default {
     @drag-start="editDone"
   >
     <div slot="content" v-if="buttonElement.imageObj">
-      <img :src="buttonElement.imageObj.url" style="width: 90px; height: 90px;" @mousedown.prevent />
+      <img :src="buttonElement.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
     </div>
     <div slot="content" v-else class="element-button"
       @dblclick="edit" 
