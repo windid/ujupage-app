@@ -91,5 +91,61 @@ export default {
       <checkbox-button v-model="button.props.boxShadow" :values="['','1px 3px 6px #888']">阴影</checkbox-button> &nbsp; 
       <checkbox-button v-model="button.props.borderStyle" :values="['none','solid']">边框</checkbox-button>
     </div>
+
+    <div class="sidebar-block">
+      <div class="button-background-selector" @click="$emit('select-image')">
+        <div v-if="button.imageObj" class="button-background-thumbnail-wrapper">
+          <img :src="button.imageObj.url" class="button-background-thumbnail"/>
+          <div class="button-background-thumbnail-action">
+            <div @click.stop="$emit('select-image')">更换</div>
+            <div @click.stop="$emit('delete-image')">删除</div>
+          </div>
+        </div>
+        <span v-else>图片背景</span>
+      </div>
+    </div>
   </div>
 </template>
+
+<style>
+  .button-background-selector {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    /* border: 1px dashed #444; */
+    background-color: #eee;
+    cursor: pointer;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 2px;
+  }
+  .button-background-thumbnail {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+  }
+  .button-background-thumbnail-action {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: #333;
+    color: #fff;
+    flex-direction: column;
+    display: none;
+  }
+  .button-background-selector:hover .button-background-thumbnail-action {
+    display: flex;
+  }
+  .button-background-thumbnail-action div {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .button-background-thumbnail-action div:hover {
+    background-color: #444;
+  }
+</style>

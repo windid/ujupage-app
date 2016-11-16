@@ -28,7 +28,8 @@ export default {
       // 模拟css hover伪类效果
       hover: false,
       resize: {},
-      draggableFromChild: true
+      draggableFromChild: true,
+      imageObj: {}
     }
   },
   computed: {
@@ -45,7 +46,9 @@ export default {
   },
   methods: {
     ...mapActions([
-      'modifyElement'
+      'modifyElement',
+      'removeElement',
+      'getImage'
     ]),
     edit () {
       this.editing = true
@@ -74,6 +77,14 @@ export default {
     },
     changeDraggable (val) {
       this.draggableFromChild = val
+    },
+    selectImage () {
+      this.getImage([(image) => {
+        this.imageObj = image
+      }])
+    },
+    deleteImage () {
+      this.buttonElement.imageObj = null
     }
   },
   watch: {
@@ -82,6 +93,11 @@ export default {
     },
     'element': function (val) {
       this.buttonElement = merge({}, val)
+    },
+    'imageObj': function (val) {
+      if (val && val.url) {
+        this.buttonElement.imageObj = val
+      }
     }
   }
 }
@@ -101,7 +117,10 @@ export default {
     @change-draggable="changeDraggable" 
     @drag-start="editDone"
   >
-    <div slot="content" class="element-button"
+    <div slot="content" v-if="buttonElement.imageObj">
+      <img :src="buttonElement.imageObj.url" style="width: 90px; height: 90px;" @mousedown.prevent />
+    </div>
+    <div slot="content" v-else class="element-button"
       @dblclick="edit" 
       @mouseenter = "hover = true"
       @mouseleave = "hover = false"
@@ -131,7 +150,7 @@ export default {
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
     </template>
   </element-common>
-  <button-editor :show="editing" v-model="buttonElement" @edit-done="editDone"></button-editor>
+  <button-editor :show="editing" v-model="buttonElement" @edit-done="editDone" @select-image="selectImage" @delete-image="deleteImage"></button-editor>
 </div>
 </template>
 
