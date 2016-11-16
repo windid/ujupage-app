@@ -108,6 +108,7 @@ export default {
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
     },
     dragMove (movement) {
+      if (movement.x === 0 && movement.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
       }
@@ -118,7 +119,7 @@ export default {
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
     },
     dragEnd (movement) {
-      this.dragging = false
+      if (movement.x === 0 && movement.y === 0) return
       this.$emit('change-button-group', 'main')
       const move = this.computeMoveMost(movement)
       this.elPositionInPage.left = this.startPosLeft + move.x

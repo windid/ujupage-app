@@ -39,18 +39,14 @@ export default {
       const x = e.clientX - this.dragStartX
       const y = e.clientY - this.dragStartY
       this.dragging = true
-      if (x !== 0 && y !== 0) {
-        this.dragMove({ x, y })
-      }
+      this.dragMove({ x, y })
     },
     onDragEnd (e) {
       document.body.style.cursor = this.windowOldCursor
       const x = e.clientX - this.dragStartX
       const y = e.clientY - this.dragStartY
       this.dragging = false
-      if (x !== 0 && y !== 0) {
-        this.dragEnd({ x, y })
-      }
+      this.dragEnd({ x, y })
       document.removeEventListener('mousemove', this.onDragMove)
       document.removeEventListener('mouseup', this.onDragEnd)
     },
