@@ -119,7 +119,7 @@ export default {
     @mouseleave="mouseHere = false"
   >
     <!-- 蒙板 -->
-    <div class="section-mask" :style="maskStyle" v-if="this.section.style.bg.src"></div>
+    <div class="section-mask" :style="maskStyle" v-if="section.style.bg && section.style.bg.src"></div>
     <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">
       <!-- 页面元素组件 -->
       <transition-group name="fade" tag="div">
