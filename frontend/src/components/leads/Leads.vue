@@ -110,7 +110,7 @@ export default {
             <p v-for="(value, key) in lead.fields">{{key}}: {{value}}</p>
           </td>
           <td>
-            <p v-for="(value, key) in lead.params">{{key}}: {{value}}</p>
+            <p v-for="(value, key) in lead.utms">{{key}}: {{value}}</p>
           </td>
           <td>{{lead.variation_name}}</td>
           <td>{{lead.created_at}}</td>
