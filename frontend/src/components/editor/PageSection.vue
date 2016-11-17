@@ -47,13 +47,14 @@ export default {
         borderWidth: this.section.style[v]['border-width'] || '0px',
         borderStyle: 'solid'
       }
-      if (this.section.style.bg) {
-        style['background-image'] = `url("${this.section.style.bg.src}")`
-        const r = parseInt(this.section.style.bg.repeat)
+      const bg = this.section.style.bg
+      if (bg) {
+        style['background-image'] = `url("${bg.src}")`
+        const r = parseInt(bg.repeat)
         style['background-repeat'] = ['no-repeat', 'repeat', 'repeat-x', 'repeat-y', 'cover'][r]
         style['background-size'] = (r === 4) ? 'cover' : 'auto'
         const position = []
-        let p = parseInt(this.section.style.bg.position)
+        let p = parseInt(bg.position)
         if (isNaN(p)) p = 1
         p--
         position[0] = ['left', 'center', 'right'][p % 3]
@@ -68,7 +69,7 @@ export default {
       }
       const m = this.section.style.mask
       const style = {
-        backgroundColor: m.color,
+        backgroundColor: this.getColor(m.color),
         opacity: m.opacity / 100
       }
       return style
@@ -119,7 +120,7 @@ export default {
     @mouseleave="mouseHere = false"
   >
     <!-- 蒙板 -->
-    <div class="section-mask" :style="maskStyle" v-if="this.section.style.bg.src"></div>
+    <div class="section-mask" :style="maskStyle" v-if="this.section.style.bg && this.section.style.bg.src"></div>
     <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">
       <!-- 页面元素组件 -->
       <transition-group name="fade" tag="div">

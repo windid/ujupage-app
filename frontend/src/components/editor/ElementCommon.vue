@@ -285,6 +285,7 @@ const getElementTop = (element) => {
   cursor: pointer;
   word-wrap: break-word;
   height: 100%;
+  z-index: 1;
 }
 
 .el-content.outline {
