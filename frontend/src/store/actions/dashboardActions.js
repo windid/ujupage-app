@@ -44,11 +44,13 @@ export const switchPageGroup = ({ commit }, [pageGroup, callback = false]) => {
   })
 }
 
-// export const createProject = ({ commit }, project) => {
-//   projectAPI.create(project, project => {
-//     commit(types.CREATE_PROJECT, { project })
-//   }, data => commit(types.LOAD_FAILED, { source: 'createProject', err: data.err }))
-// }
+export const createProject = ({ commit }, project) => {
+  API.project.save({}, project).then(response => {
+    const project = response.data
+    commit(types.CREATE_PROJECT, { project })
+    switchProject({ commit }, [project])
+  })
+}
 
 // export const removeProject = ({ commit }, project) => {
 //   projectAPI.remove(project, data => {
@@ -69,11 +71,11 @@ export const loadMembers = ({ commit }, project) => {
   })
 }
 
-// export const inviteMember = ({ commit, state }, member) => {
-//   projectAPI.invite(member, state.dashboard.currentProject, member => {
-//     loadMembers({ commit }, state.dashboard.currentProject)
-//   }, data => commit(types.LOAD_FAILED, { source: 'inviteMember', err: data.err }))
-// }
+export const inviteMember = ({ commit, state }, member) => {
+  API.projectMember.save({ projectId: state.dashboard.currentProject.id }, member).then(response => {
+    loadMembers({ commit }, state.dashboard.currentProject)
+  })
+}
 
 export const removeMember = ({ commit }, member, project) => {
 

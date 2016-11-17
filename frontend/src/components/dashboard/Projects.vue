@@ -61,8 +61,8 @@ export default {
       </slot>
       <ul slot="dropdown-menu" class="dropdown-menu projects-menu">
         <li v-for="project in projects"><a href="javascript:;" @click="switchProject(project)">{{project.name}}</a></li>
-        <!-- <li role="separator" class="divider"></li> -->
-        <!-- <li><a href="javascript:;" @click="createProject"> <span class="glyphicon glyphicon-plus"></span> 新建项目</a></li> -->
+        <li role="separator" class="divider"></li>
+        <li v-if="$store.state.user.current.id == 2"><a href="javascript:;" @click="createProject"> <span class="glyphicon glyphicon-plus"></span> 新建项目</a></li>
       </ul>
     </dropdown>
     <div class="member-item" v-for="member in members" >
