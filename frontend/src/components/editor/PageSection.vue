@@ -8,17 +8,12 @@ import ElementHtml from './ElementHtml'
 import ElementImage from './ElementImage'
 import resizer from '../ui/OnesideResizer'
 
-function getOffset (el) {
-  const box = el.getBoundingClientRect()
-  return {
-    top: box.top + window.pageYOffset - document.documentElement.clientTop,
-    left: box.left + window.pageXOffset - document.documentElement.clientLeft
-  }
-}
-
-function scrollDown () {
+function scrollDown (offset) {
   const el = document.getElementById('main-wrapper')
-  el.scrollTop = el.scrollHeight + 100
+  // scrollHeight
+  if (offset !== null) {
+    el.scrollTop = el.scrollTop + offset
+  }
 }
 
 export default {
@@ -60,22 +55,18 @@ export default {
       setActiveSectionId: 'setActiveSectionId',
       modifySection: 'modifySection'
     }),
-    resizeHeight (direction, saveToStore, size) {
-      const elementTop = getOffset(this.$el).top
-      const elementHeight = this.$el.clientHeight
-      const windowHeight = window.innerHeight
-      const windowScrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
-      if ((windowHeight + windowScrollTop) <= (elementTop + elementHeight)) {
-        scrollDown()
-      }
+    resizeStart (size) {
+      this.$refs.ruler.classList.add('active')
+    },
+    resizeHeight (direction, saveToStore, size, moved) {
       const style = {}
       style[this.workspace.version] = { height: size + 'px' }
       if (saveToStore) {
         this.modifySection([this.sectionId, style])
-        scrollDown()
+        this.$refs.ruler.classList.remove('active')
       } else {
         this.$el.style.height = size + 'px'
-        scrollDown()
+        scrollDown(moved)
       }
     }
   },
@@ -117,8 +108,8 @@ export default {
         </div>
       </transition>
     </div>
-    <div class="section-line" rel="ruler"></div>
-    <resizer :size="height" @resize-end="resizeHeight" @resizing="resizeHeight" :side="'bottom'" :min-size="60"></resizer>
+    <div class="section-line" ref="ruler"></div>
+    <resizer :size="height" @resize-start="resizeStart" @resize-end="resizeHeight" @resizing="resizeHeight" :side="'bottom'" :min-size="60"></resizer>
   </div>
 </template>
 
@@ -151,6 +142,10 @@ export default {
   border-bottom: 1px dashed #03ddff;
   height: 1px;
   bottom: -1px;
+}
+
+.section-line.active {
+    border-bottom: 1px dashed #ff6a6a;
 }
 </style>
 

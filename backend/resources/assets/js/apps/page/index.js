@@ -2,24 +2,39 @@
 import 'jquery-validation'
 import 'jquery-validation/dist/localization/messages_zh'
 
+const getParameter = function (val) {
+  var re = new RegExp(val + '=([^&#]*)', 'i')
+  var a = re.exec(window.location.href)
+  if (a === null) {
+    return ''
+  }
+  return decodeURI(a[1])
+}
+
 var Site = {
 
   init: () => {
     Site.parseForm();
     $('.msg-close').click(()=>{
-      $('.msg-mask').hide();
+      $('.msg-mask').hide()
     })
   },
 
   parseForm: () => {
+    const utmParams = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_content', 'utm_term']
+    let queryString = ''
+    utmParams.map((param) => {
+      queryString += param + '=' + getParameter(param) + '&'
+    })
     $('form').each(function(){
-      const form = $(this);
+      const form = $(this)
+      console.log(form)
       form.validate({
         submitHandler: function() {
           $.ajax({
-            url: "http://www.juyepage.com/post",
-            dataType: "jsonp",
-            jsonpCallback: "callback",
+            url: 'https://www.juyepage.com/post?' + queryString,
+            dataType: 'jsonp',
+            jsonpCallback: 'callback',
             data: form.serialize(),
             success: response => {
               const redirect = form.attr('redirect')
@@ -42,23 +57,23 @@ var Site = {
       const toggleThankyouMsg = function () {
         const mask = form.find('.thankyou-mask')
         mask.toggle()
-      };
+      }
       
       const labels = form.find('.label-inside')
       labels.each(function(){
-        const label = $(this);
+        const label = $(this)
         const input = $('#' + label.attr('for'))
         input.focus(function(){
           label.hide()
-        });
+        })
 
         input.blur(function () {
           if (this.value.length === 0){
             label.show()
           }
-        });
-      });
-    });
+        })
+      })
+    })
   },
 
   showMsg: (msg) => {
@@ -68,13 +83,13 @@ var Site = {
     msgBox.show()
   }
 
-};
+}
 
 $( document ).ready(function() {
   Site.init()
-});
+})
 
-(function () {
+;(function () {
   function Tracker () {
     this.expireDateTime = null
     this.trackUrl = '//ujupage.cn-hangzhou.log.aliyuncs.com/logstores/stats/track.gif?APIVersion=0.6.0'

@@ -1,5 +1,5 @@
 import * as types from '../mutation-types'
-import imageAPI from '../../api/imageAPI'
+// import imageAPI from '../../api/imageAPI'
 
 export const nextMessage = ({ commit }) => {
   commit(types.NEXT_MESSAGE)
@@ -17,12 +17,12 @@ export const getInput = ({ commit }, msg) => {
   commit(types.GET_INPUT, { msg })
 }
 
-export const loadImages = ({ commit }, [projectId, folder]) => {
-  imageAPI.list(projectId, folder, data => {
-    const images = data.images
-    commit(types.LOAD_IMAGES, { images })
-  })
-}
+// export const loadImages = ({ commit }, [projectId, folder]) => {
+//   imageAPI.list(projectId, folder, data => {
+//     const images = data.images
+//     commit(types.LOAD_IMAGES, { images })
+//   })
+// }
 
 export const getImage = ({ commit }, [onSelect, onCancel = false]) => {
   commit(types.GET_IMAGE, { onSelect, onCancel })

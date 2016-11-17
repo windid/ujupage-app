@@ -59,6 +59,9 @@
       </select>
     </div>
 
+  @elseif ($field['type'] === 'hidden')
+    <input type="hidden" name="fields[{{$field['label']}}]" value="{{$field['val']}}">
+
   @elseif ($field['type'] === 'china-state')
 
   @endif

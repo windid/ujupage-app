@@ -45,6 +45,25 @@ function restoreSelection (savedSel) {
   }
 }
 
+function detectSelection (el) {
+  const r = {
+    link: false
+  }
+  if (window.getSelection) {
+    var sel = window.getSelection()
+    var nodes = el.getElementsByTagName('*')
+    Array.prototype.forEach.call(nodes, (e) => {
+      // 检查是否包含 <a> 标签
+      if (e.tagName === 'A') {
+        if (sel.containsNode(e, true)) {
+          r.link = true
+        }
+      }
+    })
+  }
+  return r
+}
+
 export default {
   props: ['element', 'sectionId', 'elementId'],
   mixins: [colorMixin],
@@ -66,7 +85,8 @@ export default {
       draggableFromChild: true,
       addingLink: false,
       linkAddress: '',
-      userSelection: null
+      userSelection: null,
+      linkSelected: false
     }
   },
   computed: {
@@ -128,6 +148,11 @@ export default {
     },
     link () {
       this.linkAddress = ''
+      if (detectSelection(this.$el).link) {
+        execCommand('unlink', false)
+        this.linkSelected = false
+        return
+      }
       this.userSelection = saveSelection()
       this.addingLink = true
       setTimeout(() => {
@@ -141,6 +166,7 @@ export default {
         this.$refs.content.focus()
         if (this.linkAddress) {
           execCommand('createLink', false, this.linkAddress)
+          this.linkSelected = true
         }
       }, 10)
     },
@@ -151,6 +177,16 @@ export default {
         this.$refs.content.focus()
       }, 10)
     },
+    contentDragStart (e) {
+      if (e.target.nodeName.toUpperCase() === 'A') {
+        e.preventDefault()
+        return false
+      }
+    },
+    contentMouseUp (e) {
+      const l = detectSelection(this.$refs.content).link
+      this.linkSelected = l
+    },
     merge: merge
   },
   watch: {
@@ -159,6 +195,7 @@ export default {
     },
     'element': function (val) {
       this.textElement = merge({}, val)
+      this.$refs.content.innerHTML = this.textElement.content
     }
   }
 }
@@ -182,6 +219,8 @@ export default {
       ref="content" slot="content" 
       @dblclick="edit" 
       @click.prevent
+      @dragstart="contentDragStart"
+      @mouseup="contentMouseUp"
       :contenteditable="editing" 
       spellcheck="false" 
       :style="merge({}, textElement.fontStyle, {
@@ -194,7 +233,8 @@ export default {
       <div class="btn btn-primary" title="编辑" @click="edit">编辑</div>
     </template>
     <template slot="button-groups">
-      <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group">
+      <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group"
+      @mousedown.prevent>
         <color-picker v-model="textElement.fontStyle.color">
           <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="颜色" ><span class="glyphicon glyphicon-text-color" :style="{color:getColor(textElement.fontStyle.color)}"></span> <span class="caret"></span></div>
         </color-picker>
@@ -204,10 +244,11 @@ export default {
         <div class="btn btn-default" title="加粗" @click="styleText('bold')">B</div>
         <div class="btn btn-default" title="斜体" @click="styleText('italic')"><i>I</i></div>
         <div class="btn btn-default" title="下划线" @click="styleText('underline')"><u>U</u></div>
-        <div class="btn btn-default" title="链接" @click="link"><span class="glyphicon glyphicon-link"></span></div>
+        <div class="btn btn-default" title="链接" @click="link"><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></div>
         <div class="btn btn-success" title="完成编辑" @click="editDone">完成</div>
       </div>
-      <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks">
+      <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks"
+      @mousedown.prevent>
         <div class="btn-group">
           <input type="text" class="form-control" placeholder="所要添加的链接地址" v-model="linkAddress" ref="linkAddressInput"></input>
         </div>
@@ -249,5 +290,9 @@ export default {
   outline: none;
   box-shadow: none;
   border: 1px solid #ccc;
+}
+
+.glyphicon.unlink {
+  text-decoration: line-through;
 }
 </style>

@@ -14,8 +14,8 @@ export default {
         <li>Data</li>
       </ol> -->
       <ul class="nav nav-pills header-nav">
-        <li><router-link to="/help">帮助</router-link></li>
-        <li><router-link to="/account">我的帐号</router-link></li>
+        <!-- <li><router-link to="/help">帮助</router-link></li> -->
+        <!-- <li><router-link to="/account">我的帐号</router-link></li> -->
         <li><router-link to="/logout">退出登陆</router-link></li>
       </ul>
     </template>

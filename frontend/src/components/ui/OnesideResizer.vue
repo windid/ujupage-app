@@ -1,4 +1,15 @@
 <script>
+function hasScrollToBottom (e) {
+  if (e.toElement) {
+    return e.toElement === document.querySelector('html')
+  } else if (e.target) {
+    /* firefox */
+    return e.target === document
+  } else {
+    return false
+  }
+}
+
 export default {
   name: 'oneside-resizer',
   props: {
@@ -64,6 +75,12 @@ export default {
       return style
     }
   },
+  data () {
+    return {
+      extraOffset: 0,
+      prevPosition: null
+    }
+  },
   methods: {
     getSize () {
       if (this.size == null) {
@@ -100,9 +117,23 @@ export default {
       } else {
         pos = e.clientY
       }
+      // 离始点的移动距离
       moved = pos - this.startPos
+      const outOfWindow = hasScrollToBottom(e)
+      if (outOfWindow) {
+        this.extraOffset += 2
+      }
+      moved += this.extraOffset
       if (!this.plus) {
         moved = -moved
+      }
+      let offset = moved - this.prevPosition
+      this.prevPosition = moved
+
+      if (outOfWindow) {
+        offset += 1
+      } else {
+        offset = null
       }
       newSize = this.startSize + moved
       if (newSize < this.minSize) {
@@ -110,13 +141,14 @@ export default {
       } else if (newSize > this.maxSize) {
         newSize = this.maxSize
       }
-      this.$emit('resizing', this.side, false, newSize)
+      this.$emit('resizing', this.side, false, newSize, offset)
     },
     dragEnd: function (e) {
       e.preventDefault()
       var moved, newSize, pos
       pos = this.horizontal ? e.clientX : e.clientY
       moved = pos - this.startPos
+      moved += this.extraOffset
       if (!this.plus) {
         moved = -moved
       }
@@ -126,6 +158,8 @@ export default {
       } else if (newSize > this.maxSize) {
         newSize = this.maxSize
       }
+      this.prevPosition = null
+      this.extraOffset = 0
       document.body.style.cursor = this.oldCursor
       document.removeEventListener('mousemove', this.drag)
       document.removeEventListener('mouseup', this.dragEnd)

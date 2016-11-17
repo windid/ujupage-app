@@ -1,11 +1,14 @@
 <script>
 import API from '../../API'
 import { Pagination } from 'element-ui'
+import DatePicker from '../ui/DatePicker'
+import moment from 'moment'
 
 export default {
   name: 'Leads',
   components: {
-    [Pagination.name]: Pagination
+    [Pagination.name]: Pagination,
+    DatePicker: DatePicker
   },
   data () {
     return {
@@ -14,13 +17,41 @@ export default {
       leads: [],
       currentPage: 1,
       leadsCount: 0,
-      pageSize: 50
+      pageSize: 50,
+      limitEndDate: moment().format('YYYY-MM-DD')
+    }
+  },
+  computed: {
+    date: {
+      get () {
+        return {
+          startDate: this.$route.query.sd || moment().add(-7, 'days').format('YYYY-MM-DD'),
+          endDate: this.$route.query.ed || moment().add(-1, 'days').format('YYYY-MM-DD')
+        }
+      },
+      set (val) {
+        const query = {
+          ...this.$route.query,
+          'sd': val.startDate,
+          'ed': val.endDate
+        }
+        this.$router.push({
+          path: this.$route.path,
+          query: query
+        })
+      }
     }
   },
   methods: {
     getLeads () {
       this.loading = true
-      API.page.leads({ id: this.$route.params.pageId, current_page: this.currentPage, page_size: this.pageSize }).then(response => {
+      API.page.leads({
+        id: this.$route.params.pageId,
+        current_page: this.currentPage,
+        page_size: this.pageSize,
+        start_date: this.date.startDate,
+        end_date: this.date.endDate
+      }).then(response => {
         this.leadsCount = response.data.total_pageforms
         this.leads = response.data.pageforms
         this.loading = false
@@ -44,6 +75,11 @@ export default {
       document.title = this.page.name + ' - 商机 - 聚页'
     })
     this.getLeads()
+  },
+  watch: {
+    '$route': function () {
+      this.getLeads()
+    }
   }
 }
 </script>
@@ -56,20 +92,25 @@ export default {
   <div v-if="!loading" class="leads">
     <h1>商机列表 - {{page.name}} &nbsp; 
       <div class="btn btn-default" @click="download"><span class="glyphicon glyphicon-save"></span></div>
+      <date-picker style="float:right;" v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>
     </h1>
     <p v-if="leads.length === 0">该页面暂无表单提交数据</p>
     <table v-if="leads.length > 0" class="table table-bordered table-striped table-hover">
       <thead>
         <tr>
           <th>表单数据</th>
+          <th>来源</th>
           <th width="120px">版本</th>
-          <th width="180px">提交时间</th>
+          <th width="160px">提交时间</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="lead in leads">
           <td>
             <p v-for="(value, key) in lead.fields">{{key}}: {{value}}</p>
+          </td>
+          <td>
+            <p v-for="(value, key) in lead.params">{{key}}: {{value}}</p>
           </td>
           <td>{{lead.variation_name}}</td>
           <td>{{lead.created_at}}</td>

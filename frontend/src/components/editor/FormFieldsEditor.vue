@@ -20,6 +20,7 @@ export default {
         'radio': '单选框',
         'checkbox': '复选框',
         'dropdown': '下拉菜单',
+        'hidden': '隐藏项',
         'china-state': '省市县(中国)'
       },
       showFieldsType: false,
@@ -40,6 +41,9 @@ export default {
       if (type === 'radio' || type === 'checkbox') {
         newField.hideLabel = false
         newField.optionsInLine = false
+      }
+      if (type === 'hidden') {
+        newField.val = ''
       }
       const newFieldId = this.formFields.length
       this.formFields.push(newField)
@@ -95,12 +99,13 @@ export default {
         <div class="dropdown-field-type" @click="addField('radio')">单选框</div>
         <div class="dropdown-field-type" @click="addField('checkbox')">复选框</div>
         <div class="dropdown-field-type" @click="addField('dropdown')">下拉菜单</div>
+        <div class="dropdown-field-type" @click="addField('hidden')">隐藏项</div>
         <!-- <div class="dropdown-field-type">日期</div> -->
 
         <h5 class="dropdown-field-type-preset">预设字段</h5>
-        <div class="dropdown-field-type" @click="addField('text','姓名',['required'])">姓名</div>
-        <div class="dropdown-field-type" @click="addField('text','电子邮件',['required','email'])">电子邮件</div>
-        <div class="dropdown-field-type" @click="addField('text','手机号码',['required','mobile'])">手机号码</div>
+        <div class="dropdown-field-type" @click="addField('text', '姓名', ['required'])">姓名</div>
+        <div class="dropdown-field-type" @click="addField('text', '电子邮件', ['required', 'email'])">电子邮件</div>
+        <div class="dropdown-field-type" @click="addField('text', '手机号码', ['required', 'mobile'])">手机号码</div>
         <!-- <div class="dropdown-field-type" @click="addField('china-state')">省/市/县</div> -->
       </div>
     </dropdown>
@@ -141,12 +146,15 @@ export default {
         <div v-if="field.type === 'dropdown'" class="form-field-configs">
           <div><label><input type="checkbox" v-model="field.validator" value="required"> 必填项</label></div>
         </div>
+        <div v-if="field.type === 'hidden'" class="form-field-configs">
+          <input type="text" class="form-control input-text-shadow" placeholder="取值" v-model="field.val">
+        </div>
         <!-- 省/市/县 选项 -->
         <div v-if="field.type === 'china-state'" class="form-field-configs">
           <div><label><input type="checkbox" v-model="field.validator" value="required"> 必填项</label></div>
           <div><label><input type="checkbox" v-model="field.hideLabel"> 隐藏标签</label></div>
         </div>
-        <div v-if="field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown'">
+        <div v-if="['radio', 'checkbox', 'dropdown'].indexOf(field.type) > -1">
           <div class="form-field-options" id="form-field-options">
             <div v-for="(option, optionId) in field.options" class="form-field-option">
               <input class="form-control" type="text" :id="'field-option-'+fieldId+'-'+optionId" placeholder="新选项" :value="option" @input="updateOption(fieldId, optionId, $event.target.value)" >
