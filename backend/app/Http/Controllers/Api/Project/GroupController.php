@@ -108,7 +108,6 @@ class GroupController extends Controller {
      *  }
      */
     public function destroy(Request $request, int $project_id, int $group_id) {
-              
         $project = $this->user->projects()->find($project_id);
         if (!$project) {
             return $this->errorNotFound();
