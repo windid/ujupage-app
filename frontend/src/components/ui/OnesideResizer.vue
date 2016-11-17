@@ -131,7 +131,7 @@ export default {
       this.prevPosition = moved
 
       if (outOfWindow) {
-        offset += 1
+        offset += 2
       } else {
         offset = null
       }

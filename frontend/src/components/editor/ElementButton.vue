@@ -28,7 +28,9 @@ export default {
       // 模拟css hover伪类效果
       hover: false,
       resize: {},
-      draggableFromChild: true
+      draggableFromChild: true,
+      imageObj: {},
+      hasPopup: false
     }
   },
   computed: {
@@ -45,7 +47,10 @@ export default {
   },
   methods: {
     ...mapActions([
-      'modifyElement'
+      'modifyElement',
+      'removeElement',
+      'resizeElement',
+      'getImage'
     ]),
     edit () {
       this.editing = true
@@ -74,14 +79,55 @@ export default {
     },
     changeDraggable (val) {
       this.draggableFromChild = val
+    },
+    selectImage () {
+      this.hasPopup = true
+      this.getImage([(image) => {
+        this.hasPopup = false
+        this.imageObj = image
+      }])
+    },
+    deleteImage () {
+      this.buttonElement.imageObj = null
     }
   },
   watch: {
     'workspace.activeElementId': function (val) {
+      if (this.hasPopup) {
+        return
+      }
       if (val !== this.elementId && this.editing) this.editDone()
     },
     'element': function (val) {
       this.buttonElement = merge({}, val)
+    },
+    'imageObj': function (newImage) {
+      const self = this
+      if (newImage && newImage.url) {
+        // adjust size
+        const pcWidth = (newImage.width > 960) ? 960 : newImage.width
+        const mobileWidth = (newImage.width > 360) ? 360 : newImage.width
+        const pcLeft = (960 - pcWidth) / 2
+        const mobileLeft = (360 - mobileWidth) / 2
+        const style = {
+          'pc': {
+            width: pcWidth + 'px',
+            height: undefined,
+            left: pcLeft + 'px'
+          },
+          'mobile': {
+            width: mobileWidth + 'px',
+            height: undefined,
+            left: mobileLeft + 'px'
+          }
+        }
+        // commit to store
+        this.buttonElement.imageObj = newImage
+        this.buttonElement.style = style
+        if (!isEqual(this.element, this.buttonElement)) {
+          this.modifyElement([self.elementId, this.buttonElement, true])
+        }
+      }
     }
   }
 }
@@ -101,7 +147,10 @@ export default {
     @change-draggable="changeDraggable" 
     @drag-start="editDone"
   >
-    <div slot="content" class="element-button"
+    <div slot="content" v-if="buttonElement.imageObj">
+      <img :src="buttonElement.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
+    </div>
+    <div slot="content" v-else class="element-button"
       @dblclick="edit" 
       @mouseenter = "hover = true"
       @mouseleave = "hover = false"
@@ -131,7 +180,7 @@ export default {
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
     </template>
   </element-common>
-  <button-editor :show="editing" v-model="buttonElement" @edit-done="editDone"></button-editor>
+  <button-editor :show="editing" v-model="buttonElement" @edit-done="editDone" @select-image="selectImage" @delete-image="deleteImage"></button-editor>
 </div>
 </template>
 

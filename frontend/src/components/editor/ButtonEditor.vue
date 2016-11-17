@@ -10,7 +10,7 @@ export default {
   },
   computed: {
     button () {
-      return { ...this.value }
+      return this.value
     }
   }
 }
@@ -23,7 +23,7 @@ export default {
       <div class="btn btn-success" @click="$emit('edit-done')">完成</div>
     </div>
     <div slot="body">
-      <form-button-editor v-model="button"></form-button-editor>
+      <form-button-editor v-model="button" @select-image="$emit('select-image')" @delete-image="$emit('delete-image')"></form-button-editor>
     </div>
   </sidebar>
 </template>
