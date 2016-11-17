@@ -39,7 +39,7 @@ export default {
           'src': null
         },
         'mask': {
-          'color': '#ffffff',
+          'color': 0,
           'opacity': 0
         }
       }
@@ -157,7 +157,7 @@ export default {
           <div>
             <h4>蒙板背景色</h4>
             <div>
-              <input type="color" v-model="style.mask.color"/>
+              <color-picker v-model="style.mask.color"></color-picker>
             </div>
           </div>
           <div>
@@ -226,6 +226,9 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.bg-image-thumbnail-action div:hover {
+  background: #444;
 }
 .bg-image-thumbnail-wrapper:hover .bg-image-thumbnail-action {
   display: flex;
