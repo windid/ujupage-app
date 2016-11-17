@@ -32,7 +32,7 @@ var Site = {
       form.validate({
         submitHandler: function() {
           $.ajax({
-            url: 'http://www.juyepage.com/post?' + queryString,
+            url: 'https://www.juyepage.com/post?' + queryString,
             dataType: 'jsonp',
             jsonpCallback: 'callback',
             data: form.serialize(),
