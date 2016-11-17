@@ -43,8 +43,7 @@ export default {
         newField.optionsInLine = false
       }
       if (type === 'hidden') {
-        newField.valueType = 'direct'
-        newField.valueSource = ''
+        newField.val = ''
       }
       const newFieldId = this.formFields.length
       this.formFields.push(newField)
@@ -148,13 +147,7 @@ export default {
           <div><label><input type="checkbox" v-model="field.validator" value="required"> 必填项</label></div>
         </div>
         <div v-if="field.type === 'hidden'" class="form-field-configs">
-          <div>
-            <label><input type="radio" v-model="field.valueType" value="direct"> 直接赋值</label> &nbsp;
-            <label><input type="radio" v-model="field.valueType" value="url"> 取URL变量值</label>
-          </div>
-          <div>
-            <input type="text" class="form-control input-text-shadow" :placeholder="field.valueType === 'direct' ? '字段值' : 'GET传递的变量名'" v-model="field.valueSource">
-          </div>
+          <input type="text" class="form-control input-text-shadow" placeholder="取值" v-model="field.val">
         </div>
         <!-- 省/市/县 选项 -->
         <div v-if="field.type === 'china-state'" class="form-field-configs">

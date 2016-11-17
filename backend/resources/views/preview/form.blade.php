@@ -60,11 +60,7 @@
     </div>
 
   @elseif ($field['type'] === 'hidden')
-    @if ($field['valueType'] === 'direct')
-      <input type="hidden" name="fields[{{$field['label']}}]" value="{{$field['valueSource']}}">
-    @else
-      <input type="hidden" name="fields[{{$field['label']}}]" value="<?php=$_GET['{{$field['valueSource']}}']?>">
-    @endif
+    <input type="hidden" name="fields[{{$field['label']}}]" value="{{$field['val']}}">
 
   @elseif ($field['type'] === 'china-state')
 
