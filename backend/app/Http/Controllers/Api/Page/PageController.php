@@ -331,8 +331,15 @@ class PageController extends Controller {
         $curpage = request('page', 1);
         $page_size = request('page_size', 30);
         
+        $start_time = $end_time = 0;
+        if (request()->has('start_date') && request()->has('end_date')) {
+            $start_time = strtotime(request('start_date', date('Y-m-d')));
+            $end_time = strtotime(request('end_date', date('Y-m-d')));
+        }
+        
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
+                ->orderBy('id', 'desc')
                 ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'utms', 'created_at')
                 ->get()->toArray();
         foreach ($pageforms as $k => $v) {
@@ -369,6 +376,7 @@ class PageController extends Controller {
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)
                 ->select('variation_name', 'fields', 'created_at')
+                ->orderBy('id', 'desc')
                 ->get()->toArray();
         
         $fields = [];
