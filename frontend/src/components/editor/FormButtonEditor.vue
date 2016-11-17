@@ -118,7 +118,8 @@ export default {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
-    border-radius: 2px;
+    border-radius: 3px;
+    overflow: hidden;
   }
   .button-background-thumbnail {
     max-width: 100%;
