@@ -333,10 +333,11 @@ class PageController extends Controller {
         
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
-                ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'created_at')
+                ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'utms', 'created_at')
                 ->get()->toArray();
         foreach ($pageforms as $k => $v) {
             $pageforms[$k]['fields'] = json_decode($v['fields'], true);
+            $pageforms[$k]['utms'] = json_decode($v['utms'], true);
             $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
         }
         $total = $pageForm->where('page_id', $page->id)->count();
