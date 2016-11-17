@@ -340,6 +340,11 @@ class PageController extends Controller {
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
                 ->orderBy('id', 'desc')
+                ->where(function($query) use ($start_time, $end_time) {
+                    if ($start_time > 0 && $end_time > 0) {
+                        return $query->whereBetween('created_at', [$start_time, $end_time]);
+                    }
+                })
                 ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'utms', 'created_at')
                 ->get()->toArray();
         foreach ($pageforms as $k => $v) {
