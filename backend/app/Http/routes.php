@@ -54,7 +54,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
          */
         Route::get('logout', ['as' => '.logout', 'uses' => 'AuthController@getLogout']); //退出
         /**
-         * GET api/account/current 获取用户信息
+         * GET api/auth/account/current 获取用户信息
          * @return StatusCode 200
          * @return json {
          *  id 用户ID
