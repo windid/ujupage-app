@@ -81,6 +81,7 @@ export default {
 .report td, .report th {
   line-height: 35px !important;
   text-align: center;
+  word-break: break-all;
 }
 
 .report th {
