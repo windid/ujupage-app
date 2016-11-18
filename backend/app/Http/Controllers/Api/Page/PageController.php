@@ -449,7 +449,7 @@ class PageController extends Controller {
                 $order[$fields_val[$kk]] = $vv;
             }
             foreach ($v['utms'] as $kk => $vv) {
-                $order[$fields_val[$kk]] = $vv;
+                $order[$fields_val[$kk]] = $vv; 
             }
             ksort($order);
             // dd(implode(',', $order));
