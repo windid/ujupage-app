@@ -26,6 +26,11 @@ export default {
         return parseInt(this.button.props.borderRadius)
       }
     }
+  },
+  watch: {
+    'value': function (newValue) {
+      this.button = this.value
+    }
   }
 }
 </script>
