@@ -437,6 +437,12 @@ class PageController extends Controller {
         $values = [];
         foreach ($pageforms as $k => $v) {
             $str = $v['variation_name'] . ',' . $v['created_at'];
+            $utms = json_decode($v['utms'], true);
+            $str .= ",\"";
+            foreach ($utms as $ku => $vu) {
+                $str .= $ku . "：" . $vu . "\n"; 
+            }
+            $str .= "\"";
             $order = [];
             
             foreach ($v['fields'] as $kk => $vv) {
@@ -448,10 +454,10 @@ class PageController extends Controller {
             ksort($order);
             // dd(implode(',', $order));
             $pre_index = 1;
-            foreach ($order as $ok => $ov) {
-                $pad = $ok - $pre_index;
-                $str .= str_repeat(',', $pad) . $ov; 
-                $pre_index = $ok;
+            foreach ($order as $k => $v) {
+                $pad = $k - $pre_index;
+                $str .= str_repeat(',', $pad) . $v; 
+                $pre_index = $k;
             }
             $values[] = $str;
         }        
