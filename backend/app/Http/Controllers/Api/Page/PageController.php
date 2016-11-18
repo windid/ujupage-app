@@ -334,7 +334,7 @@ class PageController extends Controller {
         $start_time = $end_time = 0;
         if (request()->has('start_date') && request()->has('end_date')) {
             $start_time = strtotime(request('start_date', date('Y-m-d')));
-            $end_time = strtotime(request('end_date', date('Y-m-d')));
+            $end_time = strtotime(request('end_date', date('Y-m-d')))+86400;
         }
         
         $pageForm = new PageForm;
@@ -382,6 +382,11 @@ class PageController extends Controller {
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
         }
+        $start_time = $end_time = 0;
+        if (request()->has('start_date') && request()->has('end_date')) {
+            $start_time = strtotime(request('start_date', date('Y-m-d')));
+            $end_time = strtotime(request('end_date', date('Y-m-d')))+86400;
+        }
         
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)
@@ -390,7 +395,7 @@ class PageController extends Controller {
                         return $query->whereBetween('created_at', [$start_time, $end_time]);
                     }
                 })
-                ->select('variation_name', 'fields', 'created_at')
+                ->select('variation_name', 'fields', 'utms', 'created_at')
                 ->orderBy('id', 'desc')
                 ->get()->toArray();
         
@@ -410,7 +415,7 @@ class PageController extends Controller {
             }
         }
         arsort($fields);
-        $fields_val = ['版本名', '提交时间'];
+        $fields_val = ['版本名', '提交时间', 'utms'];
         foreach ($fields as $k => $v) {
             $fields_val[] = $k;
         }
@@ -420,6 +425,12 @@ class PageController extends Controller {
         $values = [];
         foreach ($pageforms as $k => $v) {
             $str = $v['variation_name'] . ',' . $v['created_at'];
+            $utms = json_decode($v['utms'], true);
+            $str .= "\"";
+            foreach ($utms as $ku => $vu) {
+                $str .= $ku . "：" . $vu . "\n";
+            }
+            $str .= "\"";
             $order = [];
             
             foreach ($v['fields'] as $kk => $vv) {
