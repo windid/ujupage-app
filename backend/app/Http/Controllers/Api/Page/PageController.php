@@ -352,7 +352,12 @@ class PageController extends Controller {
             $pageforms[$k]['utms'] = json_decode($v['utms'], true);
             $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
         }
-        $total = $pageForm->where('page_id', $page->id)->count();
+        $total = $pageForm->where('page_id', $page->id)
+                    ->where(function($query) use ($start_time, $end_time) {
+                        if ($start_time > 0 && $end_time > 0) {
+                            return $query->whereBetween('created_at', [$start_time, $end_time]);
+                        }
+                    })->count();
         $result = [
             'current_page' => $curpage,
             'total_pages' => ceil($total / $page_size),
@@ -380,6 +385,11 @@ class PageController extends Controller {
         
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)
+                ->where(function($query) use ($start_time, $end_time) {
+                    if ($start_time > 0 && $end_time > 0) {
+                        return $query->whereBetween('created_at', [$start_time, $end_time]);
+                    }
+                })
                 ->select('variation_name', 'fields', 'created_at')
                 ->orderBy('id', 'desc')
                 ->get()->toArray();
