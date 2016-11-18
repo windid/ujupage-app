@@ -456,7 +456,7 @@ class PageController extends Controller {
             $pre_index = 1;
             foreach ($order as $k => $v) {
                 $pad = $k - $pre_index;
-                $str .= str_repeat(',', $pad) . $v;
+                $str .= str_repeat(',', $pad) . $v; 
                 $pre_index = $k;
             }
             $values[] = $str;
