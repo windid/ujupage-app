@@ -400,8 +400,10 @@ class PageController extends Controller {
                 ->get()->toArray();
         
         $fields = [];
+        $utms = [];
         foreach ($pageforms as $k => $v) {
             $pageforms[$k]['fields'] = json_decode($v['fields'], true);
+            $pageforms[$k]['utms'] = json_decode($v['utms'], true);
             $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
             
             foreach ($pageforms[$k]['fields'] as $kk => $vv) {
@@ -413,10 +415,20 @@ class PageController extends Controller {
                 }
                 $fields[$kk]++;
             }
+            foreach ($pageforms[$k]['utms'] as $kk => $vv) {
+                if (!isset($utms[$kk])) {
+                    $utms[$kk] = 0;
+                }
+                $utms[$kk]++;
+            }
         }
         arsort($fields);
-        $fields_val = ['版本名', '提交时间', 'utms'];
+        arsort($utms);
+        $fields_val = ['版本名', '提交时间'];
         foreach ($fields as $k => $v) {
+            $fields_val[] = $k;
+        }
+        foreach ($utms as $k => $v) {
             $fields_val[] = $k;
         }
          $fields_val = array_flip($fields_val);
@@ -428,12 +440,15 @@ class PageController extends Controller {
             $utms = json_decode($v['utms'], true);
             $str .= ",\"";
             foreach ($utms as $ku => $vu) {
-                $str .= $ku . "：" . $vu . "\n";
+                $str .= $ku . "：" . $vu . "\n"; 
             }
             $str .= "\"";
             $order = [];
             
             foreach ($v['fields'] as $kk => $vv) {
+                $order[$fields_val[$kk]] = $vv;
+            }
+            foreach ($v['utms'] as $kk => $vv) {
                 $order[$fields_val[$kk]] = $vv;
             }
             ksort($order);
