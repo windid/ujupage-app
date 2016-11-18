@@ -426,7 +426,7 @@ class PageController extends Controller {
         foreach ($pageforms as $k => $v) {
             $str = $v['variation_name'] . ',' . $v['created_at'];
             $utms = json_decode($v['utms'], true);
-            $str .= "\"";
+            $str .= ",\"";
             foreach ($utms as $ku => $vu) {
                 $str .= $ku . "：" . $vu . "\n";
             }
