@@ -334,7 +334,7 @@ class PageController extends Controller {
         $start_time = $end_time = 0;
         if (request()->has('start_date') && request()->has('end_date')) {
             $start_time = strtotime(request('start_date', date('Y-m-d')));
-            $end_time = strtotime(request('end_date', date('Y-m-d')));
+            $end_time = strtotime(request('end_date', date('Y-m-d')))+86400;
         }
         
         $pageForm = new PageForm;
@@ -381,6 +381,11 @@ class PageController extends Controller {
         $page = $this->initPGP($page_id);         
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
+        }
+        $start_time = $end_time = 0;
+        if (request()->has('start_date') && request()->has('end_date')) {
+            $start_time = strtotime(request('start_date', date('Y-m-d')));
+            $end_time = strtotime(request('end_date', date('Y-m-d')))+86400;
         }
         
         $pageForm = new PageForm;
