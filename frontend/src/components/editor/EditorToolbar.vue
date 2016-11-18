@@ -84,6 +84,13 @@ export default {
   left: 10px;
   border-radius: 10px;
   box-shadow: 0 0 8px #ddd;
+  /* 禁止文本选择 */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 

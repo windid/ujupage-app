@@ -28,7 +28,6 @@ var Site = {
     })
     $('form').each(function(){
       const form = $(this)
-      console.log(form)
       form.validate({
         submitHandler: function() {
           $.ajax({

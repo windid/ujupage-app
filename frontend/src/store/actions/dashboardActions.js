@@ -93,7 +93,7 @@ export const createPageGroup = ({ commit }, pageGroup) => {
 }
 
 export const removePageGroup = ({ commit, state }, pageGroup) => {
-  API.pageGroup.delete({ projectId: state.dashboard.currentPageGroup.id, id: pageGroup.id }).then(response => {
+  API.pageGroup.delete({ projectId: state.dashboard.currentProject.id, id: pageGroup.id }).then(response => {
     commit(types.REMOVE_PAGEGROUP, { pageGroup })
   })
 }

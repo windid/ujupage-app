@@ -14,6 +14,14 @@ export default {
   data () {
     return {
       style: {},
+      imageObj: {},
+      bgRepeatTypes: [
+        '正常',
+        '平铺',
+        '水平平铺',
+        '垂直平铺',
+        '拉伸'
+      ],
       defaultStyle: {
         'pc': {
           'background-color': '',
@@ -24,6 +32,15 @@ export default {
           'background-color': '',
           'border-color': '',
           'border-width': 0
+        },
+        'bg': {
+          'repeat': 0,
+          'position': 0,
+          'src': null
+        },
+        'mask': {
+          'color': 0,
+          'opacity': 0
         }
       }
     }
@@ -45,10 +62,21 @@ export default {
       }
     }
   },
-  methods: mapActions([
-    'setActiveSectionId',
-    'modifySection'
-  ]),
+  methods: {
+    ...mapActions([
+      'setActiveSectionId',
+      'modifySection',
+      'getImage'
+    ]),
+    selectImage () {
+      this.getImage([(image) => {
+        this.imageObj.src = image.url
+      }])
+    },
+    removeImage () {
+      this.imageObj.src = null
+    }
+  },
   watch: {
     'workspace.activeSectionId': function (sectionId) {
       if (sectionId !== null) {
@@ -62,8 +90,15 @@ export default {
         if (oldStyle.pc && newStyle.pc) {
           this.modifySection([this.workspace.activeSectionId, newStyle])
         }
+        if (newStyle.bg) {
+          this.imageObj = newStyle.bg
+        }
       },
       deep: true
+    },
+    'imageObj': function (newImage) {
+      this.style.bg.src = newImage.src
+      this.modifySection([this.workspace.activeSectionId, this.style])
     }
   }
 }
@@ -85,6 +120,54 @@ export default {
         <div><color-picker v-model="style[workspace.version]['border-color']"></color-picker> &nbsp; 边框颜色</div>
         <div class="sidebar-block-inside"><input type="text" class="border-width-input" v-model.lazy.number="borderWidth"> &nbsp; 边框尺寸</div>
       </div>
+      <div class="background-edit">
+        <h3>图片背景</h3>
+        <div class="bg-image-edit">
+          <div @click.stop="selectImage" class="image-selector">
+            <div class="bg-image-thumbnail-wrapper" v-if="imageObj && imageObj.src">
+              <img :src="imageObj.src" class="bg-image-thumbnail" />
+              <div class="bg-image-thumbnail-action">
+                <div @click.stop="selectImage">更换</div>
+                <div @click.stop="removeImage">删除</div>
+              </div>
+            </div>
+            <div v-else class="bg-image-placeholder">背景图片</div>
+          </div>
+        </div>
+        <div class='bg-setting'>
+          <div class="bg-repeat-edit">
+            <ul>
+              <li v-for="(t,i) in bgRepeatTypes">
+                <input type="radio" name="bg-repeat" :id="`bg-repeat${i}`" :value="i" v-model="style.bg.repeat">
+                <label :for="`bg-repeat${i}`">{{t}}</label>
+              </li>
+            </ul>
+          </div>
+          <div class="bg-position-edit">
+            <h4>位置</h4>
+            <ul>
+              <li v-for="i in 9">
+                <input type="radio" name="bg-position" :id="`bg-position${i}`" :value="i" v-model="style.bg.position">
+                <label :for="`bg-position${i}`"></label>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="bg-mask-edit">
+          <div>
+            <h4>蒙板背景色</h4>
+            <div>
+              <color-picker v-model="style.mask.color"></color-picker>
+            </div>
+          </div>
+          <div>
+            <h4>蒙板透明度</h4>
+            <div>
+              <input type="range" min="0" max="100" step="1" v-model="style.mask.opacity" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </sidebar>
 </template>
@@ -97,5 +180,124 @@ export default {
   text-align: center;
   border-radius: 4px;
   width:60px;
+}
+
+.background-image-edit {
+  display: flex;
+  flex-direction: row;
+}
+
+.image-selector {
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+  background: #eee;
+}
+.bg-image-thumbnail-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    background-color: #eee;
+    cursor: pointer;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.bg-image-thumbnail {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+}
+.bg-image-thumbnail-action {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: #333;
+  color: #fff;
+  flex-direction: column;
+  display: none;
+}
+.bg-image-thumbnail-action div {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bg-image-thumbnail-action div:hover {
+  background: #444;
+}
+.bg-image-thumbnail-wrapper:hover .bg-image-thumbnail-action {
+  display: flex;
+}
+.bg-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+}
+
+.bg-setting {
+  margin-top: 10px;
+  display: flex;
+}
+/*背景模式*/
+.bg-repeat-edit {
+  margin-right: 30px;
+}
+.bg-repeat-edit ul {
+  padding: 0;
+  margin: 0;
+}
+.bg-repeat-edit ul li {
+  list-style: none;
+}
+.bg-repeat-edit ul li input {
+  /*display: none;*/
+}
+.bg-repeat-edit ul li label {
+  font-weight: normal;
+  cursor: pointer;
+}
+
+/*背景位置*/
+.bg-position-edit h4 {
+  font-size: 16px;
+  padding: 4px 0 0 0;
+  margin: 0 0 12px 0;
+}
+.bg-position-edit {
+}
+.bg-position-edit ul {
+  width: 100px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+.bg-position-edit ul li {
+  width: 33%;
+  list-style: none;
+}
+.bg-position-edit ul li input {
+  display: none;
+}
+.bg-position-edit ul li label {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  background-color: #eee;
+  cursor: pointer;
+}
+
+.bg-position-edit ul li label:hover {
+  background-color: #ddd;
+}
+.bg-position-edit ul li input:checked + label {
+  background-color: #111;
 }
 </style>

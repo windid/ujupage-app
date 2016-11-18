@@ -37,6 +37,43 @@ export default {
       workspace: 'editorWorkspace',
       elements: 'editorElements'
     }),
+    mainStyle () {
+      const v = this.workspace.version
+      const style = {
+        height: this.section.style[v]['height'],
+        backgroundAttachment: 'scroll',
+        backgroundColor: this.getColor(this.section.style[v]['background-color']),
+        borderColor: this.getColor(this.section.style[v]['border-color']),
+        borderWidth: this.section.style[v]['border-width'] || '0px',
+        borderStyle: 'solid'
+      }
+      const bg = this.section.style.bg
+      if (bg) {
+        style['background-image'] = `url("${bg.src}")`
+        const r = parseInt(bg.repeat)
+        style['background-repeat'] = ['no-repeat', 'repeat', 'repeat-x', 'repeat-y', 'cover'][r]
+        style['background-size'] = (r === 4) ? 'cover' : 'auto'
+        const position = []
+        let p = parseInt(bg.position)
+        if (isNaN(p)) p = 1
+        p--
+        position[0] = ['left', 'center', 'right'][p % 3]
+        position[1] = ['top', 'center', 'bottom'][Math.floor(p / 3)]
+        style['background-position'] = position.join(' ')
+      }
+      return style
+    },
+    maskStyle () {
+      if (!this.section.style.hasOwnProperty('mask')) {
+        this.section.style.mask = {}
+      }
+      const m = this.section.style.mask
+      const style = {
+        backgroundColor: this.getColor(m.color),
+        opacity: m.opacity / 100
+      }
+      return style
+    },
     editing () {
       return this.workspace.activeSectionId === this.sectionId
     },
@@ -78,16 +115,13 @@ export default {
 <template>
   <div  
     class="section"
-    :style="{
-      height: section.style[workspace.version]['height'],
-      backgroundColor: getColor(section.style[workspace.version]['background-color']),
-      borderColor: getColor(section.style[workspace.version]['border-color']),
-      borderWidth: section.style[workspace.version]['border-width'] || '0px',
-      borderStyle: 'solid'
-    }"
+    :style="mainStyle"
     @mouseenter="mouseHere = true"
     @mouseleave="mouseHere = false"
   >
+    <!-- 蒙板 -->
+    <div class="section-mask" :style="maskStyle" v-if="section.style.bg && section.style.bg.src"></div>
+
     <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">
       <!-- 页面元素组件 -->
       <transition-group name="fade" tag="div">
@@ -146,6 +180,15 @@ export default {
 
 .section-line.active {
     border-bottom: 1px dashed #ff6a6a;
+}
+
+.section-mask {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  user-select: unset;
 }
 </style>
 
