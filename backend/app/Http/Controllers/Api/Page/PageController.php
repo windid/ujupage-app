@@ -428,7 +428,7 @@ class PageController extends Controller {
             $utms = json_decode($v['utms'], true);
             $str .= ",\"";
             foreach ($utms as $ku => $vu) {
-                $str .= $ku . "：" . $vu . "\n";
+                $str .= $ku . "：" . $vu . "/n";
             }
             $str .= "\"";
             $order = [];
