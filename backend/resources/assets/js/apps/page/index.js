@@ -128,14 +128,11 @@ $( document ).ready(function() {
       var params = {'type': 'link'}
       var tracker = this
       for (var i in links) {
-        if (links[i].hostname) {
-          addEvent(links[i], 'click', function () {
-            params['goal'] = this.dataset.goal || 0
-            params['target'] = this.href
-            console.log(params)
-            tracker.sendRequest(params, 200)
-          })
-        }
+        addEvent(links[i], 'click', function () {
+          params['goal'] = this.dataset.goal || 0
+          params['target'] = this.href
+          tracker.sendRequest(params, 200)
+        })
       }
     },
 
