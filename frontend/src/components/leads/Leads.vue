@@ -21,7 +21,6 @@ export default {
       limitEndDate: moment().format('YYYY-MM-DD')
     }
   },
-  
   computed: {
     date: {
       get () {
