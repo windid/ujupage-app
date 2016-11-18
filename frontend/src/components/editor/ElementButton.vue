@@ -102,30 +102,39 @@ export default {
       this.buttonElement = merge({}, val)
     },
     'imageObj': function (newImage) {
-      const self = this
+      let style
       if (newImage && newImage.url) {
         // adjust size
-        const pcWidth = (newImage.width > 960) ? 960 : newImage.width
-        const mobileWidth = (newImage.width > 360) ? 360 : newImage.width
-        const pcLeft = (960 - pcWidth) / 2
-        const mobileLeft = (360 - mobileWidth) / 2
-        const style = {
-          'pc': {
-            width: pcWidth + 'px',
-            height: undefined,
-            left: pcLeft + 'px'
-          },
-          'mobile': {
-            width: mobileWidth + 'px',
-            height: undefined,
-            left: mobileLeft + 'px'
+        if (!this.element.style.pc.width) {
+          const pcWidth = (newImage.width > 960) ? 960 : newImage.width
+          const mobileWidth = (newImage.width > 360) ? 360 : newImage.width
+          const pcLeft = (960 - pcWidth) / 2
+          const mobileLeft = (360 - mobileWidth) / 2
+          style = {
+            'pc': {
+              width: pcWidth + 'px',
+              height: undefined,
+              left: pcLeft + 'px'
+            },
+            'mobile': {
+              width: mobileWidth + 'px',
+              height: undefined,
+              left: mobileLeft + 'px'
+            }
           }
+        } else {
+          style = {
+            'pc': { ...this.element.style.pc },
+            'mobile': { ...this.element.style.mobile }
+          }
+          style.pc.height = undefined
+          style.mobile.height = undefined
         }
         // commit to store
         this.buttonElement.imageObj = newImage
         this.buttonElement.style = style
         if (!isEqual(this.element, this.buttonElement)) {
-          this.modifyElement([self.elementId, this.buttonElement, true])
+          this.modifyElement([this.elementId, this.buttonElement, true])
         }
       }
     }
