@@ -49,6 +49,10 @@
     word-wrap: break-word;
   }
 
+  .element p{
+    margin: 0;
+  }
+
   .element-button{
     padding:6px;
     text-align: center;
