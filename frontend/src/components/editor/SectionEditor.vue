@@ -163,7 +163,7 @@ export default {
           <div>
             <h4>蒙板透明度</h4>
             <div>
-              <input type="range" min="0" max="100" step="1" v-model="style.mask.opacity" />
+              <input type="range" min="0" max="100" step="1" v-model="style.mask.opacity" class="mask-opacity" />
             </div>
           </div>
         </div>
@@ -300,4 +300,100 @@ export default {
 .bg-position-edit ul li input:checked + label {
   background-color: #111;
 }
+
+.background-edit h3 {
+  font-size: 18px;
+}
+.background-edit h4 {
+  font-size: 14px;
+  font-weight: normal;
+  margin-top: 16px;
+}
+/* 设置蒙板透明度的 input slider */
+input[type=range].mask-opacity {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 2.5px 0;
+}
+input[type=range].mask-opacity:focus {
+  outline: none;
+}
+input[type=range].mask-opacity::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  box-shadow: 0.5px 0.5px 0px #e0dfdf, 0px 0px 0.5px #edecec;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 2px;
+  border: 1px solid #ececec;
+}
+input[type=range].mask-opacity::-webkit-slider-thumb {
+  box-shadow: 2px 2px 5.4px #b4b4b4, 0px 0px 2px #c1c1c1;
+  border: 0px solid rgba(0, 0, 0, 0);
+  height: 13px;
+  width: 13px;
+  border-radius: 6px;
+  background: #0080c0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -3.5px;
+}
+input[type=range].mask-opacity:focus::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0.78);
+}
+input[type=range].mask-opacity::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  box-shadow: 0.5px 0.5px 0px #e0dfdf, 0px 0px 0.5px #edecec;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 2px;
+  border: 1px solid #ececec;
+}
+input[type=range].mask-opacity::-moz-range-thumb {
+  box-shadow: 2px 2px 5.4px #b4b4b4, 0px 0px 2px #c1c1c1;
+  border: 0px solid rgba(0, 0, 0, 0);
+  height: 13px;
+  width: 13px;
+  border-radius: 6px;
+  background: #0080c0;
+  cursor: pointer;
+}
+input[type=range].mask-opacity::-ms-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range].mask-opacity::-ms-fill-lower {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid #ececec;
+  border-radius: 4px;
+  box-shadow: 0.5px 0.5px 0px #e0dfdf, 0px 0px 0.5px #edecec;
+}
+input[type=range].mask-opacity::-ms-fill-upper {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid #ececec;
+  border-radius: 4px;
+  box-shadow: 0.5px 0.5px 0px #e0dfdf, 0px 0px 0.5px #edecec;
+}
+input[type=range].mask-opacity::-ms-thumb {
+  box-shadow: 2px 2px 5.4px #b4b4b4, 0px 0px 2px #c1c1c1;
+  border: 0px solid rgba(0, 0, 0, 0);
+  height: 13px;
+  width: 13px;
+  border-radius: 6px;
+  background: #0080c0;
+  cursor: pointer;
+  height: 8px;
+}
+input[type=range].mask-opacity:focus::-ms-fill-lower {
+  background: rgba(255, 255, 255, 0.78);
+}
+input[type=range].mask-opacity:focus::-ms-fill-upper {
+  background: rgba(255, 255, 255, 0.78);
+}
+
 </style>
