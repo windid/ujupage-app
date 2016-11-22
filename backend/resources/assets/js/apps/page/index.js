@@ -127,11 +127,23 @@ $( document ).ready(function() {
 
       var params = {'type': 'link'}
       var tracker = this
+      const pageUrl = (window.location.host + window.location.pathname + window.location.search).toLowerCase()
       for (var i in links) {
-        addEvent(links[i], 'click', function () {
-          params['goal'] = this.dataset.goal || 0
-          params['target'] = this.href
-          tracker.sendRequest(params, 200)
+        addEvent(links[i], 'click', function (e) {
+          e.preventDefault()
+          const linkUrl = (this.host + this.pathname + this.search).toLowerCase()
+          if (linkUrl === pageUrl) {
+            const scrollTop = document.getElementById(this.hash.replace('#','')) ? $(this.hash).offset().top : 0;
+            $('html, body').animate({
+              scrollTop: scrollTop
+            }, 500);
+          } else {
+            params['goal'] = this.dataset.goal || 0
+            params['target'] = this.href
+            tracker.sendRequest(params, 200)
+            var openTarget = this.target || '_top'
+            window.open(this.href, openTarget)
+          }
         })
       }
     },
