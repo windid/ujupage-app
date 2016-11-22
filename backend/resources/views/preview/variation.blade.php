@@ -21,6 +21,13 @@
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   }
 
+  #container {
+    position: relative; /*can be absolute or fixed*/
+    overflow-x: hidden; /*necessary*/
+    overflow-y: auto; /*doesn't seem necessary*/
+    width: 100%; /*necessary*/
+  }
+
   label{
     font-weight: normal;
   }
@@ -177,6 +184,7 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
 </style>
 </head>
 <body>
+<div id="container" style="height:600px;">
 @foreach($content['sections'] as $section_id => $section)
 <div class="section" id="section-{{$section_id}}">
   <div class="section-inner">
@@ -199,8 +207,9 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
     </div>
   </div>
 </div>
+</div>
   <script src="{{secure_asset('js/libs/jquery-1.12.3.min.js')}}"></script>
-  <script src="{{secure_asset('js/page.js?20161122')}}"></script>
+  <script src="{{secure_asset('js/page.js?20161123')}}"></script>
   <script>
     JuyeTracker.init({{$content['variation']['page_id']}}, {{$content['variation']['id']}});
   </script>
