@@ -49,17 +49,29 @@ export default {
       }
       const bg = this.section.style.bg
       if (bg) {
-        style['background-image'] = `url("${bg.src}")`
+        style.backgroundImage = `url("${bg.src}")`
         const r = parseInt(bg.repeat)
-        style['background-repeat'] = ['no-repeat', 'repeat', 'repeat-x', 'repeat-y', 'cover'][r]
-        style['background-size'] = (r === 4) ? 'cover' : 'auto'
+        style.backgroundRepeat = ['no-repeat', 'repeat', 'repeat-x', 'repeat-y', 'cover'][r]
+        style.backgroundSize = (r === 4) ? 'cover' : 'auto'
         const position = []
         let p = parseInt(bg.position)
         if (isNaN(p)) p = 1
         p--
         position[0] = ['left', 'center', 'right'][p % 3]
         position[1] = ['top', 'center', 'bottom'][Math.floor(p / 3)]
-        style['background-position'] = position.join(' ')
+        style.backgroundPosition = position.join(' ')
+
+        if (bg.attachment) {
+          style.backgroundAttachment = 'fixed'
+        }
+        if (bg.stretch) {
+          // todo::
+          style.width = '100%'
+          style.marign = ''
+        } else {
+          style.width = this.workspace.width + 'px'
+          style.margin = '0 auto'
+        }
       }
       return style
     },

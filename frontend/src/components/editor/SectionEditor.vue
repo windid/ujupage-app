@@ -36,7 +36,9 @@ export default {
         'bg': {
           'repeat': 0,
           'position': 0,
-          'src': null
+          'src': null,
+          attachment: false,
+          stretch: true
         },
         'mask': {
           'color': 0,
@@ -151,6 +153,14 @@ export default {
                 <label :for="`bg-position${i}`"><i></i></label>
               </li>
             </ul>
+          </div>
+        </div>
+        <div class="bg-other-props">
+          <div>
+            <input type="checkbox" id="bg-attachment" v-model="style.bg.attachment"/> <label for="bg-attachment">背景固定不滚动</label>
+          </div>
+          <div>
+            <input type="checkbox" id="bg-stretch" v-model="style.bg.stretch"/> <label for="bg-stretch">背景拉伸到边缘</label>
           </div>
         </div>
         <div class="bg-mask-edit">
@@ -361,6 +371,14 @@ export default {
 .background-edit h3 {
   font-size: 18px;
 }
+
+.bg-other-props {
+  margin-top: 15px;
+}
+.bg-other-props label {
+  font-weight: normal;
+}
+
 .bg-mask-edit h4 {
   font-size: 14px;
   font-weight: normal;
