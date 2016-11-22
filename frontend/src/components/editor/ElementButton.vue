@@ -29,8 +29,12 @@ export default {
       hover: false,
       resize: {},
       draggableFromChild: true,
-      imageObj: {},
       hasPopup: false
+    }
+  },
+  created () {
+    if (!this.buttonElement.hasOwnProperty('imageObj')) {
+      this.buttonElement.imageObj = null
     }
   },
   computed: {
@@ -49,8 +53,7 @@ export default {
     ...mapActions([
       'modifyElement',
       'removeElement',
-      'resizeElement',
-      'getImage'
+      'resizeElement'
     ]),
     edit () {
       this.editing = true
@@ -80,15 +83,11 @@ export default {
     changeDraggable (val) {
       this.draggableFromChild = val
     },
-    selectImage () {
-      this.hasPopup = true
-      this.getImage([(image) => {
-        this.hasPopup = false
-        this.imageObj = image
-      }])
+    popupChange (val) {
+      this.hasPopup = val
     },
-    deleteImage () {
-      this.buttonElement.imageObj = null
+    imageChange (val) {
+      this.buttonElement.imageObj = val
     }
   },
   watch: {
@@ -101,7 +100,7 @@ export default {
     'element': function (val) {
       this.buttonElement = merge({}, val)
     },
-    'imageObj': function (newImage) {
+    'buttonElement.imageObj': function (newImage) {
       let style
       if (newImage && newImage.url) {
         // adjust size
@@ -131,7 +130,7 @@ export default {
           style.mobile.height = undefined
         }
         // commit to store
-        this.buttonElement.imageObj = newImage
+        // this.buttonElement.imageObj = newImage
         this.buttonElement.style = style
         if (!isEqual(this.element, this.buttonElement)) {
           this.modifyElement([this.elementId, this.buttonElement, true])
@@ -189,7 +188,10 @@ export default {
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
     </template>
   </element-common>
-  <button-editor :show="editing" v-model="buttonElement" @edit-done="editDone" @select-image="selectImage" @delete-image="deleteImage"></button-editor>
+  <button-editor :show="editing" v-model="buttonElement"
+    @edit-done="editDone"
+    @popup-change="popupChange"
+    @image-change="imageChange"></button-editor>
 </div>
 </template>
 
