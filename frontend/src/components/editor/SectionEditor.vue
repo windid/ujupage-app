@@ -148,7 +148,7 @@ export default {
             <ul>
               <li v-for="i in 9">
                 <input type="radio" name="bg-position" :id="`bg-position${i}`" :value="i" v-model="style.bg.position">
-                <label :for="`bg-position${i}`"></label>
+                <label :for="`bg-position${i}`"><i></i></label>
               </li>
             </ul>
           </div>
@@ -292,19 +292,76 @@ export default {
   border-radius: 2px;
   background-color: #eee;
   cursor: pointer;
+  position: relative;
 }
 
 .bg-position-edit ul li label:hover {
   background-color: #ddd;
 }
 .bg-position-edit ul li input:checked + label {
-  background-color: #111;
+  background-color: #555;
+}
+.bg-position-edit ul li label i {
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.bg-position-edit ul li:nth-child(9n+1) label i {
+  border-style: solid;
+  border-width: 8px 8px 0 0;
+  border-color: #ccc transparent transparent transparent;
+  top: 6px;
+  left: 6px;
+}
+
+.bg-position-edit ul li:nth-child(9n+3) label i {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 8px 8px 0;
+  border-color: transparent #ccc transparent transparent;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.bg-position-edit ul li:nth-child(9n+5) label i {
+  border: none;
+  background-color: #ccc;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  top: 8px;
+  left: 8px;
+}
+
+.bg-position-edit ul li:nth-child(9n+7) label i {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 0 0 8px;
+  border-color: transparent transparent transparent #ccc;
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+}
+
+.bg-position-edit ul li:nth-child(9n) label i {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 8px 8px;
+  border-color: transparent transparent #ccc transparent;
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
 }
 
 .background-edit h3 {
   font-size: 18px;
 }
-.background-edit h4 {
+.bg-mask-edit h4 {
   font-size: 14px;
   font-weight: normal;
   margin-top: 16px;
