@@ -136,11 +136,8 @@ export default {
         offset = null
       }
       newSize = this.startSize + moved
-      if (newSize < this.minSize) {
-        newSize = this.minSize
-      } else if (newSize > this.maxSize) {
-        newSize = this.maxSize
-      }
+      newSize = Math.max(newSize, this.minSize)
+      newSize = Math.min(newSize, this.maxSize)
       this.$emit('resizing', this.side, false, newSize, offset)
     },
     dragEnd: function (e) {

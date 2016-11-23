@@ -3,7 +3,7 @@ import Sidebar from '../ui/Sidebar'
 import { mapGetters, mapActions } from 'vuex'
 import colorMixin from '../../mixins/colorMixin'
 import ColorPicker from './ColorPicker'
-import { merge } from 'lodash'
+import { merge, isEqual } from 'lodash'
 
 export default {
   components: {
@@ -35,10 +35,10 @@ export default {
         },
         'bg': {
           'repeat': 0,
-          'position': 0,
+          'position': 5,
           'src': null,
-          attachment: false,
-          stretch: true
+          'attachment': false,
+          'stretch': true
         },
         'mask': {
           'color': 0,
@@ -62,6 +62,10 @@ export default {
       set (val) {
         this.style[this.workspace.version]['border-width'] = val + 'px 0px'
       }
+    },
+    styleFromStore () {
+      const sectionId = this.workspace.activeSectionId
+      return sectionId !== null ? this.sections[sectionId]['style'] : null
     }
   },
   methods: {
@@ -97,6 +101,13 @@ export default {
         }
       },
       deep: true
+    },
+    'styleFromStore': function (newStyle, oldStyle) {
+      if (!isEqual(newStyle, this.style)) {
+        if (newStyle !== null) {
+          this.style = merge({}, this.style, newStyle)
+        }
+      }
     },
     'imageObj': function (newImage) {
       this.style.bg.src = newImage.src
@@ -136,45 +147,47 @@ export default {
             <div v-else class="bg-image-placeholder">背景图片</div>
           </div>
         </div>
-        <div class='bg-setting'>
-          <div class="bg-repeat-edit">
-            <ul>
-              <li v-for="(t,i) in bgRepeatTypes">
-                <input type="radio" name="bg-repeat" :id="`bg-repeat${i}`" :value="i" v-model="style.bg.repeat">
-                <label :for="`bg-repeat${i}`">{{t}}</label>
-              </li>
-            </ul>
-          </div>
-          <div class="bg-position-edit">
-            <h4>位置</h4>
-            <ul>
-              <li v-for="i in 9">
-                <input type="radio" name="bg-position" :id="`bg-position${i}`" :value="i" v-model="style.bg.position">
-                <label :for="`bg-position${i}`"><i></i></label>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="bg-other-props">
-          <div>
-            <input type="checkbox" id="bg-attachment" v-model="style.bg.attachment"/> <label for="bg-attachment">背景固定不滚动</label>
-          </div>
-          <div>
-            <input type="checkbox" id="bg-stretch" v-model="style.bg.stretch"/> <label for="bg-stretch">背景拉伸到边缘</label>
-          </div>
-        </div>
-        <div class="bg-mask-edit">
-          <div>
-            <h4>蒙板背景色</h4>
-            <div>
-              <color-picker v-model="style.mask.color"></color-picker>
+        <div v-if="imageObj && imageObj.src">
+          <div class='bg-setting'>
+            <div class="bg-repeat-edit">
+              <ul>
+                <li v-for="(t,i) in bgRepeatTypes">
+                  <input type="radio" name="bg-repeat" :id="`bg-repeat${i}`" :value="i" v-model="style.bg.repeat">
+                  <label :for="`bg-repeat${i}`">{{t}}</label>
+                </li>
+              </ul>
+            </div>
+            <div class="bg-position-edit">
+              <h4>位置</h4>
+              <ul>
+                <li v-for="i in 9">
+                  <input type="radio" name="bg-position" :id="`bg-position${i}`" :value="i" v-model="style.bg.position">
+                  <label :for="`bg-position${i}`"><i></i></label>
+                </li>
+              </ul>
             </div>
           </div>
-          <div>
-            <h4>蒙板透明度</h4>
-            <div class="mask-opacity-wrapper">
-              <input type="range" min="0" max="100" step="1" v-model="style.mask.opacity" class="mask-opacity" />
-              <label>{{this.style.mask.opacity}}%</label>
+          <div class="bg-other-props">
+            <div>
+              <input type="checkbox" id="bg-attachment" v-model="style.bg.attachment"/> <label for="bg-attachment">背景固定不滚动</label>
+            </div>
+            <div>
+              <input type="checkbox" id="bg-stretch" v-model="style.bg.stretch"/> <label for="bg-stretch">背景拉伸到边缘</label>
+            </div>
+          </div>
+          <div class="bg-mask-edit">
+            <div>
+              <h4>蒙板背景色</h4>
+              <div>
+                <color-picker v-model="style.mask.color"></color-picker>
+              </div>
+            </div>
+            <div>
+              <h4>蒙板透明度</h4>
+              <div class="mask-opacity-wrapper">
+                <input type="range" min="0" max="100" step="1" v-model="style.mask.opacity" class="mask-opacity" />
+                <label>{{this.style.mask.opacity}}%</label>
+              </div>
             </div>
           </div>
         </div>
