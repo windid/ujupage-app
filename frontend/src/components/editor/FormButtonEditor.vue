@@ -44,6 +44,14 @@ export default {
       this.$emit('image-change', newImage)
       this.button.imageObj = newImage
     }
+  },
+  watch: {
+    'value': {
+      handler: function (newButton) {
+        this.button = this.value
+      },
+      deep: true
+    }
   }
 }
 </script>

@@ -53,7 +53,8 @@ export default {
     ...mapActions([
       'modifyElement',
       'removeElement',
-      'resizeElement'
+      'resizeElement',
+      'setActiveElementId'
     ]),
     edit () {
       this.editing = true
@@ -88,19 +89,10 @@ export default {
     },
     imageChange (val) {
       this.buttonElement.imageObj = val
-    }
-  },
-  watch: {
-    'workspace.activeElementId': function (val) {
-      if (this.hasPopup) {
-        return
-      }
-      if (val !== this.elementId && this.editing) this.editDone()
+      this.setActiveElementId(this.elementId)
+      this.manualUpdate(val)
     },
-    'element': function (val) {
-      this.buttonElement = merge({}, val)
-    },
-    'buttonElement.imageObj': function (newImage) {
+    manualUpdate (newImage) {
       let style
       if (newImage && newImage.url) {
         // adjust size
@@ -137,13 +129,27 @@ export default {
         }
       }
     }
+  },
+  watch: {
+    'workspace.activeElementId': function (val) {
+      if (this.hasPopup) {
+        return
+      }
+      if (val !== this.elementId && this.editing) this.editDone()
+    },
+    'element': function (val) {
+      this.buttonElement = merge({}, val)
+    },
+    'buttonElement.imageObj': function (newImage) {
+      this.manualUpdate(newImage)
+    }
   }
 }
 </script>
 
 <template>
 <div>
-  <element-common 
+  <element-common
     :element="element" 
     :section-id="sectionId" 
     :element-id="elementId" 
@@ -155,7 +161,14 @@ export default {
     @change-draggable="changeDraggable" 
     @drag-start="editDone"
   >
-    <div slot="content" v-if="buttonElement.imageObj">
+    <div slot="content" v-if="buttonElement.imageObj" class="element-image-button"
+      :style="{
+        borderRadius: buttonElement.props.borderRadius,
+        boxShadow: buttonElement.props.boxShadow,
+        borderStyle: buttonElement.props.borderStyle,
+        borderColor: getColor(buttonElement.props.borderColor),
+        overflow: 'hidden'
+      }">
       <img :src="buttonElement.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
     </div>
     <div slot="content" v-else class="element-button"
