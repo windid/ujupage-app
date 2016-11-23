@@ -22,12 +22,13 @@
   }
 
   #container {
-    position: absolute; /*can be absolute or fixed*/
+    position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    overflow: scroll; /*doesn't seem necessary*/
+    overflow-x: hidden;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -212,7 +213,7 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
 </div>
 </div>
   <script src="{{secure_asset('js/libs/jquery-1.12.3.min.js')}}"></script>
-  <script src="{{secure_asset('js/page.js?v=20161123')}}"></script>
+  <script src="{{secure_asset('js/page.js?20161124')}}"></script>
   <script>
     JuyeTracker.init({{$content['variation']['page_id']}}, {{$content['variation']['id']}});
   </script>
