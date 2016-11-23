@@ -172,8 +172,9 @@ export default {
           </div>
           <div>
             <h4>蒙板透明度</h4>
-            <div>
+            <div class="mask-opacity-wrapper">
               <input type="range" min="0" max="100" step="1" v-model="style.mask.opacity" class="mask-opacity" />
+              <label>{{this.style.mask.opacity}}%</label>
             </div>
           </div>
         </div>
@@ -384,11 +385,30 @@ export default {
   font-weight: normal;
   margin-top: 16px;
 }
+
+.mask-opacity-wrapper {
+  padding: 5px;
+  background: #eee;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+}
+
+.mask-opacity-wrapper label {
+  width: 44px;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+}
+.mask-opacity-wrapper input {
+  flex: 1;
+}
+
 /* 设置蒙板透明度的 input slider */
 input[type=range].mask-opacity {
   -webkit-appearance: none;
-  width: 100%;
   margin: 2.5px 0;
+  background-color: transparent;
 }
 input[type=range].mask-opacity:focus {
   outline: none;
