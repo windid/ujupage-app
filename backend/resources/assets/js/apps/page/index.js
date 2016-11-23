@@ -14,7 +14,6 @@ const getParameter = function (val) {
 var Site = {
 
   init: () => {
-    $('#container').css('height', Math.max(document.documentElement.clientHeight, window.innerHeight || 0))
     Site.parseForm()
     Site.parseLink()
     $('.msg-close').click(()=>{
@@ -81,7 +80,6 @@ var Site = {
     $("a").each(function (){
       var link = $(this)
       var href = link.attr('href')
-      // if(href && href[0] === '#') {
       var name = href.substring(1)
       $(this).click(function(e) {
         e.preventDefault()
@@ -110,7 +108,6 @@ var Site = {
           window.open(href, openTarget)
         }
       })
-      // }
     })
   },
 

@@ -22,10 +22,13 @@
   }
 
   #container {
-    position: relative; /*can be absolute or fixed*/
-    overflow-x: hidden; /*necessary*/
-    overflow-y: auto; /*doesn't seem necessary*/
-    width: 100%; /*necessary*/
+    position: absolute; /*can be absolute or fixed*/
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: scroll; /*doesn't seem necessary*/
+    -webkit-overflow-scrolling: touch;
   }
 
   label{

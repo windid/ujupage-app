@@ -1,1 +1,1 @@
-# ujupage 2.2.4
+# ujupage 2.2.5
