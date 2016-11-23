@@ -188,7 +188,7 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
 </style>
 </head>
 <body>
-<div id="container" style="height:600px;">
+<div id="container">
 @foreach($content['sections'] as $section_id => $section)
 <div class="section" id="section-{{$section_id}}">
   <div class="section-inner">
