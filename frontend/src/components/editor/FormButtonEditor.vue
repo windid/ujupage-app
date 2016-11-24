@@ -107,7 +107,7 @@ export default {
       </div>
       <div class="input-group corner-radius-input">
         <div class="input-group-addon"> 圆角 </div>
-        <input type="number" class="form-control input-text-shadow" style="text-align:center" v-model.number="borderRadius">
+        <input type="number" class="form-control input-text-shadow" style="text-align:center" v-model.number="borderRadius" min="0">
       </div>
       <div style="clear:both"></div>
     </div>
@@ -117,7 +117,56 @@ export default {
       <checkbox-button v-model="button.props.boxShadow" :values="['','1px 3px 6px #888']">阴影</checkbox-button> &nbsp; 
       <checkbox-button v-model="button.props.borderStyle" :values="['none','solid']">边框</checkbox-button>
     </div>
+    <h4>边框</h4>
+    <div class="sidebar-block border-setting row">
+      <div class="form-group col-xs-6">
+        <div class="input-group">
+          <div class="input-group-addon">宽度</div>
+          <div class="input-group-btn" style="width: 20px;">
+            <input type="number" v-model="button.props.borderWidth" min="0" step="1" class="form-control"/>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-xs-6" style="padding: 0;">
+        <div class="input-group">
+          <div class="input-group-addon">类型</div>
+          <div class="input-group-btn">
+            <select v-model="button.props.borderStyle" class="form-control" style="width: 80px;">
+              <option value="none">无</option>
+              <option value="solid">实线</option>
+              <option value="dashed">虚线</option>
+              <option value="dotted">点</option>
+              <option value="double">双线</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <h4>阴影</h4>
+    <div class="sidebar-block">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label style="float: left;">X：</label>
+            <input type="number" v-model="button.props.boxShadowX" min="0" step="1" class="form-control"/>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>Y：</label>
+            <input type="number" v-model="button.props.boxShadowY" min="0" step="1" class="form-control"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <div class="form-group">
+        <label>大小</label>
+        <input type="number" v-model="button.props.boxShadowSize" min="0" step="1" class="form-control" style="display: inline; width: 80px;"/>
+        <checkbox-button v-model="button.props.boxShadowInset" :values="['false','true']">内阴影</checkbox-button>
+        <color-picker v-model="button.props.boxShadowColor"></color-picker>
+      </div>
     <div class="sidebar-block">
       <image-picker v-model="button.imageObj"
         @before-pick="$emit('popup-change', true)"

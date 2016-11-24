@@ -33,9 +33,20 @@ export default {
     }
   },
   created () {
-    if (!this.buttonElement.hasOwnProperty('imageObj')) {
-      this.buttonElement.imageObj = null
+    // 如果有属性缺失，手动补充
+    const fill = (object, key, fillValue) => {
+      if (!object.hasOwnProperty(key)) {
+        object[key] = fillValue
+      }
     }
+    const fillElement = (key, value) => fill(this.buttonElement, key, value)
+    const fillProps = (key, value) => fill(this.buttonElement.props, key, value)
+    fillElement('imageObj', null)
+    const s = ['boxShadowX', 'boxShadowY', 'boxShadowSize']
+    s.forEach((e) => fillProps(e, 0))
+    fillProps('borderWidth', 1)
+    fillProps('boxShadowInset', 'false')
+    fillProps('boxShadowColor', 4)
   },
   computed: {
     ...mapGetters({
@@ -47,6 +58,34 @@ export default {
     },
     resizable () {
       return (!this.editing && this.workspace.activeElementId === this.elementId)
+    },
+    buttonStyle () {
+      const props = this.buttonElement.props
+      const style = {
+        borderRadius: props.borderRadius,
+        borderStyle: props.borderStyle,
+        borderWidth: (props.borderWidth ? props.borderWidth : 0) + 'px',
+        borderColor: this.getColor(props.borderColor),
+        overflow: 'hidden'
+      }
+      let shadow = ''
+      shadow += (props.boxShadowX ? props.boxShadowX : 0) + 'px '
+      shadow += (props.boxShadowY ? props.boxShadowY : 0) + 'px '
+      shadow += (props.boxShadowSize ? props.boxShadowSize : 0) + 'px '
+      shadow += this.getColor(props.boxShadowColor)
+      if (props.boxShadowInset === 'true') {
+        shadow += ' inset'
+      }
+      style.boxShadow = shadow
+      if (this.buttonElement.imageObj) {
+        // 图片按钮
+      } else {
+        style.fontSize = props.fontSize
+        style.fontWeight = props.fontWeight
+        style.backgroundColor = this.hover ? this.getColor(props.hoverColor) : this.getColor(props.backgroundColor)
+        style.color = this.getColor(props.color)
+      }
+      return style
     }
   },
   methods: {
@@ -162,31 +201,14 @@ export default {
     @drag-start="editDone"
   >
     <div slot="content" v-if="buttonElement.imageObj" class="element-image-button"
-      :style="{
-        borderRadius: buttonElement.props.borderRadius,
-        boxShadow: buttonElement.props.boxShadow,
-        borderStyle: buttonElement.props.borderStyle,
-        borderColor: getColor(buttonElement.props.borderColor),
-        overflow: 'hidden'
-      }">
+      :style="buttonStyle">
       <img :src="buttonElement.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
     </div>
     <div slot="content" v-else class="element-button"
       @dblclick="edit" 
       @mouseenter = "hover = true"
       @mouseleave = "hover = false"
-      :style="[
-        {
-          borderRadius: buttonElement.props.borderRadius,
-          fontSize: buttonElement.props.fontSize,
-          boxShadow: buttonElement.props.boxShadow,
-          fontWeight: buttonElement.props.fontWeight,
-          borderStyle: buttonElement.props.borderStyle,
-          backgroundColor: hover ? getColor(buttonElement.props.hoverColor) : getColor(buttonElement.props.backgroundColor),
-          borderColor: getColor(buttonElement.props.borderColor),
-          color: getColor(buttonElement.props.color),
-        }
-      ]">
+      :style="buttonStyle">
       {{buttonElement.text}}
     </div>
     

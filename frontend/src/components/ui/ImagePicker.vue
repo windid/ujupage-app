@@ -21,6 +21,9 @@ export default {
     selectImage () {
       this.$emit('before-pick')
       this.getImage([(image) => {
+        if (image && this.image && image.url === this.image.url) {
+          return
+        }
         this.image = image
         this.$emit('image-change', image)
         this.$emit('after-pick')
