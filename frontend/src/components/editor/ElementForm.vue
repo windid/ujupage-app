@@ -48,7 +48,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'modifyElement'
+      'modifyElement',
+      'setActiveElementId'
     ]),
     edit () {
       this.editing = true
@@ -75,6 +76,7 @@ export default {
     },
     imageChange (val) {
       this.formElement.button.imageObj = val
+      this.setActiveElementId(this.elementId)
       this.$forceUpdate()
     }
   },
@@ -157,7 +159,14 @@ export default {
       </div> <!-- End fields for -->
 
       <div class="form-button">
-        <div v-if="formElement.button.imageObj">
+        <div v-if="formElement.button.imageObj" class="element-image-button"
+          :style="{
+            overflow: 'hidden',
+            borderRadius: formElement.button.props.borderRadius,
+            boxShadow: formElement.button.props.boxShadow,
+            borderStyle: formElement.button.props.borderStyle,
+            borderColor: getColor(formElement.button.props.borderColor)
+          }">
           <img :src="formElement.button.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
         </div>
         <button v-else class="form-control element-button"
