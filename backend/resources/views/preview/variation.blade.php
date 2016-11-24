@@ -9,7 +9,7 @@
   <title>{{$content['settings']['seo']['pageTitle']}}</title>
   <meta name="keywords" content="{{$content['settings']['seo']['keywords']}}">
   <meta name="description" content="{{$content['settings']['seo']['description']}}">
-  <link href="{{secure_asset('css/bootstrap.css')}}" rel="stylesheet">
+  <link href="//{{Request::root()}}/css/bootstrap.css" rel="stylesheet">
   <script>
     {!! $content['settings']['code']['header'] !!}
   </script>
