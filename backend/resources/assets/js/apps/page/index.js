@@ -14,7 +14,8 @@ const getParameter = function (val) {
 var Site = {
 
   init: () => {
-    Site.parseForm();
+    Site.parseForm()
+    Site.parseLink()
     $('.msg-close').click(()=>{
       $('.msg-mask').hide()
     })
@@ -31,7 +32,7 @@ var Site = {
       form.validate({
         submitHandler: function() {
           $.ajax({
-            url: 'https://www.juyepage.com/post?' + queryString,
+            url: '//www.juyepage.com/post?' + queryString,
             dataType: 'jsonp',
             jsonpCallback: 'callback',
             data: form.serialize(),
@@ -75,6 +76,41 @@ var Site = {
     })
   },
 
+  parseLink: () => {
+    $("a").each(function (){
+      var link = $(this)
+      var href = link.attr('href')
+      var name = href.substring(1)
+      $(this).click(function(e) {
+        e.preventDefault()
+        if(href && href[0] === '#') {
+          // var element = $(href)
+          var element = document.getElementById(href.substring(1))
+          var scrollTop = element ? element.offsetTop : 0
+          $("#container").animate({
+            scrollTop: scrollTop
+          })
+          // element.velocity("scroll",{
+          //   duration: 500,
+          //   container: $("#container"),
+          //   mobileHA: false
+          // })
+          
+          // window.parent.scrollTo(0, 0)
+          // console.log($('html, body', window.parent.document), $(window.parent))
+          // $('html, body').animate({
+          //   scrollTop: scrollTop
+          // }, 500);
+        } else {
+          var goal = $(this).data('goal')
+          JuyeTracker.trackLink(href, goal)
+          var openTarget = $(this).attr('target') || '_top'
+          window.open(href, openTarget)
+        }
+      })
+    })
+  },
+
   showMsg: (msg) => {
     const msgBox = $('.msg-mask')
     const msgBody = $('.msg-body')
@@ -101,7 +137,7 @@ $( document ).ready(function() {
       this.commonParams['vid'] = variationId
       this.commonParams['cid'] = getCookie()
       this.trackPageView()
-      this.trackLinks()
+      // this.trackLinks()
       addEvent(window, 'beforeunload', this.beforeUnloadHandler)
     },
 
@@ -119,21 +155,41 @@ $( document ).ready(function() {
       this.sendRequest(pvParams)
     },
 
-    trackLinks: function () {
-      var links = document.links
-      if (!links) {
-        return
-      }
+    // trackLinks: function () {
+    //   var links = document.links
+    //   if (!links) {
+    //     return
+    //   }
 
-      var params = {'type': 'link'}
-      var tracker = this
-      for (var i in links) {
-        addEvent(links[i], 'click', function () {
-          params['goal'] = this.dataset.goal || 0
-          params['target'] = this.href
-          tracker.sendRequest(params, 200)
-        })
+    //   var params = {'type': 'link'}
+    //   var tracker = this
+    //   const pageUrl = (window.location.host + window.location.pathname + window.location.search).toLowerCase()
+    //   for (var i in links) {
+    //     addEvent(links[i], 'click', function (e) {
+    //       e.preventDefault()
+    //       const linkUrl = (this.host + this.pathname + this.search).toLowerCase()
+    //       // if (linkUrl === pageUrl) {
+    //       //   const scrollTop = document.getElementById(this.hash.replace('#','')) ? $(this.hash).offset().top : 0;
+    //       //   $('html, body').animate({
+    //       //     scrollTop: scrollTop
+    //       //   }, 500);
+    //       // } else {
+    //       //   params['goal'] = this.dataset.goal || 0
+    //       //   params['target'] = this.href
+    //       //   tracker.sendRequest(params, 200)
+    //       //   var openTarget = this.target || '_top'
+    //       //   window.open(this.href, openTarget)
+    //       // }
+    //     })
+    //   }
+    // },
+    trackLink: function(target = '', goal = 0) {
+      var params = {
+        type: 'link',
+        target: target,
+        goal: goal
       }
+      this.sendRequest(params, 200)
     },
 
     trackEvent: function (eventParams, goal = 0) {
@@ -145,7 +201,7 @@ $( document ).ready(function() {
       params['n'] = eventParams[4] || ''
       params['type'] = 'event'
       params['goal'] = goal
-      this.sendRequest(params)
+      this.sendRequest(params, 200)
     },
 
     sendRequest: function (params, delay = null) {

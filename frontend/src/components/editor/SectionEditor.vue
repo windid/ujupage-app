@@ -3,7 +3,7 @@ import Sidebar from '../ui/Sidebar'
 import { mapGetters, mapActions } from 'vuex'
 import colorMixin from '../../mixins/colorMixin'
 import ColorPicker from './ColorPicker'
-import { merge } from 'lodash'
+import { merge, isEqual } from 'lodash'
 
 export default {
   components: {
@@ -35,8 +35,10 @@ export default {
         },
         'bg': {
           'repeat': 0,
-          'position': 0,
-          'src': null
+          'position': 5,
+          'src': null,
+          'attachment': false,
+          'stretch': true
         },
         'mask': {
           'color': 0,
@@ -60,6 +62,10 @@ export default {
       set (val) {
         this.style[this.workspace.version]['border-width'] = val + 'px 0px'
       }
+    },
+    styleFromStore () {
+      const sectionId = this.workspace.activeSectionId
+      return sectionId !== null ? this.sections[sectionId]['style'] : null
     }
   },
   methods: {
@@ -95,6 +101,13 @@ export default {
         }
       },
       deep: true
+    },
+    'styleFromStore': function (newStyle, oldStyle) {
+      if (!isEqual(newStyle, this.style)) {
+        if (newStyle !== null) {
+          this.style = merge({}, this.style, newStyle)
+        }
+      }
     },
     'imageObj': function (newImage) {
       this.style.bg.src = newImage.src
@@ -134,36 +147,47 @@ export default {
             <div v-else class="bg-image-placeholder">背景图片</div>
           </div>
         </div>
-        <div class='bg-setting'>
-          <div class="bg-repeat-edit">
-            <ul>
-              <li v-for="(t,i) in bgRepeatTypes">
-                <input type="radio" name="bg-repeat" :id="`bg-repeat${i}`" :value="i" v-model="style.bg.repeat">
-                <label :for="`bg-repeat${i}`">{{t}}</label>
-              </li>
-            </ul>
-          </div>
-          <div class="bg-position-edit">
-            <h4>位置</h4>
-            <ul>
-              <li v-for="i in 9">
-                <input type="radio" name="bg-position" :id="`bg-position${i}`" :value="i" v-model="style.bg.position">
-                <label :for="`bg-position${i}`"></label>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="bg-mask-edit">
-          <div>
-            <h4>蒙板背景色</h4>
-            <div>
-              <color-picker v-model="style.mask.color"></color-picker>
+        <div v-if="imageObj && imageObj.src">
+          <div class='bg-setting'>
+            <div class="bg-repeat-edit">
+              <ul>
+                <li v-for="(t,i) in bgRepeatTypes">
+                  <input type="radio" name="bg-repeat" :id="`bg-repeat${i}`" :value="i" v-model="style.bg.repeat">
+                  <label :for="`bg-repeat${i}`">{{t}}</label>
+                </li>
+              </ul>
+            </div>
+            <div class="bg-position-edit">
+              <h4>位置</h4>
+              <ul>
+                <li v-for="i in 9">
+                  <input type="radio" name="bg-position" :id="`bg-position${i}`" :value="i" v-model="style.bg.position">
+                  <label :for="`bg-position${i}`"><i></i></label>
+                </li>
+              </ul>
             </div>
           </div>
-          <div>
-            <h4>蒙板透明度</h4>
+          <div class="bg-other-props">
             <div>
-              <input type="range" min="0" max="100" step="1" v-model="style.mask.opacity" />
+              <input type="checkbox" id="bg-attachment" v-model="style.bg.attachment"/> <label for="bg-attachment">背景固定不滚动</label>
+            </div>
+            <div>
+              <input type="checkbox" id="bg-stretch" v-model="style.bg.stretch"/> <label for="bg-stretch">背景拉伸到边缘</label>
+            </div>
+          </div>
+          <div class="bg-mask-edit">
+            <div>
+              <h4>蒙板背景色</h4>
+              <div>
+                <color-picker v-model="style.mask.color"></color-picker>
+              </div>
+            </div>
+            <div>
+              <h4>蒙板透明度</h4>
+              <div class="mask-opacity-wrapper">
+                <input type="range" min="0" max="100" step="1" v-model="style.mask.opacity" class="mask-opacity" />
+                <label>{{this.style.mask.opacity}}%</label>
+              </div>
             </div>
           </div>
         </div>
@@ -292,12 +316,192 @@ export default {
   border-radius: 2px;
   background-color: #eee;
   cursor: pointer;
+  position: relative;
 }
 
 .bg-position-edit ul li label:hover {
   background-color: #ddd;
 }
 .bg-position-edit ul li input:checked + label {
-  background-color: #111;
+  background-color: #555;
 }
+.bg-position-edit ul li label i {
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.bg-position-edit ul li:nth-child(9n+1) label i {
+  border-style: solid;
+  border-width: 8px 8px 0 0;
+  border-color: #ccc transparent transparent transparent;
+  top: 6px;
+  left: 6px;
+}
+
+.bg-position-edit ul li:nth-child(9n+3) label i {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 8px 8px 0;
+  border-color: transparent #ccc transparent transparent;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.bg-position-edit ul li:nth-child(9n+5) label i {
+  border: none;
+  background-color: #ccc;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  top: 8px;
+  left: 8px;
+}
+
+.bg-position-edit ul li:nth-child(9n+7) label i {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 0 0 8px;
+  border-color: transparent transparent transparent #ccc;
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+}
+
+.bg-position-edit ul li:nth-child(9n) label i {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 8px 8px;
+  border-color: transparent transparent #ccc transparent;
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+}
+
+.background-edit h3 {
+  font-size: 18px;
+}
+
+.bg-other-props {
+  margin-top: 15px;
+}
+.bg-other-props label {
+  font-weight: normal;
+}
+
+.bg-mask-edit h4 {
+  font-size: 14px;
+  font-weight: normal;
+  margin-top: 16px;
+}
+
+.mask-opacity-wrapper {
+  padding: 5px;
+  background: #eee;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+}
+
+.mask-opacity-wrapper label {
+  width: 44px;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+}
+.mask-opacity-wrapper input {
+  flex: 1;
+}
+
+/* 设置蒙板透明度的 input slider */
+input[type=range].mask-opacity {
+  -webkit-appearance: none;
+  margin: 2.5px 0;
+  background-color: transparent;
+}
+input[type=range].mask-opacity:focus {
+  outline: none;
+}
+input[type=range].mask-opacity::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  box-shadow: 0.5px 0.5px 0px #e0dfdf, 0px 0px 0.5px #edecec;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 2px;
+  border: 1px solid #ececec;
+}
+input[type=range].mask-opacity::-webkit-slider-thumb {
+  box-shadow: 2px 2px 5.4px #b4b4b4, 0px 0px 2px #c1c1c1;
+  border: 0px solid rgba(0, 0, 0, 0);
+  height: 13px;
+  width: 13px;
+  border-radius: 6px;
+  background: #0080c0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -3.5px;
+}
+input[type=range].mask-opacity:focus::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0.78);
+}
+input[type=range].mask-opacity::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  box-shadow: 0.5px 0.5px 0px #e0dfdf, 0px 0px 0.5px #edecec;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 2px;
+  border: 1px solid #ececec;
+}
+input[type=range].mask-opacity::-moz-range-thumb {
+  box-shadow: 2px 2px 5.4px #b4b4b4, 0px 0px 2px #c1c1c1;
+  border: 0px solid rgba(0, 0, 0, 0);
+  height: 13px;
+  width: 13px;
+  border-radius: 6px;
+  background: #0080c0;
+  cursor: pointer;
+}
+input[type=range].mask-opacity::-ms-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range].mask-opacity::-ms-fill-lower {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid #ececec;
+  border-radius: 4px;
+  box-shadow: 0.5px 0.5px 0px #e0dfdf, 0px 0px 0.5px #edecec;
+}
+input[type=range].mask-opacity::-ms-fill-upper {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid #ececec;
+  border-radius: 4px;
+  box-shadow: 0.5px 0.5px 0px #e0dfdf, 0px 0px 0.5px #edecec;
+}
+input[type=range].mask-opacity::-ms-thumb {
+  box-shadow: 2px 2px 5.4px #b4b4b4, 0px 0px 2px #c1c1c1;
+  border: 0px solid rgba(0, 0, 0, 0);
+  height: 13px;
+  width: 13px;
+  border-radius: 6px;
+  background: #0080c0;
+  cursor: pointer;
+  height: 8px;
+}
+input[type=range].mask-opacity:focus::-ms-fill-lower {
+  background: rgba(255, 255, 255, 0.78);
+}
+input[type=range].mask-opacity:focus::-ms-fill-upper {
+  background: rgba(255, 255, 255, 0.78);
+}
+
 </style>

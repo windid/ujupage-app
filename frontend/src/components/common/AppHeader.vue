@@ -52,10 +52,10 @@ export default {
 
 .logo {
   display: inline-block;
-  height: 20px;
-  width: 70px;
+  height: 30px;
+  width: 80px;
   float: left;
-  margin: 14px 20px;
+  margin: 10px 20px;
   background-image: url("../../assets/img/logo.png");
 }
 

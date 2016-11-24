@@ -3,16 +3,23 @@ import ColorPicker from './ColorPicker'
 import FontSize from './FontSize'
 import CheckboxButton from './CheckboxButton'
 import colorMixin from '../../mixins/colorMixin'
+import ImagePicker from '../ui/ImagePicker'
+
+import { mapActions } from 'vuex'
 
 export default {
   props: ['show', 'value'],
   components: {
     ColorPicker,
     FontSize,
-    CheckboxButton
+    CheckboxButton,
+    ImagePicker
   },
   mixins: [colorMixin],
   data () {
+    if (!this.value.hasOwnProperty('imageObj')) {
+      this.value.imageObj = null
+    }
     return {
       button: this.value
     }
@@ -27,9 +34,23 @@ export default {
       }
     }
   },
+  methods: {
+    ...mapActions([
+      'modifyElement',
+      'resizeElement',
+      'getImage'
+    ]),
+    imageChange (newImage) {
+      this.$emit('image-change', newImage)
+      this.button.imageObj = newImage
+    }
+  },
   watch: {
-    'value': function (newValue) {
-      this.button = this.value
+    'value': {
+      handler: function (newButton) {
+        this.button = this.value
+      },
+      deep: true
     }
   }
 }
@@ -98,16 +119,10 @@ export default {
     </div>
 
     <div class="sidebar-block">
-      <div class="button-background-selector" @click="$emit('select-image')">
-        <div v-if="button.imageObj" class="button-background-thumbnail-wrapper">
-          <img :src="button.imageObj.url" class="button-background-thumbnail"/>
-          <div class="button-background-thumbnail-action">
-            <div @click.stop="$emit('select-image')">更换</div>
-            <div @click.stop="$emit('delete-image')">删除</div>
-          </div>
-        </div>
-        <span v-else>图片背景</span>
-      </div>
+      <image-picker v-model="button.imageObj"
+        @before-pick="$emit('popup-change', true)"
+        @after-pick="$emit('popup-change', false)"
+        @image-change="imageChange"></image-picker>
     </div>
   </div>
 </template>

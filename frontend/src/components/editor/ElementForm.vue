@@ -23,7 +23,8 @@ export default {
       hover: false,
       formElement: merge({}, this.element),
       resize: {},
-      draggableFromChild: true
+      draggableFromChild: true,
+      hasPopup: false
     }
   },
   computed: {
@@ -47,7 +48,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'modifyElement'
+      'modifyElement',
+      'setActiveElementId'
     ]),
     edit () {
       this.editing = true
@@ -68,10 +70,19 @@ export default {
     },
     changeDraggable (val) {
       this.draggableFromChild = val
+    },
+    popupChange (val) {
+      this.hasPopup = val
+    },
+    imageChange (val) {
+      this.formElement.button.imageObj = val
+      this.setActiveElementId(this.elementId)
+      this.$forceUpdate()
     }
   },
   watch: {
     'workspace.activeElementId': function (val) {
+      if (this.hasPopup) return
       if (val !== this.elementId && this.editing) this.editDone()
     },
     'element': function (val) {
@@ -147,21 +158,33 @@ export default {
 
       </div> <!-- End fields for -->
 
-      <button class="form-control element-button"
-        :style="[
-          {
+      <div class="form-button">
+        <div v-if="formElement.button.imageObj" class="element-image-button"
+          :style="{
+            overflow: 'hidden',
             borderRadius: formElement.button.props.borderRadius,
-            fontSize: formElement.button.props.fontSize,
             boxShadow: formElement.button.props.boxShadow,
-            fontWeight: formElement.button.props.fontWeight,
             borderStyle: formElement.button.props.borderStyle,
-            backgroundColor:hover ? getColor(formElement.button.props.hoverColor) : getColor(formElement.button.props.backgroundColor),
-            borderColor: getColor(formElement.button.props.borderColor),
-            color: getColor(formElement.button.props.color),
-          }
-        ]">
-        {{formElement.button.text}}
-      </button>
+            borderColor: getColor(formElement.button.props.borderColor)
+          }">
+          <img :src="formElement.button.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
+        </div>
+        <button v-else class="form-control element-button"
+          :style="[
+            {
+              borderRadius: formElement.button.props.borderRadius,
+              fontSize: formElement.button.props.fontSize,
+              boxShadow: formElement.button.props.boxShadow,
+              fontWeight: formElement.button.props.fontWeight,
+              borderStyle: formElement.button.props.borderStyle,
+              backgroundColor:hover ? getColor(formElement.button.props.hoverColor) : getColor(formElement.button.props.backgroundColor),
+              borderColor: getColor(formElement.button.props.borderColor),
+              color: getColor(formElement.button.props.color),
+            }
+          ]">
+          {{formElement.button.text}}
+        </button>
+      </div>
 
     </div>
     
@@ -174,7 +197,9 @@ export default {
       </div>
     </template>
   </element-common>
-  <form-editor :show="editing" v-model="formElement" @edit-done="editDone" @save="saveElement"></form-editor>
+  <form-editor :show="editing" v-model="formElement" @edit-done="editDone" @save="saveElement"
+    @popup-change="popupChange"
+    @image-change="imageChange"></form-editor>
 </div>
 </template>
 

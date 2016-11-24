@@ -29,8 +29,12 @@ export default {
       hover: false,
       resize: {},
       draggableFromChild: true,
-      imageObj: {},
       hasPopup: false
+    }
+  },
+  created () {
+    if (!this.buttonElement.hasOwnProperty('imageObj')) {
+      this.buttonElement.imageObj = null
     }
   },
   computed: {
@@ -50,7 +54,7 @@ export default {
       'modifyElement',
       'removeElement',
       'resizeElement',
-      'getImage'
+      'setActiveElementId'
     ]),
     edit () {
       this.editing = true
@@ -80,28 +84,15 @@ export default {
     changeDraggable (val) {
       this.draggableFromChild = val
     },
-    selectImage () {
-      this.hasPopup = true
-      this.getImage([(image) => {
-        this.hasPopup = false
-        this.imageObj = image
-      }])
+    popupChange (val) {
+      this.hasPopup = val
     },
-    deleteImage () {
-      this.buttonElement.imageObj = null
-    }
-  },
-  watch: {
-    'workspace.activeElementId': function (val) {
-      if (this.hasPopup) {
-        return
-      }
-      if (val !== this.elementId && this.editing) this.editDone()
+    imageChange (val) {
+      this.buttonElement.imageObj = val
+      this.setActiveElementId(this.elementId)
+      this.manualUpdate(val)
     },
-    'element': function (val) {
-      this.buttonElement = merge({}, val)
-    },
-    'imageObj': function (newImage) {
+    manualUpdate (newImage) {
       let style
       if (newImage && newImage.url) {
         // adjust size
@@ -131,12 +122,26 @@ export default {
           style.mobile.height = undefined
         }
         // commit to store
-        this.buttonElement.imageObj = newImage
+        // this.buttonElement.imageObj = newImage
         this.buttonElement.style = style
         if (!isEqual(this.element, this.buttonElement)) {
           this.modifyElement([this.elementId, this.buttonElement, true])
         }
       }
+    }
+  },
+  watch: {
+    'workspace.activeElementId': function (val) {
+      if (this.hasPopup) {
+        return
+      }
+      if (val !== this.elementId && this.editing) this.editDone()
+    },
+    'element': function (val) {
+      this.buttonElement = merge({}, val)
+    },
+    'buttonElement.imageObj': function (newImage) {
+      this.manualUpdate(newImage)
     }
   }
 }
@@ -144,7 +149,7 @@ export default {
 
 <template>
 <div>
-  <element-common 
+  <element-common
     :element="element" 
     :section-id="sectionId" 
     :element-id="elementId" 
@@ -156,7 +161,14 @@ export default {
     @change-draggable="changeDraggable" 
     @drag-start="editDone"
   >
-    <div slot="content" v-if="buttonElement.imageObj">
+    <div slot="content" v-if="buttonElement.imageObj" class="element-image-button"
+      :style="{
+        borderRadius: buttonElement.props.borderRadius,
+        boxShadow: buttonElement.props.boxShadow,
+        borderStyle: buttonElement.props.borderStyle,
+        borderColor: getColor(buttonElement.props.borderColor),
+        overflow: 'hidden'
+      }">
       <img :src="buttonElement.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
     </div>
     <div slot="content" v-else class="element-button"
@@ -189,7 +201,10 @@ export default {
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
     </template>
   </element-common>
-  <button-editor :show="editing" v-model="buttonElement" @edit-done="editDone" @select-image="selectImage" @delete-image="deleteImage"></button-editor>
+  <button-editor :show="editing" v-model="buttonElement"
+    @edit-done="editDone"
+    @popup-change="popupChange"
+    @image-change="imageChange"></button-editor>
 </div>
 </template>
 
