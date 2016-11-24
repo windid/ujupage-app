@@ -189,6 +189,7 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
 </head>
 <body>
 <div id="container">
+{{Request::root()}}
 @foreach($content['sections'] as $section_id => $section)
 <div class="section" id="section-{{$section_id}}">
   <div class="section-inner">
