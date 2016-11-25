@@ -6,6 +6,7 @@ import ElementText from './ElementText'
 import ElementButton from './ElementButton'
 import ElementHtml from './ElementHtml'
 import ElementImage from './ElementImage'
+import ElementShape from './ElementShape'
 import resizer from '../ui/OnesideResizer'
 
 function scrollDown (offset) {
@@ -25,6 +26,7 @@ export default {
     ElementButton,
     ElementHtml,
     ElementImage,
+    ElementShape,
     resizer
   },
   data () {

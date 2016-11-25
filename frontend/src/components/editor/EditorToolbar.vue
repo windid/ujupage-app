@@ -9,15 +9,15 @@ export default {
         { name: '图片', style: 'picture', action: () => this.addElement('image') },
         { name: '文字', style: 'font', action: () => this.addElement('text') },
         { name: '按钮', style: 'expand', action: () => this.addElement('button') },
-        { name: '表单', style: 'edit', action: () => this.addElement('form') },
-        { name: '形状', style: 'stop', action: () => this.addShape() }
+        { name: '表单', style: 'edit', action: () => this.addElement('form') }
       ],
       advancedTools: [
-        { name: '视频', style: 'film', action: () => this.addElement('video') },
-        { name: '音乐', style: 'music', action: () => this.addElement('music') },
+        { name: '形状', style: 'stop', action: () => this.addElement('shape') },
         { name: '悬浮', style: 'cloud', action: () => this.addElement('float') },
-        { name: '地图', style: 'map-marker', action: () => this.addElement('map') },
-        { name: '倒计时', style: 'time', action: () => this.addElement('timer') },
+        { name: '视频', style: 'film', action: () => this.addElement('video') },
+        // { name: '地图', style: 'map-marker', action: () => this.addElement('map') },
+        { name: '轮播图', style: 'retweet', action: () => this.addElement('swiper') },
+        // { name: '倒计时', style: 'time', action: () => this.addElement('timer') },
         { name: 'HTML', style: 'header', action: () => this.addElement('html') }
       ],
       showAdvanced: true
@@ -52,8 +52,8 @@ export default {
         </div>
       </div>
       <div class="show-advanced-btn" @click="showAdvanced = !showAdvanced">
-      <span v-show="!showAdvanced" class="glyphicon glyphicon-th"></span>
-      <span v-show="showAdvanced" class="glyphicon glyphicon-minus"></span>
+      <span v-if="!showAdvanced" class="glyphicon glyphicon-th"></span>
+      <span v-else class="glyphicon glyphicon-minus"></span>
       </div>
     </div>
   </div>

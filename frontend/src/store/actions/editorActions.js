@@ -225,6 +225,7 @@ export const modifyElement = ({ commit, state }, [elementId, newPropsObj, replac
 
 // 添加元素
 export const addElement = ({ commit, state, getters }, type) => {
+  // 如果还没有板块，那么新建一个板块
   if (state.editor.content.sections.length === 0) {
     addSection({ commit })
   }

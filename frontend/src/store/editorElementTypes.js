@@ -137,5 +137,30 @@ export default {
         height: '150px'
       }
     }
+  },
+  'shape': {
+    type: 'shape',
+    subType: 'square',
+    props: {
+      backgroundColor: '3',
+      borderWidth: '1px',
+      borderColor: '4',
+      borderRadius: '0px',
+      borderStyle: 'solid'
+    },
+    style: {
+      'pc': {
+        left: '330px',
+        top: '10px',
+        width: '200px',
+        height: '150px'
+      },
+      'mobile': {
+        left: '50px',
+        top: '10px',
+        width: '200px',
+        height: '150px'
+      }
+    }
   }
 }
