@@ -93,7 +93,7 @@ class ProjectController extends Controller {
      * @return json 
      */
     public function destroy(Request $request, $project_id) {
-        $project = $this->user->projects()->find($project_id);        
+        $project = $this->user->projects()->find($project_id);   
         if (!$project) {
             return $this->errorNotFound();
         }

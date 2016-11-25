@@ -9,7 +9,7 @@
   <title>{{$content['settings']['seo']['pageTitle']}}</title>
   <meta name="keywords" content="{{$content['settings']['seo']['keywords']}}">
   <meta name="description" content="{{$content['settings']['seo']['description']}}">
-  <link href="{{asset('css/bootstrap.css')}}" rel="stylesheet">
+  <link href="//app.ujupage.com/css/bootstrap.css" rel="stylesheet">
   <script>
     {!! $content['settings']['code']['header'] !!}
   </script>
@@ -19,6 +19,17 @@
     min-width: 960px;
     font-size:16px;
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  }
+
+  #container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
   }
 
   label{
@@ -47,6 +58,10 @@
   .element{
     position: absolute;
     word-wrap: break-word;
+  }
+
+  .element p{
+    margin: 0;
   }
 
   .element-button{
@@ -173,6 +188,7 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
 </style>
 </head>
 <body>
+<div id="container">
 @foreach($content['sections'] as $section_id => $section)
 <div class="section" id="section-{{$section_id}}">
   <div class="section-inner">
@@ -195,8 +211,9 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
     </div>
   </div>
 </div>
-  <script src="{{asset('js/libs/jquery-1.12.3.min.js')}}"></script>
-  <script src="{{asset('js/page.js')}}"></script>
+</div>
+  <script src="//app.ujupage.com/js/libs/jquery-1.12.3.min.js"></script>
+  <script src="//app.ujupage.com/js/page.js?20161124"></script>
   <script>
     JuyeTracker.init({{$content['variation']['page_id']}}, {{$content['variation']['id']}});
   </script>

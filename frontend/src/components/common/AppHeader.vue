@@ -14,8 +14,8 @@ export default {
         <li>Data</li>
       </ol> -->
       <ul class="nav nav-pills header-nav">
-        <li><router-link to="/help">帮助</router-link></li>
-        <li><router-link to="/account">我的帐号</router-link></li>
+        <!-- <li><router-link to="/help">帮助</router-link></li> -->
+        <!-- <li><router-link to="/account">我的帐号</router-link></li> -->
         <li><router-link to="/logout">退出登陆</router-link></li>
       </ul>
     </template>
@@ -52,10 +52,10 @@ export default {
 
 .logo {
   display: inline-block;
-  height: 20px;
-  width: 70px;
+  height: 30px;
+  width: 80px;
   float: left;
-  margin: 14px 20px;
+  margin: 10px 20px;
   background-image: url("../../assets/img/logo.png");
 }
 

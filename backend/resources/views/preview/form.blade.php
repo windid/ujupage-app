@@ -12,7 +12,12 @@
     @else
       <label for="form-{{$element_id}}-{{$field_id}}" class="label-inside">{{$field['label']}}</label>    
     @endif
-      <input name="fields[{{$field['label']}}]" id="form-{{$element_id}}-{{$field_id}}" type="text" class="form-control form-field-input" @if(in_array('required', $field['validator']) ) required @endif>
+      <input name="fields[{{$field['label']}}]" id="form-{{$element_id}}-{{$field_id}}" type="text" class="form-control form-field-input" 
+        @if( in_array('required', $field['validator']) ) required @endif
+        @if( in_array('email', $field['validator']) ) email="true" @endif
+        @if( in_array('number', $field['validator']) || in_array('mobile', $field['validator']) ) number="true" @endif
+        @if( in_array('mobile', $field['validator']) ) minlength="11" @endif
+      >
 
   @elseif ($field['type'] === 'textarea')
 
@@ -58,6 +63,9 @@
         @endforeach
       </select>
     </div>
+
+  @elseif ($field['type'] === 'hidden')
+    <input type="hidden" name="fields[{{$field['label']}}]" value="{{$field['val']}}">
 
   @elseif ($field['type'] === 'china-state')
 

@@ -27,7 +27,7 @@ export default {
   report: Vue.resource('report/{module}/{pageId}'),
 
   account: Vue.resource('account{/id}', {}, {
-    current: { method: 'GET', url: 'account/current' }
+    current: { method: 'GET', url: 'auth/account/current' }
   }),
 
   auth: {

@@ -290,9 +290,9 @@ class PageController extends Controller {
             } else {
                 $html = view('preview.variation', ['content' => $content])->render();
             }
-            $this->pageVariation->where('id', $v['id'])->update([
-                'html' => $html
-            ]);
+            $pageVariation = $this->pageVariation->find($v['id']);
+            $pageVariation->html = $html;
+            $pageVariation->save();
         }
         
         return $this->successOK();
@@ -331,15 +331,33 @@ class PageController extends Controller {
         $curpage = request('page', 1);
         $page_size = request('page_size', 30);
         
+        $start_time = $end_time = 0;
+        if (request()->has('start_date') && request()->has('end_date')) {
+            $start_time = strtotime(request('start_date', date('Y-m-d')));
+            $end_time = strtotime(request('end_date', date('Y-m-d')))+86400;
+        }
+        
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
-                ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'created_at')
+                ->orderBy('id', 'desc')
+                ->where(function($query) use ($start_time, $end_time) {
+                    if ($start_time > 0 && $end_time > 0) {
+                        return $query->whereBetween('created_at', [$start_time, $end_time]);
+                    }
+                })
+                ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'utms', 'created_at')
                 ->get()->toArray();
         foreach ($pageforms as $k => $v) {
             $pageforms[$k]['fields'] = json_decode($v['fields'], true);
+            $pageforms[$k]['utms'] = json_decode($v['utms'], true);
             $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
         }
-        $total = $pageForm->where('page_id', $page->id)->count();
+        $total = $pageForm->where('page_id', $page->id)
+                    ->where(function($query) use ($start_time, $end_time) {
+                        if ($start_time > 0 && $end_time > 0) {
+                            return $query->whereBetween('created_at', [$start_time, $end_time]);
+                        }
+                    })->count();
         $result = [
             'current_page' => $curpage,
             'total_pages' => ceil($total / $page_size),
@@ -364,15 +382,28 @@ class PageController extends Controller {
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
         }
+        $start_time = $end_time = 0;
+        if (request()->has('start_date') && request()->has('end_date')) {
+            $start_time = strtotime(request('start_date', date('Y-m-d')));
+            $end_time = strtotime(request('end_date', date('Y-m-d')))+86400;
+        }
         
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)
-                ->select('variation_name', 'fields', 'created_at')
+                ->where(function($query) use ($start_time, $end_time) {
+                    if ($start_time > 0 && $end_time > 0) {
+                        return $query->whereBetween('created_at', [$start_time, $end_time]);
+                    }
+                })
+                ->select('variation_name', 'fields', 'utms', 'created_at')
+                ->orderBy('id', 'desc')
                 ->get()->toArray();
         
         $fields = [];
+        $utms = [];
         foreach ($pageforms as $k => $v) {
             $pageforms[$k]['fields'] = json_decode($v['fields'], true);
+            $pageforms[$k]['utms'] = json_decode($v['utms'], true);
             $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
             
             foreach ($pageforms[$k]['fields'] as $kk => $vv) {
@@ -384,10 +415,20 @@ class PageController extends Controller {
                 }
                 $fields[$kk]++;
             }
+            foreach ($pageforms[$k]['utms'] as $kk => $vv) {
+                if (!isset($utms[$kk])) {
+                    $utms[$kk] = 0;
+                }
+                $utms[$kk]++;
+            }
         }
         arsort($fields);
+        arsort($utms);
         $fields_val = ['版本名', '提交时间'];
         foreach ($fields as $k => $v) {
+            $fields_val[] = $k;
+        }
+        foreach ($utms as $k => $v) {
             $fields_val[] = $k;
         }
          $fields_val = array_flip($fields_val);
@@ -401,13 +442,16 @@ class PageController extends Controller {
             foreach ($v['fields'] as $kk => $vv) {
                 $order[$fields_val[$kk]] = $vv;
             }
+            foreach ($v['utms'] as $kk => $vv) {
+                $order[$fields_val[$kk]] = $vv; 
+            }
             ksort($order);
             // dd(implode(',', $order));
             $pre_index = 1;
-            foreach ($order as $k => $v) {
-                $pad = $k - $pre_index;
-                $str .= str_repeat(',', $pad) . $v;
-                $pre_index = $k;
+            foreach ($order as $ok => $ov) {
+                $pad = $ok - $pre_index;
+                $str .= str_repeat(',', $pad) . $ov; 
+                $pre_index = $ok;
             }
             $values[] = $str;
         }        

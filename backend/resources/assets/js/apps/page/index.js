@@ -2,24 +2,39 @@
 import 'jquery-validation'
 import 'jquery-validation/dist/localization/messages_zh'
 
+const getParameter = function (val) {
+  var re = new RegExp(val + '=([^&#]*)', 'i')
+  var a = re.exec(window.location.href)
+  if (a === null) {
+    return ''
+  }
+  return decodeURI(a[1])
+}
+
 var Site = {
 
   init: () => {
-    Site.parseForm();
+    Site.parseForm()
+    Site.parseLink()
     $('.msg-close').click(()=>{
-      $('.msg-mask').hide();
+      $('.msg-mask').hide()
     })
   },
 
   parseForm: () => {
+    const utmParams = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_content', 'utm_term']
+    let queryString = ''
+    utmParams.map((param) => {
+      queryString += param + '=' + getParameter(param) + '&'
+    })
     $('form').each(function(){
-      const form = $(this);
+      const form = $(this)
       form.validate({
         submitHandler: function() {
           $.ajax({
-            url: "http://www.juyepage.com/post",
-            dataType: "jsonp",
-            jsonpCallback: "callback",
+            url: '//www.juyepage.com/post?' + queryString,
+            dataType: 'jsonp',
+            jsonpCallback: 'callback',
             data: form.serialize(),
             success: response => {
               const redirect = form.attr('redirect')
@@ -42,23 +57,58 @@ var Site = {
       const toggleThankyouMsg = function () {
         const mask = form.find('.thankyou-mask')
         mask.toggle()
-      };
+      }
       
       const labels = form.find('.label-inside')
       labels.each(function(){
-        const label = $(this);
+        const label = $(this)
         const input = $('#' + label.attr('for'))
         input.focus(function(){
           label.hide()
-        });
+        })
 
         input.blur(function () {
           if (this.value.length === 0){
             label.show()
           }
-        });
-      });
-    });
+        })
+      })
+    })
+  },
+
+  parseLink: () => {
+    $("a").each(function (){
+      var link = $(this)
+      var href = link.attr('href')
+      var name = href.substring(1)
+      $(this).click(function(e) {
+        e.preventDefault()
+        if(href && href[0] === '#') {
+          // var element = $(href)
+          var element = document.getElementById(href.substring(1))
+          var scrollTop = element ? element.offsetTop : 0
+          $("#container").animate({
+            scrollTop: scrollTop
+          })
+          // element.velocity("scroll",{
+          //   duration: 500,
+          //   container: $("#container"),
+          //   mobileHA: false
+          // })
+          
+          // window.parent.scrollTo(0, 0)
+          // console.log($('html, body', window.parent.document), $(window.parent))
+          // $('html, body').animate({
+          //   scrollTop: scrollTop
+          // }, 500);
+        } else {
+          var goal = $(this).data('goal')
+          JuyeTracker.trackLink(href, goal)
+          var openTarget = $(this).attr('target') || '_top'
+          window.open(href, openTarget)
+        }
+      })
+    })
   },
 
   showMsg: (msg) => {
@@ -68,13 +118,13 @@ var Site = {
     msgBox.show()
   }
 
-};
+}
 
 $( document ).ready(function() {
   Site.init()
-});
+})
 
-(function () {
+;(function () {
   function Tracker () {
     this.expireDateTime = null
     this.trackUrl = '//ujupage.cn-hangzhou.log.aliyuncs.com/logstores/stats/track.gif?APIVersion=0.6.0'
@@ -87,7 +137,7 @@ $( document ).ready(function() {
       this.commonParams['vid'] = variationId
       this.commonParams['cid'] = getCookie()
       this.trackPageView()
-      this.trackLinks()
+      // this.trackLinks()
       addEvent(window, 'beforeunload', this.beforeUnloadHandler)
     },
 
@@ -105,24 +155,41 @@ $( document ).ready(function() {
       this.sendRequest(pvParams)
     },
 
-    trackLinks: function () {
-      var links = document.links
-      if (!links) {
-        return
-      }
+    // trackLinks: function () {
+    //   var links = document.links
+    //   if (!links) {
+    //     return
+    //   }
 
-      var params = {'type': 'link'}
-      var tracker = this
-      for (var i in links) {
-        if (links[i].hostname) {
-          addEvent(links[i], 'click', function () {
-            params['goal'] = this.dataset.goal || 0
-            params['target'] = this.href
-            console.log(params)
-            tracker.sendRequest(params, 200)
-          })
-        }
+    //   var params = {'type': 'link'}
+    //   var tracker = this
+    //   const pageUrl = (window.location.host + window.location.pathname + window.location.search).toLowerCase()
+    //   for (var i in links) {
+    //     addEvent(links[i], 'click', function (e) {
+    //       e.preventDefault()
+    //       const linkUrl = (this.host + this.pathname + this.search).toLowerCase()
+    //       // if (linkUrl === pageUrl) {
+    //       //   const scrollTop = document.getElementById(this.hash.replace('#','')) ? $(this.hash).offset().top : 0;
+    //       //   $('html, body').animate({
+    //       //     scrollTop: scrollTop
+    //       //   }, 500);
+    //       // } else {
+    //       //   params['goal'] = this.dataset.goal || 0
+    //       //   params['target'] = this.href
+    //       //   tracker.sendRequest(params, 200)
+    //       //   var openTarget = this.target || '_top'
+    //       //   window.open(this.href, openTarget)
+    //       // }
+    //     })
+    //   }
+    // },
+    trackLink: function(target = '', goal = 0) {
+      var params = {
+        type: 'link',
+        target: target,
+        goal: goal
       }
+      this.sendRequest(params, 200)
     },
 
     trackEvent: function (eventParams, goal = 0) {
@@ -134,7 +201,7 @@ $( document ).ready(function() {
       params['n'] = eventParams[4] || ''
       params['type'] = 'event'
       params['goal'] = goal
-      this.sendRequest(params)
+      this.sendRequest(params, 200)
     },
 
     sendRequest: function (params, delay = null) {
