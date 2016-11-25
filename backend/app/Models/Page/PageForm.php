@@ -2,11 +2,14 @@
 
 namespace App\Models\Page;
 
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 class PageForm extends Model {
     
-    public $timestamps = true;
+    protected $connection = 'mongodb';
+
+
+    //public $timestamps = true;
     
-    protected $dateFormat = 'U';
+    //protected $dateFormat = 'U';
 }

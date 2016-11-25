@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'timezone' => 'PRC', 
+    'timezone' => 'PRC',
 
     /*
     |--------------------------------------------------------------------------
@@ -157,6 +157,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         
         Intervention\Image\ImageServiceProvider::class,
+        Jenssegers\Mongodb\MongodbServiceProvider::class,
     ],
 
     /*
