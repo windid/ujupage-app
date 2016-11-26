@@ -138,28 +138,54 @@ export default {
       }
     }
   },
-  'shape': {
+  'square': {
     type: 'shape',
     subType: 'square',
     props: {
-      backgroundColor: '3',
+      backgroundColor: '1',
       borderWidth: '1px',
-      borderColor: '4',
+      borderColor: '3',
       borderRadius: '0px',
       borderStyle: 'solid'
     },
     style: {
       'pc': {
-        left: '330px',
+        left: '380px',
         top: '10px',
         width: '200px',
         height: '150px'
       },
       'mobile': {
-        left: '50px',
+        left: '80px',
         top: '10px',
         width: '200px',
         height: '150px'
+      }
+    }
+  },
+
+  'circle': {
+    type: 'shape',
+    subType: 'circle',
+    props: {
+      backgroundColor: '1',
+      borderWidth: '1px',
+      borderColor: '3',
+      borderRadius: '50%',
+      borderStyle: 'solid'
+    },
+    style: {
+      'pc': {
+        left: '380px',
+        top: '10px',
+        width: '200px',
+        height: '200px'
+      },
+      'mobile': {
+        left: '80px',
+        top: '10px',
+        width: '200px',
+        height: '200px'
       }
     }
   }
