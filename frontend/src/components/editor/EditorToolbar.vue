@@ -19,7 +19,7 @@ export default {
       advancedTools: [
         { name: '形状', style: 'stop', action: () => this.showShapePicker() },
         { name: '悬浮', style: 'cloud', action: () => this.comming('fixed') },
-        { name: '视频', style: 'film', action: () => this.comming('video') },
+        { name: '视频', style: 'film', action: () => this.newElement('video') },
         // { name: '地图', style: 'map-marker', action: () => this.newElement('map') },
         { name: '轮播图', style: 'retweet', action: () => this.comming('swiper') },
         // { name: '倒计时', style: 'time', action: () => this.newElement('timer') },
