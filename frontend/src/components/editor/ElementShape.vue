@@ -1,6 +1,7 @@
 <script>
 import ElementCommon from './ElementCommon'
 import ShapeEditor from './ShapeEditor'
+import FixedEditor from './FixedEditor'
 import colorMixin from '../../mixins/colorMixin'
 import { mapGetters, mapActions } from 'vuex'
 import { merge, isEqual } from 'lodash'
@@ -12,7 +13,8 @@ export default {
   mixins: [colorMixin],
   components: {
     ElementCommon,
-    ShapeEditor
+    ShapeEditor,
+    FixedEditor
   },
   data () {
     return {
@@ -24,7 +26,8 @@ export default {
       shapeElement: merge({}, this.element),
       resize: {},
       draggableFromChild: true,
-      hasPopup: false
+      hasPopup: false,
+      fixedEditing: false
     }
   },
   created () {
@@ -180,6 +183,7 @@ export default {
     
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
+      <div class="btn btn-default" title="固定位置"><span class="glyphicon glyphicon-pushpin"></span></div>
     </template>
     <template slot="button-groups">
       <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">
@@ -191,6 +195,7 @@ export default {
     @edit-done="editDone"
     @popup-change="popupChange"
     @image-change="imageChange"></shape-editor> -->
+  <fixed-editor :show="fixedEditing" v-model="shapeElement"></fixed-editor>
 </div>
 </template>
 
