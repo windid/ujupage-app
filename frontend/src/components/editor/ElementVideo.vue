@@ -4,7 +4,7 @@ import VideoEditor from './VideoEditor'
 import videoHandler from '../../utils/videoHandler'
 
 import { mapGetters, mapActions } from 'vuex'
-import { merge } from 'lodash'
+import { merge, isEqual } from 'lodash'
 
 export default {
   name: 'element-video',
@@ -15,19 +15,32 @@ export default {
   },
   data () {
     return {
-      content: merge({}, this.element.content),
+      videoElement: merge({}, this.element),
       url: '',
+      resize: {
+        handles: 'e'
+      },
       buttonGroup: 'main',
       editing: false,
-      videoInfo: null
+      videoInfo: this.element.videoInfo ? merge({}, this.element.videoInfo) : null,
+      size: {
+        with: null,
+        height: null
+      }
     }
   },
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace'
     }),
+    resizable () {
+      if (this.videoType === 'empty') {
+        return false
+      }
+      return (!this.editing && this.workspace.activeElementId === this.elementId)
+    },
     videoType () {
-      const s = this.content.source
+      const s = this.videoElement.content.source
       if (!s) {
         return 'empty'
       } else if (this.isRaw(s)) {
@@ -38,16 +51,10 @@ export default {
       return 'empty'
     },
     embedStyle () {
-      const style = {}
-      const width = this.videoInfo.width
-      const height = this.videoInfo.height
-      if (width) {
-        style.width = width + 'px'
+      return {
+        width: '100%',
+        height: 'auto'
       }
-      if (height) {
-        style.height = height + 'px'
-      }
-      return style
     }
   },
   methods: {
@@ -56,46 +63,70 @@ export default {
       'setActiveElementId'
     ]),
     ...videoHandler,
-    editSave (content) {
-      this.content = content
-    },
     edit () {
       this.editing = true
       this.buttonGroup = 'edit'
     },
+    editChange (source) {
+      this.videoElement.content.source = source
+      this.videoInfo = this.parseXML(source)
+      if (this.videoType !== 'empty') {
+        const style = merge({}, this.videoElement.style)
+        style['mobile'].height = undefined
+        style['pc'].height = undefined
+        this.videoElement.style = style
+      }
+      if (this.videoType === 'embed') {
+        // todo: 重新生成embed
+      }
+      this.$forceUpdate()
+    },
     editDone () {
       this.editing = false
       this.buttonGroup = 'main'
-      // console.log(this.content)
+      this.videoElement.videoInfo = this.videoInfo
+      if (!isEqual(this.element, this.videoElement)) {
+        this.modifyElement([this.elementId, this.videoElement, true])
+      }
+    },
+    resizing (direction, size) {
+      this.size.width = size
+      if (this.videoInfo && this.videoInfo.height) {
+        this.size.height = size * this.videoInfo.height / this.videoInfo.width
+      }
     }
   },
   watch: {
-    'content.source': function (source) {
-      this.videoInfo = this.parseXML(source)
+    'element': function (val) {
+      this.videoElement = merge({}, val)
     }
   }
 }
 </script>
 
 <template>
-<div>
+<div class="element-wrapper">
   <element-common
     :element="element" 
     :section-id="sectionId" 
     :element-id="elementId"
     :button-group="buttonGroup"
+    :resizable="resizable"
+    :resize="resize"
+    @resizing="resizing"
     @drag-start="editDone">
     <div slot="content" class="element-video" >
       <div v-if="videoType === 'empty'" class="element-video-placeholder">
         <div><i class="glyphicon glyphicon-film"></i></div>
         <div>添加视频</div>
       </div>
+      <div class="elmement-video-mask" v-if="videoType !== 'empty'"></div>
       <div v-if="videoType === 'embed'" class="element-video-embed">
         <embed :src="videoInfo.src" :style="embedStyle"><embed>
       </div>
       <div v-if="videoType === 'raw'" class="element-video-raw">
-        <video controls width="100%" height="auto">
-          <source :src="content.source"></source>
+        <video controls width="100%" height="auto" ref="rawVideo">
+          <source :src="videoElement.content.source"></source>
         </video>
       </div>
     </div>
@@ -108,7 +139,7 @@ export default {
       </div>
     </template>
   </element-common>
-  <video-editor :show="editing" v-model="content" @edit-done="editDone"></video-editor>
+  <video-editor :show="editing" v-model="videoElement.content" @edit-done="editDone" @edit-change="editChange"></video-editor>
 </div>
 </template>
 
@@ -117,6 +148,15 @@ export default {
     width: 100%;
     height: 100%;
     border: 1px solid #ccc;
+    position: relative;
+  }
+  .elmement-video-mask {
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
   .element-video-placeholder {
     display: block;
