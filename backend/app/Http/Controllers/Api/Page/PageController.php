@@ -339,7 +339,7 @@ class PageController extends Controller {
         
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
-                ->orderBy('id', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->where(function($query) use ($start_time, $end_time) {
                     if ($start_time > 0 && $end_time > 0) {
                         return $query->where('created_at', '>=', new \DateTime($start_time))
@@ -351,7 +351,8 @@ class PageController extends Controller {
         $total = $pageForm->where('page_id', $page->id)
                     ->where(function($query) use ($start_time, $end_time) {
                         if ($start_time > 0 && $end_time > 0) {
-                            return $query->whereBetween('created_at', [$start_time, $end_time]);
+                            return $query->where('created_at', '>=', new \DateTime($start_time))
+                                    ->where('created_at', '<=', new \DateTime($end_time));
                         }
                     })->count();
         $result = [
