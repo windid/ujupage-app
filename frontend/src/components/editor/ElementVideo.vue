@@ -68,7 +68,9 @@ export default {
       this.buttonGroup = 'edit'
     },
     editChange (source) {
-      this.videoElement.content.source = source
+      const el = merge({}, this.videoElement)
+      el.content.source = source
+      this.videoElement = el
       this.videoInfo = this.parseXML(source)
       if (this.videoType !== 'empty') {
         const style = merge({}, this.videoElement.style)
