@@ -447,15 +447,17 @@ class PageController extends Controller {
                 $str .= str_repeat(',', $pad) . $ov; 
                 $pre_index = $ok;
             }
-            $values[] = $str;
+            $values[] = iconv('utf-8', 'gbk', $str);
         }        
-        
+
         header("Content-type:text/csv");
         header("Content-Disposition:attachment;filename=".$page->name."_商机".date('YmdHis') . '.csv');
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
         header('Expires:0'); 
         header('Pragma:public');
         echo iconv('utf-8', 'gb2312', implode(",", array_flip($fields_val))) . "\n";
-        echo iconv('utf-8', 'gb2312', implode("\n" ,$values));exit;
+        // echo iconv('utf-8', 'gb2312', implode("\n" ,$values));exit;
+        // echo implode(",", array_flip($fields_val)) . "\n";
+        echo implode("\n" ,$values);exit;
     }
 }
