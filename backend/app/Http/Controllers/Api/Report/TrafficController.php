@@ -99,7 +99,7 @@ class TrafficController extends Controller {
                                 return $query;
                             })
                             ->groupBy('dimension_value')
-                            ->select('dimension_value', 'visitors', 'conversions', \DB::raw('conversions / visitors AS conversion_percent'))
+                            ->select('dimension_value', \DB::raw('SUM(visitors) as visitors'), \DB::raw('SUM(conversions) as conversions'), \DB::raw('SUM(conversions) / SUM(visitors) AS conversion_percent'))
                             ->get();
         }
         
