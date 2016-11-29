@@ -100,14 +100,24 @@ export default {
 </script>
 
 <template>
-  <element-common :element="element" :section-id="sectionId" :element-id="elementId" :button-group.sync="buttonGroup" :draggable="draggable" :resize="resize" :resizable="resizable" @change-button-group="changeButtonGroup" @change-draggable="changeDraggable">
+  <element-common 
+    :element="element" 
+    :section-id="sectionId" 
+    :element-id="elementId" 
+    :button-group.sync="buttonGroup" 
+    :draggable="draggable" 
+    :resize="resize" 
+    :resizable="resizable" 
+    :fixedEditable="true"
+    @change-button-group="changeButtonGroup" 
+    @change-draggable="changeDraggable"
+  >
     <div slot="content" @dblclick="edit" @mousedown.prevent>
       <img v-bind:src="element.src" :style="{width:'100%',height:'auto'}" @mousedown.prevent>
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>
       <div class="btn btn-default" title="链接" @click="editLink"><span class="glyphicon glyphicon-link"></span></div>
-      <div class="btn btn-default" title="固定位置"><span class="glyphicon glyphicon-pushpin"></span></div>
     </template>
     <template slot="button-groups">
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>

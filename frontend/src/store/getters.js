@@ -43,6 +43,17 @@ export const editorSections = state => state.editor.content.sections
 
 export const editorElements = state => state.editor.content.elements
 
+export const editorFixedElements = state => {
+  const elementIds = []
+  const elements = state.editor.content.elements
+  for (const elementId in elements) {
+    if (elements[elementId].fixed && elements[elementId].fixed !== 'none') {
+      elementIds.push(elementId)
+    }
+  }
+  return elementIds
+}
+
 export const editorColorSet = state => state.editor.content.colorSet
 
 export const editingPage = state => state.editor.page
@@ -65,9 +76,9 @@ export const elementsIndex = state => {
   const elements = state.editor.content.elements
   for (const elementId in elements) {
     zIndex.pc.max = Math.max(elements[elementId].style.pc.zIndex, zIndex.pc.max)
-    zIndex.pc.min = Math.max(elements[elementId].style.pc.zIndex, zIndex.pc.min)
+    zIndex.pc.min = Math.min(elements[elementId].style.pc.zIndex, zIndex.pc.min)
     zIndex.mobile.max = Math.max(elements[elementId].style.mobile.zIndex, zIndex.mobile.max)
-    zIndex.mobile.min = Math.max(elements[elementId].style.mobile.zIndex, zIndex.mobile.min)
+    zIndex.mobile.min = Math.min(elements[elementId].style.mobile.zIndex, zIndex.mobile.min)
   }
   return zIndex
 }

@@ -35,7 +35,6 @@ export default {
   left: 0;
   right: 0;
   min-width: 980px;
-  overflow: auto;
 }
 
 .dropdown-menu-narrow{

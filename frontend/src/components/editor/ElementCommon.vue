@@ -3,12 +3,14 @@ import { mapGetters, mapActions } from 'vuex'
 
 import mouseDrag from '../../mixins/mouseDrag'
 import resizer from '../ui/OnesideResizer'
+import FixedEditor from './FixedEditor'
 
 export default {
   name: 'element-common',
   mixins: [mouseDrag],
   components: {
-    resizer
+    resizer,
+    FixedEditor
   },
   // 接受父组件传参，element元素属性, sectionId:板块ID, elementId:元素ID
   props: {
@@ -37,6 +39,10 @@ export default {
     },
     resize: {
       type: Object
+    },
+    fixedEditable: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -70,7 +76,9 @@ export default {
       'moveElement',
       'resizeElement',
       'indexElement',
-      'duplicateElement'
+      'duplicateElement',
+      'modifyElement',
+      'moveFixedElement'
     ]),
     showToolbar () {
       this.$emit('change-button-group', 'main')
@@ -82,6 +90,9 @@ export default {
       const toolbarPositionX = (viewRight < 0) ? 'right' : 'left'
 
       this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX
+    },
+    changFixed (element) {
+      this.modifyElement([this.elementId, element])
     },
     computeMoveMost (movement) {
       const getMin = (v, range) => {
@@ -102,7 +113,8 @@ export default {
       this.$emit('drag-start')
 
       const self = this.$el.getBoundingClientRect()
-      const box = document.getElementById('content-area').getBoundingClientRect()
+      const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
+      const box = document.getElementById(boxContainer).getBoundingClientRect()
       this.horizontalMost = [box.left - self.left, box.right - self.right]
       this.verticalMost = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
@@ -124,7 +136,11 @@ export default {
       const move = this.computeMoveMost(movement)
       this.elPositionInPage.left = this.startPosLeft + move.x
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
-      this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
+      if (this.element.fixed) {
+        this.moveFixedElement()
+      } else {
+        this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
+      }
     },
     dragEnable () {
       // calbacks
@@ -145,7 +161,8 @@ export default {
     },
     resizeStart (direction) {
       const self = this.$el.getBoundingClientRect()
-      const box = document.getElementById('content-area').getBoundingClientRect()
+      const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
+      const box = document.getElementById(boxContainer).getBoundingClientRect()
       if (direction === 'right') {
         this.widthMost = box.right - self.left
       } else if (direction === 'left') {
@@ -230,7 +247,7 @@ const getElementTop = (element) => {
   <div class="element" @click="setActiveElementId(elementId)" @mousedown.stop="onDragBegin"
     :style="{
       left: element.style[workspace.version].left,
-      top: element.style[workspace.version].top,
+      top: element.fixed === 'top' ? element.style[workspace.version].top + 50 : element.style[workspace.version].top,
       width: element.style[workspace.version].width,
       height: element.style[workspace.version].height || 'auto',
       transition: (resizing || dragging) ? 'none' : 'all .4s'
@@ -238,7 +255,7 @@ const getElementTop = (element) => {
   >
     <div class="el-content" :id="'element-' + elementId"
       :style="{
-        zIndex:element.style[workspace.version].zIndex,
+        zIndex: element.style[workspace.version].zIndex,
       }" 
       v-bind:class="{'outline':workspace.activeElementId === elementId}"
     >
@@ -253,6 +270,7 @@ const getElementTop = (element) => {
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
+        <fixed-editor v-if="fixedEditable" :value="element" @input="changFixed"></fixed-editor>
         <div class="btn btn-default" title="复制一个" @click.stop="duplicateElement(elementId)">
           <span class="glyphicon glyphicon-duplicate"></span>
         </div>
@@ -274,10 +292,10 @@ const getElementTop = (element) => {
   </div>
 </template>
 
-<style>
-
+<style scoped>
 .element {
-  position: absolute !important;
+  position: absolute;
+  pointer-events: auto;
 }
 
 .el-content {
