@@ -29,6 +29,9 @@ export default {
       }
     }
   },
+  created () {
+    this.calculateSize()
+  },
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace'
@@ -51,10 +54,19 @@ export default {
       return 'empty'
     },
     embedStyle () {
-      return {
-        width: '100%',
-        height: 'auto'
+      let style = {}
+      if (this.videoType === 'raw') {
+        style = {
+          width: '100%',
+          height: 'auto'
+        }
+      } else if (this.videoType === 'embed') {
+        if (this.size.width) {
+          style.width = this.size.width + 'px'
+          style.height = this.size.height + 'px'
+        }
       }
+      return style
     }
   },
   methods: {
@@ -80,6 +92,11 @@ export default {
       }
       if (this.videoType === 'embed') {
         // todo: 重新生成embed
+        const style = merge({}, this.videoElement.style)
+        style['mobile'].height = undefined
+      }
+      if (this.videoType === 'empty') {
+        // todo: 无视频资源
       }
       this.$forceUpdate()
     },
@@ -94,11 +111,30 @@ export default {
     resizing (direction, size) {
       this.size.width = size
       if (this.videoInfo && this.videoInfo.height) {
-        this.size.height = size * this.videoInfo.height / this.videoInfo.width
+        this.size.height = Math.floor(size * this.videoInfo.height / this.videoInfo.width)
       }
+    },
+    calculateSize (version) {
+      if (this.videoInfo === null) return
+      const v = arguments.length < 1 ? this.workspace.version : version
+      const size = {
+        width: null,
+        height: null
+      }
+      const width = parseInt(this.element.style[v].width)
+      if (width) {
+        size.width = width
+        if (this.videoInfo && this.videoInfo.width) {
+          size.height = Math.floor(width * this.videoInfo.height / this.videoInfo.width)
+        }
+      }
+      this.size = size
     }
   },
   watch: {
+    'workspace.version': function (v) {
+      this.calculateSize(v)
+    },
     'element': function (val) {
       this.videoElement = merge({}, val)
     }
@@ -152,6 +188,10 @@ export default {
     border: 1px solid #ccc;
     position: relative;
   }
+  .element-video video,
+  .element-video embed {
+    display: block;
+  }
   .elmement-video-mask {
     background: transparent;
     position: absolute;
@@ -159,6 +199,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 1;
   }
   .element-video-placeholder {
     display: block;
