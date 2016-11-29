@@ -172,6 +172,7 @@ export default {
       } else if (direction === 'bottom') {
         this.heightMost = box.bottom - self.top
       }
+      this.$emit('resize-start', direction)
     },
     resizeAction (direction, saveToStore, size) {
       if (direction === 'top' || direction === 'bottom') {
@@ -190,9 +191,11 @@ export default {
           width: parseInt(this.$el.style.width),
           height: parseInt(this.$el.style.height)
         }])
+        this.$emit('resize-end')
       } else {
         this.resizing = true
         this.$emit('change-draggable', false)
+        this.$emit('resizing', direction, size)
       }
     },
     resizeEnable () {
