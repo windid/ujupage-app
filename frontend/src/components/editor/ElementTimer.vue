@@ -29,10 +29,7 @@ export default {
       workspace: 'editorWorkspace'
     }),
     resizable: function () {
-      return true
-    },
-    draggable: function () {
-      return true
+      return (!this.editing && this.workspace.activeElementId === this.elementId)
     },
     labelStyle: function () {
       return {
@@ -89,7 +86,6 @@ export default {
     :section-id="sectionId" 
     :element-id="elementId" 
     :button-group="buttonGroup" 
-    :draggable="draggable" 
     :resize="resize" 
     :resizable="resizable" 
     @change-button-group="changeButtonGroup" 

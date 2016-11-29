@@ -221,7 +221,8 @@ export default {
   'timer': {
     type: 'timer',
     data: {
-      timestamp: null,
+      date: null,
+      time: null,
       labelColor: null,
       numberColor: null,
       timerColor: null
