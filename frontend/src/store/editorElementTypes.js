@@ -217,5 +217,28 @@ export default {
         height: '120px'
       }
     }
+  },
+  'timer': {
+    type: 'timer',
+    data: {
+      timestamp: null,
+      labelColor: null,
+      numberColor: null,
+      timerColor: null
+    },
+    style: {
+      pc: {
+        left: '330px',
+        top: '10px',
+        width: '300px',
+        height: 'auto'
+      },
+      'mobile': {
+        left: '50px',
+        top: '10px',
+        width: '220px',
+        height: 'auto'
+      }
+    }
   }
 }
