@@ -93,7 +93,7 @@ class ConversionController extends Controller {
         $variation_id = \Request::input('variation_id', 0);
         
         $conversions = [];
-        $visitors = intval(($this->overview->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
+        $visitors = $this->overview->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
                         ->where(function ($query) use ($variation_id, $ver){
                             if ($variation_id > 0) {
                                 $query = $query->where('variation_id', $variation_id);
@@ -102,8 +102,8 @@ class ConversionController extends Controller {
                                 $query = $query->where('ver', $ver);
                             }
                             return $query;
-                        })
-                        ->select(\DB::raw('SUM(visitors) AS visitors'))->first())['visitors']);
+                        })->select(\DB::raw('SUM(visitors) AS visitors'))->first();
+        $visitors = intval($visitors['visitors']); 
         
         $conversions[] = $this->conversion->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
                         ->where('goal', '0')

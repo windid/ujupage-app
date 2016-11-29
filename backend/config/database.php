@@ -65,6 +65,17 @@ return [
             'strict' => false,
             'engine' => null,
         ],
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'host'     => env('DB_MONGOHOST', 'localhost'),
+            'port'     => env('DB_MONGOPORT', 27017),
+            'database' => env('DB_MONGODATABASE'),
+            'username' => env('DB_MONGOUSERNAME'),
+            'password' => env('DB_MONGOPASSWORD'),
+            'options' => [
+                'database' => env('DB_MONGODATABASE') // sets the authentication database required by mongo 3
+            ]            
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',

@@ -6,6 +6,7 @@ import ElementText from './ElementText'
 import ElementButton from './ElementButton'
 import ElementHtml from './ElementHtml'
 import ElementImage from './ElementImage'
+import ElementShape from './ElementShape'
 import ElementVideo from './ElementVideo'
 import resizer from '../ui/OnesideResizer'
 
@@ -26,6 +27,7 @@ export default {
     ElementButton,
     ElementHtml,
     ElementImage,
+    ElementShape,
     ElementVideo,
     resizer
   },

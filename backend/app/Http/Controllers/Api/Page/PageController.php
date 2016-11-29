@@ -328,34 +328,31 @@ class PageController extends Controller {
             return $page;
         }
         
-        $curpage = request('page', 1);
-        $page_size = request('page_size', 30);
+        $curpage = intval(request('page', 1));
+        $page_size = intval(request('page_size', 30));
         
         $start_time = $end_time = 0;
         if (request()->has('start_date') && request()->has('end_date')) {
-            $start_time = strtotime(request('start_date', date('Y-m-d')));
-            $end_time = strtotime(request('end_date', date('Y-m-d')))+86400;
+            $start_time = request('start_date', date('Y-m-d'));
+            $end_time = date('Y-m-d', strtotime(request('end_date', date('Y-m-d')))+86400);
         }
         
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
-                ->orderBy('id', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->where(function($query) use ($start_time, $end_time) {
                     if ($start_time > 0 && $end_time > 0) {
-                        return $query->whereBetween('created_at', [$start_time, $end_time]);
+                        return $query->where('created_at', '>=', new \DateTime($start_time))
+                                ->where('created_at', '<=', new \DateTime($end_time));
                     }
                 })
                 ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'utms', 'created_at')
                 ->get()->toArray();
-        foreach ($pageforms as $k => $v) {
-            $pageforms[$k]['fields'] = json_decode($v['fields'], true);
-            $pageforms[$k]['utms'] = json_decode($v['utms'], true);
-            $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
-        }
         $total = $pageForm->where('page_id', $page->id)
                     ->where(function($query) use ($start_time, $end_time) {
                         if ($start_time > 0 && $end_time > 0) {
-                            return $query->whereBetween('created_at', [$start_time, $end_time]);
+                            return $query->where('created_at', '>=', new \DateTime($start_time))
+                                    ->where('created_at', '<=', new \DateTime($end_time));
                         }
                     })->count();
         $result = [
@@ -384,15 +381,16 @@ class PageController extends Controller {
         }
         $start_time = $end_time = 0;
         if (request()->has('start_date') && request()->has('end_date')) {
-            $start_time = strtotime(request('start_date', date('Y-m-d')));
-            $end_time = strtotime(request('end_date', date('Y-m-d')))+86400;
+            $start_time = request('start_date', date('Y-m-d'));
+            $end_time = date('Y-m-d', strtotime(request('end_date', date('Y-m-d')))+86400);
         }
         
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)
                 ->where(function($query) use ($start_time, $end_time) {
                     if ($start_time > 0 && $end_time > 0) {
-                        return $query->whereBetween('created_at', [$start_time, $end_time]);
+                        return $query->where('created_at', '>=', new \DateTime($start_time))
+                                ->where('created_at', '<=', new \DateTime($end_time));
                     }
                 })
                 ->select('variation_name', 'fields', 'utms', 'created_at')
@@ -401,11 +399,7 @@ class PageController extends Controller {
         
         $fields = [];
         $utms = [];
-        foreach ($pageforms as $k => $v) {
-            $pageforms[$k]['fields'] = json_decode($v['fields'], true);
-            $pageforms[$k]['utms'] = json_decode($v['utms'], true);
-            $pageforms[$k]['created_at'] = date('Y-m-d H:i', $v['created_at']);
-            
+        foreach ($pageforms as $k => $v) {            
             foreach ($pageforms[$k]['fields'] as $kk => $vv) {
                 if (!isset($fields[$kk])) {
                     $fields[$kk] = 0;
@@ -453,15 +447,17 @@ class PageController extends Controller {
                 $str .= str_repeat(',', $pad) . $ov; 
                 $pre_index = $ok;
             }
-            $values[] = $str;
+            $values[] = iconv('utf-8', 'gbk', $str);
         }        
-        
+
         header("Content-type:text/csv");
         header("Content-Disposition:attachment;filename=".$page->name."_商机".date('YmdHis') . '.csv');
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
         header('Expires:0'); 
         header('Pragma:public');
         echo iconv('utf-8', 'gb2312', implode(",", array_flip($fields_val))) . "\n";
-        echo iconv('utf-8', 'gb2312', implode("\n" ,$values));exit;
+        // echo iconv('utf-8', 'gb2312', implode("\n" ,$values));exit;
+        // echo implode(",", array_flip($fields_val)) . "\n";
+        echo implode("\n" ,$values);exit;
     }
 }

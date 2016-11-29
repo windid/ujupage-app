@@ -66,7 +66,7 @@ export default {
       this.getLeads()
     },
     download () {
-      window.location = '/api/page/' + this.$route.params.pageId + '/leadscvs'
+      window.location = '/api/page/' + this.$route.params.pageId + '/leadscvs?sd=' + this.date.startDate + '&ed=' + this.date.endDate
     }
   },
   created () {

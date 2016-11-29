@@ -1,20 +1,20 @@
 <script>
 import ElementCommon from './ElementCommon'
-import LinkEditor from './LinkEditor'
-import ButtonEditor from './ButtonEditor'
+import ShapeEditor from './ShapeEditor'
+import FixedEditor from './FixedEditor'
 import colorMixin from '../../mixins/colorMixin'
 import { mapGetters, mapActions } from 'vuex'
 import { merge, isEqual } from 'lodash'
 
 export default {
-  name: 'element-button',
+  name: 'element-shape',
   // 接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID
   props: ['element', 'sectionId', 'elementId'],
   mixins: [colorMixin],
   components: {
     ElementCommon,
-    LinkEditor,
-    ButtonEditor
+    ShapeEditor,
+    FixedEditor
   },
   data () {
     return {
@@ -23,69 +23,27 @@ export default {
       // 是否处于编辑状态
       editing: false,
       // 组件实例化时将传入的element参数复制到button中，以避免直接修改store中的状态
-      buttonElement: merge({}, this.element),
-      linkObj: merge({}, this.element.link),
-      // 模拟css hover伪类效果
-      hover: false,
+      shapeElement: merge({}, this.element),
       resize: {},
       draggableFromChild: true,
-      hasPopup: false
+      hasPopup: false,
+      fixedEditing: false
     }
   },
   created () {
-    // 如果有属性缺失，手动补充
-    const fill = (object, key, fillValue) => {
-      if (!object.hasOwnProperty(key)) {
-        object[key] = fillValue
-      }
+    if (!this.shapeElement.hasOwnProperty('imageObj')) {
+      this.shapeElement.imageObj = null
     }
-    const fillElement = (key, value) => fill(this.buttonElement, key, value)
-    const fillProps = (key, value) => fill(this.buttonElement.props, key, value)
-    fillElement('imageObj', null)
-    const s = ['boxShadowX', 'boxShadowY', 'boxShadowSize']
-    s.forEach((e) => fillProps(e, 0))
-    fillProps('borderWidth', 1)
-    fillProps('boxShadowInset', 'false')
-    fillProps('boxShadowColor', 4)
   },
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace'
     }),
-    // 编辑状态不允许拖动
     draggable () {
       return this.draggableFromChild
     },
     resizable () {
       return (!this.editing && this.workspace.activeElementId === this.elementId)
-    },
-    buttonStyle () {
-      const props = this.buttonElement.props
-      const style = {
-        borderRadius: props.borderRadius,
-        borderStyle: props.borderStyle,
-        borderWidth: (props.borderWidth ? props.borderWidth : 0) + 'px',
-        borderColor: this.getColor(props.borderColor),
-        overflow: 'hidden'
-      }
-      let shadow = ''
-      shadow += (props.boxShadowX ? props.boxShadowX : 0) + 'px '
-      shadow += (props.boxShadowY ? props.boxShadowY : 0) + 'px '
-      shadow += (props.boxShadowSize ? props.boxShadowSize : 0) + 'px '
-      shadow += this.getColor(props.boxShadowColor)
-      if (props.boxShadowInset === 'true') {
-        shadow += ' inset'
-      }
-      style.boxShadow = shadow
-      if (this.buttonElement.imageObj) {
-        // 图片按钮
-      } else {
-        style.fontSize = props.fontSize
-        style.fontWeight = props.fontWeight
-        style.backgroundColor = this.hover ? this.getColor(props.hoverColor) : this.getColor(props.backgroundColor)
-        style.color = this.getColor(props.color)
-      }
-      return style
     }
   },
   methods: {
@@ -102,8 +60,8 @@ export default {
     editDone () {
       this.editing = false
       this.buttonGroup = 'main'
-      if (!isEqual(this.element, this.buttonElement)) {
-        this.modifyElement([this.elementId, this.buttonElement])
+      if (!isEqual(this.element, this.shapeElement)) {
+        this.modifyElement([this.elementId, this.shapeElement])
       }
     },
     editLink () {
@@ -127,7 +85,7 @@ export default {
       this.hasPopup = val
     },
     imageChange (val) {
-      this.buttonElement.imageObj = val
+      this.shapeElement.imageObj = val
       this.setActiveElementId(this.elementId)
       this.manualUpdate(val)
     },
@@ -161,10 +119,10 @@ export default {
           style.mobile.height = undefined
         }
         // commit to store
-        // this.buttonElement.imageObj = newImage
-        this.buttonElement.style = style
-        if (!isEqual(this.element, this.buttonElement)) {
-          this.modifyElement([this.elementId, this.buttonElement, true])
+        // this.shapeElement.imageObj = newImage
+        this.shapeElement.style = style
+        if (!isEqual(this.element, this.shapeElement)) {
+          this.modifyElement([this.elementId, this.shapeElement, true])
         }
       }
     }
@@ -177,9 +135,9 @@ export default {
       if (val !== this.elementId && this.editing) this.editDone()
     },
     'element': function (val) {
-      this.buttonElement = merge({}, val)
+      this.shapeElement = merge({}, val)
     },
-    'buttonElement.imageObj': function (newImage) {
+    'shapeElement.imageObj': function (newImage) {
       this.manualUpdate(newImage)
     }
   }
@@ -200,44 +158,50 @@ export default {
     @change-draggable="changeDraggable" 
     @drag-start="editDone"
   >
-    <div slot="content" v-if="buttonElement.imageObj" class="element-image-button"
-      :style="buttonStyle">
-      <img :src="buttonElement.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
+    <div slot="content" v-if="shapeElement.imageObj" class="element-image-button"
+      :style="{
+        borderRadius: shapeElement.props.borderRadius,
+        boxShadow: shapeElement.props.boxShadow,
+        borderStyle: shapeElement.props.borderStyle,
+        borderColor: getColor(shapeElement.props.borderColor),
+        overflow: 'hidden'
+      }">
+      <img :src="shapeElement.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
     </div>
-    <div slot="content" v-else class="element-button"
+    <div slot="content" v-else class="element-shape"
       @dblclick="edit" 
-      @mouseenter = "hover = true"
-      @mouseleave = "hover = false"
-      :style="buttonStyle">
-      {{buttonElement.text}}
+      :style="[
+        {
+          borderWidth: shapeElement.props.borderWidth,
+          borderRadius: shapeElement.props.borderRadius,
+          borderStyle: shapeElement.props.borderStyle,
+          backgroundColor: getColor(shapeElement.props.backgroundColor),
+          borderColor: getColor(shapeElement.props.borderColor)
+        }
+      ]">
     </div>
     
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
-      <div class="btn btn-default" title="链接" @click="editLink"><span class="glyphicon glyphicon-link"></span></div>
       <div class="btn btn-default" title="固定位置"><span class="glyphicon glyphicon-pushpin"></span></div>
     </template>
     <template slot="button-groups">
       <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">
         <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
       </div>
-      <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
     </template>
   </element-common>
-  <button-editor :show="editing" v-model="buttonElement"
+ <!--  <shape-editor :show="editing" v-model="shapeElement"
     @edit-done="editDone"
     @popup-change="popupChange"
-    @image-change="imageChange"></button-editor>
+    @image-change="imageChange"></shape-editor> -->
+  <fixed-editor :show="fixedEditing" v-model="shapeElement"></fixed-editor>
 </div>
 </template>
 
 <style>
-
-.element-button{
-  text-align: center;
-  cursor:pointer;
-  border-width: 2px;
-  padding: 6px;
-  height:100%;
+.element-shape {
+  height: 100%;
 }
+
 </style>

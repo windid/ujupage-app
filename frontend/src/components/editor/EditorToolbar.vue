@@ -1,36 +1,57 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import eventHandler from '../../utils/eventHandler'
 
 export default {
+  name: 'editor-toolbar',
   data () {
     return {
       basicTools: [
-        { name: '版块', style: 'modal-window', action: () => this.addSection() },
-        { name: '图片', style: 'picture', action: () => this.addElement('image') },
-        { name: '文字', style: 'font', action: () => this.addElement('text') },
-        { name: '按钮', style: 'expand', action: () => this.addElement('button') },
-        { name: '表单', style: 'edit', action: () => this.addElement('form') },
-        { name: '形状', style: 'stop', action: () => this.addShape() }
+        { name: '版块', style: 'modal-window', action: () => {
+          this.addSection()
+          this.showShapes = false
+        } },
+        { name: '图片', style: 'picture', action: () => this.newElement('image') },
+        { name: '文字', style: 'font', action: () => this.newElement('text') },
+        { name: '按钮', style: 'expand', action: () => this.newElement('button') },
+        { name: '表单', style: 'edit', action: () => this.newElement('form') }
       ],
       advancedTools: [
-        { name: '视频', style: 'film', action: () => this.addElement('video') },
-        { name: '音乐', style: 'music', action: () => this.addElement('music') },
-        { name: '悬浮', style: 'cloud', action: () => this.addElement('float') },
-        { name: '地图', style: 'map-marker', action: () => this.addElement('map') },
-        { name: '倒计时', style: 'time', action: () => this.addElement('timer') },
-        { name: 'HTML', style: 'header', action: () => this.addElement('html') }
+        { name: '形状', style: 'stop', action: () => this.showShapePicker() },
+        // { name: '悬浮', style: 'cloud', action: () => this.comming('fixed') },
+        { name: '视频', style: 'film', action: () => this.newElement('video') },
+        // { name: '地图', style: 'map-marker', action: () => this.newElement('map') },
+        // { name: '音乐', style: 'music', action: () => this.newElement('music') },
+        { name: '轮播图', style: 'transfer', action: () => this.comming('swiper') },
+        { name: '倒计时', style: 'time', action: () => this.newElement('timer') },
+        { name: 'HTML', style: 'header', action: () => this.newElement('html') }
       ],
-      showAdvanced: true
+      showAdvanced: true,
+      showShapes: false
     }
   },
   computed: mapGetters({
     'workspace': 'editorWorkspace'
   }),
   methods: {
-    ...mapActions(['addSection', 'addElement']),
-    addShape () {
-      console.log('shape')
+    ...mapActions(['addSection', 'addElement', 'warning']),
+    newElement (type) {
+      this.addElement(type)
+      this.showShapes = false
+    },
+    showShapePicker () {
+      this.showShapes = !this.showShapes
+    },
+    comming () {
+      this.warning({
+        content: '工程狮们正在紧张的开发这个组件，等几天再来试试吧。'
+      })
     }
+  },
+  mounted () {
+    eventHandler.listen(window, 'click', (e) => {
+      this.showShapes = false
+    })
   }
 }
 
@@ -52,8 +73,30 @@ export default {
         </div>
       </div>
       <div class="show-advanced-btn" @click="showAdvanced = !showAdvanced">
-      <span v-show="!showAdvanced" class="glyphicon glyphicon-th"></span>
-      <span v-show="showAdvanced" class="glyphicon glyphicon-minus"></span>
+        <span v-if="!showAdvanced" class="glyphicon glyphicon-th"></span>
+        <span v-else class="glyphicon glyphicon-minus"></span>
+      </div>
+    </div>
+    <div v-if="showShapes" class="shape-picker">
+      <div class="shape-item" @click.stop="newElement('square')">
+        <div class="shape shape-box"></div>
+        <div class="shape-name">方形</div>
+      </div>
+      <div class="shape-item" @click.stop="newElement('circle')">
+        <div class="shape shape-circle"></div>
+        <div class="shape-name">圆形</div>
+      </div>
+      <div class="shape-item" @click.stop="newElement('line')">
+        <div class="shape">
+          <div class="shape-line"></div>
+        </div>
+        <div class="shape-name">横线</div>
+      </div>
+      <div class="shape-item" @click.stop="newElement('vline')">
+        <div class="shape">
+          <div class="shape-vline"></div>
+        </div>
+        <div class="shape-name">竖线</div>
       </div>
     </div>
   </div>
@@ -62,7 +105,7 @@ export default {
 <style scoped>
 .toolbar {
   position: fixed;
-  z-index: 10000;
+  z-index: 100000;
   transition: all .3s ease;
   text-align: center;
   top: 60px;
@@ -140,6 +183,58 @@ export default {
 .tool-name {
   border-top: 1px solid #BEE1F1;
   margin: 1px;
+}
+
+.shape-picker {
+  position: absolute;
+  width: 200px;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 8px #ddd;
+  border-radius: 5px;
+  height: 60px;
+  background: #fff;
+  left: 160px;
+  top: 48px;
+}
+
+.shape-item {
+  float: left;
+  margin: 10px 12px;
+  cursor: pointer;
+}
+
+.shape-name {
+  font-size: 12px;
+  padding-top: 2px;
+}
+
+.shape {
+  height: 25px;
+  width: 25px;
+}
+
+.shape-box {
+  border: 3px solid #BEE1F1;
+}
+
+.shape-circle {
+  border: 3px solid #BEE1F1;
+  border-radius: 50%;
+}
+
+.shape-line {
+  height: 13px;
+  border-bottom: 3px solid #BEE1F1;
+}
+
+.shape-vline {
+  width: 13px;
+  height: 25px;
+  border-right: 3px solid #BEE1F1;
+}
+
+.shape-box:hover, .shape-circle:hover, .shape-line:hover, .shape-vline:hover {
+  border-color: #98CFE9;
 }
 
 </style>
