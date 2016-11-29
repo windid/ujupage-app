@@ -85,7 +85,7 @@ class TrafficController extends Controller {
         $traffics = [];
         
         $dimension = $this->source->groupBy('dimension')->lists('dimension');
-
+        \DB::enableQueryLog();
         foreach ($dimension as $v) {
             $traffics[$v] = $this->source->where('page_id', $page_id)->whereBetween('report_date', [$start_date, $end_date])
                             ->where('dimension', $v)
@@ -99,8 +99,9 @@ class TrafficController extends Controller {
                                 return $query;
                             })
                             ->groupBy('dimension_value')
-                            ->select('dimension_value', 'visitors', 'conversions', \DB::raw('conversions / visitors AS conversion_percent'))
+                            ->select('dimension_value', \DB::raw('SUM(visitors) as visitors'), \DB::raw('SUM(conversions) as conversions'), \DB::raw('SUM(conversions) / SUM(visitors) AS conversion_percent'))
                             ->get();
+//            print_r(\DB::getQueryLog());
         }
         
         return $this->successOK($traffics);

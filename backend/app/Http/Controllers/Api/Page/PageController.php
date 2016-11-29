@@ -339,7 +339,7 @@ class PageController extends Controller {
         
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
-                ->orderBy('id', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->where(function($query) use ($start_time, $end_time) {
                     if ($start_time > 0 && $end_time > 0) {
                         return $query->where('created_at', '>=', new \DateTime($start_time))
@@ -351,7 +351,8 @@ class PageController extends Controller {
         $total = $pageForm->where('page_id', $page->id)
                     ->where(function($query) use ($start_time, $end_time) {
                         if ($start_time > 0 && $end_time > 0) {
-                            return $query->whereBetween('created_at', [$start_time, $end_time]);
+                            return $query->where('created_at', '>=', new \DateTime($start_time))
+                                    ->where('created_at', '<=', new \DateTime($end_time));
                         }
                     })->count();
         $result = [
@@ -446,15 +447,17 @@ class PageController extends Controller {
                 $str .= str_repeat(',', $pad) . $ov; 
                 $pre_index = $ok;
             }
-            $values[] = $str;
+            $values[] = iconv('utf-8', 'gbk', $str);
         }        
-        
+
         header("Content-type:text/csv");
         header("Content-Disposition:attachment;filename=".$page->name."_商机".date('YmdHis') . '.csv');
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
         header('Expires:0'); 
         header('Pragma:public');
         echo iconv('utf-8', 'gb2312', implode(",", array_flip($fields_val))) . "\n";
-        echo iconv('utf-8', 'gb2312', implode("\n" ,$values));exit;
+        // echo iconv('utf-8', 'gb2312', implode("\n" ,$values));exit;
+        // echo implode(",", array_flip($fields_val)) . "\n";
+        echo implode("\n" ,$values);exit;
     }
 }
