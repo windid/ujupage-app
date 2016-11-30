@@ -158,7 +158,6 @@ export default {
         <div><i class="glyphicon glyphicon-film"></i></div>
         <div>添加视频</div>
       </div>
-      <div class="elmement-video-mask" v-if="videoType !== 'empty'"></div>
       <div v-if="videoType === 'embed'" class="element-video-embed">
         <embed :src="videoInfo.src" :style="embedStyle"><embed>
       </div>
@@ -167,6 +166,7 @@ export default {
           <source :src="videoElement.content.source"></source>
         </video>
       </div>
+      <div class="elmement-video-mask" v-if="videoType !== 'empty'"></div>
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
