@@ -72,6 +72,8 @@ export default {
     ...mapGetters({
       workspace: 'editorWorkspace'
     }),
+    // 直接watch element.fixed居然无效，只好用计算属性来监听，不确定是不是Vue的bug
+    // 如果元素被固定，那么不允许拖动
     isFixed () {
       this.$emit('change-draggable', !this.element.fixed)
       return !!this.element.fixed
@@ -153,14 +155,14 @@ export default {
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
     },
-    dragEnable () {
-      // calbacks
-    },
-    dragDisable () {
-      // this.updateStyle()
-      // this.$el.style.top = this.element.style[this.workspace.version].top
-      // this.$el.style.left = this.element.style[this.workspace.version].left
-    },
+    // dragEnable () {
+    //   // calbacks
+    // },
+    // dragDisable () {
+    //   // this.updateStyle()
+    //   // this.$el.style.top = this.element.style[this.workspace.version].top
+    //   // this.$el.style.left = this.element.style[this.workspace.version].left
+    // },
     hasResizer (handle) {
       let handles
       if (this.resize && this.resize.handles) {
@@ -213,13 +215,13 @@ export default {
     },
     resizeDisable () {
     },
-    updateStyle () {
-      for (const prop in this.element.style[this.workspace.version]) {
-        if (prop !== 'zIndex') {
-          this.$el.style[prop] = this.element.style[this.workspace.version][prop]
-        }
-      }
-    },
+    // updateStyle () {
+    //   for (const prop in this.element.style[this.workspace.version]) {
+    //     if (prop !== 'zIndex') {
+    //       this.$el.style[prop] = this.element.style[this.workspace.version][prop]
+    //     }
+    //   }
+    // },
     watchScroll () {
       this.watchEvent = eventHandler.listen(window, 'scroll', (e) => {
         this.documentScrollPx = document.body.scrollTop
@@ -230,16 +232,17 @@ export default {
     }
   },
   watch: {
-    'draggable': function (dragEnabled) {
-      dragEnabled ? this.dragEnable() : this.dragDisable()
-    },
+    // 'draggable': function (dragEnabled) {
+    //   dragEnabled ? this.dragEnable() : this.dragDisable()
+    // },
     'resizable': function (resizeEnabled) {
       resizeEnabled ? this.resizeEnable() : this.resizeDisable()
     },
+
     'isFixed': function (val) {
-      console.log(val)
       this.$emit('change-draggable', !val)
     },
+
     'workspace.activeElementId': function (elementId) {
       if (this.elementId === elementId) {
         this.showToolbar()
@@ -248,7 +251,7 @@ export default {
   },
   mounted () {
     this.resizeDisable()
-    this.element.fixed && this.watchScroll()
+    this.element.fixed && this.element.fixedScrollPx > 0 && this.watchScroll()
     if (this.workspace.activeElementId === this.elementId) {
       this.showToolbar()
       this.resizeEnable()

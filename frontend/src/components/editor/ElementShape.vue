@@ -61,17 +61,6 @@ export default {
         this.modifyElement([this.elementId, this.shapeElement])
       }
     },
-    editLink () {
-      this.buttonGroup = 'link'
-    },
-    editLinkDone (changed, linkObj) {
-      if (changed) {
-        this.linkObj = merge({}, linkObj)
-        const newPropsObj = { link: linkObj }
-        this.modifyElement([this.elementId, newPropsObj])
-      }
-      this.buttonGroup = 'main'
-    },
     changeButtonGroup (val) {
       this.buttonGroup = val
     },
@@ -84,7 +73,7 @@ export default {
     imageChange (val) {
       this.shapeElement.imageObj = val
       this.setActiveElementId(this.elementId)
-      this.manualUpdate(val)
+      // this.manualUpdate(val)
     },
     manualUpdate (newImage) {
       let style
@@ -186,7 +175,7 @@ export default {
         <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
       </div>
     </template>
-    <!-- <shape-editor 
+    <shape-editor 
       slot="sidebar"
       :show="editing" 
       v-model="shapeElement"
@@ -194,7 +183,7 @@ export default {
       @popup-change="popupChange"
       @image-change="imageChange"
     >
-    </shape-editor> -->
+    </shape-editor>
   </element-common>
 </template>
 

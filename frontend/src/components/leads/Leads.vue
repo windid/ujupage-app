@@ -18,7 +18,15 @@ export default {
       currentPage: 1,
       leadsCount: 0,
       pageSize: 50,
-      limitEndDate: moment().format('YYYY-MM-DD')
+      limitEndDate: moment().format('YYYY-MM-DD'),
+      hideFieldName: false,
+      utmMap: {
+        'utm_source': '来源',
+        'utm_campaign': '广告计划',
+        'utm_medium': '媒体',
+        'utm_content': '广告内容',
+        'utm_term': '关键词'
+      }
     }
   },
   computed: {
@@ -98,7 +106,9 @@ export default {
     <table v-if="leads.length > 0" class="table table-bordered table-striped table-hover">
       <thead>
         <tr>
-          <th>表单数据</th>
+          <th>表单数据
+            <label class="toggle-field-name"><input type="checkbox" v-model="hideFieldName"> 隐藏字段名</label>
+          </th>
           <th>来源</th>
           <th width="120px">版本</th>
           <th width="160px">提交时间</th>
@@ -107,10 +117,10 @@ export default {
       <tbody>
         <tr v-for="lead in leads">
           <td>
-            <p v-for="(value, key) in lead.fields">{{key}}: {{value}}</p>
+            <p v-for="(value, key) in lead.fields"><span v-if="!hideFieldName">{{key}}: </span>{{value}}</p>
           </td>
           <td>
-            <p v-for="(value, key) in lead.utms">{{key}}: {{value}}</p>
+            <p v-for="(value, key) in lead.utms">{{utmMap[key]}}: {{value}}</p>
           </td>
           <td>{{lead.variation_name}}</td>
           <td>{{lead.created_at}}</td>
@@ -147,5 +157,11 @@ export default {
 
 .leads > .el-pagination {
   text-align: right;
+}
+
+.toggle-field-name {
+  float: right;
+  color: #999;
+  cursor: pointer;
 }
 </style>

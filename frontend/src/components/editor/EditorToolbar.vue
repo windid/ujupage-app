@@ -17,12 +17,12 @@ export default {
         { name: '表单', style: 'edit', action: () => this.newElement('form') }
       ],
       advancedTools: [
-        { name: '形状', style: 'stop', action: () => this.showShapePicker() },
+        { name: '形状', style: 'stop', action: () => this.comming() },
         // { name: '悬浮', style: 'cloud', action: () => this.comming('fixed') },
-        { name: '视频', style: 'film', action: () => this.newElement('video') },
-        { name: '地图', style: 'map-marker', action: () => this.newElement('map') },
+        { name: '视频', style: 'film', action: () => this.comming('video') },
+        { name: '地图', style: 'map-marker', action: () => this.comming('map') },
         // { name: '音乐', style: 'music', action: () => this.newElement('music') },
-        { name: '轮播图', style: 'transfer', action: () => this.newElement('swiper') },
+        { name: '轮播图', style: 'transfer', action: () => this.comming('swiper') },
         // { name: '倒计时', style: 'time', action: () => this.newElement('timer') },
         { name: 'HTML', style: 'header', action: () => this.newElement('html') }
       ],
