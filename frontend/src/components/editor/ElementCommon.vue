@@ -4,6 +4,7 @@ import { mapGetters, mapActions } from 'vuex'
 import mouseDrag from '../../mixins/mouseDrag'
 import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
+import eventHandler from '../../utils/eventHandler'
 
 export default {
   name: 'element-common',
@@ -50,7 +51,6 @@ export default {
       toolbarPosition: 'top left',
       elPositionInPage: { left: 0, top: 0 },
       clickOnThisElement: false,
-      draggie: null,
       resizeConfig: {
         handles: 'e',
         aspectRatio: false
@@ -63,12 +63,20 @@ export default {
       horizontalMost: [0, 0],
       verticalMost: [0, 0],
       widthMost: 0,
-      heightMost: 0
+      heightMost: 0,
+      fixedEditing: false,
+      documentScrollPx: 0
     }
   },
-  computed: mapGetters({
-    workspace: 'editorWorkspace'
-  }),
+  computed: {
+    ...mapGetters({
+      workspace: 'editorWorkspace'
+    }),
+    isFixed () {
+      this.$emit('change-draggable', !this.element.fixed)
+      return !!this.element.fixed
+    }
+  },
   methods: {
     ...mapActions([
       'setActiveElementId',
@@ -77,8 +85,7 @@ export default {
       'resizeElement',
       'indexElement',
       'duplicateElement',
-      'modifyElement',
-      'moveFixedElement'
+      'modifyElement'
     ]),
     showToolbar () {
       this.$emit('change-button-group', 'main')
@@ -91,8 +98,16 @@ export default {
 
       this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX
     },
+    editFixed () {
+      this.fixedEditing = true
+      this.$emit('change-button-group', 'fixedEditing')
+    },
     changFixed (element) {
-      this.modifyElement([this.elementId, element])
+      if (element) {
+        this.modifyElement([this.elementId, element])
+      }
+      this.fixedEditing = false
+      this.$emit('change-button-group', 'main')
     },
     computeMoveMost (movement) {
       const getMin = (v, range) => {
@@ -136,17 +151,13 @@ export default {
       const move = this.computeMoveMost(movement)
       this.elPositionInPage.left = this.startPosLeft + move.x
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
-      if (this.element.fixed) {
-        this.moveFixedElement()
-      } else {
-        this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
-      }
+      this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
     },
     dragEnable () {
       // calbacks
     },
     dragDisable () {
-      this.updateStyle()
+      // this.updateStyle()
       // this.$el.style.top = this.element.style[this.workspace.version].top
       // this.$el.style.left = this.element.style[this.workspace.version].left
     },
@@ -208,14 +219,26 @@ export default {
           this.$el.style[prop] = this.element.style[this.workspace.version][prop]
         }
       }
+    },
+    watchScroll () {
+      this.watchEvent = eventHandler.listen(window, 'scroll', (e) => {
+        this.documentScrollPx = document.body.scrollTop
+      })
+    },
+    removeWatchScroll () {
+      this.watchEvent && this.watchEvent.remove()
     }
   },
   watch: {
     'draggable': function (dragEnabled) {
-      (dragEnabled) ? this.dragEnable() : this.dragDisable()
+      dragEnabled ? this.dragEnable() : this.dragDisable()
     },
     'resizable': function (resizeEnabled) {
-      (resizeEnabled) ? this.resizeEnable() : this.resizeDisable()
+      resizeEnabled ? this.resizeEnable() : this.resizeDisable()
+    },
+    'isFixed': function (val) {
+      console.log(val)
+      this.$emit('change-draggable', !val)
     },
     'workspace.activeElementId': function (elementId) {
       if (this.elementId === elementId) {
@@ -225,6 +248,7 @@ export default {
   },
   mounted () {
     this.resizeDisable()
+    this.element.fixed && this.watchScroll()
     if (this.workspace.activeElementId === this.elementId) {
       this.showToolbar()
       this.resizeEnable()
@@ -249,8 +273,11 @@ const getElementTop = (element) => {
 <template>
   <div class="element" @click="setActiveElementId(elementId)" @mousedown.stop="onDragBegin"
     :style="{
-      left: element.style[workspace.version].left,
-      top: element.fixed === 'top' ? element.style[workspace.version].top + 50 : element.style[workspace.version].top,
+      display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
+      left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,
+      top: element.fixed ? element.fixedPosition.top : element.style[workspace.version].top,
+      bottom: element.fixed ? element.fixedPosition.bottom : '',
+      right: element.fixed ? element.fixedPosition.right : '',
       width: element.style[workspace.version].width,
       height: element.style[workspace.version].height || 'auto',
       transition: (resizing || dragging) ? 'none' : 'all .4s'
@@ -273,7 +300,7 @@ const getElementTop = (element) => {
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
-        <fixed-editor v-if="fixedEditable" :value="element" @input="changFixed"></fixed-editor>
+        <div v-if="fixedEditable" class="btn btn-default" title="固定位置" @click.stop="editFixed"><span class="glyphicon glyphicon-pushpin"></span></div>
         <div class="btn btn-default" title="复制一个" @click.stop="duplicateElement(elementId)">
           <span class="glyphicon glyphicon-duplicate"></span>
         </div>
@@ -287,11 +314,16 @@ const getElementTop = (element) => {
           <span class="glyphicon glyphicon-trash"></span>
         </div>
       </div>
+      <div v-show="buttonGroup === 'fixedEditing'" class="btn-group el-btn-group" role="group">
+        <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
+      </div>
       <div v-show="buttonGroup === 'position'" class="btn-group el-btn-group" role="group">
         <div class="btn btn-success">X: {{elPositionInPage.left}} &nbsp; Y: {{elPositionInPage.top}}</div>
       </div>
       <slot name="button-groups"></slot>
     </div>
+    <fixed-editor v-if="fixedEditable" :show="fixedEditing" :value="element" @input="changFixed"></fixed-editor>
+    <slot name="sidebar"></slot>
   </div>
 </template>
 

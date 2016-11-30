@@ -24,11 +24,9 @@ export default {
 </script>
 
 <template>
-  <div id="fixed-container" :style="{width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}">
-    <transition-group name="fade" tag="div">
-      <component v-for="elementId in fixedElements" :is="'element-' + elements[elementId].type" :element="elements[elementId]" section-id="fixed" :element-id="elementId" :key="elementId"></component>
-    </transition-group>
-  </div>
+  <transition-group name="fade" tag="div" id="fixed-container" :style="{width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}">
+    <component v-for="elementId in fixedElements" :is="'element-' + elements[elementId].type" :element="elements[elementId]" section-id="fixed" :element-id="elementId" :key="elementId"></component>
+  </transition-group>
 </template>
 
 <style scoped>

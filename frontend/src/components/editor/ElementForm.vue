@@ -93,7 +93,6 @@ export default {
 </script>
 
 <template>
-<div>
   <element-common 
     :element="element" 
     :section-id="sectionId" 
@@ -196,11 +195,17 @@ export default {
         <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
       </div>
     </template>
+    <form-editor 
+      slot="sidebar"
+      :show="editing" 
+      v-model="formElement" 
+      @edit-done="editDone" 
+      @save="saveElement"
+      @popup-change="popupChange"
+      @image-change="imageChange"
+    >
+    </form-editor>
   </element-common>
-  <form-editor :show="editing" v-model="formElement" @edit-done="editDone" @save="saveElement"
-    @popup-change="popupChange"
-    @image-change="imageChange"></form-editor>
-</div>
 </template>
 
 <style>

@@ -1,35 +1,79 @@
 <script>
-import Dropdown from '../ui/Dropdown'
+import Sidebar from '../ui/Sidebar'
 import { merge, isEqual } from 'lodash'
 
 export default {
   components: {
-    Dropdown
+    Sidebar
   },
   props: {
     value: {
+      required: true
+    },
+    show: {
       required: true
     }
   },
   data () {
     return {
-      show: false,
       element: {
         fixed: !!this.value.fixed,
-        fixedPosition: this.value.fixedPosition || 'top',
-        fixedScroll: this.value.fixedScroll || false,
+        fixedPosition: this.value.fixedPosition ? { ...this.value.fixedPosition } : { top: 'auto', bottom: '0', left: '0', right: 'auto' },
         fixedScrollPx: this.value.fixedScrollPx || 0
       }
     }
   },
   computed: {
-    fixedSetting: {
+    fixedTop: {
       get () {
-        return this.element.fixed ? this.element.fixedPosition : 'none'
+        return this.element.fixedPosition.top === 'auto' ? '' : parseInt(this.element.fixedPosition.top)
       },
       set (val) {
-        this.element.fixed = (val !== 'none')
-        this.element.fixedPosition = val
+        if (val === '') {
+          this.element.fixedPosition.top = 'auto'
+        } else {
+          this.element.fixedPosition.top = val + 'px'
+          this.element.fixedPosition.bottom = 'auto'
+        }
+      }
+    },
+    fixedBottom: {
+      get () {
+        return this.element.fixedPosition.bottom === 'auto' ? '' : parseInt(this.element.fixedPosition.bottom)
+      },
+      set (val) {
+        if (val === '') {
+          this.element.fixedPosition.bottom = 'auto'
+        } else {
+          this.element.fixedPosition.bottom = val + 'px'
+          this.element.fixedPosition.top = 'auto'
+        }
+      }
+    },
+    fixedLeft: {
+      get () {
+        return this.element.fixedPosition.left === 'auto' ? '' : parseInt(this.element.fixedPosition.left)
+      },
+      set (val) {
+        if (val === '') {
+          this.element.fixedPosition.left = 'auto'
+        } else {
+          this.element.fixedPosition.left = val + 'px'
+          this.element.fixedPosition.right = 'auto'
+        }
+      }
+    },
+    fixedRight: {
+      get () {
+        return this.element.fixedPosition.right === 'auto' ? '' : parseInt(this.element.fixedPosition.right)
+      },
+      set (val) {
+        if (val === '') {
+          this.element.fixedPosition.right = 'auto'
+        } else {
+          this.element.fixedPosition.right = val + 'px'
+          this.element.fixedPosition.left = 'auto'
+        }
       }
     }
   },
@@ -37,8 +81,9 @@ export default {
     editDone () {
       if (!isEqual(this.originalElement, this.element)) {
         this.$emit('input', merge({}, this.value, this.element))
+      } else {
+        this.$emit('input', false)
       }
-      this.show = false
     }
   },
   mounted () {
@@ -48,34 +93,67 @@ export default {
 </script>
 
 <template>
-  <dropdown :show="show" @toggle="show=!show">
-    <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="固定位置"><span class="glyphicon glyphicon-pushpin"></span> </div>
-    <ul slot="dropdown-menu" class="dropdown-menu">
-      <li><label><input type="radio" name="fixed" value="none" v-model="fixedSetting"> 定位在板块中</label></li>
-      <li><label><input type="radio" name="fixed" value="top" v-model="fixedSetting"> 固定到浏览器顶部</label></li>
-      <li><label><input type="radio" name="fixed" value="bottom" v-model="fixedSetting"> 固定的浏览器底部</label></li>
-      <template v-if="element.fixed">
-        <li role="separator" class="divider"></li>
-        <li><label><input type="radio" name="fixed-scroll" :value="false" v-model="element.fixedScroll"> 一直出现</label></li>
-        <li><label><input type="radio" name="fixed-scroll" :value="true" v-model="element.fixedScroll"> 页面向下滚动时出现</label></li>
-        <template v-if="element.fixedScroll">
-          <li role="separator" class="divider"></li>
-          <li><label>滚动到多少像素出现？</label></li>
-          <li><label>
-            <div class="input-group">
-              <input type="text" class="form-control" v-model="element.fixedScrollPx">
-              <div class="input-group-addon">像素</div>
+  <sidebar v-if="show" :show="show" @close="editDone">
+    <div slot="header">
+      <div class="btn btn-success" @click="editDone">完成</div>
+    </div>
+    <div slot="body">
+      <div class="sidebar-block">
+        <label><input type="checkbox" v-model="element.fixed"> 使用固定定位</label>
+        <div class="fixed-hint">* 将该组件固定在浏览器窗口的指定位置上</div>
+      </div>
+      <div v-show="element.fixed" class="sidebar-block">
+        <div>浏览器窗口位置</div>
+        <div>
+          <div>
+            <div class="input-group position-input">
+              <div class="input-group-addon" @click="fixedTop = 0">顶部</div>
+              <input style="text-align:center;" type="number" class="form-control" placeholder="自动" v-model="fixedTop">
             </div>
-          </label></li>
-        </template>
-      </template>
-      <li><label><div class="btn btn-sm btn-success" @click="editDone">确定</div></label></li>
-    </ul>
-  </dropdown>
+          </div>
+          
+          <div style="clear:both">
+            <div class="input-group position-input" style="float: left">
+              <div class="input-group-addon" @click="fixedLeft = 0">左边距</div>
+              <input style="text-align:center;" type="number" class="form-control" placeholder="自动" v-model="fixedLeft">
+            </div>
+            <div class="input-group position-input" style="float: right">
+              <div class="input-group-addon" @click="fixedRight = 0">右边距</div>
+              <input style="text-align:center;" type="number" class="form-control" placeholder="自动" v-model="fixedRight">
+            </div>
+          </div>
+          
+          <div class="input-group position-input">
+            <div class="input-group-addon" @click="fixedBottom = 0">底部</div>
+            <input style="text-align:center;" type="number" class="form-control" placeholder="自动" v-model="fixedBottom">
+          </div>
+        </div>
+      </div>
+      <div v-show="element.fixed" class="sidebar-block">
+        <div class="input-group">
+          <div class="input-group-addon">页面滚动超过</div>
+          <input style="text-align:center;" type="number" class="form-control" v-model="element.fixedScrollPx">
+          <div class="input-group-addon">像素时出现</div>
+        </div>
+        <div class="fixed-hint">* 设置为0则一直出现</div>
+      </div>
+    </div>
+  </sidebar>
 </template>
 
 <style scoped>
-.dropdown-menu > li > label{
-  padding: 6px;
+
+.position-input {
+  margin: 6px auto;
+  width: 130px; 
+}
+
+.fixed-hint {
+  padding: 5px;
+  color: #999;
+}
+
+.input-group-addon {
+  cursor: pointer;
 }
 </style>

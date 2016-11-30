@@ -62,7 +62,7 @@ export default {
   },
   watch: {
     'draggable': function (dragEnabled) {
-      (dragEnabled) ? this.dragEnable() : this.dragDisable()
+      dragEnabled ? this.dragEnable() : this.dragDisable()
     }
   }
 }

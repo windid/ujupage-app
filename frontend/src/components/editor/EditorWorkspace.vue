@@ -40,8 +40,8 @@ export default {
 </template>
 
 <style scoped>
-.workspace{
-  position:relative;
+.workspace {
+  position: relative;
   /* 禁止文本选择 */
   -webkit-touch-callout: none;
   -webkit-user-select: none;

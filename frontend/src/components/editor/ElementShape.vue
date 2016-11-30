@@ -142,7 +142,6 @@ export default {
 </script>
 
 <template>
-<div>
   <element-common
     :element="element" 
     :section-id="sectionId" 
@@ -187,12 +186,16 @@ export default {
         <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
       </div>
     </template>
+    <!-- <shape-editor 
+      slot="sidebar"
+      :show="editing" 
+      v-model="shapeElement"
+      @edit-done="editDone"
+      @popup-change="popupChange"
+      @image-change="imageChange"
+    >
+    </shape-editor> -->
   </element-common>
- <!--  <shape-editor :show="editing" v-model="shapeElement"
-    @edit-done="editDone"
-    @popup-change="popupChange"
-    @image-change="imageChange"></shape-editor> -->
-</div>
 </template>
 
 <style>

@@ -163,10 +163,7 @@ export const setActiveElementId = ({ commit }, elementId) => {
 export const removeElement = ({ commit, state }, [elementId, record = true]) => {
   // 取得元素所在的板块ID
   const sectionIds = getSectionIds(state, elementId)
-  // 从板块中删除元素
-  commit(types.REMOVE_ELEMENT_FROM_SECTION, { elementId, sectionIds })
-  // 再删除元素
-  commit(types.REMOVE_ELEMENT, { elementId })
+  commit(types.REMOVE_ELEMENT, { elementId, sectionIds })
   record && commit(types.SAVE_CONTENT_STATE)
 }
 
@@ -195,10 +192,6 @@ export const moveElement = ({ commit, state }, [sectionId, elementId, positionIn
   commit(types.SAVE_CONTENT_STATE)
 }
 
-export const moveFixedElement = ({ commit, state }) => {
-
-}
-
 // 缩放元素
 export const resizeElement = ({ commit, state }, [elementId, newSize]) => {
   const newElement = merge({}, state.editor.content.elements[elementId])
@@ -215,7 +208,6 @@ export const resizeElement = ({ commit, state }, [elementId, newSize]) => {
 // 修改元素层叠关系
 export const indexElement = ({ commit, state, getters }, [elementId, dir]) => {
   const newElement = merge({}, state.editor.content.elements[elementId])
-  console.log(getters.elementsIndex[state.editor.workspace.version])
   if (dir === 'top') {
     newElement.style[state.editor.workspace.version]['zIndex'] = ++getters.elementsIndex[state.editor.workspace.version].max
   } else {

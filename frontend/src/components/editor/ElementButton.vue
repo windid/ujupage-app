@@ -187,7 +187,6 @@ export default {
 </script>
 
 <template>
-<div>
   <element-common
     :element="element" 
     :section-id="sectionId" 
@@ -223,12 +222,12 @@ export default {
       </div>
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
     </template>
+    <button-editor slot="sidebar" :show="editing" v-model="buttonElement"
+      @edit-done="editDone"
+      @popup-change="popupChange"
+      @image-change="imageChange">
+    </button-editor>
   </element-common>
-  <button-editor :show="editing" v-model="buttonElement"
-    @edit-done="editDone"
-    @popup-change="popupChange"
-    @image-change="imageChange"></button-editor>
-</div>
 </template>
 
 <style>
