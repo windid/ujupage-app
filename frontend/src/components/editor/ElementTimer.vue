@@ -21,7 +21,10 @@ export default {
         handles: 'e'
       },
       editing: false,
-      buttonGroup: 'main'
+      buttonGroup: 'main',
+      constraints: {
+        minWidth: 210
+      }
     }
   },
   computed: {
@@ -88,6 +91,7 @@ export default {
     :button-group="buttonGroup" 
     :resize="resize" 
     :resizable="resizable" 
+    :dimensionContraint="constraints" 
     @change-button-group="changeButtonGroup" 
     @change-draggable="changeDraggable">
     <div slot="content" class="element-countdown">

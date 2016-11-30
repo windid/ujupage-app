@@ -37,6 +37,9 @@ export default {
     },
     resize: {
       type: Object
+    },
+    dimensionContraint: {
+      type: Object
     }
   },
   data () {
@@ -60,9 +63,26 @@ export default {
       heightMost: 0
     }
   },
-  computed: mapGetters({
-    workspace: 'editorWorkspace'
-  }),
+  computed: {
+    ...mapGetters({
+      workspace: 'editorWorkspace'
+    }),
+    sizeRange: function () {
+      const constraint = this.dimensionContraint
+      const get = (key, isMin) => {
+        if (constraint && constraint.hasOwnProperty(key)) {
+          return constraint[key]
+        }
+        return (isMin ? 0 : Number.MAX_SAFE_INTEGER)
+      }
+      return {
+        'minWidth': get('minWidth', true),
+        'minHeight': get('minHeight', true),
+        'maxWidth': get('maxWidth', false),
+        'maxHeight': get('maxHeight', false)
+      }
+    }
+  },
   methods: {
     ...mapActions([
       'setActiveElementId',
@@ -249,9 +269,9 @@ const getElementTop = (element) => {
     </div>
     <template v-if="resizable">
       <resizer class="resizable-n" v-if="this.hasResizer('n')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'top'" />
-      <resizer class="resizable-e" v-if="this.hasResizer('e')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'right'" />
+      <resizer class="resizable-e" v-if="this.hasResizer('e')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'right'" :minSize="sizeRange.minWidth" />
       <resizer class="resizable-s" v-if="this.hasResizer('s')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'bottom'" />
-      <resizer class="resizable-w" v-if="this.hasResizer('w')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'left'" />
+      <resizer class="resizable-w" v-if="this.hasResizer('w')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'left'" :minSize="sizeRange.minWidth" />
     </template>
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
