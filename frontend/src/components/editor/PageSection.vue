@@ -9,6 +9,7 @@ import ElementImage from './ElementImage'
 import ElementShape from './ElementShape'
 import ElementVideo from './ElementVideo'
 import ElementTimer from './ElementTimer'
+import ElementMap from './ElementMap'
 import resizer from '../ui/OnesideResizer'
 
 function scrollDown (offset) {
@@ -31,6 +32,7 @@ export default {
     ElementShape,
     ElementVideo,
     ElementTimer,
+    ElementMap,
     resizer
   },
   data () {

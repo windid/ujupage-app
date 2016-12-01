@@ -50,7 +50,7 @@ export default {
             <th></th>
             <th>Chrome</th>
             <th>Firefox</th>
-            <th>IE</th>
+            <th>IE 9+</th>
             <th>Opera</th>
             <th>Safari</th>
           </thead>

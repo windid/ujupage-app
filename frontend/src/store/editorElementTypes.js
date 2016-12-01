@@ -241,5 +241,25 @@ export default {
         height: 'auto'
       }
     }
+  },
+  'map': {
+    type: 'map',
+    data: {
+      position: null
+    },
+    style: {
+      pc: {
+        left: '330px',
+        top: '10px',
+        width: '300px',
+        height: '200px'
+      },
+      'mobile': {
+        left: '50px',
+        top: '10px',
+        width: '220px',
+        height: '160px'
+      }
+    }
   }
 }
