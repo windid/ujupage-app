@@ -245,7 +245,8 @@ export default {
   'map': {
     type: 'map',
     data: {
-      position: null
+      position: null,
+      name: null
     },
     style: {
       pc: {

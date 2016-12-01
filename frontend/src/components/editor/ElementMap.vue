@@ -1,5 +1,7 @@
 <script>
 import ElementCommon from './ElementCommon'
+import { mapGetters, mapActions } from 'vuex'
+import { merge, isEqual } from 'lodash'
 
 export default {
   name: 'element-map',
@@ -9,7 +11,7 @@ export default {
   props: ['element', 'elementId', 'sectionId'],
   data () {
     return {
-      address: '',
+      mapElement: merge({}, this.element),
       buttonGroup: 'main',
       resize: {
         handles: 'e,s'
@@ -22,22 +24,47 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      workspace: 'editorWorkspace'
+    }),
     resizable () {
       return true
+    },
+    center () {
+      if (this.mapElement.data.position === null) {
+        return [113.280637, 23.125178]
+      } else {
+        return this.mapElement.data.position
+      }
     }
   },
   mounted () {
+    const marked = this.mapElement.data.position !== null
     const config = {
       resizeEnable: true,
-      zoom: 11,
-      center: [113.280637, 23.125178]
+      zoom: marked ? 16 : 11,
+      center: this.center
     }
     this.map = new window.AMap.Map(this.$refs.mapContent, config)
+    if (marked) {
+      console.log(this.mapElement.data.position)
+      this.marker = new window.AMap.Marker({
+        position: this.mapElement.data.position,
+        title: this.mapElement.data.name
+      })
+      this.marker.setMap(this.map)
+    }
   },
   methods: {
+    ...mapActions([
+      'modifyElement'
+    ]),
     editDone () {
       // edit done
       this.buttonGroup = 'main'
+      if (!isEqual(this.element, this.mapElement)) {
+        this.modifyElement([this.elementId, this.mapElement])
+      }
     },
     edit () {
       this.buttonGroup = 'address'
@@ -63,6 +90,8 @@ export default {
       const pos = this.posList[index]
       const loc = pos.location
       const coordination = [loc.lng, loc.lat]
+      this.mapElement.data.position = coordination
+      this.mapElement.data.name = pos.name
       this.map.setCenter(coordination)
       this.map.setZoom(16)
       if (this.marker !== null) {
@@ -72,8 +101,17 @@ export default {
         position: coordination,
         title: pos.name
       })
+      console.log(coordination)
       this.marker.setMap(this.map)
       this.showList = false
+      this.editDone()
+    }
+  },
+  watch: {
+    'element': function (val) {
+      if (!isEqual(val, this.mapElement)) {
+        this.mapElement = merge({}, val)
+      }
     }
   }
 }
