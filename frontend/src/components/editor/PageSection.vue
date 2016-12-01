@@ -143,7 +143,7 @@ export default {
     <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">
       <!-- 页面元素组件 -->
       <transition-group name="fade" tag="div">
-        <component v-for="elementId in section.elements[workspace.version]" :is="'element-' + elements[elementId].type" :element="elements[elementId]" :section-id="sectionId" :element-id="elementId" :key="elementId"></component>
+        <component v-for="elementId in section.elements[workspace.version]" v-if="!elements[elementId].fixed" :is="'element-' + elements[elementId].type" :element="elements[elementId]" :section-id="sectionId" :element-id="elementId" :key="elementId"></component>
       </transition-group>
       <!-- 板块操作按钮组 -->
       <transition name="fade">

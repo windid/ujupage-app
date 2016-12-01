@@ -187,7 +187,6 @@ export default {
 </script>
 
 <template>
-<div>
   <element-common
     :element="element" 
     :section-id="sectionId" 
@@ -196,6 +195,7 @@ export default {
     :draggable="draggable" 
     :resize="resize" 
     :resizable="resizable" 
+    :fixedEditable="true"
     @change-button-group="changeButtonGroup" 
     @change-draggable="changeDraggable" 
     @drag-start="editDone"
@@ -215,7 +215,6 @@ export default {
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
       <div class="btn btn-default" title="链接" @click="editLink"><span class="glyphicon glyphicon-link"></span></div>
-      <div class="btn btn-default" title="固定位置"><span class="glyphicon glyphicon-pushpin"></span></div>
     </template>
     <template slot="button-groups">
       <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">
@@ -223,12 +222,12 @@ export default {
       </div>
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
     </template>
+    <button-editor slot="sidebar" :show="editing" v-model="buttonElement"
+      @edit-done="editDone"
+      @popup-change="popupChange"
+      @image-change="imageChange">
+    </button-editor>
   </element-common>
-  <button-editor :show="editing" v-model="buttonElement"
-    @edit-done="editDone"
-    @popup-change="popupChange"
-    @image-change="imageChange"></button-editor>
-</div>
 </template>
 
 <style>

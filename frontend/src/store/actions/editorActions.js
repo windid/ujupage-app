@@ -124,6 +124,7 @@ export const modifySection = ({ commit }, [sectionId, style]) => {
   commit(types.SAVE_CONTENT_STATE)
 }
 
+// 删除板块
 export const removeSection = ({ commit }, sectionId) => {
   commit(types.REMOVE_SECTION, { sectionId })
   commit(types.SAVE_CONTENT_STATE)
@@ -160,6 +161,7 @@ export const setActiveElementId = ({ commit }, elementId) => {
 
 // 删除元素
 export const removeElement = ({ commit, state }, [elementId, record = true]) => {
+  // 取得元素所在的板块ID
   const sectionIds = getSectionIds(state, elementId)
   commit(types.REMOVE_ELEMENT, { elementId, sectionIds })
   record && commit(types.SAVE_CONTENT_STATE)
@@ -216,7 +218,7 @@ export const indexElement = ({ commit, state, getters }, [elementId, dir]) => {
   commit(types.SAVE_CONTENT_STATE)
 }
 
-// 修改元素
+// 修改元素：需要删除属性的时候，只能用replace = true对元素进行整体替换
 export const modifyElement = ({ commit, state }, [elementId, newPropsObj, replace = false]) => {
   const newElement = replace ? merge({}, newPropsObj) : merge({}, state.editor.content.elements[elementId], newPropsObj)
   commit(types.MODIFY_ELEMENT, { elementId, newElement })

@@ -83,7 +83,7 @@ export default {
           商机 <span class="glyphicon glyphicon-user"></span>
         </div>
         <div class="btn btn-default btn-sm" @click="$router.push('/stats/' + pageItem.id + '/overview')">
-          分析 <span class="glyphicon glyphicon-signal"></span>
+          分析 <span class="glyphicon glyphicon-stats"></span>
         </div>
         <dropdown :show="showMenu" dir="up" @toggle="showMenu = !showMenu">
           <slot>

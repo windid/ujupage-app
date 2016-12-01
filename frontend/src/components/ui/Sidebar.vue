@@ -53,6 +53,7 @@ export default {
 }
 
 .sidebar-header {
+  background: #f6f6f6;
   padding:10px;
   height: 55px;
   border-bottom: 1px solid #ddd;

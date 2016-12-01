@@ -400,20 +400,24 @@ class PageController extends Controller {
         $fields = [];
         $utms = [];
         foreach ($pageforms as $k => $v) {            
-            foreach ($pageforms[$k]['fields'] as $kk => $vv) {
-                if (!isset($fields[$kk])) {
-                    $fields[$kk] = 0;
-                }
-                if ($kk == '名称') {
+            if (is_array($pageforms[$k]['fields'])) {
+                foreach ($pageforms[$k]['fields'] as $kk => $vv) {
+                    if (!isset($fields[$kk])) {
+                        $fields[$kk] = 0;
+                    }
+                    if ($kk == '名称') {
+                        $fields[$kk]++;
+                    }
                     $fields[$kk]++;
                 }
-                $fields[$kk]++;
             }
-            foreach ($pageforms[$k]['utms'] as $kk => $vv) {
-                if (!isset($utms[$kk])) {
-                    $utms[$kk] = 0;
+            if (is_array($pageforms[$k]['utms'])) {
+                foreach ($pageforms[$k]['utms'] as $kk => $vv) {
+                    if (!isset($utms[$kk])) {
+                        $utms[$kk] = 0;
+                    }
+                    $utms[$kk]++;
                 }
-                $utms[$kk]++;
             }
         }
         arsort($fields);

@@ -1,4 +1,5 @@
 <script>
+import Sidebar from '../ui/Sidebar'
 import ColorPicker from './ColorPicker'
 import FontSize from './FontSize'
 import CheckboxButton from './CheckboxButton'
@@ -10,6 +11,7 @@ import { mapActions } from 'vuex'
 export default {
   props: ['show', 'value'],
   components: {
+    Sidebar,
     ColorPicker,
     FontSize,
     CheckboxButton,
@@ -58,38 +60,30 @@ export default {
 
 
 <template>
-  <div>
+<sidebar v-if="show" :show="show" @close="$emit('edit-done')">
+  <div slot="header">
+    <div class="btn btn-success" @click="$emit('edit-done')">完成</div>
+  </div>
+  <div slot="body">
     <div class="sidebar-block">
-      <div class="input-group shadow">
-        <div class="input-group-addon"> 按钮文字 </div>
-        <input type="text" class="form-control input-text-shadow" v-model="button.text">
+      <div class="float-color-picker">
+        <div class="float-color-block-text">背景</div>
+        <color-picker v-model="button.props.backgroundColor">
+          <div class="float-color-block" data-toggle="dropdown" :style="{background:getColor(button.props.backgroundColor)}"></div>
+        </color-picker>
       </div>
     </div>
 
     <div class="sidebar-block color-groups">
 
-      <div  class="float-color-picker">
-        <div class="float-color-block-text">按钮</div>
-        <color-picker v-model="button.props.backgroundColor">
-          <div class="float-color-block" data-toggle="dropdown" :style="{background:getColor(button.props.backgroundColor)}"></div>
-        </color-picker>
-      </div>
-
-      <div  class="float-color-picker">
-        <div class="float-color-block-text">悬停</div>
-        <color-picker v-model="button.props.hoverColor">
-          <div class="float-color-block" data-toggle="dropdown" :style="{background:getColor(button.props.hoverColor)}"></div>
-        </color-picker>
-      </div>
-
-      <div  class="float-color-picker">
+      <div class="float-color-picker">
         <div class="float-color-block-text">文字</div>
         <color-picker v-model="button.props.color" position="right">
           <div class="float-color-block" data-toggle="dropdown" :style="{background:getColor(button.props.color)}"></div>
         </color-picker>
       </div>
 
-      <div  class="float-color-picker">
+      <div class="float-color-picker">
         <div class="float-color-block-text">边框</div>
         <color-picker v-model="button.props.borderColor" position="right">
           <div class="float-color-block" data-toggle="dropdown" :style="{background:getColor(button.props.borderColor)}"></div>
@@ -99,12 +93,6 @@ export default {
     </div>
 
     <div class="sidebar-block">
-      <div class="input-group font-size-input">
-        <div class="input-group-addon"> 字号 </div>
-        <div class="input-group-btn">
-          <font-size v-model="button.props.fontSize"></font-size>
-        </div>
-      </div>
       <div class="input-group corner-radius-input">
         <div class="input-group-addon"> 圆角 </div>
         <input type="number" class="form-control input-text-shadow" style="text-align:center" v-model.number="borderRadius">
@@ -125,6 +113,7 @@ export default {
         @image-change="imageChange"></image-picker>
     </div>
   </div>
+</sidebar>
 </template>
 
 <style>

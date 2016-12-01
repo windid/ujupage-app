@@ -3,25 +3,67 @@ import API from '../../API'
 import { Pagination } from 'element-ui'
 import DatePicker from '../ui/DatePicker'
 import moment from 'moment'
+import Dropdown from '../ui/Dropdown'
 
 export default {
   name: 'Leads',
   components: {
     [Pagination.name]: Pagination,
-    DatePicker: DatePicker
+    DatePicker,
+    Dropdown
   },
   data () {
     return {
-      page: null,
+      page: { name: '' },
       loading: true,
       leads: [],
       currentPage: 1,
       leadsCount: 0,
       pageSize: 50,
-      limitEndDate: moment().format('YYYY-MM-DD')
+      limitEndDate: moment().format('YYYY-MM-DD'),
+      hideFieldName: false,
+      fieldsDropdown: false,
+      utmsDropdown: false,
+      utmMap: {
+        'utm_source': {
+          name: '来源',
+          display: true
+        },
+        'utm_campaign': {
+          name: '广告计划',
+          display: false
+        },
+        'utm_medium': {
+          name: '媒体',
+          display: false
+        },
+        'utm_content': {
+          name: '广告内容',
+          display: false
+        },
+        'utm_term': {
+          name: '关键词',
+          display: false
+        }
+      }
     }
   },
   computed: {
+    utmDisplayAll: {
+      get () {
+        for (const utmKey in this.utmMap) {
+          if (!this.utmMap[utmKey].display) {
+            return false
+          }
+        }
+        return true
+      },
+      set (val) {
+        for (const utmKey in this.utmMap) {
+          this.utmMap[utmKey].display = val
+        }
+      }
+    },
     date: {
       get () {
         return {
@@ -66,7 +108,7 @@ export default {
       this.getLeads()
     },
     download () {
-      window.location = '/api/page/' + this.$route.params.pageId + '/leadscvs?sd=' + this.date.startDate + '&ed=' + this.date.endDate
+      window.location = '/api/page/' + this.$route.params.pageId + '/leadscvs?start_date=' + this.date.startDate + '&end_date=' + this.date.endDate
     }
   },
   created () {
@@ -98,19 +140,46 @@ export default {
     <table v-if="leads.length > 0" class="table table-bordered table-striped table-hover">
       <thead>
         <tr>
-          <th>表单数据</th>
-          <th>来源</th>
-          <th width="120px">版本</th>
+          <th>表单数据
+            <dropdown :show="fieldsDropdown" @toggle="fieldsDropdown=!fieldsDropdown">
+              <div class="btn btn-sm btn-defualt dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-cog"></span>
+              </div>
+              <div slot="dropdown-menu" class="dropdown-menu">
+                <div class="dropdown-item" @click="hideFieldName = !hideFieldName">
+                  <span class="glyphicon" :class="hideFieldName ? 'glyphicon-ok' : 'glyphicon-unchecked'"></span> 隐藏字段名
+                </div>
+              </div>
+            </dropdown>
+            <!-- <label class="toggle-field-name"><input type="checkbox" v-model="hideFieldName"> 隐藏字段名</label> -->
+          </th>
+          <th width="220px">来源标记
+            <dropdown :show="utmsDropdown" @toggle="utmsDropdown = !utmsDropdown">
+              <div class="btn btn-sm btn-defualt dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-cog"></span>
+              </div>
+              <ul slot="dropdown-menu" class="dropdown-menu">
+                <li class="dropdown-item" @click="utmDisplayAll = !utmDisplayAll">
+                  <span class="glyphicon" :class="utmDisplayAll ? 'glyphicon-ok' : 'glyphicon-unchecked'"></span> 全部
+                </li>
+                <li role="presentation" class="divider"></li>
+                <li v-for="(utm, utmKey) in utmMap" class="dropdown-item" @click="utm.display = !utm.display">
+                  <span class="glyphicon" :class="utm.display ? 'glyphicon-ok' : 'glyphicon-unchecked'"></span> {{utm.name}}
+                </li>
+              </ul>
+            </dropdown>
+          </th>
+          <th width="100px">版本</th>
           <th width="160px">提交时间</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="lead in leads">
           <td>
-            <p v-for="(value, key) in lead.fields">{{key}}: {{value}}</p>
+            <p v-for="(value, key) in lead.fields"><span v-if="!hideFieldName">{{key}}: </span>{{value}}</p>
           </td>
           <td>
-            <p v-for="(value, key) in lead.utms">{{key}}: {{value}}</p>
+            <p v-for="(value, key) in lead.utms" v-if="utmMap[key].display">{{utmMap[key].name}}: {{value}}</p>
           </td>
           <td>{{lead.variation_name}}</td>
           <td>{{lead.created_at}}</td>
@@ -147,5 +216,21 @@ export default {
 
 .leads > .el-pagination {
   text-align: right;
+}
+
+.toggle-field-name {
+  float: right;
+  color: #999;
+  cursor: pointer;
+}
+
+.dropdown-item {
+  padding: 5px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #f6f6f6;
 }
 </style>
