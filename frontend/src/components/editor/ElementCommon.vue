@@ -352,6 +352,7 @@ const getElementTop = (element) => {
 .element {
   position: absolute;
   pointer-events: auto;
+  z-index: 1;
 }
 
 .el-content {

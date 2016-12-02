@@ -39,28 +39,36 @@ export default {
     }
   },
   mounted () {
-    const marked = this.mapElement.data.position !== null
-    const config = {
-      resizeEnable: true,
-      zoom: marked ? 16 : 11,
-      center: this.center
-    }
-    this.map = new window.AMap.Map(this.$refs.mapContent, config)
-    if (marked) {
-      console.log(this.mapElement.data.position)
-      this.marker = new window.AMap.Marker({
-        position: this.mapElement.data.position,
-        title: this.mapElement.data.name
-      })
-      this.marker.setMap(this.map)
-    }
+    this.initMap()
   },
   methods: {
     ...mapActions([
       'modifyElement'
     ]),
+    initMap () {
+      const marked = this.mapElement.data.position !== null
+      if (this.map === null) {
+        const config = {
+          resizeEnable: true,
+          zoom: marked ? 16 : 11,
+          center: this.center
+        }
+        this.map = new window.AMap.Map(this.$refs.mapContent, config)
+      } else {
+        this.map.setCenter(this.center)
+      }
+      if (this.marker !== null) {
+        this.marker.setMap(null)
+      }
+      if (marked) {
+        this.marker = new window.AMap.Marker({
+          position: this.mapElement.data.position,
+          title: this.mapElement.data.name
+        })
+        this.marker.setMap(this.map)
+      }
+    },
     editDone () {
-      // edit done
       this.buttonGroup = 'main'
       if (!isEqual(this.element, this.mapElement)) {
         this.modifyElement([this.elementId, this.mapElement])
@@ -101,7 +109,6 @@ export default {
         position: coordination,
         title: pos.name
       })
-      console.log(coordination)
       this.marker.setMap(this.map)
       this.showList = false
       this.editDone()
@@ -111,6 +118,7 @@ export default {
     'element': function (val) {
       if (!isEqual(val, this.mapElement)) {
         this.mapElement = merge({}, val)
+        this.initMap()
       }
     }
   }
