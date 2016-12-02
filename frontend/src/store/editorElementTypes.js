@@ -262,5 +262,25 @@ export default {
         height: '160px'
       }
     }
+  },
+  'swiper': {
+    type: 'swiper',
+    data: {
+      images: []
+    },
+    style: {
+      pc: {
+        left: '330px',
+        top: '10px',
+        width: '300px',
+        height: '160px'
+      },
+      'mobile': {
+        left: '50px',
+        top: '10px',
+        width: '220px',
+        height: '120px'
+      }
+    }
   }
 }
