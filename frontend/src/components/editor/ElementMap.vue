@@ -53,7 +53,13 @@ export default {
           zoom: marked ? 16 : 11,
           center: this.center
         }
+        const toolBar = new window.AMap.ToolBar({
+          visible: true
+        })
         this.map = new window.AMap.Map(this.$refs.mapContent, config)
+        toolBar.hideDirection()
+        toolBar.hideRuler()
+        this.map.addControl(toolBar)
       } else {
         this.map.setCenter(this.center)
       }
@@ -76,6 +82,9 @@ export default {
     },
     edit () {
       this.buttonGroup = 'address'
+      setTimeout(() => {
+        this.$refs.input && this.$refs.input.focus()
+      }, 50)
     },
     search () {
       const keyword = this.input
@@ -135,7 +144,7 @@ export default {
   :resize="resize"
   @drag-start="editDone">
 </div>
-  <div class="element-map" slot="content">
+  <div class="element-map" slot="content" @dblclick.stop="edit">
     <div class="element-map-content" ref="mapContent"></div>
     <div class="map-mask"></div>
   </div>
@@ -143,12 +152,9 @@ export default {
     <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
   </template>
   <template slot="button-groups">
-    <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">
-      <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
-    </div>
     <div v-if="buttonGroup === 'address'">
       <div class="form-inline search-form">
-        <input type="text" class="form-control" v-model="input"></input><button class="btn btn-primary" @click="search">搜索</button>
+        <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input"></input><button class="btn btn-primary" @click.stop="search">搜索</button>
       </div>
       <div class="search-result" v-show="showList">
         <ul>
@@ -175,6 +181,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 200;
 }
 .element-map-content {
   width: 100%;
