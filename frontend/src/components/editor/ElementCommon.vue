@@ -301,7 +301,7 @@ const getElementTop = (element) => {
       right: element.fixed ? element.fixedPosition.right : '',
       width: element.style[workspace.version].width,
       height: element.style[workspace.version].height || 'auto',
-      transition: (resizing || dragging) ? 'none' : 'all .4s'
+      transition: (resizing || dragging) ? 'none' : 'all .3s'
     }"
   >
     <div class="el-content" :id="'element-' + elementId"

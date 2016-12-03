@@ -318,10 +318,10 @@ export default {
         height: '200px'
       },
       'mobile': {
-        left: '50px',
+        left: '30px',
         top: '10px',
-        width: '220px',
-        height: '160px'
+        width: '300px',
+        height: '180px'
       }
     }
   },
