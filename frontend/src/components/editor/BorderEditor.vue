@@ -29,9 +29,9 @@
         presetBorders: [
           { width: '1px', style: 'solid' },
           { width: '2px', style: 'solid' },
-          { width: '3px', style: 'solid' },
-          { width: '1px', style: 'dotted' },
-          { width: '1px', style: 'dashed' },
+          { width: '4px', style: 'solid' },
+          { width: '2px', style: 'dotted' },
+          { width: '2px', style: 'dashed' },
           { width: '3px', style: 'double' }
         ]
       }
@@ -79,9 +79,10 @@
         <div v-for="presetBorder in presetBorders" class="preset-border" @click="pickPreset(presetBorder)" :style="{
             borderWidth: presetBorder.width,
             borderStyle: presetBorder.style,
-            borderColor: getColor(presetBorder.color)
+            borderColor: '#333'
           }">
         </div>
+        <div class="no-border" @click="pickPreset({ width: 0, style: 'solid' })">无边框</div>
       </div>
     </dropdown>
     <div slot="content">
@@ -124,12 +125,21 @@
   }
   .preset-border {
     float: left;
-    width: 30px;
+    width: 32px;
     height: 30px;
     margin: 10px;
     cursor: pointer;
   }
-  .preset-border:hover {
+  .no-border {
+    clear: both;
+    margin: 0 10px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+    text-align: center;
+    cursor: pointer;
+    line-height: 22px;
+  }
+  .preset-border:hover, .no-border:hover {
     background: #eee;
   }
   .border-btn {
