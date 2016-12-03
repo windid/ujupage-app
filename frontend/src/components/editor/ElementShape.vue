@@ -90,6 +90,7 @@ export default {
       :style="[ elementBackground,
         {
           border: isLine ? '' : elementBorder,
+          boxShadow: isLine ? '' : elementShadow,
           borderRadius: localElement.style.borderRadius,
           opacity: localElement.style.opacity / 100
         }

@@ -76,7 +76,8 @@
         </div>
       </div>
       <div slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">
-        <div v-for="presetBorder in presetBorders" class="preset-border" @click="pickPreset(presetBorder)" :style="{
+        <div v-for="presetBorder in presetBorders" class="preset-border" @click="pickPreset(presetBorder)" 
+          :style="{
             borderWidth: presetBorder.width,
             borderStyle: presetBorder.style,
             borderColor: '#333'
@@ -132,7 +133,7 @@
   }
   .no-border {
     clear: both;
-    margin: 0 10px;
+    margin: 10px;
     border: 1px solid #ccc;
     font-size: 12px;
     text-align: center;

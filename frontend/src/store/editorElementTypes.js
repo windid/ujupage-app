@@ -70,6 +70,11 @@ export default {
         top: '10px',
         width: '160px',
         height: '37px'
+      },
+      'border': {
+        color: '3',
+        style: 'solid',
+        width: '1px'
       }
     }
   },
@@ -175,6 +180,12 @@ export default {
         repeat: 'no-repeat',
         position: 'left top',
         size: ''
+      },
+      'shadow': {
+        x: 0,
+        y: 0,
+        z: 0,
+        color: 4
       }
     }
   },
@@ -208,6 +219,12 @@ export default {
         repeat: 'no-repeat',
         position: 'left top',
         size: ''
+      },
+      'shadow': {
+        x: 0,
+        y: 0,
+        z: 0,
+        color: 4
       }
     }
   },
@@ -290,7 +307,7 @@ export default {
       timerColor: null
     },
     style: {
-      pc: {
+      'pc': {
         left: '330px',
         top: '10px',
         width: '300px',
@@ -304,6 +321,7 @@ export default {
       }
     }
   },
+
   'map': {
     type: 'map',
     data: {
@@ -311,7 +329,7 @@ export default {
       name: null
     },
     style: {
-      pc: {
+      'pc': {
         left: '330px',
         top: '10px',
         width: '300px',
@@ -325,13 +343,14 @@ export default {
       }
     }
   },
+
   'swiper': {
     type: 'swiper',
     data: {
       images: []
     },
     style: {
-      pc: {
+      'pc': {
         left: '330px',
         top: '10px',
         width: '300px',
