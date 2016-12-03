@@ -6,6 +6,9 @@ export default {
   props: {
     'value': {
       required: true
+    },
+    'id': {
+      required: false
     }
   },
   data: function () {
@@ -24,13 +27,13 @@ export default {
           return
         }
         this.image = image
-        this.$emit('image-change', image)
+        this.$emit('image-change', image, this.id)
         this.$emit('after-pick')
       }])
     },
     deleteImage () {
       this.image = null
-      this.$emit('image-change', null)
+      this.$emit('image-change', null, this.id)
     }
   }
 }
