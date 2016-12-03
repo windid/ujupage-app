@@ -149,13 +149,6 @@ export default {
   'square': {
     type: 'shape',
     subType: 'square',
-    props: {
-      backgroundColor: '1',
-      borderWidth: '1px',
-      borderColor: '3',
-      borderRadius: '0px',
-      borderStyle: 'solid'
-    },
     style: {
       'pc': {
         left: '380px',
@@ -168,6 +161,20 @@ export default {
         top: '10px',
         width: '200px',
         height: '150px'
+      },
+      'opacity': 100,
+      'borderRadius': '0px',
+      'border': {
+        color: '3',
+        style: 'solid',
+        width: '1px'
+      },
+      'background': {
+        color: '1',
+        image: '',
+        repeat: 'no-repeat',
+        position: 'left top',
+        size: ''
       }
     }
   },
@@ -175,13 +182,6 @@ export default {
   'circle': {
     type: 'shape',
     subType: 'circle',
-    props: {
-      backgroundColor: '1',
-      borderWidth: '1px',
-      borderColor: '3',
-      borderRadius: '50%',
-      borderStyle: 'solid'
-    },
     style: {
       'pc': {
         left: '380px',
@@ -194,6 +194,68 @@ export default {
         top: '10px',
         width: '200px',
         height: '200px'
+      },
+      'borderRadius': '50%',
+      'opacity': 100,
+      'border': {
+        color: '3',
+        style: 'solid',
+        width: '1px'
+      },
+      'background': {
+        color: '1',
+        image: '',
+        repeat: 'no-repeat',
+        position: 'left top',
+        size: ''
+      }
+    }
+  },
+
+  'line': {
+    type: 'shape',
+    subType: 'line',
+    style: {
+      'pc': {
+        left: '330px',
+        top: '10px',
+        width: '300px',
+        height: ''
+      },
+      'mobile': {
+        left: '30px',
+        top: '10px',
+        width: '300px',
+        height: ''
+      },
+      'border': {
+        color: '3',
+        style: 'solid',
+        width: '2px'
+      }
+    }
+  },
+
+  'vline': {
+    type: 'shape',
+    subType: 'vline',
+    style: {
+      'pc': {
+        left: '479px',
+        top: '10px',
+        width: '',
+        height: '300px'
+      },
+      'mobile': {
+        left: '179px',
+        top: '10px',
+        width: '',
+        height: '300px'
+      },
+      'border': {
+        color: '3',
+        style: 'solid',
+        width: '2px'
       }
     }
   },

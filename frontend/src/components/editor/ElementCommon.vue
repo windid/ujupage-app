@@ -308,7 +308,7 @@ const getElementTop = (element) => {
       :style="{
         zIndex: element.style[workspace.version].zIndex,
       }" 
-      v-bind:class="{'outline':workspace.activeElementId === elementId}"
+      :class="{'outline':workspace.activeElementId === elementId}"
     >
       <slot name="content"></slot>
     </div>

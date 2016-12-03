@@ -1,55 +1,24 @@
 <script>
-import ElementCommon from './ElementCommon'
 import ShapeEditor from './ShapeEditor'
 import colorMixin from '../../mixins/colorMixin'
-import { mapGetters, mapActions } from 'vuex'
-import { merge, isEqual } from 'lodash'
+import elementMixin from '../../mixins/elementMixin'
+import { isEqual } from 'lodash'
 
 export default {
   name: 'element-shape',
-  // 接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID
-  props: ['element', 'sectionId', 'elementId'],
-  mixins: [colorMixin],
+  mixins: [colorMixin, elementMixin],
   components: {
-    ElementCommon,
     ShapeEditor
   },
   data () {
     return {
-      // 初始加载主按钮组
-      buttonGroup: 'main',
-      // 是否处于编辑状态
-      editing: false,
-      // 组件实例化时将传入的element参数复制到button中，以避免直接修改store中的状态
-      shapeElement: merge({}, this.element),
-      resize: {},
-      draggableFromChild: true,
-      hasPopup: false
-    }
-  },
-  created () {
-    if (!this.shapeElement.hasOwnProperty('imageObj')) {
-      this.shapeElement.imageObj = null
-    }
-  },
-  computed: {
-    ...mapGetters({
-      workspace: 'editorWorkspace'
-    }),
-    draggable () {
-      return this.draggableFromChild
-    },
-    resizable () {
-      return (!this.editing && this.workspace.activeElementId === this.elementId)
+      resize: {
+        handles: this.element.subType === 'line' ? 'e' : (this.element.subType === 'vline' ? 's' : 's,e'),
+        aspectRatio: this.element.subType === 'circle'
+      }
     }
   },
   methods: {
-    ...mapActions([
-      'modifyElement',
-      'removeElement',
-      'resizeElement',
-      'setActiveElementId'
-    ]),
     edit () {
       this.editing = true
       this.buttonGroup = 'edit'
@@ -57,74 +26,46 @@ export default {
     editDone () {
       this.editing = false
       this.buttonGroup = 'main'
-      if (!isEqual(this.element, this.shapeElement)) {
-        this.modifyElement([this.elementId, this.shapeElement])
-      }
-    },
-    changeButtonGroup (val) {
-      this.buttonGroup = val
-    },
-    changeDraggable (val) {
-      this.draggableFromChild = val
-    },
-    popupChange (val) {
-      this.hasPopup = val
-    },
-    imageChange (val) {
-      this.shapeElement.imageObj = val
-      this.setActiveElementId(this.elementId)
-      // this.manualUpdate(val)
-    },
-    manualUpdate (newImage) {
-      let style
-      if (newImage && newImage.url) {
-        // adjust size
-        if (!this.element.style.pc.width) {
-          const pcWidth = (newImage.width > 960) ? 960 : newImage.width
-          const mobileWidth = (newImage.width > 360) ? 360 : newImage.width
-          const pcLeft = (960 - pcWidth) / 2
-          const mobileLeft = (360 - mobileWidth) / 2
-          style = {
-            'pc': {
-              width: pcWidth + 'px',
-              height: undefined,
-              left: pcLeft + 'px'
-            },
-            'mobile': {
-              width: mobileWidth + 'px',
-              height: undefined,
-              left: mobileLeft + 'px'
-            }
-          }
-        } else {
-          style = {
-            'pc': { ...this.element.style.pc },
-            'mobile': { ...this.element.style.mobile }
-          }
-          style.pc.height = undefined
-          style.mobile.height = undefined
-        }
-        // commit to store
-        // this.shapeElement.imageObj = newImage
-        this.shapeElement.style = style
-        if (!isEqual(this.element, this.shapeElement)) {
-          this.modifyElement([this.elementId, this.shapeElement, true])
-        }
+      if (!isEqual(this.element, this.localElement)) {
+        this.modifyElement([this.elementId, this.localElement])
       }
     }
   },
-  watch: {
-    'workspace.activeElementId': function (val) {
-      if (this.hasPopup) {
-        return
+  computed: {
+    elementCommonStyle () {
+      if (this.localElement.subType === 'line') {
+        return {
+          height: 20 + parseInt(this.localElement.style.border.width) + 'px',
+          marginTop: '-10px'
+        }
+      } else if (this.localElement.subType === 'vline') {
+        return {
+          width: 20 + parseInt(this.localElement.style.border.width) + 'px',
+          marginRight: '-10px'
+        }
+      } else {
+        return {}
       }
-      if (val !== this.elementId && this.editing) this.editDone()
     },
-    'element': function (val) {
-      this.shapeElement = merge({}, val)
+    contentStyle () {
+      if (this.localElement.subType === 'line') {
+        return {
+          height: 10 + parseInt(this.localElement.style.border.width) + 'px',
+          width: '100%',
+          borderBottom: this.elementBorder
+        }
+      } else if (this.localElement.subType === 'vline') {
+        return {
+          width: 10 + parseInt(this.localElement.style.border.width) + 'px',
+          height: '100%',
+          borderRight: this.elementBorder
+        }
+      } else {
+        return {}
+      }
     },
-    'shapeElement.imageObj': function (newImage) {
-      this.manualUpdate(newImage)
+    isLine () {
+      return (this.localElement.subType === 'line' || this.localElement.subType === 'vline')
     }
   }
 }
@@ -139,32 +80,21 @@ export default {
     :draggable="draggable" 
     :resize="resize" 
     :resizable="resizable" 
-    :fixedEditable="true"
+    :fixed-editable="true"
     @change-button-group="changeButtonGroup" 
     @change-draggable="changeDraggable" 
     @drag-start="editDone"
+    :style="elementCommonStyle"
   >
-    <div slot="content" v-if="shapeElement.imageObj" class="element-image-button"
-      :style="{
-        borderRadius: shapeElement.props.borderRadius,
-        boxShadow: shapeElement.props.boxShadow,
-        borderStyle: shapeElement.props.borderStyle,
-        borderColor: getColor(shapeElement.props.borderColor),
-        overflow: 'hidden'
-      }">
-      <img :src="shapeElement.imageObj.url" :style="{width: '100%', height: 'auto'}" @mousedown.prevent/>
-    </div>
-    <div slot="content" v-else class="element-shape"
-      @dblclick="edit" 
-      :style="[
+    <div slot="content" class="element-shape" @dblclick="edit" 
+      :style="[ elementBackground,
         {
-          borderWidth: shapeElement.props.borderWidth,
-          borderRadius: shapeElement.props.borderRadius,
-          borderStyle: shapeElement.props.borderStyle,
-          backgroundColor: getColor(shapeElement.props.backgroundColor),
-          borderColor: getColor(shapeElement.props.borderColor)
+          border: isLine ? '' : elementBorder,
+          borderRadius: localElement.style.borderRadius,
+          opacity: localElement.style.opacity / 100
         }
       ]">
+      <div v-if="isLine" :style="contentStyle"></div>
     </div>
     
     <template slot="main-buttons-extend">
@@ -178,10 +108,8 @@ export default {
     <shape-editor 
       slot="sidebar"
       :show="editing" 
-      v-model="shapeElement"
+      v-model="localElement"
       @edit-done="editDone"
-      @popup-change="popupChange"
-      @image-change="imageChange"
     >
     </shape-editor>
   </element-common>
@@ -190,6 +118,7 @@ export default {
 <style>
 .element-shape {
   height: 100%;
+  transition: all .3s ease;
 }
 
 </style>

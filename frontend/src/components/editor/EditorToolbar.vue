@@ -18,7 +18,6 @@ export default {
       ],
       advancedTools: [
         { name: '形状', style: 'stop', action: () => this.showShapePicker() },
-        // { name: '悬浮', style: 'cloud', action: () => this.comming('fixed') },
         { name: '视频', style: 'film', action: () => this.newElement('video') },
         { name: '地图', style: 'map-marker', action: () => this.newElement('map') },
         // { name: '音乐', style: 'music', action: () => this.newElement('music') },
