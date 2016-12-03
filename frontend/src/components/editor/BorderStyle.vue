@@ -30,7 +30,7 @@ export default {
 <template>
   <dropdown :show="show" @toggle="show=!show">
     <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="边框样式">
-      <div class="border-sample" style="top: 8px" :style="{ borderBottomStyle: value }"></div>
+      <div class="border-sample" :style="{ borderBottomStyle: value }"></div>
     </div>
     <ul slot="dropdown-menu" class="dropdown-menu">
       <li v-for="borderStyle in borderStyles" @click="setBorderStyle(borderStyle)" class="border-inline" :class="{'selected':value === borderStyle}">
@@ -53,6 +53,7 @@ export default {
   height: auto;
   border-bottom-width: 3px;
   border-color: #333;
+  top: 8px
 }
 
 .border-inline {

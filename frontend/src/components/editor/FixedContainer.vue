@@ -1,26 +1,26 @@
 <script>
-import ElementText from './ElementText'
-import ElementButton from './ElementButton'
-import ElementImage from './ElementImage'
-import ElementShape from './ElementShape'
+  import ElementText from './ElementText'
+  import ElementButton from './ElementButton'
+  import ElementImage from './ElementImage'
+  import ElementShape from './ElementShape'
 
-import { mapGetters } from 'vuex'
+  import { mapGetters } from 'vuex'
 
-export default {
-  components: {
-    ElementText,
-    ElementButton,
-    ElementImage,
-    ElementShape
-  },
-  computed: {
-    ...mapGetters({
-      workspace: 'editorWorkspace',
-      fixedElements: 'editorFixedElements',
-      elements: 'editorElements'
-    })
+  export default {
+    components: {
+      ElementText,
+      ElementButton,
+      ElementImage,
+      ElementShape
+    },
+    computed: {
+      ...mapGetters({
+        workspace: 'editorWorkspace',
+        fixedElements: 'editorFixedElements',
+        elements: 'editorElements'
+      })
+    }
   }
-}
 </script>
 
 <template>
@@ -30,12 +30,12 @@ export default {
 </template>
 
 <style scoped>
-#fixed-container {
-  position: fixed;
-  pointer-events: none;
-  z-index: 100;
-  top: 50px;
-  height: calc(100% - 50px);
-  left: 50%;
-}
+  #fixed-container {
+    position: fixed;
+    pointer-events: none;
+    z-index: 100;
+    top: 50px;
+    height: calc(100% - 50px);
+    left: 50%;
+  }
 </style>

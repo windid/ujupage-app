@@ -1,45 +1,89 @@
 <script>
-import SidebarPart from '../ui/SidebarPart'
-import BorderStyle from './BorderStyle'
-import ColorPicker from './ColorPicker'
-import colorMixin from '../../mixins/colorMixin'
+  import SidebarPart from '../ui/SidebarPart'
+  import BorderStyle from './BorderStyle'
+  import ColorPicker from './ColorPicker'
+  import colorMixin from '../../mixins/colorMixin'
+  import Dropdown from '../ui/Dropdown'
 
-export default {
-  props: {
-    value: {
-      type: Object,
-      required: true
-    }
-  },
-  components: {
-    SidebarPart,
-    ColorPicker,
-    BorderStyle
-  },
-  mixins: [colorMixin],
-  computed: {
-    border: {
-      get () {
-        return this.value
+  export default {
+    props: {
+      value: {
+        type: Object,
+        required: true
       },
-      set (val) {
-        this.$emit('input', val)
+      expand: {
+        type: Boolean,
+        default: false
       }
     },
-    borderWidth: {
-      get () {
-        return parseInt(this.border.width)
+    components: {
+      SidebarPart,
+      ColorPicker,
+      BorderStyle,
+      Dropdown
+    },
+    mixins: [colorMixin],
+    data () {
+      return {
+        showQuickSelector: false,
+        presetBorders: [
+          { width: '1px', style: 'solid' },
+          { width: '2px', style: 'solid' },
+          { width: '3px', style: 'solid' },
+          { width: '1px', style: 'dotted' },
+          { width: '1px', style: 'dashed' },
+          { width: '3px', style: 'double' }
+        ]
+      }
+    },
+    computed: {
+      border: {
+        get () {
+          return this.value
+        },
+        set (val) {
+          this.$emit('input', val)
+        }
       },
-      set (val) {
-        this.border.width = val + 'px'
+      borderWidth: {
+        get () {
+          return parseInt(this.border.width)
+        },
+        set (val) {
+          this.border.width = val + 'px'
+        }
+      }
+    },
+    methods: {
+      pickPreset (presetBorder) {
+        this.border.width = presetBorder.width
+        this.border.style = presetBorder.style
+        this.showQuickSelector = false
       }
     }
   }
-}
 </script>
 
 <template>
-  <sidebar-part title="边框" :expand="true">
+  <sidebar-part title="边框" :expand="expand">
+    <dropdown slot="quick-selector" class="border-quick-selector" :show="showQuickSelector" @toggle="showQuickSelector=!showQuickSelector">
+      <div class="border-wrapper" data-toggle="dropdown">
+        <div class="border-btn" :style="{
+            borderBottomWidth: parseInt(border.width) < 26 ? border.width : '26px',
+            borderBottomStyle: border.style,
+            borderBottomColor: getColor(border.color)
+          }">
+        </div>
+      </div>
+      <div slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">
+        <div v-for="presetBorder in presetBorders" class="preset-border" @click="pickPreset(presetBorder)" :style="{
+            borderWidth: presetBorder.width,
+            borderStyle: presetBorder.style,
+            borderColor: getColor(presetBorder.color)
+          }">
+        </div>
+      </div>
+    </dropdown>
     <div slot="content">
       <border-style class="col" style="width: 38%" v-model="border.style"></border-style>
       <div class="input-group col" style="width: 40%">
@@ -54,12 +98,42 @@ export default {
 </template>
 
 <style scoped>
-.color-btn {
-  height: 34px;
-  width: 100%;
-}
-.col {
-  float: left;
-  margin-right: 1%;
-}
+  .color-btn {
+    height: 34px;
+    width: 100%;
+  }
+  .col {
+    float: left;
+    margin-right: 1%;
+  }
+  .border-quick-selector {
+    display: table;
+  }
+  .border-quick-selector, .border-wrapper {
+    width: 100%;
+    height: 100%;
+  }
+  .border-wrapper {
+    max-height: 28px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: table-cell;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  .preset-border {
+    float: left;
+    width: 30px;
+    height: 30px;
+    margin: 10px;
+    cursor: pointer;
+  }
+  .preset-border:hover {
+    background: #eee;
+  }
+  .border-btn {
+    position: relative;
+    margin: auto 10px;
+  }
 </style>

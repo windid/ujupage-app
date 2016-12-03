@@ -25,7 +25,6 @@ export default {
     selectImage () {
       this.getImage([(image) => {
         if (image && this.image === image.url) {
-          console.log(image, this.image)
           return
         }
         this.image = image.url
@@ -53,10 +52,10 @@ export default {
 
 <style scoped>
 .image-picker {
-  line-height: 80px;
+  line-height: 120px;
   text-align: center;
   width: 100%;
-  height: 80px;
+  height: 120px;
   background: #eee;
   cursor: pointer;
   border-radius: 4px;
