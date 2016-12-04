@@ -143,18 +143,18 @@
     top:5px;
   }
 
-  @foreach($content['style']['common'] as $class => $styles)
-    #{{$class}}{
+  @foreach($content['style']['common'] as $el => $styles)
+    #{{$el}}{
       @foreach($styles as $key => $value)
-      {{$key}}:{{$value}};
+        {{$key}}:{{$value}};
       @endforeach
     }
   @endforeach
 
-  @foreach($content['style']['pc'] as $class => $styles)
-    #{{$class}}{
+  @foreach($content['style']['pc'] as $el => $styles)
+    #{{$el}}{
       @foreach($styles as $key => $value)
-      {{$key}}:{{$value}};
+        {{$key}}:{{$value}};
       @endforeach
     }
   @endforeach

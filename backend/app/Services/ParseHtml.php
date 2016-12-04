@@ -100,20 +100,35 @@ class ParseHtml {
             case 'html':
                 self::parseElementHTML($element_id, $element);
                 break;
+            case 'shape':
+                self::parseElementShape($element_id, $element);
+                break;
+            case 'map':
+                self::parseElementMap($element_id, $element);
+                break;
+            case 'video':
+                self::parseElementVideo($element_id, $element);
+                break;
+            case 'Timer':
+                self::parseElementTimer($element_id, $element);
+                break;
+            case 'Swiper':
+                self::parseElementSwiper($element_id, $element);
+                break;
             default:
                 break;
         }
         
     }
 
-    protected static function parseElementText($element_id, $element){
+    protected static function parseElementText ($element_id, $element) {
         self::$page['style']['common']['element-'.$element_id] = self::parseStyles($element['fontStyle']);
     }
 
-    protected static function parseElementImage($element_id, $element){
+    protected static function parseElementImage ($element_id, $element) {
     }
 
-    protected static function parseElementForm($element_id, $element){
+    protected static function parseElementForm ($element_id, $element) {
         self::$page['style']['common']['element-'.$element_id." label"] = self::parseStyles(['color'=>$element['props']['labelColor']]);
         self::$page['elements'][$element_id]['props']['goal'] = in_array('form', self::$page['settings']['goals']) ? 1 : 0;
         
@@ -124,18 +139,98 @@ class ParseHtml {
 
     }
 
-    protected static function parseElementButton($element_id, $element){
+    protected static function parseElementButton ($element_id, $element) {
         $hover_color = self::getColor($element['props']['hoverColor']);
         unset ($element['props']['hoverColor']);
         self::$page['style']['common']['element-'.$element_id] = self::parseStyles($element['props']);
         self::$page['style']['common']['element-'.$element_id.':hover'] = ['background-color'=>$hover_color];
     }
 
-    protected static function parseElementHTML($element_id, $element){
+    protected static function parseElementHTML ($element_id, $element) {
         
     }
 
-    protected static function parseStyles($styles){
+    protected static function parseElementShape ($element_id, $element) {
+        print_r($element);
+        // 边框
+        $border = self::parseBorder($element['style']['border']);
+
+        if ($border) {
+            if ($element['subType'] === 'line') {
+                self::$page['style']['common']['element-'.$element_id]['border-bottom'] = $border;
+            } elseif ($element['subType'] === 'vline') {
+                self::$page['style']['common']['element-'.$element_id]['border-right'] = $border;
+            } else {
+                self::$page['style']['common']['element-'.$element_id]['border'] = $border;
+            }
+        }
+
+        // 透明度
+        if (isset($element['style']['opacity']) && $element['style']['opacity'] < 100) {
+            self::$page['style']['common']['element-'.$element_id]['opacity'] = $element['style']['opacity'] / 100;
+        }
+
+        // 圆角
+        if (isset($element['style']['borderRadius']) && $element['style']['borderRadius'] !== '0px') {
+            self::$page['style']['common']['element-'.$element_id]['border-radius'] = $element['style']['borderRadius'];
+        }
+
+        // 背景
+        if (isset($element['style']['background'])) {
+            $background = $element['style']['background'];
+            self::$page['style']['common']['element-'.$element_id]['background'] = self::parseBackground($background);
+            // 背景图片拉升
+            if (isset($background['image']) && isset($background['size']) && $background['image'] && $background['size']) {
+                self::$page['style']['common']['element-'.$element_id]['background-size'] = 'cover';
+            }
+        }
+
+        // 投影
+        if (isset($element['style']['shadow'])) {
+            $shadow = $element['style']['shadow'];
+            if ($shadow['x'] || $shadow['y'] || $shadow['blur'] || $shadow['spread']) {
+                self::$page['style']['common']['element-'.$element_id]['box-shadow'] = self::parseShadow($shadow);
+            }
+        }
+    }
+
+    protected static function parseElementMap ($element_id, $element) {
+        
+    }
+
+    protected static function parseElementVideo ($element_id, $element) {
+        
+    }
+
+    protected static function parseElementSwiper ($element_id, $element) {
+        
+    }
+
+    protected static function parseBackground ($background) {
+        if (is_array($background)) {
+            $background_str = self::getColor($background['color']);
+            if (isset($background['image']) && $background['image'] != '') {
+                $background_str .= ' url(' . $background['image'] . ') ' . $background['repeat'] . ' ' . $background['position'];
+            }
+            return $background_str;
+        } else {
+            return $background;
+        }
+    }
+
+    protected static function parseBorder ($border) {
+        if ($border && $border['width'] != 0) {
+            return $border['width'] . ' ' . $border['style'] . ' ' . self::getColor($border['color']);
+        } else {
+            return '';
+        }
+    }
+
+    protected static function parseShadow ($shadow) {
+        return $shadow['x'] . 'px ' . $shadow['y'] . 'px ' . $shadow['blur'] . 'px ' . $shadow['spread'] . 'px ' . self::getColor($shadow['color']);
+    }
+
+    protected static function parseStyles ($styles) {
         $new_styles = array();
         foreach ($styles as $key => $style){
             $key = self::parseCamelCase($key);
@@ -147,7 +242,7 @@ class ParseHtml {
         return $new_styles;
     }
 
-    protected static function parseCamelCase($str){
+    protected static function parseCamelCase ($str) {
         return strtolower(preg_replace('/((?<=[a-z])(?=[A-Z]))/', '-', $str));
     }
 
@@ -155,8 +250,8 @@ class ParseHtml {
     //     if (substr($prop, -5, 5) === "Color")
     // }
 
-    protected static function getColor($str){
-        if ($str === ""){
+    protected static function getColor ($str) {
+        if ($str === "") {
             return "transparent";
         } elseif (substr($str, 0, 1) === "#") {
             return $str;
