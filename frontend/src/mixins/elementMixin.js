@@ -54,7 +54,7 @@ export default {
     elementShadow () {
       const shadowObj = this.localElement.style.shadow
       if (shadowObj) {
-        return shadowObj.x + 'px ' + shadowObj.y + 'px ' + shadowObj.z + 'px ' + this.getColor(shadowObj.color)
+        return shadowObj.x + 'px ' + shadowObj.y + 'px ' + shadowObj.blur + 'px ' + shadowObj.spread + 'px ' + this.getColor(shadowObj.color)
       }
     }
   },

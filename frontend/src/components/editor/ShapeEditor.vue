@@ -65,7 +65,7 @@ export default {
       
       <border-editor v-model="shape.style.border"></border-editor>
 
-      <shadow-editor v-model="shape.style.shadow"></shadow-editor>
+      <shadow-editor v-if="shape.subType === 'square' || shape.subType === 'circle'" v-model="shape.style.shadow"></shadow-editor>
 
       <div v-if="shape.subType === 'square' || shape.subType === 'circle'" class="sidebar-block">
         <div class="input-group">

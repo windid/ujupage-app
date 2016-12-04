@@ -184,7 +184,8 @@ export default {
       'shadow': {
         x: 0,
         y: 0,
-        z: 0,
+        blur: 0,
+        spread: 0,
         color: 4
       }
     }
@@ -223,7 +224,8 @@ export default {
       'shadow': {
         x: 0,
         y: 0,
-        z: 0,
+        blur: 0,
+        spread: 0,
         color: 4
       }
     }

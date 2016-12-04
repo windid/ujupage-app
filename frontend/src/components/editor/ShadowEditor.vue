@@ -26,12 +26,12 @@
       return {
         showQuickSelector: false,
         presetShadows: [
-          { x: 0, y: 0, z: 8 },
-          { x: -2, y: 2, z: 8 },
-          { x: 2, y: 2, z: 8 },
-          { x: 0, y: 0, z: 12 },
-          { x: -4, y: 4, z: 12 },
-          { x: 4, y: 4, z: 12 }
+          { x: 0, y: 0, blur: 8, spread: 0 },
+          { x: -2, y: 2, blur: 8, spread: 0 },
+          { x: 2, y: 2, blur: 8, spread: 0 },
+          { x: 0, y: 0, blur: 12, spread: 0 },
+          { x: -4, y: 4, blur: 12, spread: 2 },
+          { x: 4, y: 4, blur: 12, spread: 2 }
         ]
       }
     },
@@ -49,7 +49,9 @@
       pickPreset (preset) {
         this.shadow.x = preset.x
         this.shadow.y = preset.y
-        this.shadow.z = preset.z
+        this.shadow.blur = preset.blur
+        this.shadow.spread = preset.spread
+        this.showQuickSelector = false
       }
     }
   }
@@ -59,30 +61,38 @@
   <sidebar-part title="投影" :expand="expand">
     <dropdown slot="quick-selector" class="shadow-quick-selector" :show="showQuickSelector" @toggle="showQuickSelector=!showQuickSelector">
       <div class="shadow-wrapper" data-toggle="dropdown">
-        <div class="shadow-sample" :style="{boxShadow: shadow.x + 'px ' + shadow.y + 'px ' + shadow.z + 'px ' + getColor(shadow.color)}"></div>
-      </div>
-      <div slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">
-        <div v-for="presetShadow in presetShadows" class="preset-shadow" @click="pickPreset(presetShadow)" 
+        <div class="shadow-sample" 
           :style="{
-            boxShadow: presetShadow.x + 'px ' + presetShadow.y + 'px ' + presetShadow.z + 'px ' + getColor(shadow.color)
+            boxShadow: shadow.x + 'px ' + shadow.y + 'px ' + shadow.blur + 'px ' + shadow.spread + 'px ' + getColor(shadow.color)
           }">
         </div>
-        <div class="no-shadow" @click="pickPreset({ x: 0, y: 0, z: 0 })">无投影</div>
+      </div>
+      <div slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">
+        <div v-for="preset in presetShadows" class="preset-shadow" @click="pickPreset(preset)" 
+          :style="{
+            boxShadow: preset.x + 'px ' + preset.y + 'px ' + preset.blur + 'px ' + preset.spread + 'px ' + getColor(shadow.color)
+          }">
+        </div>
+        <div class="no-shadow" @click="pickPreset({ x: 0, y: 0, blur: 0, spread: 0 })">无投影</div>
       </div>
     </dropdown>
     <div slot="content">
       <color-picker v-model="shadow.color"></color-picker>
       <div class="input-group position-slider">
         <div class="input-group-addon"> 横向偏移 </div>
-        <slider :min="-50" :max="50" class="form-control" v-model="shadow.x"></slider>
+        <slider :min="-30" :max="30" class="form-control" v-model="shadow.x"></slider>
       </div>
       <div class="input-group position-slider">
         <div class="input-group-addon"> 纵向偏移 </div>
-        <slider :min="-50" :max="50" class="form-control" v-model="shadow.y"></slider>
+        <slider :min="-30" :max="30" class="form-control" v-model="shadow.y"></slider>
       </div>
       <div class="input-group position-slider">
-        <div class="input-group-addon"> 垂直偏移 </div>
-        <slider class="form-control" v-model="shadow.z"></slider>
+        <div class="input-group-addon"> 模糊半径 </div>
+        <slider :max="50" class="form-control" v-model="shadow.blur"></slider>
+      </div>
+      <div class="input-group position-slider">
+        <div class="input-group-addon"> 扩展半径 </div>
+        <slider :min="-30" :max="30" class="form-control" v-model="shadow.spread"></slider>
       </div>
     </div>
   </sidebar-part>
