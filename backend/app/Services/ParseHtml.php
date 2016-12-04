@@ -84,6 +84,25 @@ class ParseHtml {
             self::$page['elements'][$element_id]['link']['goal'] = 1;
         }
 
+        if (isset($element['fixed']) && $element['fixed']) {
+            unset(self::$page['style']['pc']['element-'.$element_id]['display']);
+            unset(self::$page['style']['pc']['element-'.$element_id]['top']);
+            unset(self::$page['style']['pc']['element-'.$element_id]['left']);
+            unset(self::$page['style']['mobile']['element-'.$element_id]['display']);
+            unset(self::$page['style']['mobile']['element-'.$element_id]['top']);
+            unset(self::$page['style']['mobile']['element-'.$element_id]['left']);
+
+            self::$page['style']['pc']['element-'.$element_id]['position'] = 'fixed';
+            self::$page['style']['pc']['element-'.$element_id]['top'] = $element['fixedPosition']['top'];
+            self::$page['style']['pc']['element-'.$element_id]['bottom'] = $element['fixedPosition']['bottom'];
+            self::$page['style']['pc']['element-'.$element_id]['margin-left'] = $element['fixedPosition']['left'];
+            self::$page['style']['pc']['element-'.$element_id]['z-index'] += 50000;
+            self::$page['style']['mobile']['element-'.$element_id]['z-index'] += 50000;
+            if ($element['fixedScrollPx']) {
+                self::$page['style']['pc']['element-'.$element_id]['display'] = 'none';
+            }
+        }
+
         switch ($element['type']) {
             case 'text':
                 self::parseElementText($element_id, $element);
@@ -151,7 +170,6 @@ class ParseHtml {
     }
 
     protected static function parseElementShape ($element_id, $element) {
-        print_r($element);
         // 边框
         $border = self::parseBorder($element['style']['border']);
 

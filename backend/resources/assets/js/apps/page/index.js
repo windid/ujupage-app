@@ -16,8 +16,23 @@ var Site = {
   init: () => {
     Site.parseForm()
     Site.parseLink()
+    Site.parseFixed()
     $('.msg-close').click(()=>{
       $('.msg-mask').hide()
+    })
+  },
+
+  parseFixed () {
+    $("[fixed]").each(function(){
+      const el = $(this)
+      const fixedPx = parseInt(el.attr('fixed'))
+      $("#container").scroll(function(){
+        if ($("#container").scrollTop() > fixedPx) {
+          el.fadeIn(400);
+        } else {
+          el.fadeOut(400);
+        }
+      })
     })
   },
 

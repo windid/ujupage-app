@@ -213,7 +213,8 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
 </div>
 </div>
   <script src="//app.ujupage.com/js/libs/jquery-1.12.3.min.js"></script>
-  <script src="//app.ujupage.com/js/page.js?20161124"></script>
+  <script src="//app.ujupage.com/js/page.js?20161204"></script>
+  <!-- <script src="/js/page.js"></script> -->
   <script>
     JuyeTracker.init({{$content['variation']['page_id']}}, {{$content['variation']['id']}});
   </script>
