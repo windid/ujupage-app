@@ -18,7 +18,7 @@ export default {
     return {
       element: {
         fixed: !!this.value.fixed,
-        fixedPosition: this.value.fixedPosition ? { ...this.value.fixedPosition } : { top: 'auto', bottom: '0', left: '0', right: 'auto' },
+        fixedPosition: this.value.fixedPosition ? { ...this.value.fixedPosition } : { top: 'auto', bottom: '0', left: '0' },
         fixedScrollPx: this.value.fixedScrollPx || 0
       }
     }
@@ -59,20 +59,6 @@ export default {
           this.element.fixedPosition.left = 'auto'
         } else {
           this.element.fixedPosition.left = val + 'px'
-          this.element.fixedPosition.right = 'auto'
-        }
-      }
-    },
-    fixedRight: {
-      get () {
-        return this.element.fixedPosition.right === 'auto' ? '' : parseInt(this.element.fixedPosition.right)
-      },
-      set (val) {
-        if (val === '') {
-          this.element.fixedPosition.right = 'auto'
-        } else {
-          this.element.fixedPosition.right = val + 'px'
-          this.element.fixedPosition.left = 'auto'
         }
       }
     }
@@ -107,24 +93,20 @@ export default {
         <div>
           <div>
             <div class="input-group position-input">
-              <div class="input-group-addon" @click="fixedTop = 0">顶部</div>
+              <div class="input-group-addon">顶部</div>
               <input style="text-align:center;" type="number" class="form-control" placeholder="自动" v-model="fixedTop">
             </div>
           </div>
           
-          <div style="clear:both">
-            <div class="input-group position-input" style="float: left">
-              <div class="input-group-addon" @click="fixedLeft = 0">左边距</div>
+          <div>
+            <div class="input-group position-input">
+              <div class="input-group-addon">左边</div>
               <input style="text-align:center;" type="number" class="form-control" placeholder="自动" v-model="fixedLeft">
-            </div>
-            <div class="input-group position-input" style="float: right">
-              <div class="input-group-addon" @click="fixedRight = 0">右边距</div>
-              <input style="text-align:center;" type="number" class="form-control" placeholder="自动" v-model="fixedRight">
             </div>
           </div>
           
           <div class="input-group position-input">
-            <div class="input-group-addon" @click="fixedBottom = 0">底部</div>
+            <div class="input-group-addon">底部</div>
             <input style="text-align:center;" type="number" class="form-control" placeholder="自动" v-model="fixedBottom">
           </div>
         </div>
@@ -153,7 +135,4 @@ export default {
   color: #999;
 }
 
-.input-group-addon {
-  cursor: pointer;
-}
 </style>
