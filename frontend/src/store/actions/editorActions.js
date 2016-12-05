@@ -93,8 +93,48 @@ export const publishPage = ({ commit, state }, successCb) => {
 export const addSection = ({ commit }) => {
   const section = {
     style: {
-      'pc': { 'background-color': '', height: '500px' },
-      'mobile': { 'background-color': '', height: '500px' }
+      'pc': {
+        height: '500px',
+        background: {
+          color: '',
+          image: '',
+          repeat: 'no-repeat',
+          position: 'center center',
+          size: '',
+          fixed: false,
+          stretch: true
+        },
+        border: {
+          width: '0px',
+          style: 'solid',
+          color: 3
+        },
+        mask: {
+          color: 1,
+          opacity: 0
+        }
+      },
+      'mobile': {
+        height: '500px',
+        background: {
+          color: '',
+          image: '',
+          repeat: 'no-repeat',
+          position: 'center center',
+          size: '',
+          fixed: false,
+          stretch: true
+        },
+        border: {
+          width: '0px',
+          style: 'solid',
+          color: 3
+        },
+        mask: {
+          color: 1,
+          opacity: 0
+        }
+      }
     },
     elements: { 'pc': [], 'mobile': [] }
   }
@@ -233,9 +273,9 @@ export const addElement = ({ commit, state, getters }, type) => {
   }
 
   // 计算元素应该进入哪个板块，以及在板块中的高
-  const workspace = document.getElementById('main-wrapper')
+  const scrollTop = document.body.scrollTop || document.documentElement.scrollTop
   const element = elementTypes[type]
-  const elementTopInPage = workspace.scrollTop + 100
+  const elementTopInPage = scrollTop + 150
   let sumSectionsHeight = 0
   let sectionHeight = 0
   let sectionId = -1

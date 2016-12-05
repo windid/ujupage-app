@@ -12,6 +12,7 @@ import ElementTimer from './ElementTimer'
 import ElementMap from './ElementMap'
 import ElementSwiper from './ElementSwiper'
 import resizer from '../ui/OnesideResizer'
+import { merge } from 'lodash'
 
 function scrollDown (offset) {
   const el = document.getElementById('main-wrapper')
@@ -21,7 +22,55 @@ function scrollDown (offset) {
   }
 }
 
+const defaultSection = {
+  style: {
+    'pc': {
+      height: '500px',
+      background: {
+        color: '',
+        image: '',
+        repeat: 'no-repeat',
+        position: 'center center',
+        size: '',
+        fixed: false,
+        stretch: true
+      },
+      border: {
+        width: '0px',
+        style: 'solid',
+        color: 3
+      },
+      mask: {
+        color: 1,
+        opacity: 0
+      }
+    },
+    'mobile': {
+      height: '500px',
+      background: {
+        color: '',
+        image: '',
+        repeat: 'no-repeat',
+        position: 'center center',
+        size: '',
+        fixed: false,
+        stretch: true
+      },
+      border: {
+        width: '0px',
+        style: 'solid',
+        color: 3
+      },
+      mask: {
+        color: 1,
+        opacity: 0
+      }
+    }
+  }
+}
+
 export default {
+  name: 'PageSection',
   props: ['sectionId', 'section'],
   mixins: [colorMixin],
   components: {
@@ -47,54 +96,35 @@ export default {
       workspace: 'editorWorkspace',
       elements: 'editorElements'
     }),
+    localSection () {
+      return merge({}, defaultSection, this.section)
+    },
+    border () {
+      const style = this.localSection.style[this.workspace.version]
+      return (style.border.width || '0px') + ' ' + style.border.style + ' ' + this.getColor(style.border.color)
+    },
     mainStyle () {
-      const v = this.workspace.version
-      const style = {
-        height: this.section.style[v]['height'],
-        backgroundAttachment: 'scroll',
-        backgroundColor: this.getColor(this.section.style[v]['background-color']),
-        borderColor: this.getColor(this.section.style[v]['border-color']),
-        borderWidth: this.section.style[v]['border-width'] || '0px',
-        borderStyle: 'solid'
+      const style = this.localSection.style[this.workspace.version]
+      return {
+        height: style.height,
+        borderTop: this.border,
+        borderBottom: this.border,
+        width: style.background.stretch ? '100%' : this.workspace.width + 2 + 'px',
+        margin: style.background.stretch ? '' : '0 auto',
+        backgroundColor: this.getColor(style.background.color),
+        backgroundImage: `url("${style.background.image}")`,
+        backgroundRepeat: style.background.repeat,
+        backgroundPosition: style.background.position,
+        backgroundSize: style.background.size ? 'cover' : 'auto',
+        backgroundAttachment: style.background.fixed ? 'fixed' : 'scroll'
       }
-      const bg = this.section.style.bg
-      if (bg) {
-        style.backgroundImage = `url("${bg.src}")`
-        const r = parseInt(bg.repeat)
-        style.backgroundRepeat = ['no-repeat', 'repeat', 'repeat-x', 'repeat-y', 'cover'][r]
-        style.backgroundSize = (r === 4) ? 'cover' : 'auto'
-        const position = []
-        let p = parseInt(bg.position)
-        if (isNaN(p)) p = 1
-        p--
-        position[0] = ['left', 'center', 'right'][p % 3]
-        position[1] = ['top', 'center', 'bottom'][Math.floor(p / 3)]
-        style.backgroundPosition = position.join(' ')
-
-        if (bg.attachment) {
-          style.backgroundAttachment = 'fixed'
-        }
-        if (bg.stretch) {
-          // todo::
-          style.width = '100%'
-          style.marign = ''
-        } else {
-          style.width = this.workspace.width + 'px'
-          style.margin = '0 auto'
-        }
-      }
-      return style
     },
     maskStyle () {
-      if (!this.section.style.hasOwnProperty('mask')) {
-        this.section.style.mask = {}
+      const mask = this.section.style[this.workspace.version].mask
+      return {
+        backgroundColor: this.getColor(mask.color),
+        opacity: mask.opacity / 100
       }
-      const m = this.section.style.mask
-      const style = {
-        backgroundColor: this.getColor(m.color),
-        opacity: m.opacity / 100
-      }
-      return style
     },
     editing () {
       return this.workspace.activeSectionId === this.sectionId
@@ -128,8 +158,6 @@ export default {
         scrollDown(moved)
       }
     }
-  },
-  mounted () {
   }
 }
 </script>
@@ -142,12 +170,20 @@ export default {
     @mouseleave="mouseHere = false"
   >
     <!-- 蒙板 -->
-    <div class="section-mask" :style="maskStyle" v-if="section.style.bg && section.style.bg.src"></div>
+    <div class="section-mask" :style="maskStyle" v-if="localSection.style[workspace.version].background.image"></div>
 
     <div class="editable-area" :style="{width: workspace.width + 2 + 'px'}">
       <!-- 页面元素组件 -->
       <transition-group name="fade" tag="div">
-        <component v-for="elementId in section.elements[workspace.version]" v-if="!elements[elementId].fixed" :is="'element-' + elements[elementId].type" :element="elements[elementId]" :section-id="sectionId" :element-id="elementId" :key="elementId"></component>
+        <component 
+          v-for="elementId in section.elements[workspace.version]" 
+          v-if="!elements[elementId].fixed" 
+          :is="'element-' + elements[elementId].type" 
+          :element="elements[elementId]" 
+          :section-id="sectionId" 
+          :element-id="elementId" 
+          :key="elementId">
+        </component>
       </transition-group>
       <!-- 板块操作按钮组 -->
       <transition name="fade">
@@ -201,7 +237,7 @@ export default {
 }
 
 .section-line.active {
-    border-bottom: 1px dashed #ff6a6a;
+  border-bottom: 1px dashed #ff6a6a;
 }
 
 .section-mask {

@@ -44,7 +44,7 @@ a:focus {
   box-shadow: 0px 0px 8px #ddd;
 }
 
-.input-group-btn > .btn {
+.input-group-btn .btn {
   height: 34px;
 }
 
