@@ -46,7 +46,7 @@ export default {
         <div @click.stop="deleteImage">删除</div>
       </div>
     </div>
-    <span v-else>图片背景</span>
+    <span v-else>点选图片</span>
   </div>
 </template>
 

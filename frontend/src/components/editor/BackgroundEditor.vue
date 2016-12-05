@@ -71,7 +71,7 @@
         <label><input type="radio" name="background-repeat" value="repeat" v-model="background.repeat"> 平铺</label>
         <label><input type="radio" name="background-repeat" value="repeat-x" v-model="background.repeat"> 水平平铺</label>
         <label><input type="radio" name="background-repeat" value="repeat-y" v-model="background.repeat"> 垂直平铺</label>
-        <label><input type="checkbox" name="background-size" value="cover" v-model="background.size"> 拉伸</label>
+        <label><input type="checkbox" name="background-size" true-value="cover" false-value="auto" v-model="background.size"> 拉伸</label>
       </div>
       <div class="col" v-if="background.image" style="width: 32%; margin-right: 0">
         <p>背景图位置</p>

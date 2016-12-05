@@ -1,7 +1,8 @@
 import API from '../../API'
 import * as types from '../mutation-types'
 import { merge } from 'lodash'
-import elementTypes from '../editorElementTypes'
+import elementTypes from '../../config/editorElementTypes'
+import defaultSection from '../../config/editorSection'
 
 // 数据初始化，在路由中调用
 export const editorInit = ({ commit, state }, [route, callback = false]) => {
@@ -91,53 +92,7 @@ export const publishPage = ({ commit, state }, successCb) => {
 
 // 添加板块
 export const addSection = ({ commit }) => {
-  const section = {
-    style: {
-      'pc': {
-        height: '500px',
-        background: {
-          color: '',
-          image: '',
-          repeat: 'no-repeat',
-          position: 'center center',
-          size: '',
-          fixed: false,
-          stretch: true
-        },
-        border: {
-          width: '0px',
-          style: 'solid',
-          color: 3
-        },
-        mask: {
-          color: 1,
-          opacity: 0
-        }
-      },
-      'mobile': {
-        height: '500px',
-        background: {
-          color: '',
-          image: '',
-          repeat: 'no-repeat',
-          position: 'center center',
-          size: '',
-          fixed: false,
-          stretch: true
-        },
-        border: {
-          width: '0px',
-          style: 'solid',
-          color: 3
-        },
-        mask: {
-          color: 1,
-          opacity: 0
-        }
-      }
-    },
-    elements: { 'pc': [], 'mobile': [] }
-  }
+  const section = defaultSection
   commit(types.ADD_SECTION, { section })
   commit(types.SAVE_CONTENT_STATE)
 }

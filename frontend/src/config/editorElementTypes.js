@@ -40,22 +40,12 @@ export default {
   'button': {
     type: 'button',
     text: '点击下载',
-    imageObj: null,
+    image: '',
     props: {
       backgroundColor: '3',
-      borderWidth: 1,
-      borderColor: '4',
       color: '0',
-      hoverColor: '4',
       borderRadius: '5px',
       fontSize: '18px',
-      borderStyle: 'none',
-      boxShadow: '1px 3px 6px #888',
-      boxShadowX: 1,
-      boxShadowY: 1,
-      boxShadowSize: 2,
-      boxShadowColor: 4,
-      boxShadowInset: false,
       fontWeight: 'normal'
     },
     style: {
@@ -63,18 +53,25 @@ export default {
         left: '400px',
         top: '10px',
         width: '160px',
-        height: '37px'
+        height: 'auto'
       },
       'mobile': {
         left: '100px',
         top: '10px',
         width: '160px',
-        height: '37px'
+        height: 'auto'
       },
       'border': {
-        color: '3',
+        color: '4',
         style: 'solid',
-        width: '1px'
+        width: '0px'
+      },
+      'shadow': {
+        x: 0,
+        y: 0,
+        blur: 8,
+        spread: 0,
+        color: 4
       }
     }
   },
@@ -179,7 +176,7 @@ export default {
         image: '',
         repeat: 'no-repeat',
         position: 'left top',
-        size: ''
+        size: 'auto'
       },
       'shadow': {
         x: 0,
@@ -219,7 +216,7 @@ export default {
         image: '',
         repeat: 'no-repeat',
         position: 'left top',
-        size: ''
+        size: 'auto'
       },
       'shadow': {
         x: 0,

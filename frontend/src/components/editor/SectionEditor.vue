@@ -2,56 +2,14 @@
 import Sidebar from '../ui/Sidebar'
 import BackgroundEditor from './BackgroundEditor'
 import BorderEditor from './BorderEditor'
-import { mapGetters, mapActions } from 'vuex'
 import colorMixin from '../../mixins/colorMixin'
 import ColorPicker from './ColorPicker'
 import { slider } from 'element-ui'
-import { merge, isEqual } from 'lodash'
 
-const defaultStyle = {
-  'pc': {
-    height: '500px',
-    background: {
-      color: '',
-      image: '',
-      repeat: 'no-repeat',
-      position: 'center center',
-      size: '',
-      fixed: false,
-      stretch: true
-    },
-    border: {
-      width: '0px',
-      style: 'solid',
-      color: 3
-    },
-    mask: {
-      color: 1,
-      opacity: 0
-    }
-  },
-  'mobile': {
-    height: '500px',
-    background: {
-      color: '',
-      image: '',
-      repeat: 'no-repeat',
-      position: 'center center',
-      size: '',
-      fixed: false,
-      stretch: true
-    },
-    border: {
-      width: '0px',
-      style: 'solid',
-      color: 3
-    },
-    mask: {
-      color: 1,
-      opacity: 0
-    }
-  }
-}
+import defaultSection from '../../config/editorSection'
+
+import { mapGetters, mapActions } from 'vuex'
+import { merge, isEqual } from 'lodash'
 
 export default {
   components: {
@@ -85,7 +43,7 @@ export default {
   watch: {
     'workspace.activeSectionId': function (sectionId) {
       if (sectionId !== null) {
-        this.style = merge({}, defaultStyle, this.sections[sectionId]['style'])
+        this.style = merge({}, defaultSection.style, this.sections[sectionId]['style'])
       } else {
         this.style = {}
       }

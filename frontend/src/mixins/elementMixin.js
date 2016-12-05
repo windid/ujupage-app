@@ -45,7 +45,7 @@ export default {
           backgroundImage: 'url(' + this.localElement.style.background.image + ')',
           backgroundRepeat: this.localElement.style.background.repeat,
           backgroundPosition: this.localElement.style.background.position,
-          backgroundSize: this.localElement.style.background.size ? 'cover' : 'auto'
+          backgroundSize: this.localElement.style.background.size
         }
       } else {
         return {}
