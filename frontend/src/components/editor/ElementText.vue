@@ -1,11 +1,10 @@
 <script>
-import ElementCommon from './ElementCommon'
+import elementMixin from '../../mixins/elementMixin'
 import colorMixin from '../../mixins/colorMixin.js'
 import ColorPicker from './ColorPicker'
 import FontSize from './FontSize'
 import LineHeight from './LineHeight'
 import TextAlign from './TextAlign'
-import { mapGetters, mapActions } from 'vuex'
 import { merge, isEqual } from 'lodash'
 
 function execCommand (...args) {
@@ -65,10 +64,8 @@ function detectSelection (el) {
 }
 
 export default {
-  props: ['element', 'sectionId', 'elementId'],
-  mixins: [colorMixin],
+  mixins: [colorMixin, elementMixin],
   components: {
-    ElementCommon,
     ColorPicker,
     FontSize,
     LineHeight,
@@ -76,13 +73,6 @@ export default {
   },
   data () {
     return {
-      // 初始加载主按钮组
-      buttonGroup: 'main',
-      // 是否处于编辑状态
-      editing: false,
-      textElement: merge({}, this.element),
-      resize: {},
-      draggableFromChild: true,
       addingLink: false,
       linkAddress: '',
       userSelection: null,
@@ -90,24 +80,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      workspace: 'editorWorkspace'
-    }),
     // 编辑状态不允许拖动
     draggable () {
       return !this.editing && this.draggableFromChild
-    },
-    resizable () {
-      return (!this.editing && this.workspace.activeElementId === this.elementId)
     }
   },
   mounted () {
-    this.$refs.content.innerHTML = this.textElement.content
+    this.$refs.content.innerHTML = this.localElement.content
   },
   methods: {
-    ...mapActions([
-      'modifyElement'
-    ]),
     edit () {
       if (this.editing) return
 
@@ -126,19 +107,13 @@ export default {
     editDone () {
       this.editing = false
       this.buttonGroup = 'main'
-      this.textElement.content = this.$refs.content.innerHTML
+      this.localElement.content = this.$refs.content.innerHTML
       this.changeDraggable(true)
 
-      if (!isEqual(this.element, this.textElement)) {
-        this.modifyElement([this.elementId, this.textElement])
+      if (!isEqual(this.element, this.localElement)) {
+        this.modifyElement([this.elementId, this.localElement])
       }
       this.addingLink = false
-    },
-    changeButtonGroup (val) {
-      this.buttonGroup = val
-    },
-    changeDraggable (val) {
-      this.draggableFromChild = val
     },
     styleColor (color) {
       execCommand('foreColor', false, color)
@@ -190,12 +165,9 @@ export default {
     merge: merge
   },
   watch: {
-    'workspace.activeElementId': function (val) {
-      if (val !== this.elementId && this.editing) this.editDone()
-    },
     'element': function (val) {
-      this.textElement = merge({}, val)
-      this.$refs.content.innerHTML = this.textElement.content
+      this.localElement = merge({}, val)
+      this.$refs.content.innerHTML = this.localElement.content
     }
   }
 }
@@ -224,9 +196,9 @@ export default {
       @mouseup="contentMouseUp"
       :contenteditable="editing" 
       spellcheck="false" 
-      :style="merge({}, textElement.fontStyle, {
+      :style="merge({}, localElement.fontStyle, {
         cursor: editing ? 'text' : 'pointer',
-        color: getColor(textElement.fontStyle.color)
+        color: getColor(localElement.fontStyle.color)
       })"
     >
     </div>
@@ -236,12 +208,12 @@ export default {
     <template slot="button-groups">
       <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group"
       @mousedown.prevent>
-        <color-picker v-model="textElement.fontStyle.color">
-          <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="颜色" ><span class="glyphicon glyphicon-text-color" :style="{color:getColor(textElement.fontStyle.color)}"></span> <span class="caret"></span></div>
+        <color-picker v-model="localElement.fontStyle.color">
+          <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="颜色" ><span class="glyphicon glyphicon-text-color" :style="{color:getColor(localElement.fontStyle.color)}"></span> <span class="caret"></span></div>
         </color-picker>
-        <font-size v-model="textElement.fontStyle.fontSize"></font-size>
-        <line-height v-model="textElement.fontStyle.lineHeight"></line-height>
-        <text-align v-model="textElement.fontStyle.textAlign"></text-align>
+        <font-size v-model="localElement.fontStyle.fontSize"></font-size>
+        <line-height v-model="localElement.fontStyle.lineHeight"></line-height>
+        <text-align v-model="localElement.fontStyle.textAlign"></text-align>
         <div class="btn btn-default" title="加粗" @click="styleText('bold')">B</div>
         <div class="btn btn-default" title="斜体" @click="styleText('italic')"><i>I</i></div>
         <div class="btn btn-default" title="下划线" @click="styleText('underline')"><u>U</u></div>
