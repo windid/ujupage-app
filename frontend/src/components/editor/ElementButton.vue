@@ -3,6 +3,7 @@ import LinkEditor from './LinkEditor'
 import ButtonEditor from './ButtonEditor'
 import elementMixin from '../../mixins/elementMixin'
 import colorMixin from '../../mixins/colorMixin'
+import elementTypes from '../../config/editorElementTypes'
 import { merge, isEqual } from 'lodash'
 
 export default {
@@ -14,6 +15,7 @@ export default {
   },
   data () {
     return {
+      localElement: merge({}, elementTypes.button, this.element),
       linkObj: merge({}, this.element.link)
     }
   },
@@ -54,6 +56,11 @@ export default {
         this.modifyElement([this.elementId, newPropsObj])
       }
       this.buttonGroup = 'main'
+    }
+  },
+  watch: {
+    'element': function (val) {
+      this.localElement = merge({}, elementTypes.button, val)
     }
   }
 }

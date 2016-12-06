@@ -53,6 +53,11 @@ export default {
         this.modifyElement([this.elementId, this.localElement, true])
       }
     }
+  },
+  watch: {
+    'element': function (val) {
+      this.localElement = merge({}, elementTypes.form, val)
+    }
   }
 }
 </script>
