@@ -60,7 +60,7 @@ export default {
 }
 
 .sidebar-body {
-  padding:12px;
+  padding: 0 12px;
   height: calc(100% - 54px);
   overflow-y: auto;
   overflow-x: hidden;

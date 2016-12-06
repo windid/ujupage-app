@@ -53,6 +53,7 @@
     position: relative;
     width: 960px;
     margin:0 auto;
+    height: 100%;
   }
 
   .element{

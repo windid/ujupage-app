@@ -47,8 +47,22 @@ class ParseHtml {
     }
 
     protected static function parseSection($section_id, $section){
-        self::$page['style']['pc']['section-'.$section_id]     = self::parseStyles($section['style']['pc']);
-        self::$page['style']['mobile']['section-'.$section_id] = self::parseStyles($section['style']['mobile']);
+        self::$page['style']['pc']['section-'.$section_id] = self::parseSectionStyles($section['style']['pc']);
+        self::$page['style']['mobile']['section-'.$section_id] = self::parseSectionStyles($section['style']['mobile']);
+
+        if (isset($section['style']['pc']['mask'])) {
+            self::$page['style']['pc']['section-'.$section_id.' .section-inner'] = [
+                'opacity' => $section['style']['pc']['mask']['opacity'] / 100,
+                'background-color' => self::getColor($section['style']['pc']['mask']['color'])
+            ];
+        }
+        
+        if (isset($section['style']['pc']['mask'])) {
+            self::$page['style']['mobile']['section-'.$section_id.' .section-inner'] = [
+                'opacity' => $section['style']['mobile']['mask']['opacity'] / 100,
+                'background-color' => self::getColor($section['style']['mobile']['mask']['color'])
+            ];
+        }
 
         foreach ($section['elements']['pc'] as $element_id){
             self::$elements['pc'][$element_id] = self::$page['style']['pc']['content']['height'];
@@ -62,6 +76,27 @@ class ParseHtml {
         self::$page['style']['pc']['content']['height'] .= "px";
         self::$page['style']['mobile']['content']['height'] += $section['style']['mobile']['height'];
         self::$page['style']['mobile']['content']['height'] .= "px";
+    }
+
+    protected static function parseSectionStyles ($sectionStyles) {
+        $styles = [
+            'height' => $sectionStyles['height']
+        ];
+        if (isset($sectionStyles['border'])) {
+            $border = self::parseBorder($sectionStyles['border']);
+            $styles['border-top'] = $border;
+            $style['border-bottom'] = $border;
+        }
+        if (isset($sectionStyles['background'])) {
+            $styles['background'] = self::parseBackground($sectionStyles['background']);
+            $styles['width'] = $sectionStyles['background']['stretch'] ? '100%' : '960px';
+            $styles['margin'] = $sectionStyles['background']['stretch'] ? '' : '0 auto';
+            $styles['background-size'] = $sectionStyles['background']['size'];
+            if ($sectionStyles['background']['fixed'] ) {
+                $styles['background-attachment'] = 'fixed';
+            }
+        }
+        return $styles;
     }
 
     protected static function parseElement($element_id, $element){
@@ -240,7 +275,7 @@ class ParseHtml {
         if ($border && $border['width'] != 0) {
             return $border['width'] . ' ' . $border['style'] . ' ' . self::getColor($border['color']);
         } else {
-            return '';
+            return 0;
         }
     }
 

@@ -14,10 +14,10 @@ export default {
         { name: '图片', style: 'picture', action: () => this.newElement('image') },
         { name: '文字', style: 'font', action: () => this.newElement('text') },
         { name: '按钮', style: 'expand', action: () => this.newElement('button') },
-        { name: '表单', style: 'edit', action: () => this.newElement('form') }
+        { name: '形状', style: 'stop', action: () => this.showShapePicker() }
       ],
       advancedTools: [
-        { name: '形状', style: 'stop', action: () => this.showShapePicker() },
+        { name: '表单', style: 'edit', action: () => this.newElement('form') },
         { name: '视频', style: 'film', action: () => this.newElement('video') },
         { name: '地图', style: 'map-marker', action: () => this.newElement('map') },
         // { name: '音乐', style: 'music', action: () => this.newElement('music') },
@@ -25,7 +25,7 @@ export default {
         // { name: '倒计时', style: 'time', action: () => this.newElement('timer') },
         { name: 'HTML', style: 'header', action: () => this.newElement('html') }
       ],
-      showAdvanced: true,
+      showAdvanced: false,
       showShapes: false
     }
   },
@@ -192,8 +192,8 @@ export default {
   border-radius: 5px;
   height: 60px;
   background: #fff;
-  left: 160px;
-  top: 48px;
+  left: 80px;
+  top: 353px;
 }
 
 .shape-item {
