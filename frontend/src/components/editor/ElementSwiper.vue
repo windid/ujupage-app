@@ -25,8 +25,8 @@ export default {
     ...mapGetters({
       workspace: 'editorWorkspace'
     }),
-    resizable: function () {
-      return true
+    resizable () {
+      return (!this.editing && this.workspace.activeElementId === this.elementId)
     },
     hasImages: function () {
       return this.swiperElement.data.images && this.swiperElement.data.images.length >= 1
@@ -44,7 +44,7 @@ export default {
       this.buttonGroup = 'main'
       this.editing = false
       if (!isEqual(this.swiperElement, this.element)) {
-        this.modifyElement([this.elementId, this.swiperElement])
+        this.modifyElement([this.elementId, this.swiperElement, true])
       }
     },
     imagesChange (val) {
@@ -107,7 +107,7 @@ export default {
 </div>
 </template>
 
-<style>
+<style scoped>
 .element-swiper {
   width: 100%;
   height: 100%;

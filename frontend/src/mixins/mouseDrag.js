@@ -12,13 +12,15 @@
 const MOVE_THRESHOLD = 9
 const HUGE_MOVE_THRESHOLD = 40
 const TIME_THRESHOLD = 1000 * 0.12 // 毫秒
+const HUGE_TIME_THRESHOLD = 1000
 
 function movable (x, y, timeStart) {
-  const now = Date.now()
-  const condTime = (now - timeStart) > TIME_THRESHOLD
+  const timeLapse = Date.now() - timeStart
+  const condTime = timeLapse > TIME_THRESHOLD
+  const condHugeTime = timeLapse > HUGE_TIME_THRESHOLD
   const condMove = Math.abs(x) > MOVE_THRESHOLD || Math.abs(y) > MOVE_THRESHOLD
   const condHugeMove = Math.abs(x) > HUGE_MOVE_THRESHOLD || Math.abs(y) > HUGE_MOVE_THRESHOLD
-  return (condTime && condMove) || condHugeMove
+  return (condTime && condMove) || condHugeMove || condHugeTime
 }
 
 export default {

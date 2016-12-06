@@ -19,6 +19,7 @@ export default {
       input: '',
       posList: [],
       showList: false,
+      editing: false,
       map: null,
       marker: null
     }
@@ -28,7 +29,7 @@ export default {
       workspace: 'editorWorkspace'
     }),
     resizable () {
-      return true
+      return (!this.editing && this.workspace.activeElementId === this.elementId)
     },
     center () {
       if (this.mapElement.data.position === null) {
@@ -75,12 +76,14 @@ export default {
       }
     },
     editDone () {
+      this.editing = false
       this.buttonGroup = 'main'
       if (!isEqual(this.element, this.mapElement)) {
         this.modifyElement([this.elementId, this.mapElement])
       }
     },
     edit () {
+      this.editing = true
       this.buttonGroup = 'address'
       setTimeout(() => {
         this.$refs.input && this.$refs.input.focus()
@@ -167,7 +170,7 @@ export default {
   </template>
 </template>
 
-<style>
+<style scoped>
 .element-map {
   background-color: #f8f8f8;
   width: 100%;
