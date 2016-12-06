@@ -1,31 +1,25 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import ElementCommon from './ElementCommon'
+import { mapActions } from 'vuex'
 import LinkEditor from './LinkEditor'
+import elementMixin from '../../mixins/elementMixin'
 import { merge } from 'lodash'
 
 export default {
-  // 接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID
-  props: ['element', 'sectionId', 'elementId'],
+  mixins: [elementMixin],
   components: {
-    ElementCommon,
     LinkEditor
   },
   data () {
     return {
-      buttonGroup: 'main',
       imageObj: {},
       linkObj: merge({}, this.element.link),
       resize: {
         // aspectRatio: true
-      },
-      draggableFromChild: true
+      }
     }
   },
   methods: {
     ...mapActions([
-      'modifyElement',
-      'removeElement',
       'getImage'
     ]),
     edit () {
@@ -43,23 +37,6 @@ export default {
         this.modifyElement([this.elementId, newPropsObj])
       }
       this.buttonGroup = 'main'
-    },
-    changeButtonGroup (val) {
-      this.buttonGroup = val
-    },
-    changeDraggable (val) {
-      this.draggableFromChild = val
-    }
-  },
-  computed: {
-    ...mapGetters({
-      workspace: 'editorWorkspace'
-    }),
-    draggable () {
-      return this.draggableFromChild
-    },
-    resizable () {
-      return this.workspace.activeElementId === this.elementId
     }
   },
   watch: {
