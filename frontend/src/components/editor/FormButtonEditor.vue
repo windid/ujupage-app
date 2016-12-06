@@ -11,6 +11,7 @@ import { Slider } from 'element-ui'
 import { mapActions } from 'vuex'
 
 export default {
+  name: 'FormButtonEditor',
   props: ['show', 'value'],
   components: {
     ColorPicker,
@@ -23,14 +24,19 @@ export default {
   },
   mixins: [colorMixin],
   data () {
-    if (!this.value.hasOwnProperty('imageObj')) {
-      this.value.imageObj = null
-    }
     return {
-      button: this.value
+      // button: this.value
     }
   },
   computed: {
+    button: {
+      get () {
+        return this.value
+      },
+      set (val) {
+        this.emit('input', val)
+      }
+    },
     borderRadius: {
       set (newValue) {
         this.button.props.borderRadius = newValue + 'px'
@@ -44,14 +50,6 @@ export default {
     ...mapActions([
       'getImage'
     ])
-  },
-  watch: {
-    'value': {
-      handler: function (newButton) {
-        this.button = this.value
-      },
-      deep: true
-    }
   }
 }
 </script>

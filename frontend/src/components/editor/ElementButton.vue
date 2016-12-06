@@ -18,7 +18,7 @@ export default {
     }
   },
   computed: {
-    buttonStyle () {
+    buttonStyles () {
       const props = this.localElement.props
       return {
         borderRadius: props.borderRadius,
@@ -75,7 +75,7 @@ export default {
   >
     <div slot="content" :class="{'element-button-text': !localElement.image}"
       @dblclick="edit" 
-      :style="buttonStyle">
+      :style="buttonStyles">
       <img v-if="localElement.image" :src="localElement.image" :style="{width: '100%', height: 'auto'}" @mousedown.prevent>
       <span v-else>{{localElement.text}}</span>
     </div>

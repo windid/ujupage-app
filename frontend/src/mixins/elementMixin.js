@@ -31,30 +31,25 @@ export default {
       return (!this.editing && this.workspace.activeElementId === this.elementId)
     },
     elementBorder () {
-      const borderObj = this.localElement.style.border
-      if (borderObj) {
-        return borderObj.width + ' ' + borderObj.style + ' ' + this.getColor(borderObj.color)
+      const border = this.localElement.style.border
+      if (border) {
+        return this.parseBorderStyle(border)
       } else {
         return ''
       }
     },
     elementBackground () {
-      if (this.localElement.style.background) {
-        return {
-          backgroundColor: this.getColor(this.localElement.style.background.color),
-          backgroundImage: 'url(' + this.localElement.style.background.image + ')',
-          backgroundRepeat: this.localElement.style.background.repeat,
-          backgroundPosition: this.localElement.style.background.position,
-          backgroundSize: this.localElement.style.background.size
-        }
+      const background = this.localElement.style.background
+      if (background) {
+        return this.parseBackgroundStyle(background)
       } else {
         return {}
       }
     },
     elementShadow () {
-      const shadowObj = this.localElement.style.shadow
-      if (shadowObj) {
-        return shadowObj.x + 'px ' + shadowObj.y + 'px ' + shadowObj.blur + 'px ' + shadowObj.spread + 'px ' + this.getColor(shadowObj.color)
+      const shadow = this.localElement.style.shadow
+      if (shadow) {
+        return this.parseShadowStyle(shadow)
       }
     }
   },
@@ -62,6 +57,21 @@ export default {
     ...mapActions([
       'modifyElement'
     ]),
+    parseBorderStyle (border) {
+      return border.width + ' ' + border.style + ' ' + this.getColor(border.color)
+    },
+    parseShadowStyle (shadow) {
+      return shadow.x + 'px ' + shadow.y + 'px ' + shadow.blur + 'px ' + shadow.spread + 'px ' + this.getColor(shadow.color)
+    },
+    parseBackgroundStyle (background) {
+      return {
+        backgroundColor: this.getColor(background.color),
+        backgroundImage: 'url(' + background.image + ')',
+        backgroundRepeat: background.repeat,
+        backgroundPosition: background.position,
+        backgroundSize: background.size
+      }
+    },
     editDone () {
 
     },

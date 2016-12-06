@@ -22,20 +22,11 @@ export default {
     switchTab (tab) {
       this.currentTab = tab
       this.$emit('save')
-    },
-    popupChange (val) {
-      this.$emit('popup-change', val)
-    },
-    imageChange (val) {
-      this.$emit('image-change', val)
     }
   },
   computed: {
     formElement () {
       return { ...this.value }
-    },
-    isButton () {
-      return this.currentTab === 'button'
     }
   }
 }
@@ -54,11 +45,7 @@ export default {
       <div class="btn btn-success" @click="$emit('edit-done')">完成</div>
     </div>
     <div slot="body">
-      <form-button-editor v-if="isButton"
-        v-model="formElement[currentTab]"
-        @popup-change="popupChange"
-        @image-change="imageChange"></form-button-editor>
-      <component v-else :is="'form-' + currentTab + '-editor'" v-model="formElement[currentTab]"></component>
+      <component :is="'form-' + currentTab + '-editor'" v-model="formElement[currentTab]"></component>
     </div>
   </sidebar>
 

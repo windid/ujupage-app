@@ -39,7 +39,7 @@ export default {
 
   'button': {
     type: 'button',
-    text: '点击下载',
+    text: '提交',
     image: '',
     props: {
       backgroundColor: '3',
@@ -71,7 +71,7 @@ export default {
         y: 0,
         blur: 8,
         spread: 0,
-        color: 4
+        color: 3
       }
     }
   },
@@ -113,18 +113,42 @@ export default {
         validator: ['required', 'mobile']
       }
     ],
-    button: {
-      text: '提交',
+    'button': {
+      type: 'button',
+      text: '点击下载',
+      image: '',
       props: {
         backgroundColor: '3',
-        borderColor: '4',
         color: '0',
-        hoverColor: '4',
         borderRadius: '5px',
         fontSize: '18px',
-        borderStyle: 'none',
-        boxShadow: '1px 3px 6px #888',
         fontWeight: 'normal'
+      },
+      style: {
+        'pc': {
+          left: '400px',
+          top: '10px',
+          width: '160px',
+          height: 'auto'
+        },
+        'mobile': {
+          left: '100px',
+          top: '10px',
+          width: '160px',
+          height: 'auto'
+        },
+        'border': {
+          color: '4',
+          style: 'solid',
+          width: '0px'
+        },
+        'shadow': {
+          x: 0,
+          y: 0,
+          blur: 8,
+          spread: 0,
+          color: 3
+        }
       }
     }
   },
