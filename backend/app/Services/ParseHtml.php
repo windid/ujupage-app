@@ -52,7 +52,7 @@ class ParseHtml {
 
         if (isset($section['style']['pc']['mask'])) {
             self::$page['style']['pc']['section-'.$section_id.' .section-inner'] = [
-                'opacity' => $section['style']['pc']['mask']['opacity'] / 100,
+                'opacity'          => $section['style']['pc']['mask']['opacity'] / 100,
                 'background-color' => self::getColor($section['style']['pc']['mask']['color'])
             ];
         }
