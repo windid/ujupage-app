@@ -49,55 +49,59 @@
     margin-left: -480px;
   }
 
-  .section-inner{
+  .section-inner {
     position: relative;
     width: 960px;
-    margin:0 auto;
+    margin: 0 auto;
     height: 100%;
   }
 
-  .element{
+  .element {
     position: absolute;
     word-wrap: break-word;
   }
 
-  .element p{
+  .element p {
     margin: 0;
   }
 
-  .element-button{
-    padding:6px;
+  .element-button {
+    padding: 6px;
     text-align: center;
-    border-width: 2px;
-    width: 100%
+    width: 100%;
+    height: auto;
   }
 
-  .element-button a{
+  .element-button-image {
+    max-width: 100%;
+  }
+
+  .element-button a {
     display: block;
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    bottom: 0;
+    right: 0;
   }
 
-  .element-image{
+  .element-image {
     width:100%;
     height:auto;
   }
 
-  .form-group{
+  .form-group {
     position: relative;
   }
 
-  .form-field-input{
+  .form-field-input {
     font-size: 16px;
     height: 40px;
     line-height: 20px;
     padding: 4px 10px;
   }
 
-  .label-inside{
+  .label-inside {
     position: absolute;
     font-weight: normal;
     top:9px;
@@ -105,9 +109,9 @@
     font-size:16px;
   }
 
-  .options-inline{
+  .options-inline {
     display: inline-block;
-    margin-right:10px;
+    margin-right: 10px;
   }
 
   .msg-mask {
@@ -138,7 +142,7 @@
     transition: all .3s ease;
   }
 
-  .msg-close{
+  .msg-close {
     position: absolute;
     right:8px;
     top:5px;

@@ -186,18 +186,36 @@ class ParseHtml {
         self::$page['style']['common']['element-'.$element_id." label"] = self::parseStyles(['color'=>$element['props']['labelColor']]);
         self::$page['elements'][$element_id]['props']['goal'] = in_array('form', self::$page['settings']['goals']) ? 1 : 0;
         
-        $hover_color = self::getColor($element['button']['props']['hoverColor']);
-        unset ($element['button']['props']['hoverColor']);
-        self::$page['style']['common']['element-'.$element_id."-button"] = self::parseStyles($element['button']['props']);
-        self::$page['style']['common']['element-'.$element_id."-button:hover"] = ['background-color'=>$hover_color];
-
+        // 按钮
+        self::$page['style']['common']['element-'.$element_id."-button"] = self::parseButton($element['button']);
     }
 
     protected static function parseElementButton ($element_id, $element) {
-        $hover_color = self::getColor($element['props']['hoverColor']);
-        unset ($element['props']['hoverColor']);
-        self::$page['style']['common']['element-'.$element_id] = self::parseStyles($element['props']);
-        self::$page['style']['common']['element-'.$element_id.':hover'] = ['background-color'=>$hover_color];
+        self::$page['style']['common']['element-'.$element_id] = self::parseButton($element);
+    }
+
+    protected static function parseButton($element) {
+        $styles = self::parseStyles($element['props']);
+
+        // 边框
+        if (isset($element['style']['border']) && $element['style']['border']['width'] != '0px') {
+            $styles['border'] = self::parseBorder($element['style']['border']);
+        }
+
+        // 投影
+        if (isset($element['style']['shadow'])) {
+            $shadow = $element['style']['shadow'];
+            if ($shadow['x'] || $shadow['y'] || $shadow['blur'] || $shadow['spread']) {
+                $styles['box-shadow'] = self::parseShadow($shadow);
+            }
+        }
+
+        // 如果是图片padding0 否则padding6
+        if (isset($element['image']) && $element['image']) {
+            $styles['padding'] = '0px';
+        }
+
+        return $styles;
     }
 
     protected static function parseElementHTML ($element_id, $element) {
