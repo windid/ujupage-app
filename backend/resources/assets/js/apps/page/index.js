@@ -120,9 +120,30 @@ var Site = {
     const msgBody = $('.msg-body')
     msgBody.html(msg)
     msgBox.show()
+  },
+
+  makeMap: (config) => {
+    var map = new AMap.Map(config.domId, {
+      resizeEnable: true,
+      zoom: 16,
+      center: config.coordination
+    })
+    var toolBar = new AMap.ToolBar({
+        visible: true
+    })
+    toolBar.hideDirection()
+    toolBar.hideRuler()
+    map.addControl(toolBar)
+    var marker = new AMap.Marker({
+      position: config.coordination,
+      title: config.name
+    })
+    marker.setMap(map)
   }
 
 }
+
+window.JuyePage = Site
 
 $( document ).ready(function() {
   Site.init()

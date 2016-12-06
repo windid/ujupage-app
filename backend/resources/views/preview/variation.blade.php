@@ -10,6 +10,12 @@
   <meta name="keywords" content="{{$content['settings']['seo']['keywords']}}">
   <meta name="description" content="{{$content['settings']['seo']['description']}}">
   <link href="//app.ujupage.com/css/bootstrap.css" rel="stylesheet">
+  <script src="//app.ujupage.com/js/libs/jquery-1.12.3.min.js"></script>
+  <!-- <script src="//app.ujupage.com/js/page.js?20161204"></script> -->
+  <script src="/js/page.js"></script>
+  @if ($content['settings']['hasmap'])
+  <script src="http://webapi.amap.com/maps?v=1.3&key=e3b78e84d1aedba49bc8a84c4e113e01&plugin=AMap.Scale,AMap.OverView,AMap.ToolBar"></script>
+  @endif
   <script>
     {!! $content['settings']['code']['header'] !!}
   </script>
@@ -217,9 +223,6 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
   </div>
 </div>
 </div>
-  <script src="//app.ujupage.com/js/libs/jquery-1.12.3.min.js"></script>
-  <script src="//app.ujupage.com/js/page.js?20161204"></script>
-  <!-- <script src="/js/page.js"></script> -->
   <script>
     JuyeTracker.init({{$content['variation']['page_id']}}, {{$content['variation']['id']}});
   </script>

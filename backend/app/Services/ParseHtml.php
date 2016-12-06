@@ -20,6 +20,7 @@ class ParseHtml {
         self::$color_set = $content['colorSet'];
 
         self::$page['settings'] = $content['settings'];
+        self::$page['settings']['hasmap'] = 0;
         self::$page['sections'] = $content['sections'];
         self::$page['elements'] = $content['elements'];
         self::$page['style'] = array('common'=>array(), 'pc'=>array(), 'mobile'=>array());
@@ -266,7 +267,7 @@ class ParseHtml {
     }
 
     protected static function parseElementMap ($element_id, $element) {
-        
+        self::$page['settings']['hasmap'] = 1;
     }
 
     protected static function parseElementVideo ($element_id, $element) {
