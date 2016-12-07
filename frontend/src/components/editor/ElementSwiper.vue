@@ -82,6 +82,7 @@ export default {
 <swiper-editor
   :id="elementId"
   :show="editing"
+  :value="localElement.data"
   :images="localElement.data.images"
   @edit-done="editDone"
   @images-change="imagesChange"></swiper-editor>
