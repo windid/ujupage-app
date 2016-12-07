@@ -4,6 +4,7 @@ import ImagePicker from '../ui/ImagePicker'
 
 import { mapActions } from 'vuex'
 import { clone } from 'lodash'
+import Vue from 'vue'
 
 export default {
   name: 'swiper-editor',
@@ -30,6 +31,8 @@ export default {
     imageChange (image, id) {
       if (image === null) {
         this.imageList.splice(id, 1)
+      } else {
+        Vue.set(this.imageList, id, image)
       }
     }
   },
@@ -63,7 +66,7 @@ export default {
 </sidebar>
 </template>
 
-<style>
+<style scoped>
 .swiper-add-image-btn {
   -webkit-appearance: none;
   outline: none;

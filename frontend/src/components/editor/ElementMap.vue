@@ -157,7 +157,7 @@ export default {
   <template slot="button-groups">
     <div v-if="buttonGroup === 'address'">
       <div class="form-inline search-form">
-        <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input"></input><button class="btn btn-primary" @click.stop="search">搜索</button>
+        <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input" placeholder="输入地名，回车搜索"></input><button class="btn btn-primary" @click.stop="search">搜索</button>
       </div>
       <div class="search-result" v-show="showList">
         <ul>

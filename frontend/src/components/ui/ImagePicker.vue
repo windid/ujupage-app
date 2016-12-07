@@ -5,7 +5,6 @@ export default {
   name: 'image-picker',
   props: {
     'value': {
-      twoWay: true,
       required: true
     },
     'id': {
@@ -35,6 +34,11 @@ export default {
     deleteImage () {
       this.image = null
       this.$emit('image-change', null, this.id)
+    }
+  },
+  watch: {
+    'value': function (val) {
+      this.image = val
     }
   }
 }
