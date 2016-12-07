@@ -119,10 +119,10 @@ export default {
         </tooltip>
       </div>
       <div class="btn-group">
-        <tooltip content="撤销" class="btn btn-default" :class="{ disabled: !undoButton }" @click="undo">
+        <tooltip content="撤销" class="btn btn-default" :class="{ disabled: !undoButton }" @click.native="undo">
           <span class="glyphicon glyphicon-share-alt flipx"></span>
         </tooltip>
-        <tooltip content="重做" class="btn btn-default" :class="{ disabled: !redoButton }" @click="redo">
+        <tooltip content="重做" class="btn btn-default" :class="{ disabled: !redoButton }" @click.native="redo">
           <span class="glyphicon glyphicon-share-alt"></span>
         </tooltip>
       </div>

@@ -28,7 +28,7 @@ export default {
   height: 50px;
   top: 0;
   width: 100%;
-  z-index: 1000000;
+  z-index: 100000;
   position: fixed;
   box-shadow: 0 3px 8px #eee;
   border-top: 1px solid #ddd;
