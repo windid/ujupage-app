@@ -1,41 +1,26 @@
 <script>
-import ElementCommon from './ElementCommon'
+import elementMixin from '../../mixins/elementMixin'
 import SwiperEditor from './SwiperEditor'
-import { mapGetters, mapActions } from 'vuex'
-import { merge, isEqual } from 'lodash'
+import { isEqual } from 'lodash'
 
 export default {
-  name: 'element-swiper',
+  mixins: [elementMixin],
   components: {
-    ElementCommon,
     SwiperEditor
   },
-  props: ['element', 'elementId', 'sectionId'],
   data () {
     return {
-      swiperElement: merge({}, this.element),
-      buttonGroup: 'main',
-      editing: false,
       resize: {
         handles: 's,e'
       }
     }
   },
   computed: {
-    ...mapGetters({
-      workspace: 'editorWorkspace'
-    }),
-    resizable () {
-      return (!this.editing && this.workspace.activeElementId === this.elementId)
-    },
     hasImages: function () {
-      return this.swiperElement.data.images && this.swiperElement.data.images.length >= 1
+      return this.localElement.data.images && this.localElement.data.images.length >= 1
     }
   },
   methods: {
-    ...mapActions([
-      'modifyElement'
-    ]),
     edit () {
       this.buttonGroup = 'edit'
       this.editing = true
@@ -43,19 +28,14 @@ export default {
     editDone () {
       this.buttonGroup = 'main'
       this.editing = false
-      if (!isEqual(this.swiperElement, this.element)) {
-        this.modifyElement([this.elementId, this.swiperElement, true])
+      if (!isEqual(this.localElement, this.element)) {
+        this.modifyElement([this.elementId, this.localElement, true])
       }
     },
     imagesChange (val) {
-      if (!isEqual(this.swiperElement.data.images, val)) {
-        this.swiperElement.data.images = val
+      if (!isEqual(this.localElement.data.images, val)) {
+        this.localElement.data.images = val
       }
-    }
-  },
-  watch: {
-    'element': function (val) {
-      this.swiperElement = merge({}, val)
     }
   }
 }
@@ -78,14 +58,14 @@ export default {
     <div class="swiper-container" v-else>
       <div class="swiper-image-list">
         <ul @mousedown.prevent>
-          <li v-for="(image, index) in this.swiperElement.data.images">
+          <li v-for="(image, index) in this.localElement.data.images">
             <img :src="image.url">
           </li>
         </ul>
       </div>
       <div class="swiper-bullets">
         <ul>
-          <li v-for="(image, index) in this.swiperElement.data.images"><li>
+          <li v-for="(image, index) in this.localElement.data.images"><li>
         </ul>
       </div>
     </div>
@@ -102,7 +82,7 @@ export default {
 <swiper-editor
   :id="elementId"
   :show="editing"
-  :images="swiperElement.data.images"
+  :images="localElement.data.images"
   @edit-done="editDone"
   @images-change="imagesChange"></swiper-editor>
 </div>
