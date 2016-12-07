@@ -5,7 +5,6 @@ import App from './App'
 import API from './API'
 import cookieHandler from './utils/cookieHandler'
 import './style/bootstrap.scss'
-import 'chartist/dist/scss/chartist.scss'
 
 API.account.current().then(response => {
   store.dispatch('loadUser', response.data)

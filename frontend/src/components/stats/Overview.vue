@@ -2,12 +2,12 @@
 import StatsNav from './StatsNav'
 import moment from 'moment'
 import { mapGetters } from 'vuex'
-import ChartLine from './charts/Line'
+import Chart from './charts/Chart'
 
 export default {
   components: {
     StatsNav,
-    ChartLine
+    Chart
   },
   props: ['report', 'params'],
   filters: {
@@ -55,6 +55,15 @@ export default {
     variations () {
       return this.report.variations.map(v => v.name)
     },
+    chartOptions () {
+      return {
+        axisY: {
+          labelInterpolationFnc: value => {
+            return this.currentTab === 'conversionRate' ? value + '%' : value
+          }
+        }
+      }
+    },
     stats () {
       const startDate = moment(this.params.start_date)
       const endDate = moment(this.params.end_date)
@@ -74,9 +83,9 @@ export default {
           const conversionRate = []
           const visitors = []
           variation.dates.forEach(d => {
-            conversions.push(d.total_conversions)
-            conversionRate.push((Math.round(d.cv * 1000) / 10.0).toString() + '%')
-            visitors.push(d.total_visitors)
+            conversions.push(parseInt(d.total_conversions))
+            conversionRate.push(parseInt((Math.round(d.cv * 1000) / 10.0)))
+            visitors.push(parseInt(d.total_visitors))
           })
           data.conversions.push({
             name: variation.name,
@@ -142,7 +151,7 @@ export default {
           <div class="btn btn-default" :class="{ active: currentTab === 'visitors'}" @click="currentTab = 'visitors'">访客数</div>
         </div>
       </div>
-      <chart-line type="line" :stats="stats"></chart-line>
+      <chart type="line" :stats="stats" :options="chartOptions"></chart>
       <table class="report table table-bordered table-hover">
         <thead>
           <tr>

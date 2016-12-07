@@ -10,3 +10,10 @@ export default {
   mixins: [chartMixin]
 }
 </script>
+
+<style lang="scss">
+@import '~chartist/dist/scss/chartist';
+.ct-chart {
+  max-width: 100%;
+}
+</style>

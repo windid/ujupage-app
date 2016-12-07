@@ -1,10 +1,15 @@
 import Chartist from 'chartist'
 
+const allChartTypes = ['line', 'bar', 'pie']
+
 export default {
   props: {
     type: {
       type: String,
-      default: 'line'
+      default: 'line',
+      validator (val) {
+        return allChartTypes.indexOf(val) !== -1
+      }
     },
     stats: Object,
     options: {
@@ -14,6 +19,14 @@ export default {
           fullWidth: true
         }
       }
+    },
+    responsiveOptions: {
+      type: Array
+    }
+  },
+  data () {
+    return {
+      $chart: null
     }
   },
   computed: {
@@ -22,6 +35,13 @@ export default {
     }
   },
   mounted () {
-    new Chartist[this.chartType](this.$el, this.stats, this.options)
+    this.$chart = new Chartist[this.chartType](this.$el, this.stats, this.options, this.responsiveOptions)
+  },
+  watch: {
+    stats (val) {
+      this.$nextTick(() => {
+        this.$chart.update(this.stats, this.options)
+      })
+    }
   }
 }
