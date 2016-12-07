@@ -2,6 +2,7 @@
 import EditorHeader from './EditorHeader.vue'
 import EditorToolbar from './EditorToolbar.vue'
 import EditorWorkspace from './EditorWorkspace.vue'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'editor',
@@ -10,15 +11,39 @@ export default {
     EditorToolbar,
     EditorWorkspace
   },
+  computed: {
+    ...mapGetters({
+      saveStatus: 'saveStatus'
+    })
+  },
+  methods: {
+    ...mapActions(['setActiveElementId', 'confirm']),
+    clearActiveElement () {
+      this.setActiveElementId('')
+    }
+  },
   mounted () {
     document.title = this.$store.getters.editingPage.name + ' - 编辑 - 聚页'
+  },
+  beforeRouteLeave (to, from, next) {
+    if (!this.saveStatus) {
+      this.confirm({
+        header: '页面未保存',
+        content: '您对该页面所作修改尚未保存，现在离开导致您所作的修改丢失，确定吗?',
+        onConfirm: () => {
+          next()
+        }
+      })
+    } else {
+      next()
+    }
   }
 }
 
 </script>
 
 <template>
-  <div @mousedown="$store.dispatch('setActiveElementId', '')">
+  <div @mousedown="clearActiveElement">
   	<editor-header></editor-header>
     <div id="main-wrapper">
       <editor-toolbar></editor-toolbar>

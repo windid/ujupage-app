@@ -5,16 +5,13 @@ import cookieHandler from '../../utils/cookieHandler'
 import * as types from '../mutation-types'
 
 export const dashboardInit = ({ commit, state }, [route, callback = false]) => {
-  if (state.dashboard.projects.length > 0) {
-    if (callback) callback()
-    return
-  }
   API.project.get().then(response => {
     const projects = response.data
     commit(types.LOAD_PROJECTS, { projects })
     // 加载默认项目，第一优先取路由传递的projectId，其次是Cookie，再次是用户默认项目，如果都没有，取项目列表的第一个。
     const projectId = getParameter('id') || cookieHandler.get('projectId')
-    const currentProject = projects.find(p => p.id === projectId) || projects.find(p => p.is_default === 1) || projects[0]
+    console.log(projectId)
+    const currentProject = projects.find(p => p.id === parseInt(projectId)) || projects.find(p => p.is_default === 1) || projects[0]
     switchProject({ commit }, [currentProject, callback])
   })
 }

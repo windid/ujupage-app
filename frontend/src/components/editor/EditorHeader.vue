@@ -37,38 +37,39 @@ export default {
       publishPage: 'publishPage'
     }),
     publish () {
-      this.saveNotice()
-      if (!this.page.url) {
-        this.getInput({
-          header: '为您的页面选定一个URL地址',
-          inputAddon: 'http://www.juyepage.com/',
-          placeholder: '自定义url',
-          hint: '可由数字、英文字母组成，至少3位以上。',
-          onConfirm: (val) => {
-            if (val.length < 3) {
-              return '自定义url地址不能少于3位'
+      this.saveNotice(() => {
+        if (!this.page.url) {
+          this.getInput({
+            header: '为您的页面选定一个URL地址',
+            inputAddon: 'http://www.juyepage.com/',
+            placeholder: '自定义url',
+            hint: '可由数字、英文字母组成，至少3位以上。',
+            onConfirm: (val) => {
+              if (val.length < 3) {
+                return '自定义url地址不能少于3位'
+              }
+              this.setURL([val, () => {
+                this.doPublish()
+              }, (error) => {
+                this.warning({
+                  header: '发布失败',
+                  content: error,
+                  onConfirm: () => {
+                    this.publish()
+                  }
+                })
+              }])
             }
-            this.setURL([val, () => {
-              this.doPublish()
-            }, (error) => {
-              this.warning({
-                header: '发布失败',
-                content: error,
-                onConfirm: () => {
-                  this.publish()
-                }
-              })
-            }])
-          }
-        })
-      } else {
-        this.doPublish()
-      }
+          })
+        } else {
+          this.doPublish()
+        }
+      })
     },
     doPublish () {
       this.publishPage(() => {
-        this.warning({
-          header: '恭喜！页面发布成功',
+        this.confirm({
+          header: '页面发布成功！',
           content: '点击确定将返回主面板',
           onConfirm: () => {
             this.$router.push('/')
@@ -76,15 +77,20 @@ export default {
         })
       })
     },
-    saveNotice () {
+    saveNotice (cb) {
       if (!this.saveStatus) {
         this.confirm({
           header: '是否先保存？',
           content: '您修改了页面，建议保存之后再发布。',
           onConfirm: () => {
-            this.saveVariation()
+            this.saveVariation(cb)
+          },
+          onCancel: () => {
+            cb()
           }
         })
+      } else {
+        cb()
       }
     }
   }

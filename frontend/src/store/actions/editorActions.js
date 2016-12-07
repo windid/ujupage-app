@@ -69,10 +69,11 @@ export const saveSettings = ({ commit }, settings) => {
 }
 
 // 保存
-export const saveVariation = ({ commit, state }) => {
+export const saveVariation = ({ commit, state }, callback) => {
   const content = JSON.stringify(state.editor.content)
   API.variation.update({ pageId: state.editor.page.id, id: state.editor.workspace.activeVariation.id }, { htmljson: content }).then(response => {
     commit(types.SAVE_VARIATION)
+    callback()
   })
 }
 

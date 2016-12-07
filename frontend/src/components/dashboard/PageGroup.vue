@@ -37,16 +37,22 @@ export default {
           this.removePageGroup(this.pageGroup)
         }
       })
+    },
+    focusInput () {
+      this.$nextTick(() => {
+        this.$refs.nameInput.focus()
+        this.$refs.nameInput.select()
+      })
     }
   },
   watch: {
     'editing': function (val) {
-      if (val) {
-        this.$nextTick(() => {
-          this.$refs.nameInput.focus()
-          this.$refs.nameInput.select()
-        })
-      }
+      val && this.focusInput()
+    }
+  },
+  mounted () {
+    if (this.editing) {
+      this.focusInput()
     }
   }
 }
