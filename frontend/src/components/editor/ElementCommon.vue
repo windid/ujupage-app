@@ -4,6 +4,7 @@ import { mapGetters, mapActions } from 'vuex'
 import mouseDrag from '../../mixins/mouseDrag'
 import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
+import { Tooltip } from 'element-ui'
 import eventHandler from '../../utils/eventHandler'
 
 export default {
@@ -11,7 +12,8 @@ export default {
   mixins: [mouseDrag],
   components: {
     resizer,
-    FixedEditor
+    FixedEditor,
+    Tooltip
   },
   // 接受父组件传参，element元素属性, sectionId:板块ID, elementId:元素ID
   props: {
@@ -301,14 +303,14 @@ const getElementTop = (element) => {
       right: element.fixed ? element.fixedPosition.right : '',
       width: element.style[workspace.version].width,
       height: element.style[workspace.version].height || 'auto',
-      transition: (resizing || dragging) ? 'none' : 'all .4s'
+      transition: (resizing || dragging) ? 'none' : 'all .3s'
     }"
   >
     <div class="el-content" :id="'element-' + elementId"
       :style="{
         zIndex: element.style[workspace.version].zIndex,
       }" 
-      v-bind:class="{'outline':workspace.activeElementId === elementId}"
+      :class="{'outline':workspace.activeElementId === elementId}"
     >
       <slot name="content"></slot>
     </div>
@@ -321,19 +323,19 @@ const getElementTop = (element) => {
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
-        <div v-if="fixedEditable" class="btn btn-default" title="固定位置" @click.stop="editFixed"><span class="glyphicon glyphicon-pushpin"></span></div>
-        <div class="btn btn-default" title="复制一个" @click.stop="duplicateElement(elementId)">
-          <span class="glyphicon glyphicon-duplicate"></span>
-        </div>
-        <div class="btn btn-default" title="移到顶层" @click="indexElement([ elementId, 'top' ])">
+        <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed"><span class="glyphicon glyphicon-pushpin"></span></tooltip>
+        <tooltip class="btn btn-default" @click.native.stop="duplicateElement(elementId)" content="复制一个">
+            <span class="glyphicon glyphicon-duplicate"></span>
+        </tooltip>
+        <tooltip class="btn btn-default" content="移到顶层" @click.native="indexElement([ elementId, 'top' ])">
           <span class="glyphicon glyphicon-circle-arrow-up"></span>
-        </div>
-        <div class="btn btn-default" title="移到底层" @click="indexElement([ elementId, 'bottom' ])">
+        </tooltip>
+        <tooltip class="btn btn-default" content="移到底层" @click.native="indexElement([ elementId, 'bottom' ])">
           <span class="glyphicon glyphicon-circle-arrow-down"></span>
-        </div>
-        <div class="btn btn-default" title="删除" @click="removeElement([elementId])">
+        </tooltip>
+        <tooltip class="btn btn-default" content="删除" @click.native="removeElement([elementId])">
           <span class="glyphicon glyphicon-trash"></span>
-        </div>
+        </tooltip>
       </div>
       <div v-show="buttonGroup === 'fixedEditing'" class="btn-group el-btn-group" role="group">
         <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
@@ -352,7 +354,6 @@ const getElementTop = (element) => {
 .element {
   position: absolute;
   pointer-events: auto;
-  z-index: 1;
 }
 
 .el-content {

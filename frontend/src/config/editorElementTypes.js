@@ -39,23 +39,13 @@ export default {
 
   'button': {
     type: 'button',
-    text: '点击下载',
-    imageObj: null,
+    text: '提交',
+    image: '',
     props: {
       backgroundColor: '3',
-      borderWidth: 1,
-      borderColor: '4',
       color: '0',
-      hoverColor: '4',
       borderRadius: '5px',
       fontSize: '18px',
-      borderStyle: 'none',
-      boxShadow: '1px 3px 6px #888',
-      boxShadowX: 1,
-      boxShadowY: 1,
-      boxShadowSize: 2,
-      boxShadowColor: 4,
-      boxShadowInset: false,
       fontWeight: 'normal'
     },
     style: {
@@ -63,13 +53,25 @@ export default {
         left: '400px',
         top: '10px',
         width: '160px',
-        height: '37px'
+        height: 'auto'
       },
       'mobile': {
         left: '100px',
         top: '10px',
         width: '160px',
-        height: '37px'
+        height: 'auto'
+      },
+      'border': {
+        color: '4',
+        style: 'solid',
+        width: '0px'
+      },
+      'shadow': {
+        x: 0,
+        y: 0,
+        blur: 8,
+        spread: 0,
+        color: 3
       }
     }
   },
@@ -111,18 +113,42 @@ export default {
         validator: ['required', 'mobile']
       }
     ],
-    button: {
-      text: '提交',
+    'button': {
+      type: 'button',
+      text: '点击下载',
+      image: '',
       props: {
         backgroundColor: '3',
-        borderColor: '4',
         color: '0',
-        hoverColor: '4',
         borderRadius: '5px',
         fontSize: '18px',
-        borderStyle: 'none',
-        boxShadow: '1px 3px 6px #888',
         fontWeight: 'normal'
+      },
+      style: {
+        'pc': {
+          left: '400px',
+          top: '10px',
+          width: '160px',
+          height: 'auto'
+        },
+        'mobile': {
+          left: '100px',
+          top: '10px',
+          width: '160px',
+          height: 'auto'
+        },
+        'border': {
+          color: '4',
+          style: 'solid',
+          width: '0px'
+        },
+        'shadow': {
+          x: 0,
+          y: 0,
+          blur: 8,
+          spread: 0,
+          color: 3
+        }
       }
     }
   },
@@ -149,13 +175,6 @@ export default {
   'square': {
     type: 'shape',
     subType: 'square',
-    props: {
-      backgroundColor: '1',
-      borderWidth: '1px',
-      borderColor: '3',
-      borderRadius: '0px',
-      borderStyle: 'solid'
-    },
     style: {
       'pc': {
         left: '380px',
@@ -168,6 +187,27 @@ export default {
         top: '10px',
         width: '200px',
         height: '150px'
+      },
+      'opacity': 100,
+      'borderRadius': '0px',
+      'border': {
+        color: '3',
+        style: 'solid',
+        width: '1px'
+      },
+      'background': {
+        color: '1',
+        image: '',
+        repeat: 'no-repeat',
+        position: 'left top',
+        size: 'auto'
+      },
+      'shadow': {
+        x: 0,
+        y: 0,
+        blur: 0,
+        spread: 0,
+        color: 4
       }
     }
   },
@@ -175,13 +215,6 @@ export default {
   'circle': {
     type: 'shape',
     subType: 'circle',
-    props: {
-      backgroundColor: '1',
-      borderWidth: '1px',
-      borderColor: '3',
-      borderRadius: '50%',
-      borderStyle: 'solid'
-    },
     style: {
       'pc': {
         left: '380px',
@@ -194,6 +227,75 @@ export default {
         top: '10px',
         width: '200px',
         height: '200px'
+      },
+      'borderRadius': '50%',
+      'opacity': 100,
+      'border': {
+        color: '3',
+        style: 'solid',
+        width: '1px'
+      },
+      'background': {
+        color: '1',
+        image: '',
+        repeat: 'no-repeat',
+        position: 'left top',
+        size: 'auto'
+      },
+      'shadow': {
+        x: 0,
+        y: 0,
+        blur: 0,
+        spread: 0,
+        color: 4
+      }
+    }
+  },
+
+  'line': {
+    type: 'shape',
+    subType: 'line',
+    style: {
+      'pc': {
+        left: '330px',
+        top: '10px',
+        width: '300px',
+        height: ''
+      },
+      'mobile': {
+        left: '30px',
+        top: '10px',
+        width: '300px',
+        height: ''
+      },
+      'border': {
+        color: '3',
+        style: 'solid',
+        width: '2px'
+      }
+    }
+  },
+
+  'vline': {
+    type: 'shape',
+    subType: 'vline',
+    style: {
+      'pc': {
+        left: '479px',
+        top: '10px',
+        width: '',
+        height: '300px'
+      },
+      'mobile': {
+        left: '179px',
+        top: '10px',
+        width: '',
+        height: '300px'
+      },
+      'border': {
+        color: '3',
+        style: 'solid',
+        width: '2px'
       }
     }
   },
@@ -228,7 +330,7 @@ export default {
       timerColor: null
     },
     style: {
-      pc: {
+      'pc': {
         left: '330px',
         top: '10px',
         width: '300px',
@@ -242,6 +344,7 @@ export default {
       }
     }
   },
+
   'map': {
     type: 'map',
     data: {
@@ -249,27 +352,28 @@ export default {
       name: null
     },
     style: {
-      pc: {
+      'pc': {
         left: '330px',
         top: '10px',
         width: '300px',
         height: '200px'
       },
       'mobile': {
-        left: '50px',
+        left: '30px',
         top: '10px',
-        width: '220px',
-        height: '160px'
+        width: '300px',
+        height: '180px'
       }
     }
   },
+
   'swiper': {
     type: 'swiper',
     data: {
       images: []
     },
     style: {
-      pc: {
+      'pc': {
         left: '330px',
         top: '10px',
         width: '300px',

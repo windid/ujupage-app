@@ -100,6 +100,7 @@ export default {
   </template>
 </element-common>
 <swiper-editor
+  :id="elementId"
   :show="editing"
   :images="swiperElement.data.images"
   @edit-done="editDone"

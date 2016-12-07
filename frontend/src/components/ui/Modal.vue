@@ -19,7 +19,7 @@ export default {
 
 <template>
 <transition name="fade">
-  <div v-show="show" class="modal-mask">
+  <div v-show="show" class="modal-mask" @mousedown.stop>
     <div class="modal-wrapper" @click="$emit('close')">
       <div class="modal-container" :style="{width: width, height: height}" @click.stop>
         

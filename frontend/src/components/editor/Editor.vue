@@ -38,7 +38,7 @@ export default {
 }
 
 .dropdown-menu-narrow{
-  min-width:52px;
+  min-width: 52px !important;
 }
 
 .dropdown-menu-narrow li{
@@ -53,6 +53,6 @@ export default {
 }
 
 .dropdown-menu-narrow li.selected, .dropdown-menu-narrow li:hover{
-  background-color:#eee;
+  background-color: #eee;
 }
 </style>

@@ -8,7 +8,7 @@ import Vue from 'vue'
 
 export default {
   name: 'swiper-editor',
-  props: ['images', 'show'],
+  props: ['id', 'images', 'show'],
   components: {
     Sidebar,
     ImagePicker
@@ -34,6 +34,13 @@ export default {
       } else {
         Vue.set(this.imageList, id, image)
       }
+    },
+    getId (ns, index) {
+      let suffix = ''
+      if (arguments.length >= 2) {
+        suffix = '-' + index
+      }
+      return ns + '-' + this.id + suffix
     }
   },
   watch: {
@@ -52,6 +59,19 @@ export default {
     <div class="btn btn-success" @click="$emit('edit-done')">完成</div>
   </div>
   <div slot="body" class="swiper-editor-body">
+    <div class="swiper-property">
+      <div class="swiper-auto">
+        <input type="checkbox" :id="getId('auto')"></inpu> <label :for="getId('auto')">自动播放</label>
+      </div>
+      <div class="swiper-effect">
+        <input type="radio" :name="getId('effect')" value="1" :id="getId('effect', 1)">
+        <label :for="getId('effect', 1)">水平滚动</label>
+        <input type="radio" :name="getId('effect')" value="2" :id="getId('effect', 2)">
+        <label :for="getId('effect', 2)">垂直滚动</label>
+        <input type="radio" :name="getId('effect')" value="3" :id="getId('effect', 3)">
+        <label :for="getId('effect', 3)">淡入淡出</label>
+      </div>
+    </div>
     <div style="text-align: right; margin-bottom: 12px;">
       <button class="swiper-add-image-btn" @click.stop="selectImage">+ 添加图片</button>
     </div>
@@ -67,6 +87,9 @@ export default {
 </template>
 
 <style scoped>
+label {
+  font-weight: normal;
+}
 .swiper-add-image-btn {
   -webkit-appearance: none;
   outline: none;
@@ -89,5 +112,9 @@ export default {
   list-style-type: none;
   padding: 0;
   margin-bottom: 12px;
+}
+.swiper-property {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 8px;
 }
 </style>

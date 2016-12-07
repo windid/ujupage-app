@@ -60,7 +60,9 @@ export default {
       <div class="input-group color-block">
         <div class="input-group-addon" :style="{background:getColor(color)}"> &nbsp; </div>
         <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色">
-        <div class="input-group-addon btn btn-primary" @click="show=false"><span class="glyphicon glyphicon-ok"></span></div>
+        <div class="input-group-btn" @click="show=false">
+          <div class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></div>
+        </div>
       </div>
     </div>
   </dropdown>

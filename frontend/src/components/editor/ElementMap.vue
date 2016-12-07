@@ -1,18 +1,12 @@
 <script>
-import ElementCommon from './ElementCommon'
-import { mapGetters, mapActions } from 'vuex'
+import elementMixin from '../../mixins/elementMixin'
 import { merge, isEqual } from 'lodash'
 
 export default {
   name: 'element-map',
-  components: {
-    ElementCommon
-  },
-  props: ['element', 'elementId', 'sectionId'],
+  mixins: [elementMixin],
   data () {
     return {
-      mapElement: merge({}, this.element),
-      buttonGroup: 'main',
       resize: {
         handles: 'e,s'
       },
@@ -25,17 +19,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      workspace: 'editorWorkspace'
-    }),
-    resizable () {
-      return (!this.editing && this.workspace.activeElementId === this.elementId)
-    },
     center () {
-      if (this.mapElement.data.position === null) {
+      if (this.localElement.data.position === null) {
         return [113.280637, 23.125178]
       } else {
-        return this.mapElement.data.position
+        return this.localElement.data.position
       }
     }
   },
@@ -43,11 +31,8 @@ export default {
     this.initMap()
   },
   methods: {
-    ...mapActions([
-      'modifyElement'
-    ]),
     initMap () {
-      const marked = this.mapElement.data.position !== null
+      const marked = this.localElement.data.position !== null
       if (this.map === null) {
         const config = {
           resizeEnable: true,
@@ -69,8 +54,8 @@ export default {
       }
       if (marked) {
         this.marker = new window.AMap.Marker({
-          position: this.mapElement.data.position,
-          title: this.mapElement.data.name
+          position: this.localElement.data.position,
+          title: this.localElement.data.name
         })
         this.marker.setMap(this.map)
       }
@@ -78,8 +63,8 @@ export default {
     editDone () {
       this.editing = false
       this.buttonGroup = 'main'
-      if (!isEqual(this.element, this.mapElement)) {
-        this.modifyElement([this.elementId, this.mapElement])
+      if (!isEqual(this.element, this.localElement)) {
+        this.modifyElement([this.elementId, this.localElement])
       }
     },
     edit () {
@@ -110,8 +95,8 @@ export default {
       const pos = this.posList[index]
       const loc = pos.location
       const coordination = [loc.lng, loc.lat]
-      this.mapElement.data.position = coordination
-      this.mapElement.data.name = pos.name
+      this.localElement.data.position = coordination
+      this.localElement.data.name = pos.name
       this.map.setCenter(coordination)
       this.map.setZoom(16)
       if (this.marker !== null) {
@@ -128,8 +113,8 @@ export default {
   },
   watch: {
     'element': function (val) {
-      if (!isEqual(val, this.mapElement)) {
-        this.mapElement = merge({}, val)
+      if (!isEqual(val, this.localElement)) {
+        this.localElement = merge({}, val)
         this.initMap()
       }
     }
@@ -152,12 +137,15 @@ export default {
     <div class="map-mask"></div>
   </div>
   <template slot="main-buttons-extend">
-    <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
+    <div class="btn btn-primary" title="定位" @click.stop="edit">定位</div>
   </template>
   <template slot="button-groups">
     <div v-if="buttonGroup === 'address'">
-      <div class="form-inline search-form">
-        <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input" placeholder="输入地名，回车搜索"></input><button class="btn btn-primary" @click.stop="search">搜索</button>
+      <div class="input-group search-form">
+        <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input" placeholder="输入地名，回车搜索"></input>
+        <div class="input-group-btn">
+          <div class="btn btn-primary" @click.stop="search">搜索</div>
+        </div>
       </div>
       <div class="search-result" v-show="showList">
         <ul>

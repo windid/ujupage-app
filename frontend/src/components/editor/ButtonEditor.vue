@@ -7,14 +7,6 @@ export default {
   components: {
     Sidebar,
     FormButtonEditor
-  },
-  methods: {
-    popupChange (val) {
-      this.$emit('popup-change', val)
-    },
-    imageChange (val) {
-      this.$emit('image-change', val)
-    }
   }
 }
 
@@ -26,9 +18,7 @@ export default {
       <div class="btn btn-success" @click="$emit('edit-done')">完成</div>
     </div>
     <div slot="body">
-      <form-button-editor v-model="value"
-        @popup-change="popupChange"
-        @image-change="imageChange"></form-button-editor>
+      <form-button-editor v-model="value"></form-button-editor>
     </div>
   </sidebar>
 </template>

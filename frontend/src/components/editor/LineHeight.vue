@@ -1,9 +1,10 @@
 <script>
 import Dropdown from '../ui/Dropdown'
-
+import { Tooltip } from 'element-ui'
 export default {
   components: {
-    Dropdown
+    Dropdown,
+    Tooltip
   },
   props: {
     value: {
@@ -27,7 +28,9 @@ export default {
 
 <template>
   <dropdown :show="show" @toggle="show=!show">
-    <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="行高"><span class="glyphicon glyphicon-text-height"></span> <span class="caret"></span></div>
+    <tooltip class="btn btn-default dropdown-toggle" data-toggle="dropdown" content="行高" :disabled="show">
+      <span class="glyphicon glyphicon-text-height"></span> <span class="caret"></span>
+    </tooltip>
     <ul slot="dropdown-menu" class="dropdown-menu dropdown-menu-narrow">
       <li v-for="line in lineHeights" @click="setLineHeight(line)" :class="{'selected':value == line}">{{line}}</li>
     </ul>

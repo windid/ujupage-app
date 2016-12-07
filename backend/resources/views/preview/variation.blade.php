@@ -10,6 +10,12 @@
   <meta name="keywords" content="{{$content['settings']['seo']['keywords']}}">
   <meta name="description" content="{{$content['settings']['seo']['description']}}">
   <link href="//app.ujupage.com/css/bootstrap.css" rel="stylesheet">
+  <script src="//app.ujupage.com/js/libs/jquery-1.12.3.min.js"></script>
+  <script src="//app.ujupage.com/js/page.js?20161206"></script>
+  <!-- <script src="/js/page.js"></script> -->
+  @if ($content['settings']['hasmap'])
+  <script src="http://webapi.amap.com/maps?v=1.3&key=e3b78e84d1aedba49bc8a84c4e113e01&plugin=AMap.Scale,AMap.OverView,AMap.ToolBar"></script>
+  @endif
   <script>
     {!! $content['settings']['code']['header'] !!}
   </script>
@@ -49,54 +55,59 @@
     margin-left: -480px;
   }
 
-  .section-inner{
+  .section-inner {
     position: relative;
     width: 960px;
-    margin:0 auto;
+    margin: 0 auto;
+    height: 100%;
   }
 
-  .element{
+  .element {
     position: absolute;
     word-wrap: break-word;
   }
 
-  .element p{
+  .element p {
     margin: 0;
   }
 
-  .element-button{
-    padding:6px;
+  .element-button {
+    padding: 6px;
     text-align: center;
-    border-width: 2px;
-    width: 100%
+    width: 100%;
+    height: auto;
   }
 
-  .element-button a{
+  .element-button-image {
+    max-width: 100%;
+  }
+
+  .element-button a {
     display: block;
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    bottom: 0;
+    right: 0;
   }
 
-  .element-image{
+  .element-image {
     width:100%;
     height:auto;
   }
 
-  .form-group{
+  .form-group {
     position: relative;
   }
 
-  .form-field-input{
+  .form-field-input {
     font-size: 16px;
     height: 40px;
     line-height: 20px;
     padding: 4px 10px;
   }
 
-  .label-inside{
+  .label-inside {
     position: absolute;
     font-weight: normal;
     top:9px;
@@ -104,9 +115,9 @@
     font-size:16px;
   }
 
-  .options-inline{
+  .options-inline {
     display: inline-block;
-    margin-right:10px;
+    margin-right: 10px;
   }
 
   .msg-mask {
@@ -137,24 +148,24 @@
     transition: all .3s ease;
   }
 
-  .msg-close{
+  .msg-close {
     position: absolute;
     right:8px;
     top:5px;
   }
 
-  @foreach($content['style']['common'] as $class => $styles)
-    #{{$class}}{
+  @foreach($content['style']['common'] as $el => $styles)
+    #{{$el}}{
       @foreach($styles as $key => $value)
-      {{$key}}:{{$value}};
+        {{$key}}:{{$value}};
       @endforeach
     }
   @endforeach
 
-  @foreach($content['style']['pc'] as $class => $styles)
-    #{{$class}}{
+  @foreach($content['style']['pc'] as $el => $styles)
+    #{{$el}}{
       @foreach($styles as $key => $value)
-      {{$key}}:{{$value}};
+        {{$key}}:{{$value}};
       @endforeach
     }
   @endforeach
@@ -212,8 +223,6 @@ screen and (max-width: 999px) and (-webkit-min-device-pixel-ratio: 1.5) and ( ma
   </div>
 </div>
 </div>
-  <script src="//app.ujupage.com/js/libs/jquery-1.12.3.min.js"></script>
-  <script src="//app.ujupage.com/js/page.js?20161124"></script>
   <script>
     JuyeTracker.init({{$content['variation']['page_id']}}, {{$content['variation']['id']}});
   </script>

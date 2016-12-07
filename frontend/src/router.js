@@ -6,20 +6,30 @@ import store from './store'
 Vue.use(VueRouter)
 
 // 异步加载的模块
-const Editor = resolve => require(['./components/editor/Editor.vue'], resolve)
-const Preview = resolve => require(['./components/preview/Preview.vue'], resolve)
-const Dashboard = resolve => require(['./components/dashboard/Dashboard.vue'], resolve)
-const Account = resolve => require(['./components/account/Account.vue'], resolve)
-const Stats = resolve => require(['./components/stats/Stats.vue'], resolve)
-const Leads = resolve => require(['./components/leads/Leads.vue'], resolve)
-const Register = resolve => require(['./components/auth/Register.vue'], resolve)
-const Active = resolve => require(['./components/auth/Active.vue'], resolve)
-const ForgetPassword = resolve => require(['./components/auth/ForgetPassword.vue'], resolve)
-const ResetPassword = resolve => require(['./components/auth/ResetPassword.vue'], resolve)
+// const Editor = resolve => require(['./components/editor/Editor.vue'], resolve)
+// const Preview = resolve => require(['./components/preview/Preview.vue'], resolve)
+// const Dashboard = resolve => require(['./components/dashboard/Dashboard.vue'], resolve)
+// const Account = resolve => require(['./components/account/Account.vue'], resolve)
+// const Stats = resolve => require(['./components/stats/Stats.vue'], resolve)
+// const Leads = resolve => require(['./components/leads/Leads.vue'], resolve)
+// const Register = resolve => require(['./components/auth/Register.vue'], resolve)
+// const Active = resolve => require(['./components/auth/Active.vue'], resolve)
+// const ForgetPassword = resolve => require(['./components/auth/ForgetPassword.vue'], resolve)
+// const ResetPassword = resolve => require(['./components/auth/ResetPassword.vue'], resolve)
 
 // 同步加载的模块
 import Home from './components/common/Home'
 import Login from './components/auth/Login'
+import Editor from './components/editor/Editor'
+import Preview from './components/preview/Preview'
+import Dashboard from './components/dashboard/Dashboard'
+import Account from './components/account/Account'
+import Stats from './components/stats/Stats'
+import Leads from './components/leads/Leads'
+import Register from './components/auth/Register'
+import Active from './components/auth/Active'
+import ForgetPassword from './components/auth/ForgetPassword'
+import ResetPassword from './components/auth/ResetPassword'
 
 const router = new VueRouter({
   mode: 'history',

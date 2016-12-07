@@ -1,30 +1,25 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import ElementCommon from './ElementCommon'
+import { mapActions } from 'vuex'
 import LinkEditor from './LinkEditor'
+import elementMixin from '../../mixins/elementMixin'
 import { merge } from 'lodash'
 
 export default {
-  // 接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID
-  props: ['element', 'sectionId', 'elementId'],
+  mixins: [elementMixin],
   components: {
-    ElementCommon,
     LinkEditor
   },
   data () {
     return {
-      buttonGroup: 'main',
       imageObj: {},
       linkObj: merge({}, this.element.link),
       resize: {
         // aspectRatio: true
-      },
-      draggableFromChild: true
+      }
     }
   },
   methods: {
     ...mapActions([
-      'modifyElement',
       'removeElement',
       'getImage'
     ]),
@@ -43,23 +38,6 @@ export default {
         this.modifyElement([this.elementId, newPropsObj])
       }
       this.buttonGroup = 'main'
-    },
-    changeButtonGroup (val) {
-      this.buttonGroup = val
-    },
-    changeDraggable (val) {
-      this.draggableFromChild = val
-    }
-  },
-  computed: {
-    ...mapGetters({
-      workspace: 'editorWorkspace'
-    }),
-    draggable () {
-      return this.draggableFromChild
-    },
-    resizable () {
-      return this.workspace.activeElementId === this.elementId
     }
   },
   watch: {
@@ -117,7 +95,7 @@ export default {
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>
-      <div class="btn btn-default" title="链接" @click="editLink"><span class="glyphicon glyphicon-link"></span></div>
+      <tooltip class="btn btn-default" content="链接" @click.native="editLink"><span class="glyphicon glyphicon-link"></span></tooltip>
     </template>
     <template slot="button-groups">
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>
