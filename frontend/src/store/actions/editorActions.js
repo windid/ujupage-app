@@ -92,7 +92,7 @@ export const publishPage = ({ commit, state }, successCb) => {
 
 // 添加板块
 export const addSection = ({ commit }) => {
-  const section = defaultSection
+  const section = merge({}, defaultSection)
   commit(types.ADD_SECTION, { section })
   commit(types.SAVE_CONTENT_STATE)
 }
@@ -229,7 +229,7 @@ export const addElement = ({ commit, state, getters }, type) => {
 
   // 计算元素应该进入哪个板块，以及在板块中的高
   const scrollTop = document.body.scrollTop || document.documentElement.scrollTop
-  const element = elementTypes[type]
+  const element = merge({}, elementTypes[type])
   const elementTopInPage = scrollTop + 150
   let sumSectionsHeight = 0
   let sectionHeight = 0
