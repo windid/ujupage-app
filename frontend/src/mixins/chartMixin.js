@@ -8,7 +8,7 @@ export default {
       type: String,
       default: 'line',
       validator (val) {
-        return allChartTypes.indexOf(val) !== -1
+        return allChartTypes.indexOf(val.toLowerCase()) !== -1
       }
     },
     stats: Object,

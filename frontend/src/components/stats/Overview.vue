@@ -64,18 +64,21 @@ export default {
         }
       }
     },
-    stats () {
+    axisLabels () {
       const startDate = moment(this.params.start_date)
       const endDate = moment(this.params.end_date)
       const labels = []
+      for (var i = 0; i <= endDate.diff(startDate, 'days'); i++) {
+        const currentDate = moment(startDate).add(i, 'days').format('YYYY-MM-DD')
+        labels.push(currentDate)
+      }
+      return labels
+    },
+    chartData () {
       const data = {
         conversions: [],
         conversionRate: [],
         visitors: []
-      }
-      for (var i = 0; i <= endDate.diff(startDate, 'days'); i++) {
-        const currentDate = moment(startDate).add(i, 'days').format('YYYY-MM-DD')
-        labels.push(currentDate)
       }
       if (this.report.variations) {
         this.report.variations.forEach(variation => {
@@ -83,9 +86,9 @@ export default {
           const conversionRate = []
           const visitors = []
           variation.dates.forEach(d => {
-            conversions.push(parseInt(d.total_conversions))
-            conversionRate.push(parseInt((Math.round(d.cv * 1000) / 10.0)))
-            visitors.push(parseInt(d.total_visitors))
+            conversions.push(parseFloat(d.total_conversions))
+            conversionRate.push(parseFloat((Math.round(d.cv * 1000) / 10.0)))
+            visitors.push(parseFloat(d.total_visitors))
           })
           data.conversions.push({
             name: variation.name,
@@ -101,13 +104,12 @@ export default {
           })
         })
       }
-      console.log({
-        labels,
-        series: data[this.currentTab]
-      })
+      return data
+    },
+    stats () {
       return {
-        labels,
-        series: data[this.currentTab]
+        labels: this.axisLabels,
+        series: this.chartData[this.currentTab]
       }
     }
   }
