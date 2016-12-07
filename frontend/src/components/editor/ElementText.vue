@@ -209,15 +209,18 @@ export default {
       <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group"
       @mousedown.prevent>
         <color-picker v-model="localElement.fontStyle.color">
-          <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="颜色" ><span class="glyphicon glyphicon-text-color" :style="{color:getColor(localElement.fontStyle.color)}"></span> <span class="caret"></span></div>
+          <tooltip class="btn btn-default dropdown-toggle" data-toggle="dropdown" content="颜色" >
+            <span class="glyphicon glyphicon-text-color" :style="{color:getColor(localElement.fontStyle.color)}"></span> 
+            <span class="caret"></span>
+          </tooltip>
         </color-picker>
         <font-size v-model="localElement.fontStyle.fontSize"></font-size>
         <line-height v-model="localElement.fontStyle.lineHeight"></line-height>
         <text-align v-model="localElement.fontStyle.textAlign"></text-align>
-        <div class="btn btn-default" title="加粗" @click="styleText('bold')">B</div>
-        <div class="btn btn-default" title="斜体" @click="styleText('italic')"><i>I</i></div>
-        <div class="btn btn-default" title="下划线" @click="styleText('underline')"><u>U</u></div>
-        <div class="btn btn-default" title="链接" @click="link"><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></div>
+        <tooltip class="btn btn-default" content="加粗" @click.native="styleText('bold')">B</tooltip>
+        <tooltip class="btn btn-default" content="斜体" @click.native="styleText('italic')"><i>I</i></tooltip>
+        <tooltip class="btn btn-default" content="下划线" @click.native="styleText('underline')"><u>U</u></tooltip>
+        <tooltip class="btn btn-default" content="链接" @click.native="link"><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></tooltip>
         <div class="btn btn-success" title="完成编辑" @click="editDone">完成</div>
       </div>
       <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks"

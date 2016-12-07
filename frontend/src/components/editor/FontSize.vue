@@ -1,9 +1,11 @@
 <script>
 import Dropdown from '../ui/Dropdown'
+import { Tooltip } from 'element-ui'
 
 export default {
   components: {
-    Dropdown
+    Dropdown,
+    Tooltip
   },
   props: {
     value: {
@@ -41,7 +43,9 @@ export default {
 
 <template>
   <dropdown :show="show" @toggle="show=!show">
-    <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="字号">{{fontSizeInt}} <span class="caret"></span></div>
+    <tooltip class="btn btn-default dropdown-toggle" data-toggle="dropdown" content="字号" :disabled="show">
+      {{fontSizeInt}} <span class="caret"></span>
+    </tooltip>
     <div slot="dropdown-menu" class="dropdown-menu" :class="{'dropdown-menu-right':position === 'right'}">
       <div class="font-size-wrapper">
         <div v-for="size in fontSizes" @click="setSize(size)" class="font-size-item" :class="{'selected':fontSizeInt === size}">{{size}}</div>

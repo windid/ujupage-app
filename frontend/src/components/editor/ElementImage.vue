@@ -20,6 +20,7 @@ export default {
   },
   methods: {
     ...mapActions([
+      'removeElement',
       'getImage'
     ]),
     edit () {
@@ -94,7 +95,7 @@ export default {
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>
-      <div class="btn btn-default" title="链接" @click="editLink"><span class="glyphicon glyphicon-link"></span></div>
+      <tooltip class="btn btn-default" content="链接" @click.native="editLink"><span class="glyphicon glyphicon-link"></span></tooltip>
     </template>
     <template slot="button-groups">
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>

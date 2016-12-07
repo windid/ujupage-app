@@ -1,4 +1,5 @@
 import ElementCommon from '../components/editor/ElementCommon'
+import { Tooltip } from 'element-ui'
 import { merge } from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -6,7 +7,8 @@ export default {
   // 接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID
   props: ['element', 'sectionId', 'elementId'],
   components: {
-    ElementCommon
+    ElementCommon,
+    Tooltip
   },
   data () {
     return {

@@ -104,7 +104,7 @@ export default {
 <style scoped>
 .toolbar {
   position: fixed;
-  z-index: 100000;
+  z-index: 1000;
   transition: all .3s ease;
   text-align: center;
   top: 60px;

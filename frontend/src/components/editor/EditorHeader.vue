@@ -2,13 +2,15 @@
 import ColorSchemes from './ColorSchemes'
 import EditorSettings from './EditorSettings'
 import AbTest from './AbTest'
+import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     ColorSchemes,
     EditorSettings,
-    AbTest
+    AbTest,
+    Tooltip
   },
   data () {
     return {
@@ -112,17 +114,17 @@ export default {
 
     <div class="btn-toolbar fr">
       <div class="btn-group">
-        <div class="btn btn-default">
+        <tooltip class="btn btn-default" content="帮助">
           <span class="glyphicon glyphicon-question-sign"></span>
-        </div>
+        </tooltip>
       </div>
       <div class="btn-group">
-        <div class="btn btn-default" :class="{ disabled: !undoButton }" @click="undo">
+        <tooltip content="撤销" class="btn btn-default" :class="{ disabled: !undoButton }" @click="undo">
           <span class="glyphicon glyphicon-share-alt flipx"></span>
-        </div>
-        <div class="btn btn-default" :class="{ disabled: !redoButton }" @click="redo">
+        </tooltip>
+        <tooltip content="重做" class="btn btn-default" :class="{ disabled: !redoButton }" @click="redo">
           <span class="glyphicon glyphicon-share-alt"></span>
-        </div>
+        </tooltip>
       </div>
       
       <color-schemes></color-schemes>
@@ -155,7 +157,7 @@ export default {
   top: 0;
   height:50px;
   width:100%;
-  z-index: 1000001;
+  z-index: 1002;
   background: #fff;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
