@@ -2,10 +2,12 @@
 import StatsNav from './StatsNav'
 import moment from 'moment'
 import { mapGetters } from 'vuex'
+import ChartLine from './charts/Line'
 
 export default {
   components: {
-    StatsNav
+    StatsNav,
+    ChartLine
   },
   props: ['report', 'params'],
   filters: {
@@ -49,6 +51,55 @@ export default {
         }
       }
       return data
+    },
+    variations () {
+      return this.report.variations.map(v => v.name)
+    },
+    stats () {
+      const startDate = moment(this.params.start_date)
+      const endDate = moment(this.params.end_date)
+      const labels = []
+      const data = {
+        conversions: [],
+        conversionRate: [],
+        visitors: []
+      }
+      for (var i = 0; i <= endDate.diff(startDate, 'days'); i++) {
+        const currentDate = moment(startDate).add(i, 'days').format('YYYY-MM-DD')
+        labels.push(currentDate)
+      }
+      if (this.report.variations) {
+        this.report.variations.forEach(variation => {
+          const conversions = []
+          const conversionRate = []
+          const visitors = []
+          variation.dates.forEach(d => {
+            conversions.push(d.total_conversions)
+            conversionRate.push((Math.round(d.cv * 1000) / 10.0).toString() + '%')
+            visitors.push(d.total_visitors)
+          })
+          data.conversions.push({
+            name: variation.name,
+            data: conversions
+          })
+          data.conversionRate.push({
+            name: variation.name,
+            data: conversionRate
+          })
+          data.visitors.push({
+            name: variation.name,
+            data: visitors
+          })
+        })
+      }
+      console.log({
+        labels,
+        series: data[this.currentTab]
+      })
+      return {
+        labels,
+        series: data[this.currentTab]
+      }
     }
   }
 }
@@ -84,7 +135,6 @@ export default {
           </tr>
         </tbody>
       </table>
-
       <div class="data-tab">
         <div class="btn-group">
           <div class="btn btn-default" :class="{ active: currentTab === 'conversionRate'}" @click="currentTab = 'conversionRate'">转化率</div>
@@ -92,7 +142,7 @@ export default {
           <div class="btn btn-default" :class="{ active: currentTab === 'visitors'}" @click="currentTab = 'visitors'">访客数</div>
         </div>
       </div>
-
+      <chart-line type="line" :stats="stats"></chart-line>
       <table class="report table table-bordered table-hover">
         <thead>
           <tr>
@@ -107,7 +157,7 @@ export default {
             <td v-for="(data, name) in variations">{{data}}</td>
           </tr>
         </tbody>
-
+        
       </table>
     </div>
   </div>
