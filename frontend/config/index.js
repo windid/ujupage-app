@@ -23,7 +23,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://app.ujupage.com',
+        target: 'http://testapp.ujupage.com',
         changeOrigin: true
       }
     },
