@@ -1,4 +1,4 @@
-@extends('auth.emails.master')
+@extends('auth.emails.email')
 
 @section('content')
   <p>正在为您的聚页账户验证邮箱地址，请点击下面的链接：</p>
