@@ -63,6 +63,9 @@ export default {
       <div class="swiper-auto">
         <input type="checkbox" :id="getId('auto')" v-model="value.auto"></input> <label :for="getId('auto')">自动播放</label>
       </div>
+      <div class="swiper-button">
+        <input type="checkbox" :id="getId('button')" v-model="value.button"></input> <label :for="getId('button')">翻页按钮</label>
+      </div>
       <div class="swiper-effect">
         <input type="radio" :name="getId('effect')" value="1" :id="getId('effect', 1)" v-model="value.effect">
         <label :for="getId('effect', 1)">水平滚动</label>

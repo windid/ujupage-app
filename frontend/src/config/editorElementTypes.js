@@ -371,6 +371,7 @@ export default {
     type: 'swiper',
     data: {
       images: [],
+      button: true,
       auto: true,
       effect: 1
     },
