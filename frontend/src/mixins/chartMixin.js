@@ -6,7 +6,7 @@ const defaultOptions = {
   // fullWidth: true,
   axisX: {
     labelOffset: {
-      x: -15,
+      x: -16,
       y: 10
     }
   },
@@ -31,6 +31,10 @@ export default {
     options: {
       type: Object
     },
+    legend: {
+      type: Boolean,
+      default: true
+    },
     responsiveOptions: {
       type: Array
     }
@@ -43,10 +47,13 @@ export default {
   computed: {
     chartType () {
       return this.type[0].toUpperCase() + this.type.slice(1)
+    },
+    labels () {
+      return this.stats.series.map(s => s.name)
     }
   },
   mounted () {
-    this.$data.$chart = new Chartist[this.chartType](this.$el, this.stats, merge({}, defaultOptions, this.options), this.responsiveOptions)
+    this.$data.$chart = new Chartist[this.chartType](this.$refs.chart, this.stats, merge({}, defaultOptions, this.options), this.responsiveOptions)
   },
   watch: {
     stats (val) {

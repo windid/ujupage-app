@@ -54,7 +54,7 @@ export default {
       return data
     },
     variations () {
-      return this.report.variations.map(v => v.name)
+      return this.report.variations ? this.report.variations.map(v => v.name) : []
     },
     chartOptions () {
       return {
@@ -95,10 +95,14 @@ export default {
           const visitors = []
 
           this.dayLabels.forEach((day) => {
-            const vd = find(variation.dates, { report_date: day })
-            conversions.push(vd ? parseFloat(vd.total_conversions) : 0)
-            conversionRate.push(parseFloat((Math.round(vd ? vd.cv * 1000 : 0) / 10.0)))
-            visitors.push(vd ? parseFloat(vd.total_visitors) : 0)
+            const vd = find(variation.dates, { report_date: day }) || {
+              total_conversions: 0,
+              cv: 0,
+              total_visitors: 0
+            }
+            conversions.push(parseFloat(vd.total_conversions))
+            conversionRate.push(parseFloat((Math.round(vd.cv * 1000) / 10.0)))
+            visitors.push(parseFloat(vd.total_visitors))
           })
 
           data.conversions.push({

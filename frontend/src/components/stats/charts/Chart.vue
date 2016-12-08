@@ -1,13 +1,20 @@
 <template>
-  <div class="ct-chart ct-major-twelfth"></div>
+  <div class="chart-container">
+    <chart-legend :labels="labels" v-if="legend"></chart-legend>
+    <div class="ct-chart ct-major-twelfth" ref="chart"></div>
+  </div>
 </template>
 
 <script>
 import chartMixin from '../../../mixins/chartMixin'
+import ChartLegend from './Legend'
 
 export default {
   name: 'chart-line',
-  mixins: [chartMixin]
+  mixins: [chartMixin],
+  components: {
+    ChartLegend
+  }
 }
 </script>
 
