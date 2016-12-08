@@ -1,12 +1,12 @@
 import Chartist from 'chartist'
-import { assign } from 'lodash'
+import { merge } from 'lodash'
 
 const allChartTypes = ['line', 'bar', 'pie']
 const defaultOptions = {
   // fullWidth: true,
   axisX: {
     labelOffset: {
-      x: -30,
+      x: -15,
       y: 10
     }
   },
@@ -46,12 +46,12 @@ export default {
     }
   },
   mounted () {
-    this.$data.$chart = new Chartist[this.chartType](this.$el, this.stats, assign({}, defaultOptions, this.options), this.responsiveOptions)
+    this.$data.$chart = new Chartist[this.chartType](this.$el, this.stats, merge({}, defaultOptions, this.options), this.responsiveOptions)
   },
   watch: {
     stats (val) {
       this.$nextTick(() => {
-        this.$data.$chart.update(this.stats, assign({}, defaultOptions, this.options))
+        this.$data.$chart.update(this.stats, merge({}, defaultOptions, this.options))
       })
     }
   }

@@ -60,7 +60,8 @@ export default {
         axisY: {
           labelInterpolationFnc: value => {
             return this.currentTab === 'conversionRate' ? value + '%' : value
-          }
+          },
+          onlyInteger: this.currentTab !== 'conversionRate'
         }
       }
     },
@@ -70,7 +71,7 @@ export default {
       const labels = []
       for (var i = 0; i <= endDate.diff(startDate, 'days'); i++) {
         const currentDate = moment(startDate).add(i, 'days').format('YYYY-MM-DD')
-        labels.push(currentDate)
+        labels.push(moment(currentDate, 'YYYY-MM-DD').format('MM-DD'))
       }
       return labels
     },

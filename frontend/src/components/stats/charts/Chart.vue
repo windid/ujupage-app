@@ -12,6 +12,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../../assets/styles/chartist_setting.scss';
 @import '~chartist/dist/scss/chartist';
 .ct-chart {
   max-width: 100%;
