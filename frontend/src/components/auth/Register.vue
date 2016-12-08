@@ -12,7 +12,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['register']),
+    ...mapActions(['register', 'loading', 'loadingDone']),
     formSubmit (e) {
       const name = e.target.name.value
       const email = e.target.email.value
@@ -47,9 +47,12 @@ export default {
         email: email,
         password: password
       }
+      this.loading()
       this.register([user, () => {
+        this.loadingDone()
         this.$router.replace(this.$route.query.redirect || '/')
       }, (response) => {
+        this.loadingDone()
         if (response.status === 422) {
           this.error = '您输入的邮箱已经注册过了。'
           return

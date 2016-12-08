@@ -13,7 +13,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['resetPassword']),
+    ...mapActions(['resetPassword', 'loading', 'loadingDone']),
     formSubmit (e) {
       const password = e.target.new_password.value
       const passwordConfirmation = e.target.password_confirmation.value
@@ -27,9 +27,12 @@ export default {
         this.error = '两次输入的密码不一致。'
         return
       }
+      this.loading()
       this.resetPassword([token, password, () => {
+        this.loadingDone()
         this.success = true
       }, (response) => {
+        this.loadingDone()
         this.error = response.error
       }])
     }
