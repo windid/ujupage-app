@@ -2,6 +2,7 @@
 import ColorSchemes from './ColorSchemes'
 import EditorSettings from './EditorSettings'
 import AbTest from './AbTest'
+import AbSplit from './AbSplit'
 import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -10,11 +11,13 @@ export default {
     ColorSchemes,
     EditorSettings,
     AbTest,
+    AbSplit,
     Tooltip
   },
   data () {
     return {
-      showSettings: false
+      showSettings: false,
+      showSplit: false
     }
   },
   computed: mapGetters({
@@ -107,7 +110,7 @@ export default {
       </router-link>
     </div>
 
-    <ab-test></ab-test>
+    <ab-test @absplit="showSplit = true"></ab-test>
 
     <div class="btn-group">
       <div class="btn btn-default" :class="{ active: workspace.version === 'pc' }" @click="switchVersion('pc')">
@@ -142,20 +145,16 @@ export default {
         <div class="btn btn-primary" @click="publish">发布 <span class="glyphicon glyphicon-send"></span></div>
       </div>
     </div>
-    <transition name="fade">
-      <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings=false" ></editor-settings>
-    </transition>
+    <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings = false" ></editor-settings>
+    <ab-split v-if="showSplit" :show="showSplit" @close="showSplit = false"></ab-split>
   </div>
 </template>
 
 <style scoped>
 .flipx {
-  -moz-transform:scaleX(-1);
-  -webkit-transform:scaleX(-1);
-  -o-transform:scaleX(-1);
-  transform:scaleX(-1);
+  transform: scaleX(-1);
   /*IE*/
-  filter:FlipH;
+  filter: FlipH;
 }
 
 .editor-header{

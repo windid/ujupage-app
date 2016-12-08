@@ -1,10 +1,12 @@
 <script>
 import Dropdown from '../ui/Dropdown.vue'
+import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
-    Dropdown
+    Dropdown,
+    Tooltip
   },
   data () {
     return {
@@ -84,13 +86,18 @@ export default {
         <span class="variation-name" @click="switchVariation(variation)">{{variation.name}}</span>
         <span class="caret-right"></span>
         <div class="btn-group">
-          <div class="btn btn-default" title="重命名" @click="rename(variation)"><span class="glyphicon glyphicon-pencil"></span></div>
-          <div class="btn btn-default" title="复制" @click="duplicate(variation)"><span class="glyphicon glyphicon-duplicate"></span></div>
-          <div class="btn btn-danger" title="删除" @click="remove(variation)"><span class="glyphicon glyphicon-trash"></span></div>
-        </div>
+          <tooltip class="btn btn-default" content="重命名" @click.native="rename(variation)"><span class="glyphicon glyphicon-pencil"></span></tooltip>
+          <tooltip class="btn btn-default" content="复制" @click.native="duplicate(variation)"><span class="glyphicon glyphicon-duplicate"></span></tooltip>
+          <tooltip class="btn btn-danger" content="删除" @click.native="remove(variation)"><span class="glyphicon glyphicon-trash"></span></tooltip>
+        </tooltip>
       </li>
+      <li role="separator" class="divider"></li>
       <li @click="create()">
-        <span class="glyphicon glyphicon-plus"></span> 新建一个版本
+        新建一个版本
+      </li>
+      <li role="separator" class="divider"></li>
+      <li @click="$emit('absplit')">
+        <span>版本流量分配</span>
       </li>
     </ul>
   </dropdown>
