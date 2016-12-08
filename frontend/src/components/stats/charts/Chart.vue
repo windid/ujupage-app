@@ -16,4 +16,7 @@ export default {
 .ct-chart {
   max-width: 100%;
 }
+.ct-label.ct-horizontal {
+  min-width: 100px;
+}
 </style>

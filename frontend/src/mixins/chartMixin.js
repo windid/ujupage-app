@@ -1,6 +1,22 @@
 import Chartist from 'chartist'
+import { assign } from 'lodash'
 
 const allChartTypes = ['line', 'bar', 'pie']
+const defaultOptions = {
+  // fullWidth: true,
+  axisX: {
+    labelOffset: {
+      x: -30,
+      y: 10
+    }
+  },
+  chartPadding: {
+    top: 15,
+    right: 15,
+    bottom: 20,
+    left: 20
+  }
+}
 
 export default {
   props: {
@@ -13,12 +29,7 @@ export default {
     },
     stats: Object,
     options: {
-      type: Object,
-      default () {
-        return {
-          fullWidth: true
-        }
-      }
+      type: Object
     },
     responsiveOptions: {
       type: Array
@@ -26,7 +37,7 @@ export default {
   },
   data () {
     return {
-      $chart: null
+      $chart: null // 使用$开头，使其不被Vue实例代理
     }
   },
   computed: {
@@ -35,12 +46,12 @@ export default {
     }
   },
   mounted () {
-    this.$chart = new Chartist[this.chartType](this.$el, this.stats, this.options, this.responsiveOptions)
+    this.$data.$chart = new Chartist[this.chartType](this.$el, this.stats, assign({}, defaultOptions, this.options), this.responsiveOptions)
   },
   watch: {
     stats (val) {
       this.$nextTick(() => {
-        this.$chart.update(this.stats, this.options)
+        this.$data.$chart.update(this.stats, assign({}, defaultOptions, this.options))
       })
     }
   }
