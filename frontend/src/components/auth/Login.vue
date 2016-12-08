@@ -13,7 +13,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['login']),
+    ...mapActions(['login', 'loading', 'loadingDone']),
     formSubmit (e) {
       const email = e.target.email.value
       const password = e.target.password.value
@@ -26,9 +26,12 @@ export default {
         this.error = '请输入您的密码'
         return
       }
+      this.loading()
       this.login([email, password, remember, () => {
+        this.loadingDone()
         this.$router.replace(this.$route.query.redirect || '/')
       }, (response) => {
+        this.loadingDone()
         switch (response.status) {
           case 401:
             this.error = '密码错误！'

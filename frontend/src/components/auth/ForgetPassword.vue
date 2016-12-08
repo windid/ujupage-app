@@ -13,7 +13,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getPassword']),
+    ...mapActions(['getPassword', 'loading', 'loadingDone']),
     formSubmit (e) {
       const email = e.target.email.value
       const emailPattern = /^[A-Za-z0-9]+([-_.][A-Za-z0-9]+)*@([A-Za-z0-9]+[-.])+[A-Za-z0-9]{2,5}$/
@@ -21,12 +21,15 @@ export default {
         this.error = '请输入正确的邮箱地址'
         return
       }
+      this.loading()
       this.getPassword([email, () => {
+        this.loadingDone()
         this.emailSent = true
       }, (response) => {
         if (response.status === 404) {
           this.error = '您输入的邮箱尚未注册。'
         }
+        this.loadingDone()
       }])
     }
   },
