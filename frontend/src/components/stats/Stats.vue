@@ -61,7 +61,7 @@ export default {
           <div class="loading-icon"></div>
         </div>
       </div>
-      <component v-if="!loading" :is="$route.params.module" :report="report" :params="params"></component>
+      <component v-if="!loading" :is="params.module" :report="report" :params="params"></component>
     </transition>
   </div>
 </template>
