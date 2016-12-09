@@ -1,5 +1,6 @@
 import Chartist from 'chartist'
 import { merge } from 'lodash'
+import '../components/stats/charts/plugins/tooltip'
 
 const allChartTypes = ['line', 'bar', 'pie']
 const defaultOptions = {
@@ -15,7 +16,10 @@ const defaultOptions = {
     right: 15,
     bottom: 20,
     left: 20
-  }
+  },
+  plugins: [
+    Chartist.plugins.Tooltip()
+  ]
 }
 
 export default {
