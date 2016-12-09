@@ -83,15 +83,12 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
 .page-group {
   background: #f9f9f9;
   cursor: pointer;
-  width: 200px;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  float: left;
-  margin: 10px;
+  border-radius: 4px;
   box-shadow: 0 0 8px #ddd;
 }
 
@@ -109,8 +106,8 @@ export default {
 }
 
 .page-group-body {
-  height: 136px;
-  font-size: 100px;
+  height: 71px;
+  font-size: 50px;
   color: #ccc;
   text-align: center;
   background: #f9f9f9;

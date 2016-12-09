@@ -162,7 +162,7 @@ export default {
   margin:10px;
   padding: 4px 8px;
   border: 5px solid #BEE1F1;
-  border-radius: 33px;
+  border-radius: 50%;
   cursor: pointer;
   font-size: 12px;
   color: #333;

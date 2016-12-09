@@ -60,6 +60,7 @@ export default {
   left: 0;
   right: 0;
   min-width: 980px;
+  background: #fff;
 }
 
 .dropdown-menu-narrow{
