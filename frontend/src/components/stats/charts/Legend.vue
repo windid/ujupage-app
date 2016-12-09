@@ -1,8 +1,8 @@
 <template>
   <div class="ct-legend-list">
-    <label v-for="(label, index) in labels" class="ct-legend" :class="'ct-legend-' + index">
+    <label v-for="(label, index) in labels" class="ct-legend" :class="'ct-legend-' + index" @click="onLabelClick(index)">
       <i class="ct-mark"></i>
-      <span class="ct-label">{{ label }}</span>
+      <span class="ct-label">{{ label.name }}</span>
     </label>
   </div>
 </template>
@@ -12,6 +12,11 @@ export default {
   name: 'chart-legend',
   props: {
     labels: Array
+  },
+  methods: {
+    onLabelClick (index) {
+      this.$emit('on-switch', index)
+    }
   }
 }
 </script>
@@ -38,10 +43,11 @@ $legend-mark-size: 15px;
     display: inline-block;
     line-height: $legend-mark-size;
     font-weight: normal;
+    margin-left: 5px;
   }
 }
 @for $i from 0 to length($ct-series-names) {
-  .ct-legend-#{$i)} {
+  .ct-legend-#{nth($ct-series-names, $i + 1))} {
     i {
       background: nth($ct-series-colors, $i + 1)
     }

@@ -8,6 +8,7 @@ const defaultOptions = {
     y: -12
   },
   anchorToPoint: false,
+  appendToBody: false,
   className: 'chartist-tooltip',
   pointClass: 'ct-point'
 }
@@ -28,6 +29,9 @@ const Tooltip = function (options) {
     if (!$toolTip) {
       $toolTip = document.createElement('div')
       $toolTip.className = options.className
+      if (options.appendToBody) {
+        document.body.appendChild($toolTip)
+      }
       $chart.appendChild($toolTip)
     }
     let height = $toolTip.offsetHeight

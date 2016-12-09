@@ -1,13 +1,14 @@
 import Chartist from 'chartist'
 import { merge } from 'lodash'
 import '../components/stats/charts/plugins/tooltip'
+import '../components/stats/charts/plugins/legend'
 
 const allChartTypes = ['line', 'bar', 'pie']
 const defaultOptions = {
   // fullWidth: true,
   axisX: {
     labelOffset: {
-      x: -16,
+      x: 0,
       y: 10
     }
   },
@@ -18,7 +19,8 @@ const defaultOptions = {
     left: 20
   },
   plugins: [
-    Chartist.plugins.Tooltip()
+    Chartist.plugins.Tooltip(),
+    Chartist.plugins.Legend()
   ]
 }
 
@@ -53,7 +55,7 @@ export default {
       return this.type[0].toUpperCase() + this.type.slice(1)
     },
     labels () {
-      return this.stats.series.map(s => s.name)
+      return this.stats.series.map(s => { return { name: s.name, enabled: true } })
     }
   },
   mounted () {

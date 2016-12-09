@@ -1,19 +1,21 @@
 <template>
   <div class="chart-container">
-    <chart-legend :labels="labels" v-if="legend"></chart-legend>
     <div class="ct-chart ct-major-twelfth" ref="chart"></div>
   </div>
 </template>
 
 <script>
 import chartMixin from '../../../mixins/chartMixin'
-import ChartLegend from './Legend'
 
 export default {
   name: 'chart-line',
   mixins: [chartMixin],
   components: {
-    ChartLegend
+  },
+  methods: {
+    legendSwitch (index) {
+      console.log(index)
+    }
   }
 }
 </script>
@@ -60,5 +62,44 @@ $chart-tooltip-color: #fff;
 
 .ct-area, .ct-line {
   pointer-events: none;
+}
+$legend-mark-size: 15px;
+
+.ct-legend-list {
+  padding: 10px;
+  text-align: center;
+  
+}
+.ct-legend {
+  display: inline-block;
+  margin: 0 10px;
+  cursor: pointer;
+  .ct-mark {
+    display: inline-block;
+    width: $legend-mark-size;
+    height: $legend-mark-size;
+    vertical-align: middle;
+  }
+  .ct-label {
+    display: inline-block;
+    line-height: $legend-mark-size;
+    font-weight: normal;
+    margin-left: 5px;
+  }
+  &.is-disable {
+    .ct-mark {
+      background: rgba(0,0,0,0.1);
+    }
+    .ct-label {
+      text-decoration: line-through;
+    }
+  }
+}
+@for $i from 0 to length($ct-series-names) {
+  .ct-legend-#{nth($ct-series-names, $i + 1))} {
+    i {
+      background: nth($ct-series-colors, $i + 1)
+    }
+  }
 }
 </style>
