@@ -17,11 +17,12 @@ const Legend = function (options) {
       const series = [].concat(chart.data.series)
       const legends = series.map(s => s.name)
       const $element = chart.container
-      let $container = $element.parentNode.querySelector('.' + options.containerClass)
-      if (!$container) {
-        $container = document.createElement('div')
-        $container.className = options.containerClass
+      const $previous = $element.parentNode.querySelector('.' + options.containerClass)
+      if ($previous) {
+        $element.parentNode.removeChild($previous)
       }
+      const $container = document.createElement('div')
+      $container.className = options.containerClass
       if ($container.childNodes.length === 0) {
         legends.forEach((legend, index) => {
           const $legend = document.createElement('label')
