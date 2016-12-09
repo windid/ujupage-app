@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang=zh-CN><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=renderer content=webkit><meta name=force-rendering content=webkit><title>聚页</title><script src="//webapi.amap.com/maps?v=1.3&key=e3b78e84d1aedba49bc8a84c4e113e01&plugin=AMap.ToolBar"></script><style>html, body {
+  height: 100%;
+}
+
+.loading {
+  position: absolute; 
+  display: block;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%); 
+  background: #fff;
+  border-radius: 50%;
+  padding: 5px;
+  box-shadow: 0 3px 8px #ccc;
+}
+
+.loading-icon {
+  width: 90px;
+  height: 90px;
+  box-sizing: border-box;
+
+  border: solid 10px transparent;
+  border-top-color: #91AA9D;
+  border-left-color: #91AA9D;
+  border-radius: 50%;
+
+  -webkit-animation: loader 1500ms linear infinite;
+          animation: loader 1500ms linear infinite;
+}
+
+.loading-icon.small {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+@-webkit-keyframes loader {
+  0%   { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes loader {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}</style><link href=/static/css/app.c356fcd9ef09127b0ecd077e2f25e3e1.css rel=stylesheet></head><body><div id=app><div class=loading><div class=loading-icon></div></div></div><script type=text/javascript src=/static/js/manifest.335b413d6608cb881833.js></script><script type=text/javascript src=/static/js/vendor.6216dd63374594dae1bf.js></script><script type=text/javascript src=/static/js/app.563fc1a2b5cfbfce9ceb.js></script></body></html>
