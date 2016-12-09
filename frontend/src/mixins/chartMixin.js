@@ -5,7 +5,6 @@ import '../components/stats/charts/plugins/legend'
 
 const allChartTypes = ['line', 'bar', 'pie']
 const defaultOptions = {
-  // fullWidth: true,
   axisX: {
     labelOffset: {
       x: 0,
@@ -19,8 +18,8 @@ const defaultOptions = {
     left: 20
   },
   plugins: [
-    Chartist.plugins.Tooltip(),
-    Chartist.plugins.Legend()
+    Chartist.plugins.Legend(),
+    Chartist.plugins.Tooltip()
   ]
 }
 
