@@ -1,14 +1,22 @@
 <script>
   import Modal from '../ui/Modal'
-  import { mapGetters } from 'vuex'
-  // import { merge } from 'lodash'
+  import API from '../../API'
+  import { mapActions } from 'vuex'
 
   export default {
     name: 'AbSplit',
     props: {
       show: {
         type: Boolean,
-        require: true
+        required: true
+      },
+      variations: {
+        type: Array,
+        required: true
+      },
+      pageId: {
+        type: Number,
+        required: true
       }
     },
     components: {
@@ -16,33 +24,25 @@
     },
     data () {
       return {
-        variations: [],
-        weights: [33, 33, 34]
+        weights: [],
+        error: ''
       }
     },
-    computed: {
-      ...mapGetters({
-        page: 'editingPage',
-        workspace: 'editorWorkspace'
-      })
-      // variations () {
-      //   let sumQuota = 0.0
-      //   const variations = [...this.page.variations]
-      //   variations.forEach((variation) => {
-      //     sumQuota = sumQuota + parseFloat(variation.quota)
-      //   })
-      //   let sumWeight = 0
-      //   variations.forEach((variation) => {
-      //     variation.weight = parseInt(variation.quota / sumQuota * 100)
-      //     sumWeight += variation.weight
-      //   })
-      //   variations[variations.length - 1].weight += (100 - sumWeight)
-      //   return variations
-      // }
-    },
     methods: {
-      submit () {
-        console.log(this.weights)
+      ...mapActions(['loading', 'loadingDone']),
+      save () {
+        const variations = {}
+        this.variations.forEach((variation, index) => {
+          variations[variation.id] = this.weights[index]
+        })
+        this.loading()
+        API.page.split({ id: this.pageId }, { variations: variations }).then(response => {
+          this.$emit('close')
+          this.loadingDone()
+        }, response => {
+          this.error = '保存失败，请稍后再试！'
+          this.loadingDone()
+        })
       },
       decrease (index) {
         this.changeWeight(index, this.weights[index] - 1)
@@ -54,10 +54,10 @@
         val = (val < 0) ? 0 : val
         val = (val > 100) ? 100 : val
         const weights = this.weights
-        const offset = weights[index] - val
-        const anotherIndex = (index === weights.length - 1) ? index - 1 : index + 1
+        const difference = weights[index] - val
+        const anotherIndex = (index === weights.length - 1) ? 0 : index + 1
         weights[index] = val
-        weights[anotherIndex] += offset
+        weights[anotherIndex] += difference
         if (weights[anotherIndex] < 0) {
           this.$nextTick(() => {
             this.changeWeight(anotherIndex, 0)
@@ -71,13 +71,12 @@
     },
     created () {
       let sumQuota = 0.0
-      const variations = [...this.page.variations]
       const weights = []
-      variations.forEach((variation) => {
+      this.variations.forEach((variation) => {
         sumQuota = sumQuota + parseFloat(variation.quota)
       })
       let sumWeight = 0
-      variations.forEach((variation, index) => {
+      this.variations.forEach((variation, index) => {
         weights[index] = parseInt(variation.quota / sumQuota * 100)
         sumWeight += weights[index]
       })
@@ -91,7 +90,7 @@
   <modal :show="show" @close="$emit('close')" width="300px" height="500px">
     <h4 slot="header">版本流量分配</h4>
     <div slot="body">
-      <div v-for="(variation, index) in page.variations" class="form-inline var-item">
+      <div v-for="(variation, index) in variations" class="form-inline var-item">
         <div class="form-group var-name">
           <label>{{variation.name}}</label>
         </div>
@@ -106,7 +105,8 @@
       </div>
     </div>
     <div slot="footer">
-      <div class="btn btn-primary btn-sm" @click="submit">确定</div>
+      <p class="text-danger" style="float: left">{{error}}</p>
+      <div class="btn btn-success btn-sm" @click="save">保存</div>
     </div>
   </modal>
 </template>

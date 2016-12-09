@@ -10,7 +10,7 @@ export default {
   props: {
     show: {
       type: Boolean,
-      require: true
+      required: true
     }
   },
   computed: {

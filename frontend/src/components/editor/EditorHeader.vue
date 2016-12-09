@@ -2,7 +2,7 @@
 import ColorSchemes from './ColorSchemes'
 import EditorSettings from './EditorSettings'
 import AbTest from './AbTest'
-import AbSplit from './AbSplit'
+import AbSplit from '../common/AbSplit'
 import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -146,7 +146,7 @@ export default {
       </div>
     </div>
     <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings = false" ></editor-settings>
-    <ab-split v-if="showSplit" :show="showSplit" @close="showSplit = false"></ab-split>
+    <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @close="showSplit = false"></ab-split>
   </div>
 </template>
 

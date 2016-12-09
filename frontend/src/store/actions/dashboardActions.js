@@ -125,7 +125,6 @@ export const renamePage = ({ commit }, [page, newName]) => {
 
 export const movePage = ({ commit }, [page, pageGroup]) => {
   API.page.update({ id: page.id }, { name: page.name, group_id: pageGroup.id }).then(response => {
-    console.log(response)
     commit(types.REMOVE_PAGE, { page })
   })
 }
