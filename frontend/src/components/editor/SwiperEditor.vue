@@ -8,7 +8,7 @@ import Vue from 'vue'
 
 export default {
   name: 'swiper-editor',
-  props: ['id', 'images', 'show'],
+  props: ['id', 'images', 'value', 'show'],
   components: {
     Sidebar,
     ImagePicker
@@ -61,14 +61,17 @@ export default {
   <div slot="body" class="swiper-editor-body">
     <div class="swiper-property">
       <div class="swiper-auto">
-        <input type="checkbox" :id="getId('auto')"></inpu> <label :for="getId('auto')">自动播放</label>
+        <input type="checkbox" :id="getId('auto')" v-model="value.auto"></input> <label :for="getId('auto')">自动播放</label>
+      </div>
+      <div class="swiper-button">
+        <input type="checkbox" :id="getId('button')" v-model="value.button"></input> <label :for="getId('button')">翻页按钮</label>
       </div>
       <div class="swiper-effect">
-        <input type="radio" :name="getId('effect')" value="1" :id="getId('effect', 1)">
+        <input type="radio" :name="getId('effect')" value="1" :id="getId('effect', 1)" v-model="value.effect">
         <label :for="getId('effect', 1)">水平滚动</label>
-        <input type="radio" :name="getId('effect')" value="2" :id="getId('effect', 2)">
+        <input type="radio" :name="getId('effect')" value="2" :id="getId('effect', 2)" v-model="value.effect">
         <label :for="getId('effect', 2)">垂直滚动</label>
-        <input type="radio" :name="getId('effect')" value="3" :id="getId('effect', 3)">
+        <input type="radio" :name="getId('effect')" value="3" :id="getId('effect', 3)" v-model="value.effect">
         <label :for="getId('effect', 3)">淡入淡出</label>
       </div>
     </div>
@@ -116,5 +119,6 @@ label {
 .swiper-property {
   border-bottom: 1px solid #eee;
   margin-bottom: 8px;
+  padding-top: 8px;
 }
 </style>

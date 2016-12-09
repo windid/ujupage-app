@@ -68,6 +68,10 @@ export default {
           <li v-for="(image, index) in this.localElement.data.images"><li>
         </ul>
       </div>
+      <div class="swiper-buttons" v-if="localElement.data.button">
+        <a class="button-prev">&#x3008;</a>
+        <a class="button-next">&#x3009;</a>
+      </div>
     </div>
   </div>
   <template slot="main-buttons-extend">
@@ -82,6 +86,7 @@ export default {
 <swiper-editor
   :id="elementId"
   :show="editing"
+  :value="localElement.data"
   :images="localElement.data.images"
   @edit-done="editDone"
   @images-change="imagesChange"></swiper-editor>
@@ -152,5 +157,21 @@ export default {
   background-color: rgba(255,255,255,0.4);
   box-shadow: 0 0 2px #ddd;
   display: inline-block;
+}
+.swiper-buttons a {
+  position: absolute;
+  top: 50%;
+  color: #fff;
+  text-decoration: none;
+  background-color: rgba(232, 228, 228, 0.6);
+  font-size: 12px;
+}
+.swiper-buttons a.button-prev {
+  left: 0;
+  padding: 3px 6px 3px 0;
+}
+.swiper-buttons a.button-next {
+  right: 0;
+  padding: 3px 0 3px 6px;
 }
 </style>
