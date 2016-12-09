@@ -1,4 +1,12 @@
 import Chartist from 'chartist'
+import {
+  $,
+  hasClass,
+  addClass,
+  removeClass,
+  show,
+  hide
+} from './util'
 
 const defaultOptions = {
   seriesClasses: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'],
@@ -17,12 +25,13 @@ const Legend = function (options) {
       const series = [].concat(chart.data.series)
       const legends = series.map(s => s.name)
       const $element = chart.container
-      const $previous = $element.parentNode.querySelector('.' + options.containerClass)
-      if ($previous) {
-        $element.parentNode.removeChild($previous)
+
+      let $container = $('.' + options.containerClass, $element.parentNode)
+      if (!$container) {
+        $container = document.createElement('div')
+        $container.className = options.containerClass
       }
-      const $container = document.createElement('div')
-      $container.className = options.containerClass
+
       if ($container.childNodes.length === 0) {
         legends.forEach((legend, index) => {
           const $legend = document.createElement('label')
@@ -32,49 +41,27 @@ const Legend = function (options) {
           $legend.innerHTML = '<i class="ct-mark"></i><span class="ct-label" data-legend="' + legend + '">' + legendText + '</span>'
           $legend.addEventListener('click', e => {
             if (hasClass($legend, options.disableClass)) {
-              show($element.querySelector('.ct-series-' + state))
+              show($('.ct-series-' + state, $element))
               removeClass($legend, options.disableClass)
             } else {
-              hide($element.querySelector('.ct-series-' + state))
+              hide($('.ct-series-' + state, $element))
               addClass($legend, options.disableClass)
             }
             options.onClick(index, e)
           })
           $container.appendChild($legend)
         })
+      } else {
+        legends.forEach((legend, index) => {
+          const state = index < options.seriesClasses.length ? options.seriesClasses[index] : '' + index
+          if (hasClass($('.ct-legend-' + state, $container), options.disableClass)) {
+            hide($('.ct-series-' + state, $element))
+          }
+        })
       }
       $element.parentNode.insertBefore($container, $element)
     })
   }
-}
-
-function hasClass ($el, className) {
-  return (' ' + $el.getAttribute('class') + ' ').indexOf(' ' + className + ' ') > -1
-}
-
-function addClass ($el, className) {
-  if (!hasClass($el, className)) {
-    $el.className = $el.className + ' ' + className
-  }
-}
-
-function removeClass ($el, className) {
-  var regex = new RegExp(className + '\\s*', 'gi')
-  $el.className = $el.className.replace(regex, '').trim()
-}
-
-function show ($el) {
-  if (!$el) {
-    return
-  }
-  $el.style.display = ''
-}
-
-function hide ($el) {
-  if (!$el) {
-    return
-  }
-  $el.style.display = 'none'
 }
 
 Chartist.plugins = Chartist.plugins || {}

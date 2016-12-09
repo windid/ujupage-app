@@ -1,4 +1,10 @@
 import Chartist from 'chartist'
+import {
+  $,
+  hasClass,
+  addClass,
+  removeClass
+} from './util'
 
 const defaultOptions = {
   currency: undefined,
@@ -13,6 +19,8 @@ const defaultOptions = {
   pointClass: 'ct-point'
 }
 
+const showClass = 'tooltip-show'
+
 const Tooltip = function (options) {
   options = Chartist.extend({}, defaultOptions, options)
 
@@ -25,7 +33,7 @@ const Tooltip = function (options) {
     }
 
     const $chart = chart.container
-    let $toolTip = $chart.querySelector('.' + options.className)
+    let $toolTip = $('.' + options.className, $chart)
     if (!$toolTip) {
       $toolTip = document.createElement('div')
       $toolTip.className = options.className
@@ -37,7 +45,7 @@ const Tooltip = function (options) {
     let height = $toolTip.offsetHeight
     let width = $toolTip.offsetWidth
 
-    hide($toolTip)
+    removeClass($toolTip, showClass)
 
     function on (event, selector, callback) {
       $chart.addEventListener(event, function (e) {
@@ -99,7 +107,7 @@ const Tooltip = function (options) {
       if (tooltipText) {
         $toolTip.innerHTML = tooltipText
         setPosition(event)
-        show($toolTip)
+        addClass($toolTip, showClass)
 
         height = $toolTip.offsetHeight
         width = $toolTip.offsetWidth
@@ -107,7 +115,7 @@ const Tooltip = function (options) {
     })
 
     on('mouseout', tooltipSelector, function () {
-      hide($toolTip)
+      removeClass($toolTip, showClass)
     })
 
     on('mousemove', null, function (event) {
@@ -141,21 +149,6 @@ const Tooltip = function (options) {
       }
     }
   }
-}
-
-function show (element) {
-  if (!hasClass(element, 'tooltip-show')) {
-    element.className = element.className + ' tooltip-show'
-  }
-}
-
-function hide (element) {
-  var regex = new RegExp('tooltip-show' + '\\s*', 'gi')
-  element.className = element.className.replace(regex, '').trim()
-}
-
-function hasClass (element, className) {
-  return (' ' + element.getAttribute('class') + ' ').indexOf(' ' + className + ' ') > -1
 }
 
 function next (element, className) {
