@@ -30,7 +30,7 @@
 <template>
   <div style="float: right;">
     <avatar v-for="member in members" :member="member" :key="member.email" class="avatar"></avatar>
-    <tooltip content="邀请新成员" class="avatar invite-btn" @click="invite">+</tooltip>
+    <tooltip content="邀请新成员" class="avatar invite-btn" @click.native="invite">+</tooltip>
   </div>
 </template>
 

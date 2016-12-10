@@ -29,7 +29,7 @@ export default {
   height: 50px;
   top: 0;
   width: 100%;
-  background: #fff;
+  background: #f9f9f9;
   box-shadow: 0 3px 8px #eee;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;

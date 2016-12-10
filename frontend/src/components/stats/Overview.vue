@@ -168,7 +168,7 @@ export default {
           <div class="btn btn-default" :class="{ active: currentTab === 'visitors'}" @click="currentTab = 'visitors'">访客数</div>
         </div>
       </div>
-      <chart type="line" :stats="stats" :options="chartOptions"></chart>
+      <!-- <chart type="line" :stats="stats" :options="chartOptions"></chart> -->
       <table class="report table table-bordered table-hover">
         <thead>
           <tr>

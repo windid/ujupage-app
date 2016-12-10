@@ -101,21 +101,21 @@ export default {
   white-space: nowrap;
 }
 
-.page-group-name {
-  line-height: 35px;
+.page-group-name > span {
+  line-height: 34px;
 }
 
 .page-group-body {
-  height: 71px;
-  font-size: 50px;
+  height: 64px;
+  font-size: 48px;
   color: #ccc;
   text-align: center;
   background: #f9f9f9;
 }
 
 .page-group-footer {
-  height: 50px;
+  height: 58px;
   text-align: right;
-  padding: 10px;
+  padding: 15px;
 }
 </style>
