@@ -13,25 +13,28 @@ export default {
         <li><router-link to="/project">Wendell的项目 <span class="caret"></span></router-link></li>
         <li>Data</li>
       </ol> -->
-      <ul class="nav nav-pills header-nav">
+      <div class="btn-toolbar header-nav">
         <!-- <li><router-link to="/help">帮助</router-link></li> -->
-        <li><router-link to="/account">我的帐号</router-link></li>
-        <li><router-link to="/logout">退出登陆</router-link></li>
-      </ul>
+        <router-link active-class="active" to="/account" tag="div" class="btn btn-default">
+          帐号 <span class="glyphicon glyphicon-user"></span>
+        </router-link>
+        <router-link active-class="active" to="/logout" tag="div" class="btn btn-default">
+          退出 <span class="glyphicon glyphicon-log-out"></span>
+        </router-link>
+      </div>
     </template>
   </div>
 </div>
 </template>
 
-<style>
+<style scoped>
+
 #header-wrapper {
   position: relative;
   height: 50px;
-  top: 0;
   width: 100%;
   background: #f9f9f9;
   box-shadow: 0 3px 8px #eee;
-  border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
 }
 
@@ -39,7 +42,7 @@ export default {
   position: relative;
   margin:0 auto;
   width: 1000px;
-  height: 48px;
+  height: 49px;
   overflow: hidden;
 }
 
@@ -58,7 +61,8 @@ export default {
 }
 
 .header-nav {
-  margin: 5px 0;
+  margin: 8px 0;
   float: right;  
 }
+
 </style>

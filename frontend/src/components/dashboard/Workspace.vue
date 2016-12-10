@@ -73,6 +73,7 @@ export default {
 
 .workspace-nav > .btn {
   margin: 10px 10px 20px 0;
+  box-shadow: 0 0 8px #ddd;
 }
 
 .page-list-item {
