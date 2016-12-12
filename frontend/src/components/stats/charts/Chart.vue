@@ -9,14 +9,7 @@ import chartMixin from '../../../mixins/chartMixin'
 
 export default {
   name: 'chart-line',
-  mixins: [chartMixin],
-  components: {
-  },
-  methods: {
-    legendSwitch (index) {
-      console.log(index)
-    }
-  }
+  mixins: [chartMixin]
 }
 </script>
 
