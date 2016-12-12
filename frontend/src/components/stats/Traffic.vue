@@ -29,7 +29,7 @@ export default {
 <template>
   <div>
     <stats-nav title="流量来源"></stats-nav>
-    <div class="stats-content">
+    <div class="content-body">
       <ul class="nav nav-tabs" role="tablist">
         <li v-for="(tabName, tab) in tabs" :class="{ active: tab === currentTab }"><a href="javascript:;" @click="currentTab = tab">{{tabName}}</a></li>
       </ul>

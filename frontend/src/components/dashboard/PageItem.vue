@@ -114,11 +114,8 @@ export default {
 
 <style scoped>
 .page-item{
-  width: 200px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  float:left;
-  margin:10px;
   box-shadow: 0 0 8px #ddd;
 }
 
@@ -132,21 +129,21 @@ export default {
 }
 
 .page-item-url span, .page-item-url a{
-  color:#bbb;
+  color: #bbb;
   font-size: 12px;
 }
 
 .page-item-body{
-  height:133px;
+  height: 60px;
   background:#f9f9f9;
-  border-top:1px solid #eee;
-  border-bottom:1px solid #eee;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 .page-item-footer{
-  height:50px;
+  height: 58px;
   text-align: right;
-  padding:10px;
+  padding: 15px;
 }
 
 .page-menu {

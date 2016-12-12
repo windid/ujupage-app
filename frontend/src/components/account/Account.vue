@@ -8,6 +8,15 @@ export default {
 
 <template>
   <div>
-    ssdfdsgfhfgfnhrtytry
+    <div class="content-header">
+      <h4>我的帐号</h4>
+    </div>
+    <div class="content-body">
+      Coming soon ...
+    </div>
   </div>
 </template>
+
+<style scoped>
+
+</style>

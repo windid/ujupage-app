@@ -42,7 +42,7 @@ export default {
 <style>
 .sidebar {
   position: fixed;
-  z-index: 800000;
+  z-index: 102000;
   width: 300px;
   top: 50px;
   right: 0;

@@ -21,7 +21,7 @@ export default {
         { name: '视频', style: 'film', action: () => this.newElement('video') },
         { name: '地图', style: 'map-marker', action: () => this.newElement('map') },
         // { name: '音乐', style: 'music', action: () => this.newElement('music') },
-        { name: '轮播图', style: 'transfer', action: () => this.comming('swiper') },
+        { name: '轮播图', style: 'transfer', action: () => this.newElement('swiper') },
         // { name: '倒计时', style: 'time', action: () => this.newElement('timer') },
         { name: 'HTML', style: 'header', action: () => this.newElement('html') }
       ],
@@ -162,7 +162,7 @@ export default {
   margin:10px;
   padding: 4px 8px;
   border: 5px solid #BEE1F1;
-  border-radius: 33px;
+  border-radius: 50%;
   cursor: pointer;
   font-size: 12px;
   color: #333;

@@ -1,9 +1,12 @@
 <script>
 import AppHeader from './AppHeader'
+import AppFooter from './AppFooter'
 
 export default {
+  name: 'Home',
   components: {
-    AppHeader
+    AppHeader,
+    AppFooter
   }
 }
 </script>
@@ -11,8 +14,11 @@ export default {
 <template>
   <div>
     <app-header></app-header>
-    <transition name="fade" mode="out-in">
-      <router-view class="main-wrapper"></router-view>
-    </transition>
+    <div class="main-wrapper">
+      <transition name="fade" mode="out-in">
+        <router-view class="content"></router-view>
+      </transition>
+    </div>
+    <app-footer></app-footer>
   </div>
 </template>

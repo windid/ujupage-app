@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     getReportData () {
-      // this.loading = true
+      this.loading = true
       API.report.get(this.params).then(response => {
         this.report = response.data
         this.loading = false
@@ -55,28 +55,18 @@ export default {
 
 <template>
   <div>
-    <navbar></navbar>
     <transition name="fade" mode="out-in">
-      <div v-if="loading" class="stats">
+      <div v-if="loading">
         <div class="loading">
           <div class="loading-icon"></div>
         </div>
       </div>
-      <component v-if="!loading" :is="params.module" :report="report" :params="params" class="stats"></component>
+      <component v-if="!loading" :is="$route.params.module" :report="report" :params="params"></component>
     </transition>
   </div>
 </template>
 
 <style>
-.stats{
-  position:relative;
-  height:100%;
-  margin-left:240px;
-}
-
-.stats-content {
-  padding: 15px;
-}
 
 .report td, .report th {
   line-height: 35px !important;

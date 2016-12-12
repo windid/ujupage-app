@@ -24,7 +24,7 @@ export const loadVariation = ({ commit, state }, [variation, callback = false]) 
   API.variation.get({ pageId: state.editor.page.id, id: variation.id }).then(response => {
     const content = JSON.parse(response.data.html_json)
     commit(types.LOAD_VARIATION, { variation, content })
-    if (callback) callback()
+    callback && callback()
   })
 }
 
@@ -69,10 +69,11 @@ export const saveSettings = ({ commit }, settings) => {
 }
 
 // 保存
-export const saveVariation = ({ commit, state }) => {
+export const saveVariation = ({ commit, state }, callback = false) => {
   const content = JSON.stringify(state.editor.content)
   API.variation.update({ pageId: state.editor.page.id, id: state.editor.workspace.activeVariation.id }, { htmljson: content }).then(response => {
     commit(types.SAVE_VARIATION)
+    callback && callback()
   })
 }
 

@@ -121,7 +121,7 @@ use AuthenticatesAndRegistersUsers,
 
                 $from = config('mail')['from'];
                 $m->from($from['address'], $from['name']);
-                $m->to($data['email'], $data['name'])->subject('你的激活链接');
+                $m->to($data['email'], $data['name'])->subject('验证您的邮箱');
 
                 UserActive::create([
                     'email' => $data['email'],

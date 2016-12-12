@@ -370,7 +370,10 @@ export default {
   'swiper': {
     type: 'swiper',
     data: {
-      images: []
+      images: [],
+      button: true,
+      auto: true,
+      effect: 1
     },
     style: {
       'pc': {

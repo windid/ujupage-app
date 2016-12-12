@@ -10,7 +10,7 @@ export default {
   props: {
     show: {
       type: Boolean,
-      require: true
+      required: true
     }
   },
   computed: {
@@ -52,7 +52,7 @@ export default {
 </script>
 
 <template>
-<modal :show="show" @close="$emit('close')" :width="'800px'" :height="'500px'" >
+<modal :show="show" @close="$emit('close')" width="800px" height="500px" >
   <div slot="header">
     <ul class="nav nav-pills">
       <li :class="{active: currentTab === 'seo'}"><a href="javascript:;" @click="currentTab = 'seo'">页面设置</a></li>

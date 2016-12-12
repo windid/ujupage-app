@@ -135,7 +135,7 @@ export default {
 <template>
   <div>
     <stats-nav title="数据概览"></stats-nav>
-    <div class="stats-content">
+    <div class="content-body">
       <table class="report table table-bordered table-hover">
         <thead>
           <tr>
