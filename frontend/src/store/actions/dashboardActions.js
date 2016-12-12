@@ -73,8 +73,11 @@ export const inviteMember = ({ commit, state }, member) => {
   })
 }
 
-export const removeMember = ({ commit }, member, project) => {
-
+export const removeMember = ({ commit }, [member, project]) => {
+  console.log(member, project)
+  API.projectMember.delete({ projectId: project.id }, member).then(response => {
+    console.log(response)
+  })
 }
 
 export const quitProject = ({ commit }, project) => {
