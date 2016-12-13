@@ -33,6 +33,7 @@ export default {
   position: relative;
   height: 50px;
   width: 100%;
+  min-width: 1000px;
   background: #f9f9f9;
   box-shadow: 0 3px 8px #eee;
   border-bottom: 1px solid #ddd;
