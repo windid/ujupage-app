@@ -73,6 +73,10 @@ a:focus {
   box-shadow: 0px 0px 8px #ddd;
 }
 
+.btn, .nav > li > a, .dropdown-menu > li, .dropdown-menu > li > a {
+  transition: all .2s ease;
+}
+
 .input-group-btn .btn {
   height: 34px;
 }

@@ -81,7 +81,6 @@ export default {
       <router-link tag="li" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'conversion'}, query: $route.query }"><a>转化详情</a></router-link>
       <router-link tag="li" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'traffic'}, query: $route.query }"><a>流量来源</a></router-link>
     </ul>
-    <div style="clear: both"></div>
   </div>
   <div class="data-filter">
     <div class="btn-group">
@@ -107,7 +106,7 @@ export default {
 <style scoped>
 
 .content-header h4 {
-  float: left;
+  display: inline-block;
 }
 
 .data-filter {

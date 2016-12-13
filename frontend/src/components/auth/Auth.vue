@@ -22,6 +22,7 @@
   padding: 40px 90px;
   border-radius: 8px;
   box-shadow: 0 2px 20px #ddd;
+  background: #fff;
 }
 
 .auth-header {
