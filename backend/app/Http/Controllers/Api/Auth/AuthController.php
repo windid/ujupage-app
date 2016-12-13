@@ -155,7 +155,8 @@ use AuthenticatesAndRegistersUsers,
         } else {
             return $this->errorInvalidRequest();
         }
-        return $this->successCreated();
+        // return $this->successCreated();        
+        return redirect('/');
     }
 
     
