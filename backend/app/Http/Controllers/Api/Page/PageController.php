@@ -398,7 +398,9 @@ class PageController extends Controller {
                 ->select('variation_name', 'created_at', 'fields', 'utms')
                 ->orderBy('created_at', 'desc')
                 ->get();
-                
+                    
+        /* 
+        dd($pageforms->toArray());
         $values = [];
         foreach ($pageforms as $k => $v) {
             $order = [];
@@ -412,9 +414,7 @@ class PageController extends Controller {
             $v = array_merge($v->toArray(), $order);
             unset($v['fields'], $v['utms']);
             $values[] = $v;
-        }        
-        dd($values);
-        /*
+        }   
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
                 ->orderBy('created_at', 'desc')
@@ -440,7 +440,7 @@ class PageController extends Controller {
             'total_pages' => ceil($total / $page_size),
             'total_pageforms' => $total,
             'page_size' => $page_size,
-            'pageforms' => $values
+            'pageforms' => $pageforms->toArray()
         ];                
         
         return $this->successOK($result);
@@ -461,14 +461,13 @@ class PageController extends Controller {
             return $page;
         }
         $start_time = $end_time = 0;
-        if (request()->has('sd') && request()->has('ed')) {
-            $start_time = request('sd', date('Y-m-d'));
-            $end_time = date('Y-m-d', strtotime(request('ed', date('Y-m-d')))+86400);
+        if (request()->has('start_date') && request()->has('end_date')) {
+            $start_time = request('start_date', date('Y-m-d'));
+            $end_time = date('Y-m-d', strtotime(request('end_date', date('Y-m-d')))+86400);
         }
         /*******************获取所有字段***********************/
         
         $client = \DB::connection('mongodb')->getMongoClient();
-        $db = \DB::connection('mongodb')->getMongoDB();
         
         $filter = [
             'page_id' => $page->id,
@@ -525,7 +524,6 @@ class PageController extends Controller {
                 ->select('variation_name', 'created_at', 'fields', 'utms')
                 ->orderBy('created_at', 'desc')
                 ->get();
-                
         $values = [];
         foreach ($pageforms as $k => $v) {
             $str = $v['variation_name'] . ',' . $v['created_at'];
