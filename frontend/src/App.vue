@@ -23,15 +23,44 @@ export default {
 
 <style>
 
+body {
+  background: #f9fbfe !important;
+  overflow-y: scroll;
+}
+
 #app, .page {
   height: 100%;
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 
 .main-wrapper {
-  height: calc(100% - 50px);
+  /*height: calc(100% - 50px);*/
   position: relative;
-  top: 50px;
+  padding: 0;
+}
+
+.content {
+  position: relative;
+  margin: 24px auto;
+  width: 1000px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 0 8px #ddd;
+  background: #fff;
+}
+
+.content-header {
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  background: #f6f6f6;
+}
+.content-body {
+  min-height: 300px;
+  padding: 10px 20px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 a:focus {
@@ -44,17 +73,16 @@ a:focus {
   box-shadow: 0px 0px 8px #ddd;
 }
 
+.input-group-btn .btn {
+  height: 34px;
+}
+
 .fr{
   float: right;
 }
 
 .fl{
   float: left;
-}
-
-.main-wrapper {
-  position: relative;
-  top:50px;
 }
 
 .fade-enter-active, .fade-leave-active {

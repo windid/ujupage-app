@@ -20,6 +20,7 @@ class ParseHtml {
         self::$color_set = $content['colorSet'];
 
         self::$page['settings'] = $content['settings'];
+        self::$page['settings']['hasmap'] = 0;
         self::$page['sections'] = $content['sections'];
         self::$page['elements'] = $content['elements'];
         self::$page['style'] = array('common'=>array(), 'pc'=>array(), 'mobile'=>array());
@@ -47,8 +48,22 @@ class ParseHtml {
     }
 
     protected static function parseSection($section_id, $section){
-        self::$page['style']['pc']['section-'.$section_id]     = self::parseStyles($section['style']['pc']);
-        self::$page['style']['mobile']['section-'.$section_id] = self::parseStyles($section['style']['mobile']);
+        self::$page['style']['pc']['section-'.$section_id] = self::parseSectionStyles($section['style']['pc']);
+        self::$page['style']['mobile']['section-'.$section_id] = self::parseSectionStyles($section['style']['mobile']);
+
+        if (isset($section['style']['pc']['mask'])) {
+            self::$page['style']['pc']['section-'.$section_id.' .section-inner'] = [
+                'opacity'          => $section['style']['pc']['mask']['opacity'] / 100,
+                'background-color' => self::getColor($section['style']['pc']['mask']['color'])
+            ];
+        }
+        
+        if (isset($section['style']['pc']['mask'])) {
+            self::$page['style']['mobile']['section-'.$section_id.' .section-inner'] = [
+                'opacity' => $section['style']['mobile']['mask']['opacity'] / 100,
+                'background-color' => self::getColor($section['style']['mobile']['mask']['color'])
+            ];
+        }
 
         foreach ($section['elements']['pc'] as $element_id){
             self::$elements['pc'][$element_id] = self::$page['style']['pc']['content']['height'];
@@ -62,6 +77,27 @@ class ParseHtml {
         self::$page['style']['pc']['content']['height'] .= "px";
         self::$page['style']['mobile']['content']['height'] += $section['style']['mobile']['height'];
         self::$page['style']['mobile']['content']['height'] .= "px";
+    }
+
+    protected static function parseSectionStyles ($sectionStyles) {
+        $styles = [
+            'height' => $sectionStyles['height']
+        ];
+        if (isset($sectionStyles['border'])) {
+            $border = self::parseBorder($sectionStyles['border']);
+            $styles['border-top'] = $border;
+            $style['border-bottom'] = $border;
+        }
+        if (isset($sectionStyles['background'])) {
+            $styles['background'] = self::parseBackground($sectionStyles['background']);
+            $styles['width'] = $sectionStyles['background']['stretch'] ? '100%' : '960px';
+            $styles['margin'] = $sectionStyles['background']['stretch'] ? '' : '0 auto';
+            $styles['background-size'] = $sectionStyles['background']['size'];
+            if ($sectionStyles['background']['fixed'] ) {
+                $styles['background-attachment'] = 'fixed';
+            }
+        }
+        return $styles;
     }
 
     protected static function parseElement($element_id, $element){
@@ -84,6 +120,25 @@ class ParseHtml {
             self::$page['elements'][$element_id]['link']['goal'] = 1;
         }
 
+        if (isset($element['fixed']) && $element['fixed']) {
+            unset(self::$page['style']['pc']['element-'.$element_id]['display']);
+            unset(self::$page['style']['pc']['element-'.$element_id]['top']);
+            unset(self::$page['style']['pc']['element-'.$element_id]['left']);
+            unset(self::$page['style']['mobile']['element-'.$element_id]['display']);
+            unset(self::$page['style']['mobile']['element-'.$element_id]['top']);
+            unset(self::$page['style']['mobile']['element-'.$element_id]['left']);
+
+            self::$page['style']['pc']['element-'.$element_id]['position'] = 'fixed';
+            self::$page['style']['pc']['element-'.$element_id]['top'] = $element['fixedPosition']['top'];
+            self::$page['style']['pc']['element-'.$element_id]['bottom'] = $element['fixedPosition']['bottom'];
+            self::$page['style']['pc']['element-'.$element_id]['margin-left'] = $element['fixedPosition']['left'];
+            self::$page['style']['pc']['element-'.$element_id]['z-index'] += 50000;
+            self::$page['style']['mobile']['element-'.$element_id]['z-index'] += 50000;
+            if ($element['fixedScrollPx']) {
+                self::$page['style']['pc']['element-'.$element_id]['display'] = 'none';
+            }
+        }
+
         switch ($element['type']) {
             case 'text':
                 self::parseElementText($element_id, $element);
@@ -100,42 +155,154 @@ class ParseHtml {
             case 'html':
                 self::parseElementHTML($element_id, $element);
                 break;
+            case 'shape':
+                self::parseElementShape($element_id, $element);
+                break;
+            case 'map':
+                self::parseElementMap($element_id, $element);
+                break;
+            case 'video':
+                self::parseElementVideo($element_id, $element);
+                break;
+            case 'Timer':
+                self::parseElementTimer($element_id, $element);
+                break;
+            case 'Swiper':
+                self::parseElementSwiper($element_id, $element);
+                break;
             default:
                 break;
         }
         
     }
 
-    protected static function parseElementText($element_id, $element){
+    protected static function parseElementText ($element_id, $element) {
         self::$page['style']['common']['element-'.$element_id] = self::parseStyles($element['fontStyle']);
     }
 
-    protected static function parseElementImage($element_id, $element){
+    protected static function parseElementImage ($element_id, $element) {
     }
 
-    protected static function parseElementForm($element_id, $element){
+    protected static function parseElementForm ($element_id, $element) {
         self::$page['style']['common']['element-'.$element_id." label"] = self::parseStyles(['color'=>$element['props']['labelColor']]);
         self::$page['elements'][$element_id]['props']['goal'] = in_array('form', self::$page['settings']['goals']) ? 1 : 0;
         
-        $hover_color = self::getColor($element['button']['props']['hoverColor']);
-        unset ($element['button']['props']['hoverColor']);
-        self::$page['style']['common']['element-'.$element_id."-button"] = self::parseStyles($element['button']['props']);
-        self::$page['style']['common']['element-'.$element_id."-button:hover"] = ['background-color'=>$hover_color];
-
+        // 按钮
+        self::$page['style']['common']['element-'.$element_id."-button"] = self::parseButton($element['button']);
     }
 
-    protected static function parseElementButton($element_id, $element){
-        $hover_color = self::getColor($element['props']['hoverColor']);
-        unset ($element['props']['hoverColor']);
-        self::$page['style']['common']['element-'.$element_id] = self::parseStyles($element['props']);
-        self::$page['style']['common']['element-'.$element_id.':hover'] = ['background-color'=>$hover_color];
+    protected static function parseElementButton ($element_id, $element) {
+        self::$page['style']['common']['element-'.$element_id] = self::parseButton($element);
     }
 
-    protected static function parseElementHTML($element_id, $element){
+    protected static function parseButton($element) {
+        $styles = self::parseStyles($element['props']);
+
+        // 边框
+        if (isset($element['style']['border']) && $element['style']['border']['width'] != '0px') {
+            $styles['border'] = self::parseBorder($element['style']['border']);
+        }
+
+        // 投影
+        if (isset($element['style']['shadow'])) {
+            $shadow = $element['style']['shadow'];
+            if ($shadow['x'] || $shadow['y'] || $shadow['blur'] || $shadow['spread']) {
+                $styles['box-shadow'] = self::parseShadow($shadow);
+            }
+        }
+
+        // 如果是图片padding0 否则padding6
+        if (isset($element['image']) && $element['image']) {
+            $styles['padding'] = '0px';
+        }
+
+        return $styles;
+    }
+
+    protected static function parseElementHTML ($element_id, $element) {
         
     }
 
-    protected static function parseStyles($styles){
+    protected static function parseElementShape ($element_id, $element) {
+        // 边框
+        $border = self::parseBorder($element['style']['border']);
+
+        if ($border) {
+            if ($element['subType'] === 'line') {
+                self::$page['style']['common']['element-'.$element_id]['border-bottom'] = $border;
+            } elseif ($element['subType'] === 'vline') {
+                self::$page['style']['common']['element-'.$element_id]['border-right'] = $border;
+            } else {
+                self::$page['style']['common']['element-'.$element_id]['border'] = $border;
+            }
+        }
+
+        // 透明度
+        if (isset($element['style']['opacity']) && $element['style']['opacity'] < 100) {
+            self::$page['style']['common']['element-'.$element_id]['opacity'] = $element['style']['opacity'] / 100;
+        }
+
+        // 圆角
+        if (isset($element['style']['borderRadius']) && $element['style']['borderRadius'] !== '0px') {
+            self::$page['style']['common']['element-'.$element_id]['border-radius'] = $element['style']['borderRadius'];
+        }
+
+        // 背景
+        if (isset($element['style']['background'])) {
+            $background = $element['style']['background'];
+            self::$page['style']['common']['element-'.$element_id]['background'] = self::parseBackground($background);
+            // 背景图片拉升
+            if (isset($background['image']) && isset($background['size']) && $background['image'] && $background['size']) {
+                self::$page['style']['common']['element-'.$element_id]['background-size'] = 'cover';
+            }
+        }
+
+        // 投影
+        if (isset($element['style']['shadow'])) {
+            $shadow = $element['style']['shadow'];
+            if ($shadow['x'] || $shadow['y'] || $shadow['blur'] || $shadow['spread']) {
+                self::$page['style']['common']['element-'.$element_id]['box-shadow'] = self::parseShadow($shadow);
+            }
+        }
+    }
+
+    protected static function parseElementMap ($element_id, $element) {
+        self::$page['settings']['hasmap'] = 1;
+    }
+
+    protected static function parseElementVideo ($element_id, $element) {
+        
+    }
+
+    protected static function parseElementSwiper ($element_id, $element) {
+        
+    }
+
+    protected static function parseBackground ($background) {
+        if (is_array($background)) {
+            $background_str = self::getColor($background['color']);
+            if (isset($background['image']) && $background['image'] != '') {
+                $background_str .= ' url(' . $background['image'] . ') ' . $background['repeat'] . ' ' . $background['position'];
+            }
+            return $background_str;
+        } else {
+            return $background;
+        }
+    }
+
+    protected static function parseBorder ($border) {
+        if ($border && $border['width'] != 0) {
+            return $border['width'] . ' ' . $border['style'] . ' ' . self::getColor($border['color']);
+        } else {
+            return 0;
+        }
+    }
+
+    protected static function parseShadow ($shadow) {
+        return $shadow['x'] . 'px ' . $shadow['y'] . 'px ' . $shadow['blur'] . 'px ' . $shadow['spread'] . 'px ' . self::getColor($shadow['color']);
+    }
+
+    protected static function parseStyles ($styles) {
         $new_styles = array();
         foreach ($styles as $key => $style){
             $key = self::parseCamelCase($key);
@@ -147,7 +314,7 @@ class ParseHtml {
         return $new_styles;
     }
 
-    protected static function parseCamelCase($str){
+    protected static function parseCamelCase ($str) {
         return strtolower(preg_replace('/((?<=[a-z])(?=[A-Z]))/', '-', $str));
     }
 
@@ -155,8 +322,8 @@ class ParseHtml {
     //     if (substr($prop, -5, 5) === "Color")
     // }
 
-    protected static function getColor($str){
-        if ($str === ""){
+    protected static function getColor ($str) {
+        if ($str === "") {
             return "transparent";
         } elseif (substr($str, 0, 1) === "#") {
             return $str;

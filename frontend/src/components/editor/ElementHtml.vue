@@ -1,43 +1,23 @@
 <script>
-import ElementCommon from './ElementCommon'
-import { mapGetters, mapActions } from 'vuex'
+import elementMixin from '../../mixins/elementMixin'
 
 export default {
-  name: 'element-html',
-  // 接受父组件传参，element元素属性，sectionId:板块ID，elementId:元素ID
-  props: ['element', 'sectionId', 'elementId'],
-  components: {
-    ElementCommon
-  },
+  mixins: [elementMixin],
   data () {
     return {
-      // 初始加载主按钮组
-      buttonGroup: 'main',
-      // 是否处于编辑状态
-      editing: false,
       content: this.element.content,
       resize: {
         handles: 's,e'
-      },
-      draggableFromChild: true
+      }
     }
   },
   computed: {
-    ...mapGetters({
-      workspace: 'editorWorkspace'
-    }),
     // 编辑状态不允许拖动
     draggable () {
       return !this.editing && this.draggableFromChild
-    },
-    resizable () {
-      return (!this.editing && this.workspace.activeElementId === this.elementId)
     }
   },
   methods: {
-    ...mapActions([
-      'modifyElement'
-    ]),
     edit () {
       this.editing = true
       this.buttonGroup = 'edit'
@@ -48,20 +28,6 @@ export default {
       if (this.element.content !== this.content) {
         this.modifyElement([this.elementId, { content: this.content }])
       }
-    },
-    changeButtonGroup (val) {
-      this.buttonGroup = val
-    },
-    changeDraggable (val) {
-      this.draggableFromChild = val
-    }
-  },
-  watch: {
-    'workspace.activeElementId': function (val) {
-      if (val !== this.elementId && this.editing) this.editDone()
-    },
-    'element': function (val) {
-      this.content = val.content
     }
   }
 }

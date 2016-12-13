@@ -1,2 +1,0 @@
-webpackJsonp([9,10],{115:function(t,e){"use strict";Object.defineProperty(e,"__esModule",{value:!0}),e.default={mounted:function(){document.title="我的账号 - 聚页"}}},330:function(t,e,n){var r,o;r=n(115);var f=n(423);o=r=r||{},"object"!=typeof r.default&&"function"!=typeof r.default||(o=r=r.default),"function"==typeof o&&(o=o.options),o.render=f.render,o.staticRenderFns=f.staticRenderFns,t.exports=r},423:function(t,e){t.exports={render:function(){var t=this;return t._h("div",["\n  ssdfdsgfhfgfnhrtytry\n"])},staticRenderFns:[]}}});
-//# sourceMappingURL=9.a3ea281b6081e576f9d3.js.map

@@ -42,7 +42,7 @@ export default {
 <style>
 .sidebar {
   position: fixed;
-  z-index: 800000;
+  z-index: 102000;
   width: 300px;
   top: 50px;
   right: 0;
@@ -60,7 +60,7 @@ export default {
 }
 
 .sidebar-body {
-  padding:12px;
+  padding: 0 12px;
   height: calc(100% - 54px);
   overflow-y: auto;
   overflow-x: hidden;

@@ -1,7 +1,8 @@
 import API from '../../API'
 import * as types from '../mutation-types'
 import { merge } from 'lodash'
-import elementTypes from '../editorElementTypes'
+import elementTypes from '../../config/editorElementTypes'
+import defaultSection from '../../config/editorSection'
 
 // 数据初始化，在路由中调用
 export const editorInit = ({ commit, state }, [route, callback = false]) => {
@@ -23,7 +24,7 @@ export const loadVariation = ({ commit, state }, [variation, callback = false]) 
   API.variation.get({ pageId: state.editor.page.id, id: variation.id }).then(response => {
     const content = JSON.parse(response.data.html_json)
     commit(types.LOAD_VARIATION, { variation, content })
-    if (callback) callback()
+    callback && callback()
   })
 }
 
@@ -68,10 +69,11 @@ export const saveSettings = ({ commit }, settings) => {
 }
 
 // 保存
-export const saveVariation = ({ commit, state }) => {
+export const saveVariation = ({ commit, state }, callback = false) => {
   const content = JSON.stringify(state.editor.content)
   API.variation.update({ pageId: state.editor.page.id, id: state.editor.workspace.activeVariation.id }, { htmljson: content }).then(response => {
     commit(types.SAVE_VARIATION)
+    callback && callback()
   })
 }
 
@@ -91,13 +93,7 @@ export const publishPage = ({ commit, state }, successCb) => {
 
 // 添加板块
 export const addSection = ({ commit }) => {
-  const section = {
-    style: {
-      'pc': { 'background-color': '', height: '500px' },
-      'mobile': { 'background-color': '', height: '500px' }
-    },
-    elements: { 'pc': [], 'mobile': [] }
-  }
+  const section = merge({}, defaultSection)
   commit(types.ADD_SECTION, { section })
   commit(types.SAVE_CONTENT_STATE)
 }
@@ -233,9 +229,9 @@ export const addElement = ({ commit, state, getters }, type) => {
   }
 
   // 计算元素应该进入哪个板块，以及在板块中的高
-  const workspace = document.getElementById('main-wrapper')
-  const element = elementTypes[type]
-  const elementTopInPage = workspace.scrollTop + 100
+  const scrollTop = document.body.scrollTop || document.documentElement.scrollTop
+  const element = merge({}, elementTypes[type])
+  const elementTopInPage = scrollTop + 150
   let sumSectionsHeight = 0
   let sectionHeight = 0
   let sectionId = -1

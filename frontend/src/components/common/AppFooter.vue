@@ -1,0 +1,20 @@
+<template>
+  <div class="app-footer">
+    <span>&copy; 2017 优矩广告</span>
+    <div class="footer-nav">
+      <!-- <a href="">帮助</a> -->
+    </div>
+  </div>
+</template>
+
+<style scoped>
+  .app-footer {
+    width: 1000px;
+    padding: 0 20px 20px 20px;
+    margin: 0 auto;
+    color: #aaa;
+  }
+  .footer-nav {
+    float: right;
+  }
+</style>

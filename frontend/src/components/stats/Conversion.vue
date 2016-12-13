@@ -26,7 +26,7 @@ export default {
 <template>
   <div>
     <stats-nav title="转化详情"></stats-nav>
-    <div class="stats-content">
+    <div class="content-body">
       <h4>转化事件</h4>
       <table v-if="goalData.length > 0" class="report table table-bordered table-hover">
         <thead>

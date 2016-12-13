@@ -2,17 +2,22 @@
 import ColorSchemes from './ColorSchemes'
 import EditorSettings from './EditorSettings'
 import AbTest from './AbTest'
+import AbSplit from '../common/AbSplit'
+import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     ColorSchemes,
     EditorSettings,
-    AbTest
+    AbTest,
+    AbSplit,
+    Tooltip
   },
   data () {
     return {
-      showSettings: false
+      showSettings: false,
+      showSplit: false
     }
   },
   computed: mapGetters({
@@ -35,38 +40,39 @@ export default {
       publishPage: 'publishPage'
     }),
     publish () {
-      this.saveNotice()
-      if (!this.page.url) {
-        this.getInput({
-          header: '为您的页面选定一个URL地址',
-          inputAddon: 'http://www.juyepage.com/',
-          placeholder: '自定义url',
-          hint: '可由数字、英文字母组成，至少3位以上。',
-          onConfirm: (val) => {
-            if (val.length < 3) {
-              return '自定义url地址不能少于3位'
+      this.saveNotice(() => {
+        if (!this.page.url) {
+          this.getInput({
+            header: '为您的页面选定一个URL地址',
+            inputAddon: 'http://www.juyepage.com/',
+            placeholder: '自定义url',
+            hint: '可由数字、英文字母组成，至少3位以上。',
+            onConfirm: (val) => {
+              if (val.length < 3) {
+                return '自定义url地址不能少于3位'
+              }
+              this.setURL([val, () => {
+                this.doPublish()
+              }, (error) => {
+                this.warning({
+                  header: '发布失败',
+                  content: error,
+                  onConfirm: () => {
+                    this.publish()
+                  }
+                })
+              }])
             }
-            this.setURL([val, () => {
-              this.doPublish()
-            }, (error) => {
-              this.warning({
-                header: '发布失败',
-                content: error,
-                onConfirm: () => {
-                  this.publish()
-                }
-              })
-            }])
-          }
-        })
-      } else {
-        this.doPublish()
-      }
+          })
+        } else {
+          this.doPublish()
+        }
+      })
     },
     doPublish () {
       this.publishPage(() => {
-        this.warning({
-          header: '恭喜！页面发布成功',
+        this.confirm({
+          header: '页面发布成功！',
           content: '点击确定将返回主面板',
           onConfirm: () => {
             this.$router.push('/')
@@ -74,15 +80,20 @@ export default {
         })
       })
     },
-    saveNotice () {
+    saveNotice (cb) {
       if (!this.saveStatus) {
         this.confirm({
           header: '是否先保存？',
           content: '您修改了页面，建议保存之后再发布。',
           onConfirm: () => {
-            this.saveVariation()
+            this.saveVariation(cb)
+          },
+          onCancel: () => {
+            cb()
           }
         })
+      } else {
+        cb()
       }
     }
   }
@@ -99,7 +110,7 @@ export default {
       </router-link>
     </div>
 
-    <ab-test></ab-test>
+    <ab-test @absplit="showSplit = true"></ab-test>
 
     <div class="btn-group">
       <div class="btn btn-default" :class="{ active: workspace.version === 'pc' }" @click="switchVersion('pc')">
@@ -112,17 +123,17 @@ export default {
 
     <div class="btn-toolbar fr">
       <div class="btn-group">
-        <div class="btn btn-default">
+        <tooltip class="btn btn-default" content="帮助">
           <span class="glyphicon glyphicon-question-sign"></span>
-        </div>
+        </tooltip>
       </div>
       <div class="btn-group">
-        <div class="btn btn-default" :class="{ disabled: !undoButton }" @click="undo">
+        <tooltip content="撤销" class="btn btn-default" :class="{ disabled: !undoButton }" @click.native="undo">
           <span class="glyphicon glyphicon-share-alt flipx"></span>
-        </div>
-        <div class="btn btn-default" :class="{ disabled: !redoButton }" @click="redo">
+        </tooltip>
+        <tooltip content="重做" class="btn btn-default" :class="{ disabled: !redoButton }" @click.native="redo">
           <span class="glyphicon glyphicon-share-alt"></span>
-        </div>
+        </tooltip>
       </div>
       
       <color-schemes></color-schemes>
@@ -134,20 +145,16 @@ export default {
         <div class="btn btn-primary" @click="publish">发布 <span class="glyphicon glyphicon-send"></span></div>
       </div>
     </div>
-    <transition name="fade">
-      <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings=false" ></editor-settings>
-    </transition>
+    <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings = false" ></editor-settings>
+    <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @close="showSplit = false"></ab-split>
   </div>
 </template>
 
 <style scoped>
 .flipx {
-  -moz-transform:scaleX(-1);
-  -webkit-transform:scaleX(-1);
-  -o-transform:scaleX(-1);
-  transform:scaleX(-1);
+  transform: scaleX(-1);
   /*IE*/
-  filter:FlipH;
+  filter: FlipH;
 }
 
 .editor-header{
@@ -155,7 +162,7 @@ export default {
   top: 0;
   height:50px;
   width:100%;
-  z-index: 1000001;
+  z-index: 1002;
   background: #fff;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;

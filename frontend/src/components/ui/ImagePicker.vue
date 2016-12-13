@@ -5,8 +5,10 @@ export default {
   name: 'image-picker',
   props: {
     'value': {
-      twoWay: true,
       required: true
+    },
+    'id': {
+      required: false
     }
   },
   data: function () {
@@ -25,13 +27,18 @@ export default {
           return
         }
         this.image = image
-        this.$emit('image-change', image)
+        this.$emit('image-change', image, this.id)
         this.$emit('after-pick')
       }])
     },
     deleteImage () {
       this.image = null
-      this.$emit('image-change', null)
+      this.$emit('image-change', null, this.id)
+    }
+  },
+  watch: {
+    'value': function (val) {
+      this.image = val
     }
   }
 }
@@ -42,15 +49,15 @@ export default {
   <div v-if="image && image.url" class="button-background-thumbnail-wrapper">
     <img :src="image.url" class="button-background-thumbnail"/>
     <div class="button-background-thumbnail-action">
-    <div @click.stop="selectImage">更换</div>
-    <div @click.stop="deleteImage">删除</div>
+      <div @click.stop="selectImage">更换</div>
+      <div @click.stop="deleteImage">删除</div>
     </div>
   </div>
   <span v-else>图片背景</span>
 </div>
 </template>
 
-<style>
+<style scoped>
   .button-background-selector {
     position: relative;
     width: 120px;
