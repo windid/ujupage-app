@@ -18,7 +18,11 @@ const defaultOptions = {
     left: 20
   },
   plugins: [
-    Chartist.plugins.Legend(),
+    Chartist.plugins.Legend({
+      filter (value, index) {
+        return value + index
+      }
+    }),
     Chartist.plugins.Tooltip()
   ]
 }

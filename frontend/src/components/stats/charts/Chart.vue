@@ -67,30 +67,29 @@ $legend-mark-size: 15px;
   display: inline-block;
   margin: 0 10px;
   cursor: pointer;
-  .ct-mark {
+  line-height: $legend-mark-size;
+  font-weight: normal;
+  margin-left: 5px;
+  color: #999;
+  font-size: .8rem;
+  &::before {
     display: inline-block;
+    content: '';
     width: $legend-mark-size;
     height: $legend-mark-size;
     vertical-align: middle;
-  }
-  .ct-label {
-    display: inline-block;
-    line-height: $legend-mark-size;
-    font-weight: normal;
-    margin-left: 5px;
+    margin-right: 5px;
   }
   &.is-disable {
-    .ct-mark {
+    text-decoration: line-through;
+    &::before {
       background: rgba(0,0,0,0.1);
-    }
-    .ct-label {
-      text-decoration: line-through;
     }
   }
 }
 @for $i from 0 to length($ct-series-names) {
   .ct-legend-#{nth($ct-series-names, $i + 1))} {
-    i {
+    &::before {
       background: nth($ct-series-colors, $i + 1)
     }
   }
