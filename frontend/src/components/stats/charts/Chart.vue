@@ -71,7 +71,7 @@ $legend-mark-size: 15px;
   font-weight: normal;
   margin-left: 5px;
   color: #999;
-  font-size: .8rem;
+  font-size: .9em;
   &::before {
     display: inline-block;
     content: '';
