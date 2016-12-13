@@ -136,11 +136,12 @@ export default {
   align-items: center;
 }
 .swiper-container .swiper-image-list ul li img {
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   max-height: 100%;
   max-width: 100%;
   display: block;
+  object-fit: contain;
 }
 .swiper-bullets {
   position: absolute;
