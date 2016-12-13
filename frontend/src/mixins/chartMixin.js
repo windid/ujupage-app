@@ -7,8 +7,16 @@ const allChartTypes = ['line', 'bar', 'pie']
 const defaultOptions = {
   axisX: {
     labelOffset: {
-      x: 0,
+      x: -16,
       y: 10
+    },
+    showGrid: false
+  },
+  axisY: {
+    onlyInteger: true,
+    labelOffset: {
+      x: 0,
+      y: 5
     }
   },
   chartPadding: {
@@ -18,11 +26,7 @@ const defaultOptions = {
     left: 20
   },
   plugins: [
-    Chartist.plugins.Legend({
-      filter (value, index) {
-        return value + index
-      }
-    }),
+    Chartist.plugins.Legend(),
     Chartist.plugins.Tooltip()
   ]
 }

@@ -56,7 +56,7 @@ $chart-tooltip-color: #fff;
 .ct-area, .ct-line {
   pointer-events: none;
 }
-$legend-mark-size: 15px;
+$legend-mark-size: 16px;
 
 .ct-legend-list {
   padding: 10px;
