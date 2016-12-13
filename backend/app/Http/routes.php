@@ -219,6 +219,13 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              */
             Route::put('page/{id}/publish', ['as' => '.publish', 'uses' => 'PageController@publish']);
             /**
+             * publish api/page/{page_id}/quota 分配权重
+             * -- page_id 页面ID
+             * quotas: {id: quota, id: quota, id: quota, id: quota}
+             * @return StatusCode 200
+             */
+            Route::post('page/{id}/quota', ['as' => '.quota', 'uses' => 'PageController@quota']);
+            /**
              * GET api/pages/{page_id}/leads 用户提交表单数据
              * -- page_id 页面ID
             * page 页码

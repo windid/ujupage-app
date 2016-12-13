@@ -556,15 +556,27 @@ class PageController extends Controller {
         // echo iconv('utf-8', 'gb2312', implode("\n" ,$values));exit;
         // echo implode(",", array_flip($fields_val)) . "\n";
         echo implode("\n" ,$values);exit;
-    }
+    }    
     
-    public function transfer() {
-        $pageForm = new PageForm;
-        $pageForms = $pageForm->get();
-        
-        foreach ($pageForms as $k => $v) {
-            $v->save();
+    /**
+     * 
+     * 分配权重
+     * @param int $id page_id
+     * @return json $quota id: quota
+     */
+    public function quota(Request $request, $page_id) {
+        $page = $this->initPGP($page_id);         
+        if (get_class($page) == 'Illuminate\Http\JsonResponse') {
+            return $page;
         }
-        exit;
+        $quota = json_decode($request->get('quota', '{}'), true);
+        if ($quota) {
+            foreach ($quota as $k => $v) {
+                $variation = $this->pageVariation->where('page_id', $page->id)->find($k);
+                $variation->quota = $v;
+                $variation->save();
+            }
+        }
+        return $this->successOK();
     }
 }
