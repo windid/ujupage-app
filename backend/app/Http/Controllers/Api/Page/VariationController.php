@@ -285,6 +285,13 @@ class VariationController extends Controller {
     }
     
     /**
+     * 
+     * 分配权重
+     * @param int $id page_id
+     * @return json $quota id: quota
+     */
+    
+    /**
      * 版本预览
      * @param int $id 版本ID
      * @return string $content 页面内容

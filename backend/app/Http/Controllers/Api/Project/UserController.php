@@ -31,7 +31,10 @@ class UserController extends Controller {
     public function index($project_id) {
         $users = $this->user->projects()->find($project_id)->users()->withPivot('role')->get()->toArray();
         
-        return $this->successOK($users);
+        $invites = $this->projectInvite->where('project_id', $project_id)->lists('email', 'id')->toArray();
+        
+        
+        return $this->successOK([ 'users' => $users, 'invites' => $invites]);
     }
     
     /**
@@ -133,6 +136,28 @@ class UserController extends Controller {
                 || $user_id == $this->user->id) {
             $project->users()->detach($user_id);
         }
+                
+        return $this->successNoConnect();
+    }
+    
+    /**
+    * 删除未确认邀请
+    * @param int $project_id
+    * @param int $invite_id
+    * @return json
+    * 
+    */
+    public function destroyInvites($project_id, $invite_id) {
+        $project = $this->user->projects()->find($project_id);
+        if (!$project) {
+            return $this->errorNotFound();
+        }        
+        
+        $invite = $this->projectInvite->where('project_id', $project_id)->find($invite_id);  
+        if (!$invite) {
+            return $this->errorNotFound();
+        }
+        $invite->delete();
                 
         return $this->successNoConnect();
     }

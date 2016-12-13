@@ -101,6 +101,13 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
             Route::resource('project', 'ProjectController');
             
             /**
+             * GET api/projects/{project_id}/destroyinvites/{invite_id} 删除未确认邀请
+             * -- project_id 项目ID
+             * -- invite_id 邀请ID
+             * @return StatusCode 204
+             */
+            Route::get('projects/{project_id}/destroyinvites/{invite_id}', ['as' => '.destroyinvites', 'uses' => 'UserController@destroyInvites']);
+            /**
              * GET api/projects/{project_id}/users 获取项目下的用户
              * -- project_id 项目ID
              * @return StatusCode 200
