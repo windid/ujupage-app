@@ -30,11 +30,11 @@ export default {
           </tooltip>
         </div>
         <div class="col-md-4">
-          <h5>注册于</h5>
+          <!-- <h5>注册于</h5>
           <p class="text-user-info"><i>2016-12-12</i></p>
           <h5>最后登陆于</h5>
           <p class="text-user-info"><i>2016-12-12 12:12:12</i></p>
-          <p class="text-user-info"><i>IP: 192.168.0.123</i></p>
+          <p class="text-user-info"><i>IP: 192.168.0.123</i></p> -->
         </div>
         <div class="col-md-3">
           <form role="form" @submit.prevent>
