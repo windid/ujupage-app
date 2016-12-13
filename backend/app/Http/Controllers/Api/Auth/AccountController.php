@@ -10,11 +10,11 @@ class AccountController extends Controller{
         if (!$this->user) {
             return $this->errorUnauthorized();
         }
-        return $this->successOK(json_encode([
+        return $this->successOK([
             'id' => $this->user->id,
             'name' => $this->user->name,
             'email' => $this->user->email
-        ]));
+        ]);
     }
 }
 ?>

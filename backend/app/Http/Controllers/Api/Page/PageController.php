@@ -328,15 +328,93 @@ class PageController extends Controller {
             return $page;
         }
         
-        $curpage = intval(request('page', 1));
+        $curpage = intval(request('current_page', 1));
         $page_size = intval(request('page_size', 30));
         
-        $start_time = $end_time = 0;
+        $start_time = date('Y-m-d');
+        $end_time = date('Y-m-d', strtotime('+1 days'));
         if (request()->has('start_date') && request()->has('end_date')) {
             $start_time = request('start_date', date('Y-m-d'));
             $end_time = date('Y-m-d', strtotime(request('end_date', date('Y-m-d')))+86400);
-        }
+        } 
         
+        /*******************获取所有字段***********************/
+        
+        $client = \DB::connection('mongodb')->getMongoClient();
+        $db = \DB::connection('mongodb')->getMongoDB();
+        
+        $filter = [
+            'page_id' => $page->id,
+            'created_at' => [
+                '$gte' => (new \MongoDB\BSON\UTCDateTime(strtotime($start_time) * 1000)),
+                '$lte' => (new \MongoDB\BSON\UTCDateTime(strtotime($end_time) * 1000)),
+            ]
+        ];
+        
+        $out = '_page_forms_fields_mapreduce_' . rand(100000,999999);
+        $cmd = $client->ujupage_com->command([
+            'mapreduce' => 'page_forms',
+            'map' => 'function() {
+                for (var key in this.fields) {
+                    emit(key, 1);
+                }
+                for (var key in this.utms) {
+                    emit(key, 1);
+                }
+            }',
+            'reduce' => 'function(key, values) {
+                var total = 0;
+                for (var i=0; i<values.length; i++) {
+                    total += values[i];
+                }
+                return parseFloat(total);
+            }',
+            'query' => $filter,
+            'out' => $out
+        ]);
+        $fields = $client->ujupage_com->{$cmd->toArray()[0]->result}->find(
+            [],
+            [
+                'sort' => ['value' => -1]
+            ]
+        )->toArray();
+        $client->ujupage_com->{$out}->drop();
+        
+        /*******************获取所有字段***********************/
+        
+        $fields_val = ['版本名', '提交时间'];
+        foreach ($fields as $v) {
+            $fields_val[] = $v->_id;
+        }
+        $fields_val = array_flip($fields_val);
+        $pageForm = new PageForm;
+        $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
+                ->where(function($query) use ($start_time, $end_time) {
+                    if ($start_time > 0 && $end_time > 0) {
+                        return $query->where('created_at', '>=', new \DateTime($start_time))
+                                ->where('created_at', '<=', new \DateTime($end_time));
+                    }
+                })
+                ->select('variation_name', 'created_at', 'fields', 'utms')
+                ->orderBy('created_at', 'desc')
+                ->get();
+                    
+        /* 
+        dd($pageforms->toArray());
+        $values = [];
+        foreach ($pageforms as $k => $v) {
+            $order = [];
+            
+            foreach ($v['utms'] as $kk => $vv) {
+                $order[$kk] = $vv; 
+            }
+            foreach ($v['fields'] as $kk => $vv) {
+                $order[$kk] = $vv;
+            }
+            $v = array_merge($v->toArray(), $order);
+            unset($v['fields'], $v['utms']);
+            $values[] = $v;
+        }   
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
                 ->orderBy('created_at', 'desc')
@@ -348,6 +426,8 @@ class PageController extends Controller {
                 })
                 ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'utms', 'created_at')
                 ->get()->toArray();
+         * 
+         */
         $total = $pageForm->where('page_id', $page->id)
                     ->where(function($query) use ($start_time, $end_time) {
                         if ($start_time > 0 && $end_time > 0) {
@@ -360,7 +440,7 @@ class PageController extends Controller {
             'total_pages' => ceil($total / $page_size),
             'total_pageforms' => $total,
             'page_size' => $page_size,
-            'pageforms' => $pageforms
+            'pageforms' => $pageforms->toArray()
         ];                
         
         return $this->successOK($result);
@@ -375,6 +455,7 @@ class PageController extends Controller {
      *       fields 
      */
     public function leadscvs(int $page_id) {
+        //$this->transfer();
         $page = $this->initPGP($page_id);         
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
@@ -384,7 +465,54 @@ class PageController extends Controller {
             $start_time = request('start_date', date('Y-m-d'));
             $end_time = date('Y-m-d', strtotime(request('end_date', date('Y-m-d')))+86400);
         }
+        /*******************获取所有字段***********************/
         
+        $client = \DB::connection('mongodb')->getMongoClient();
+        
+        $filter = [
+            'page_id' => $page->id,
+            'created_at' => [
+                '$gte' => (new \MongoDB\BSON\UTCDateTime(strtotime($start_time) * 1000)),
+                '$lte' => (new \MongoDB\BSON\UTCDateTime(strtotime($end_time) * 1000)),
+            ]
+        ];
+        
+        $out = '_page_forms_fields_mapreduce_' . rand(100000,999999);
+        $cmd = $client->ujupage_com->command([
+            'mapreduce' => 'page_forms',
+            'map' => 'function() {
+                for (var key in this.fields) {
+                    emit(key, 1);
+                }
+                for (var key in this.utms) {
+                    emit(key, 1);
+                }
+            }',
+            'reduce' => 'function(key, values) {
+                var total = 0;
+                for (var i=0; i<values.length; i++) {
+                    total += values[i];
+                }
+                return parseFloat(total);
+            }',
+            'query' => $filter,
+            'out' => $out
+        ]);
+        $fields = $client->ujupage_com->{$cmd->toArray()[0]->result}->find(
+            [],
+            [
+                'sort' => ['value' => -1]
+            ]
+        )->toArray();
+        $client->ujupage_com->{$out}->drop();
+        
+        /*******************获取所有字段***********************/
+        
+        $fields_val = ['版本名', '提交时间'];
+        foreach ($fields as $v) {
+            $fields_val[] = $v->_id;
+        }
+        $fields_val = array_flip($fields_val);
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)
                 ->where(function($query) use ($start_time, $end_time) {
@@ -393,58 +521,23 @@ class PageController extends Controller {
                                 ->where('created_at', '<=', new \DateTime($end_time));
                     }
                 })
-                ->select('variation_name', 'fields', 'utms', 'created_at')
-                ->orderBy('id', 'desc')
-                ->get()->toArray();
-        
-        $fields = [];
-        $utms = [];
-        foreach ($pageforms as $k => $v) {            
-            if (is_array($pageforms[$k]['fields'])) {
-                foreach ($pageforms[$k]['fields'] as $kk => $vv) {
-                    if (!isset($fields[$kk])) {
-                        $fields[$kk] = 0;
-                    }
-                    if ($kk == '名称') {
-                        $fields[$kk]++;
-                    }
-                    $fields[$kk]++;
-                }
-            }
-            if (is_array($pageforms[$k]['utms'])) {
-                foreach ($pageforms[$k]['utms'] as $kk => $vv) {
-                    if (!isset($utms[$kk])) {
-                        $utms[$kk] = 0;
-                    }
-                    $utms[$kk]++;
-                }
-            }
-        }
-        arsort($fields);
-        arsort($utms);
-        $fields_val = ['版本名', '提交时间'];
-        foreach ($fields as $k => $v) {
-            $fields_val[] = $k;
-        }
-        foreach ($utms as $k => $v) {
-            $fields_val[] = $k;
-        }
-         $fields_val = array_flip($fields_val);
-        // dd($fields, $fields_val);
-        $fields_count = count($fields_val);
+                ->select('variation_name', 'created_at', 'fields', 'utms')
+                ->orderBy('created_at', 'desc')
+                ->get();
         $values = [];
         foreach ($pageforms as $k => $v) {
             $str = $v['variation_name'] . ',' . $v['created_at'];
             $order = [];
             
-            foreach ($v['fields'] as $kk => $vv) {
-                $order[$fields_val[$kk]] = $vv;
-            }
             foreach ($v['utms'] as $kk => $vv) {
                 $order[$fields_val[$kk]] = $vv; 
             }
-            ksort($order);
-            // dd(implode(',', $order));
+            foreach ($v['fields'] as $kk => $vv) {
+                $order[$fields_val[$kk]] = $vv;
+            }
+            
+            ksort($order);            
+            
             $pre_index = 1;
             foreach ($order as $ok => $ov) {
                 $pad = $ok - $pre_index;
@@ -463,5 +556,15 @@ class PageController extends Controller {
         // echo iconv('utf-8', 'gb2312', implode("\n" ,$values));exit;
         // echo implode(",", array_flip($fields_val)) . "\n";
         echo implode("\n" ,$values);exit;
+    }
+    
+    public function transfer() {
+        $pageForm = new PageForm;
+        $pageForms = $pageForm->get();
+        
+        foreach ($pageForms as $k => $v) {
+            $v->save();
+        }
+        exit;
     }
 }
