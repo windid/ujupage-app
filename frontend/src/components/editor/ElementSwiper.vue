@@ -14,6 +14,10 @@ export default {
         handles: 's,e'
       },
       editing: false,
+      constraints: {
+        minWidth: 100,
+        minHeight: 80
+      },
       activeIndex: null
     }
   },
@@ -74,6 +78,7 @@ export default {
   :section-id="sectionId" 
   :element-id="elementId"
   :button-group="buttonGroup"
+  :dimensionContraint="constraints" 
   :resizable="resizable"
   :resize="resize"
   @drag-start="editDone">
@@ -113,7 +118,7 @@ export default {
 <swiper-editor
   :id="elementId"
   :show="editing"
-  :value="localElement.data"
+  v-model="localElement.data"
   :images="localElement.data.images"
   @edit-done="editDone"
   @images-change="imagesChange"></swiper-editor>
@@ -162,7 +167,7 @@ export default {
   align-items: center;
 }
 .swiper-container .swiper-image-list ul li.active {
-  z-index: 100;
+  z-index: 10;
 }
 .swiper-container .swiper-image-list ul li img {
   width: 100%;
@@ -178,12 +183,14 @@ export default {
   left: 0;
   right: 0;
   height: 12px;
+  z-index: 20;
 }
 .swiper-bullets ul {
   margin: 0;
   padding: 0;
   width: 100%;
   text-align: center;
+  white-space: nowrap;
 }
 .swiper-bullets ul li {
   width: 10px;
@@ -202,6 +209,7 @@ export default {
   text-decoration: none;
   background-color: rgba(232, 228, 228, 0.6);
   font-size: 12px;
+  z-index: 20;
 }
 .swiper-buttons a.button-prev {
   left: 0;
