@@ -32,6 +32,7 @@ export const loadVariation = ({ commit, state }, [variation, callback = false]) 
 export const createVariation = ({ commit, state }) => {
   API.variation.save({ pageId: state.editor.page.id }, {}).then(response => {
     const variation = response.data
+    variation.quota = 1
     commit(types.CREATE_VARIATION, { variation })
     loadVariation({ commit, state }, [variation])
   })
