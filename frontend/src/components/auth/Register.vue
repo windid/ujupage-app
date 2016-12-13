@@ -8,7 +8,9 @@ export default {
   },
   data () {
     return {
-      error: ''
+      error: '',
+      token: this.$route.query.token || '',
+      invitedEmail: this.$route.query.email || ''
     }
   },
   methods: {
@@ -17,7 +19,7 @@ export default {
       const name = e.target.name.value
       const email = e.target.email.value
       const password = e.target.password.value
-      const passwordConfirmation = e.target.password_confirmation.value
+      // const passwordConfirmation = e.target.password_confirmation.value
 
       this.error = ''
 
@@ -38,19 +40,20 @@ export default {
         this.error = '密码长度至少要6位。'
         return
       }
-      if (password !== passwordConfirmation) {
-        this.error = '两次输入的密码不一致。'
-        return
-      }
+      // if (password !== passwordConfirmation) {
+      //   this.error = '两次输入的密码不一致。'
+      //   return
+      // }
       const user = {
         name: name,
         email: email,
-        password: password
+        password: password,
+        i: this.token
       }
       this.loading()
       this.register([user, () => {
         this.loadingDone()
-        this.$router.replace(this.$route.query.redirect || '/')
+        this.$router.replace('/')
       }, (response) => {
         this.loadingDone()
         if (response.status === 422) {
@@ -79,14 +82,14 @@ export default {
         <input class="form-control input-lg" type="text" name="name" placeholder="姓名"/>        
       </div>
       <div class="form-group">
-        <input class="form-control input-lg" type="text" name="email" placeholder="电子邮箱"/>        
+        <input class="form-control input-lg" type="text" name="email" :value="invitedEmail" placeholder="电子邮箱" :disabled="!!invitedEmail"/>
       </div>
       <div class="form-group">
         <input class="form-control input-lg" type="password" name="password" placeholder="密码"/>
       </div> 
-      <div class="form-group">
+      <!-- <div class="form-group">
         <input class="form-control input-lg" type="password" name="password_confirmation" placeholder="确认密码"/>
-      </div>
+      </div> -->
       
       <p class="auth-error bg-danger" v-show="!!error">{{error}}</p>
 
