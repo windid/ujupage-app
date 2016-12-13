@@ -43,15 +43,15 @@ body {
   position: relative;
   margin: 24px auto;
   width: 1000px;
-  border: 1px solid #ddd;
+  border: 1px solid #e9e9e9;
   border-radius: 4px;
-  box-shadow: 0 0 8px #ddd;
+  box-shadow: 0 1px 8px #ddd;
   background: #fff;
 }
 
 .content-header {
   padding: 10px 20px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e9e9e9;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   background: #f6f6f6;

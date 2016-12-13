@@ -35,35 +35,34 @@ export default {
   width: 100%;
   min-width: 1000px;
   background: #f9f9f9;
-  box-shadow: 0 3px 8px #eee;
-  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 3px #ddd;
 }
 
 .header {
   position: relative;
   margin:0 auto;
   width: 1000px;
-  height: 49px;
+  height: 50px;
   overflow: hidden;
 }
 
-.header > .breadcrumb {
+/*.header > .breadcrumb {
   margin: 6px 0 0 80px;
   background: transparent;
-}
+}*/
 
 .logo {
   display: inline-block;
   height: 30px;
   width: 80px;
   float: left;
-  margin: 10px 0;
+  margin: 11px 0;
   background-image: url("../../assets/img/logo.png");
 }
 
 .header-nav {
   margin: 8px 0;
-  float: right;  
+  float: right;
 }
 
 </style>

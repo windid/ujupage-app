@@ -82,6 +82,9 @@ export default {
   margin-right: 15px;
   margin-bottom: 15px;
   width: 228px;
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+  box-shadow: 0 0 8px #ddd;
 }
 
 .page-list-item:nth-child(4n) {

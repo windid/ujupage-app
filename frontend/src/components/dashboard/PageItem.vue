@@ -113,11 +113,6 @@ export default {
 </template>
 
 <style scoped>
-.page-item{
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  box-shadow: 0 0 8px #ddd;
-}
 
 .page-item-header{
   position:relative;

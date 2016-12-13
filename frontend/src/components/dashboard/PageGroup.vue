@@ -87,9 +87,6 @@ export default {
 .page-group {
   background: #f9f9f9;
   cursor: pointer;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 0 8px #ddd;
 }
 
 .page-group-header {
