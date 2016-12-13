@@ -10,7 +10,7 @@
   }
 
   export default {
-    name: 'avatar',
+    name: 'member',
     props: {
       member: {
         type: Object,
@@ -31,17 +31,20 @@
         project: 'currentProject'
       }),
       memberName () {
-        const name = this.member.name
+        const name = this.member.name || this.member.email
         const shortName = name.substr(name.length - 2, 2)
         if (testChinese(shortName)) {
           return shortName
         } else {
           return name.substr(0, 2).toUpperCase()
         }
+      },
+      memberRole () {
+        return this.member.pivot ? this.member.pivot.role : 'invited'
       }
     },
     methods: {
-      ...mapActions(['removeMember', 'confirm']),
+      ...mapActions(['removeMember', 'cancelInvite', 'confirm']),
       toggle () {
         if (this.show) {
           this.show = false
@@ -59,12 +62,16 @@
           })
         }
       },
-      remove (member) {
+      remove () {
         this.confirm({
           header: '移除成员',
-          content: '确定将' + member.name + '移除出此项目吗？',
+          content: '确定将' + this.member.name + '移除出此项目吗？',
           onConfirm: () => {
-            this.removeMember([member, this.project])
+            if (this.memberRole === 'invited') {
+              this.cancelInvite([this.member, this.project])
+            } else {
+              this.removeMember([this.member, this.project])
+            }
           }
         })
       }
@@ -76,10 +83,16 @@
   <tooltip data-toggle="dropdown" v-model="show" :manual="true" @click.native="toggle">
     {{memberName}}
     <div ref="tooltip" slot="content" class="tooltip-content">
-      {{member.name}}<br/>
-      {{member.email}}<br/>
-      {{member.pivot.role === 'admin' ? '项目管理员' : '项目成员'}}<br/>
-      <!-- <div v-if="isAdmin && member.pivot.role !== 'admin'" class="btn btn-xs btn-danger" @click="remove(member)">移除</div> -->
+      <p v-if="memberRole === 'invited'">
+        {{member.email}}<br/>
+        已邀请<br/>
+      </p>
+      <p v-else>
+        {{member.name}}<br/>
+        {{member.email}}<br/>
+        {{memberRole === 'admin' ? '项目管理员' : '项目成员'}}<br/>
+      </p>
+      <div v-if="isAdmin && memberRole !== 'admin'" class="btn btn-xs btn-danger" @click="remove">移除</div>
     </div>
   </tooltip>
 </template>

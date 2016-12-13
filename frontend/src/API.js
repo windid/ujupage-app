@@ -4,7 +4,9 @@ Vue.use(VueResource)
 Vue.http.options.root = '/api'
 
 export default {
-  project: Vue.resource('project{/id}'),
+  project: Vue.resource('project{/id}', {}, {
+    cancelInvite: { method: 'DELETE', url: 'projects/{id}/destroyinvites/{inviteId}' }
+  }),
 
   projectMember: Vue.resource('projects/{projectId}/users{/id}'),
 
