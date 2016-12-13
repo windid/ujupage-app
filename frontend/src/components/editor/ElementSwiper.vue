@@ -13,7 +13,8 @@ export default {
       resize: {
         handles: 's,e'
       },
-      editing: false
+      editing: false,
+      activeIndex: null
     }
   },
   computed: {
@@ -35,7 +36,31 @@ export default {
     },
     imagesChange (val) {
       if (!isEqual(this.localElement.data.images, val)) {
+        if (val.length <= 0) {
+          this.activeIndex = null
+        }
+        const oldLength = this.localElement.data.images.length
+        const newLength = val.length
+        if (newLength !== oldLength) {
+          if (newLength > 0) {
+            this.activeIndex = newLength - 1
+          } else {
+            this.activeIndex = null
+          }
+        }
         this.localElement.data.images = val
+      }
+    },
+    isActive (index) {
+      return this.activeIndex !== null && index === this.activeIndex
+    },
+    nextSlide () {
+      const count = this.localElement.data.images.length
+      if (count <= 0) return
+      if (this.activeIndex === null) {
+        this.activeIndex = 0
+      } else {
+        this.activeIndex = (this.activeIndex + 1) % count
       }
     }
   }
@@ -59,7 +84,7 @@ export default {
     <div class="swiper-container" v-else>
       <div class="swiper-image-list">
         <ul @mousedown.prevent>
-          <li v-for="(image, index) in this.localElement.data.images">
+          <li v-for="(image, index) in this.localElement.data.images" :class="{active: isActive(index)}">
             <img :src="image.url">
           </li>
         </ul>
@@ -77,6 +102,7 @@ export default {
   </div>
   <template slot="main-buttons-extend">
     <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
+    <div class="btn btn-primary" title="下一张" @click.stop="nextSlide">下一张</div>
   </template>
   <template slot="button-groups">
     <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">
@@ -134,6 +160,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.swiper-container .swiper-image-list ul li.active {
+  z-index: 100;
 }
 .swiper-container .swiper-image-list ul li img {
   width: 100%;
