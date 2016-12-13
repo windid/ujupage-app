@@ -522,52 +522,10 @@ class PageController extends Controller {
                                 ->where('created_at', '<=', new \DateTime($end_time));
                     }
                 })
-<<<<<<< HEAD
                 ->select('variation_name', 'created_at', 'fields', 'utms')
                 ->orderBy('created_at', 'desc')
                 ->get();
                 
-=======
-                ->select('variation_name', 'fields', 'utms', 'created_at')
-                ->orderBy('id', 'desc')
-                ->get()->toArray();
-        
-        $fields = [];
-        $utms = [];
-        foreach ($pageforms as $k => $v) {            
-            if (is_array($pageforms[$k]['fields'])) {
-                foreach ($pageforms[$k]['fields'] as $kk => $vv) {
-                    if (!isset($fields[$kk])) {
-                        $fields[$kk] = 0;
-                    }
-                    if ($kk == '名称') {
-                        $fields[$kk]++;
-                    }
-                    $fields[$kk]++;
-                }
-            }
-            if (is_array($pageforms[$k]['utms'])) {
-                foreach ($pageforms[$k]['utms'] as $kk => $vv) {
-                    if (!isset($utms[$kk])) {
-                        $utms[$kk] = 0;
-                    }
-                    $utms[$kk]++;
-                }
-            }
-        }
-        arsort($fields);
-        arsort($utms);
-        $fields_val = ['版本名', '提交时间'];
-        foreach ($fields as $k => $v) {
-            $fields_val[] = $k;
-        }
-        foreach ($utms as $k => $v) {
-            $fields_val[] = $k;
-        }
-         $fields_val = array_flip($fields_val);
-        // dd($fields, $fields_val);
-        $fields_count = count($fields_val);
->>>>>>> c274a47d2bd50a52ff37c3e09e8d8df862945ccc
         $values = [];
         foreach ($pageforms as $k => $v) {
             $str = $v['variation_name'] . ',' . $v['created_at'];
