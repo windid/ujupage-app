@@ -84,13 +84,13 @@ export default {
   @drag-start="editDone">
   <div slot="content" class="element-swiper" @dblclick.stop="edit">
     <div class="swiper-placeholder" v-if="!hasImages">
-      <p>轮播组件<br><small>双击添加图片</small></p>
+      <p>轮播图<br><small>双击编辑图片</small></p>
     </div>
     <div class="swiper-container" v-else>
       <div class="swiper-image-list">
         <ul @mousedown.prevent>
           <li v-for="(image, index) in this.localElement.data.images" :class="{active: isActive(index)}">
-            <img :src="image.url">
+            <img :src="image">
           </li>
         </ul>
       </div>
@@ -138,6 +138,11 @@ export default {
   justify-content: center;
   background-color: #eee;
   text-align: center;
+  font-size: 18px;
+  color: #91aa9d;
+}
+.swiper-placeholder small{
+  color: #333;
 }
 .swiper-container,
 .swiper-image-list,

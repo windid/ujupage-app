@@ -29,9 +29,11 @@ export default {
         }
         this.image = image.url
       }])
+      this.$emit('image-changed', this.image)
     },
     deleteImage () {
       this.image = ''
+      this.$emit('image-removed', this.image)
     }
   }
 }
