@@ -42,10 +42,10 @@ const ctTip = function (options) {
       pointSelector = chart.options.donut ? 'ct-slice-donut' : 'ct-slice-pie'
     }
     const $container = chart.container
-    let $points = []
-    let positions = []
+    const $points = []
+    const positions = []
     let seriesIndex = 0
-    let pointIndex = 0
+    let pointIndex = -1
 
     let $tooltip = $('.' + options.classNames.tooltip, $container)
     if (!$tooltip) {
@@ -67,28 +67,31 @@ const ctTip = function (options) {
     }
 
     const tooltipData = chart.options.tooltipData
-    const labelsLen = chart.data.labels.length
-    chart.on('data', data => {
-      $points = []
-      positions = []
-    })
+    // const labelsLen = chart.data.labels.length
+
     chart.on('draw', data => {
       if (data.type === 'point') {
-        $points.push(data.element._node)
-        positions.push({
+        $points[data.seriesIndex] = $points[data.seriesIndex] || []
+        positions[data.seriesIndex] = positions[data.seriesIndex] || []
+        $points[data.seriesIndex][data.index] = data.element._node
+        positions[data.seriesIndex][data.index] = {
           x: data.x,
           y: data.y
-        })
+        }
       }
     })
     // 鼠标移到图表的point上时，显示tooltip
     on($container, 'mouseover', pointSelector, e => {
       const $point = e.target
-      const index = $points.indexOf($point)
-      if (index > -1) {
-        seriesIndex = Math.floor(index / labelsLen)
-        pointIndex = index % labelsLen
-        changeTooltip()
+      for (let i = 0; i < $points.length; i++) {
+        for (let j = 0; j < $points[i].length; j++) {
+          if ($point === $points[i][j]) {
+            seriesIndex = i
+            pointIndex = j
+            changeTooltip()
+            return
+          }
+        }
       }
     })
 
@@ -128,15 +131,14 @@ const ctTip = function (options) {
       const width = $tooltip.offsetWidth
       const offsetX = -width / 2 + options.offset.x
       const offsetY = -height + options.offset.y - 10
-      const index = seriesIndex * labelsLen + pointIndex
-      $tooltip.style.left = positions[index].x + offsetX + 'px'
-      $tooltip.style.top = positions[index].y + offsetY + 'px'
+      $tooltip.style.left = positions[seriesIndex][pointIndex].x + offsetX + 'px'
+      $tooltip.style.top = positions[seriesIndex][pointIndex].y + offsetY + 'px'
     }
 
     // 检测是否切换tooltip
     function searchIndex (e) {
-      if (positions.length >= 2) {
-        const width = positions[1].x - positions[0].x
+      if (positions.length > 0 && positions[0].length >= 2) {
+        const width = positions[0][1].x - positions[0][0].x
         const padding = chart.options.chartPadding
         const axisYOffset = chart.options.axisY.offset
         const box = getOffset($container)
