@@ -1,18 +1,153 @@
 <script>
-import { Tooltip } from 'element-ui'
+import { Tooltip, Dialog, Button } from 'element-ui'
+import API from '../../API'
 
 export default {
   components: {
-    Tooltip
+    Tooltip,
+    'el-dialog': Dialog,
+    'el-button': Button
   },
   data () {
     return {
       changePassword: false,
-      user: { ...this.$store.state.user.current }
+      user: { ...this.$store.state.user.current },
+      avatarUrl: this.$store.state.user.current.avatar || null,
+      uploading: false,
+      dialogVisible: false,
+      dialog: {
+        title: '',
+        content: ''
+      },
+      messages: {
+        avatarTooSmall: {
+          title: '修改头像',
+          content: '图片宽度和高度不能小于160像素'
+        },
+        fieldEmpty: (name) => ({
+          title: name + '为空',
+          content: name + '不能为空'
+        }),
+        passNotMatch: {
+          title: '新密码不相同',
+          content: '两次输入的新密码不相同'
+        },
+        editSuccess: {
+          title: '修改成功',
+          content: '用户信息已修改成功'
+        },
+        authFail: {
+          title: '修改失败',
+          content: '用户验证失败'
+        },
+        avatarFail: {
+          title: '修改失败',
+          content: '用户头像修改失败'
+        }
+      },
+      oldPassword: '',
+      newPassword: '',
+      newPassword2: ''
+    }
+  },
+  computed: {
+    avatarClip () {
+      if (this.avatarUrl) {
+        return this.avatarUrl + '?x-oss-process=image/resize,m_fill,h_120,w_120'
+      }
+      return ''
     }
   },
   created () {
     document.title = '我的账号 - 聚页'
+  },
+  mounted () {
+    this.$refs.file.addEventListener('change', this.avatarLoad)
+  },
+  methods: {
+    avatarSelect () {
+      this.$refs.file.value = null
+      this.$refs.file.click()
+    },
+    avatarLoad (event) {
+      const image = this.$refs.file.files[0]
+      var img = document.createElement('img')
+      img.onload = () => {
+        const width = img.naturalWidth || img.width
+        const height = img.naturalHeight || img.height
+        if (width < 160 || height < 160) {
+          // 如果图片尺寸太小
+          this.showDialog(this.messages.avatarTooSmall)
+        } else {
+          const data = new window.FormData()
+          data.append('avatar', image)
+          API.user.edit(data).then(
+          response => {
+            if (response.ok) {
+              const url = response.body.avatar
+              if (url && typeof url === 'string' && url.length > 0) {
+                this.avatarUrl = url
+              }
+            } else {
+              this.showDialog(this.messages.avatarFail)
+            }
+          },
+          response => {
+            // failed
+            console.error('用户头像上传失败')
+            this.showDialog(this.messages.avatarFail)
+          })
+        }
+      }
+      const URL = window.URL || window.webkitURL
+      img.src = URL.createObjectURL(image)
+    },
+    hideDialog () {
+      this.dialogVisible = false
+    },
+    showDialog (message) {
+      this.dialog = message
+      this.dialogVisible = true
+    },
+    save () {
+      const isEmpty = (str) => typeof str === 'string' && str.length <= 0
+
+      const data = new window.FormData()
+      const name = this.user.name
+      if (isEmpty(name)) {
+        this.showDialog(this.messages.fieldEmpty('用户名'))
+        return
+      }
+      if (this.changePassword) {
+        if (isEmpty(this.oldPassword)) {
+          this.showDialog(this.messages.fieldEmpty('旧密码'))
+          return
+        }
+        if (isEmpty(this.newPassword) || isEmpty(this.newPassword2)) {
+          this.showDialog(this.messages.fieldEmpty('新密码'))
+          return
+        }
+        if (this.newPassword !== this.newPassword2) {
+          this.showDialog(this.messages.passNotMatch)
+          return
+        }
+        data.append('old_password', this.oldPassword)
+        data.append('password', this.newPassword)
+        data.append('password_confirmation', this.newPassword2)
+      }
+      data.append('name', name)
+      API.user.edit(data).then(
+      response => {
+        if (response.ok) {
+          this.showDialog(this.messages.editSuccess)
+        }
+      },
+      response => {
+        if (response.status === 401) {
+          this.showDialog(this.messages.authFail)
+        }
+      })
+    }
   }
 }
 </script>
@@ -25,9 +160,15 @@ export default {
     <div class="content-body container-fluid">
       <div class="row">
         <div class="col-md-2">
-          <tooltip content="设置头像" class="avatar">
-            <span class="glyphicon glyphicon-user"></span>
-          </tooltip>
+          <div class="avatar-wrapper" @click="avatarSelect">
+            <tooltip content="设置头像" class="avatar" v-loading.lock="uploading">
+              <img v-if="avatarUrl" :src="avatarClip" />
+              <span v-else class="glyphicon glyphicon-user"></span>
+            </tooltip>
+            <form hidden class="hidden"  enctype="multipart/form-data">
+              <input type="file" ref="file" accept="image/x-png,image/jpg,image/jpeg"></input>
+            </form>
+          </div>
         </div>
         <div class="col-md-4">
           <!-- <h5>注册于</h5>
@@ -53,32 +194,46 @@ export default {
             </div>
             <template v-if="changePassword">
               <div class="form-group">
-                <input type="password" class="form-control" placeholder="旧密码" name="old-password">
+                <input type="password" class="form-control" placeholder="旧密码" name="old-password" v-model="oldPassword">
               </div>
               <div class="form-group">
-                <input type="password" class="form-control" placeholder="新密码" name="new-password">
+                <input type="password" class="form-control" placeholder="新密码" name="new-password" v-model="newPassword">
               </div>
               <div class="form-group">
-                <input type="password" class="form-control" placeholder="再次输入新密码" name="confirm-password">
+                <input type="password" class="form-control" placeholder="再次输入新密码" name="confirm-password" v-model="newPassword2">
               </div>
             </template>
-            <button type="submit" class="btn btn-success">保存</button>
+            <button type="submit" class="btn btn-success" @click.stop="save">保存</button>
           </form>
         </div>
       </div>
     </div>
+    <el-dialog :title="dialog.title" v-model="dialogVisible" size="tiny">
+      <span>{{this.dialog.content}}</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click.stop="hideDialog">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <style scoped>
+.avatar-wrapper {
+  margin: 0 15px;
+}
 .avatar {
   width: 120px;
   height: 120px;
-  margin: 0 15px;
+  margin: 0;
   background: #f9f9f9;
   font-size: 60px;
   line-height: 120px;
   color: #ccc;
+}
+.avatar img {
+  padding: 0;
+  margin: 0;
+  display: block;
 }
 .text-user-info {
   color: #999;
