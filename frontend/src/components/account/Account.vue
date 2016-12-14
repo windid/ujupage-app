@@ -1,5 +1,5 @@
 <script>
-import { Tooltip, Dialog, Button } from 'element-ui'
+import { Tooltip, Dialog, Button, Loading } from 'element-ui'
 import API from '../../API'
 
 export default {
@@ -81,6 +81,11 @@ export default {
         } else {
           const data = new window.FormData()
           data.append('avatar', image)
+          const loader = Loading.service({
+            fullscreen: false,
+            text: '正在上传',
+            target: this.$refs.avatar
+          })
           API.user.edit(data).then(
           response => {
             if (response.ok) {
@@ -91,9 +96,11 @@ export default {
             } else {
               this.showDialog(this.messages.avatarFail)
             }
+            loader.close()
           },
           response => {
             // failed
+            loader.close()
             console.error('用户头像上传失败')
             this.showDialog(this.messages.avatarFail)
           })
@@ -160,8 +167,8 @@ export default {
     <div class="content-body container-fluid">
       <div class="row">
         <div class="col-md-2">
-          <div class="avatar-wrapper" @click="avatarSelect">
-            <tooltip content="设置头像" class="avatar" v-loading.lock="uploading">
+          <div class="avatar-wrapper" @click="avatarSelect" ref="avatar">
+            <tooltip content="设置头像" class="avatar">
               <img v-if="avatarUrl" :src="avatarClip" />
               <span v-else class="glyphicon glyphicon-user"></span>
             </tooltip>
@@ -219,7 +226,7 @@ export default {
 
 <style scoped>
 .avatar-wrapper {
-  margin: 0 15px;
+  margin: 0 0 0 15px;
 }
 .avatar {
   width: 120px;
