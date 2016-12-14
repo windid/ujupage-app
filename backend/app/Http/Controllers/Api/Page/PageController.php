@@ -485,7 +485,7 @@ class PageController extends Controller {
                     emit(key, 1);
                 }
                 for (var key in this.utms) {
-                    emit(key, 1);
+                    emit(key, 0);
                 }
             }',
             'reduce' => 'function(key, values) {
@@ -513,6 +513,7 @@ class PageController extends Controller {
             $fields_val[] = $v->_id;
         }
         $fields_val = array_flip($fields_val);
+ 
         $pageForm = new PageForm;
         $pageforms = $pageForm->where('page_id', $page->id)
                 ->where(function($query) use ($start_time, $end_time) {
@@ -544,6 +545,7 @@ class PageController extends Controller {
                 $str .= str_repeat(',', $pad) . $ov; 
                 $pre_index = $ok;
             }
+            
             $values[] = iconv('utf-8', 'gbk', $str);
         }        
 
@@ -569,11 +571,7 @@ class PageController extends Controller {
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
         }
-<<<<<<< HEAD
         $quota = $request->get('quota', []);
-=======
-        $quota = $request->get('quota', '{}');
->>>>>>> de5e65007b12e574be879bb90897380405fcc66c
         if ($quota) {
             foreach ($quota as $k => $v) {
                 $variation = $this->pageVariation->where('page_id', $page->id)->find($k);
