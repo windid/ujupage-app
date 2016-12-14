@@ -10,7 +10,8 @@
     computed: {
       ...mapGetters({
         members: 'projectMembers',
-        invited: 'projectMembersInvited'
+        invited: 'projectMembersInvited',
+        isAdmin: 'isProjectAdmin'
       })
     },
     methods: {
@@ -32,7 +33,7 @@
   <div style="float: right;">
     <member v-for="member in members" :member="member" class="avatar"></member>
     <member v-for="(email, id) in invited" :member="{id: id, email: email, name: email}" class="avatar invited"></member>
-    <tooltip content="邀请新成员" class="avatar invite-btn" @click.native="invite">+</tooltip>
+    <tooltip v-if="isAdmin" content="邀请新成员" class="avatar invite-btn" @click.native="invite">+</tooltip>
   </div>
 </template>
 
