@@ -67,6 +67,9 @@ export default {
         this.activeIndex = (this.activeIndex + 1) % count
       }
     }
+  },
+  mounted () {
+    console.log(this.localElement.data.images, this.localElement.data.images.length)
   }
 }
 </script>
@@ -89,14 +92,14 @@ export default {
     <div class="swiper-container" v-else>
       <div class="swiper-image-list">
         <ul @mousedown.prevent>
-          <li v-for="(image, index) in this.localElement.data.images" :class="{active: isActive(index)}">
+          <li v-for="(image, index) in localElement.data.images" :class="{active: isActive(index)}">
             <img :src="image">
           </li>
         </ul>
       </div>
       <div class="swiper-bullets">
         <ul>
-          <li v-for="(image, index) in this.localElement.data.images"><li>
+          <li v-for="n in localElement.data.images.length-1"><li>
         </ul>
       </div>
       <div class="swiper-buttons" v-if="localElement.data.button">
