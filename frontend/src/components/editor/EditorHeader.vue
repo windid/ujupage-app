@@ -37,7 +37,8 @@ export default {
       getInput: 'getInput',
       warning: 'warning',
       setURL: 'setURL',
-      publishPage: 'publishPage'
+      publishPage: 'publishPage',
+      traficSplit: 'traficSplit'
     }),
     publish () {
       this.saveNotice(() => {
@@ -95,6 +96,9 @@ export default {
       } else {
         cb()
       }
+    },
+    updateQuota (traficWeights) {
+      this.traficSplit(traficWeights)
     }
   }
 
@@ -146,7 +150,7 @@ export default {
       </div>
     </div>
     <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings = false" ></editor-settings>
-    <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @close="showSplit = false"></ab-split>
+    <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @update-quota="updateQuota" @close="showSplit = false"></ab-split>
   </div>
 </template>
 

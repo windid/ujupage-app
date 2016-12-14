@@ -16,7 +16,7 @@ export default {
     duplicate: { method: 'POST', url: 'page/{id}/copy' },
     publish: { method: 'PUT', url: 'page/{id}/publish' },
     leads: { method: 'GET', url: 'page/{id}/leads' },
-    split: { method: 'POST', url: 'page/{id}/split' }
+    split: { method: 'POST', url: 'page/{id}/quota' }
   }),
 
   variation: Vue.resource('pages/{pageId}/variations{/id}', {}, {
