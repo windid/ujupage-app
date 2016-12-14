@@ -37,7 +37,7 @@
         })
         this.loading()
         API.page.split({ id: this.pageId }, { quota: quota }).then(response => {
-          this.$emit('update-quota', quota)
+          this.$emit('update-split', quota)
           this.$emit('close')
           this.loadingDone()
         }, response => {
