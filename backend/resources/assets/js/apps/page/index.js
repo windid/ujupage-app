@@ -95,6 +95,7 @@ var Site = {
     $("a").each(function (){
       var link = $(this)
       var href = link.attr('href')
+      if (!href) return
       var name = href.substring(1)
       $(this).click(function(e) {
         e.preventDefault()
