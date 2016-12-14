@@ -3,11 +3,12 @@ import {
   $,
   on,
   addClass,
-  removeClass
+  removeClass,
+  hasClass,
+  getOffset
 } from './util'
 
 const defaultOptions = {
-  contentFactory: contentFactory,
   offset: {
     x: 0,
     y: 0
@@ -23,11 +24,16 @@ const defaultOptions = {
   pointClass: 'ct-point'
 }
 
-function contentFactory ($tooltip, chart, options) {
-}
-
 const ctTip = function (options) {
   options = Chartist.extend({}, defaultOptions, options)
+
+  function createDataItem (name, className) {
+    const $item = document.createElement('li')
+    $item.className = options.classNames.dataItem + ' data-' + className
+    $item.innerHTML = name + ': <span class="item-data"></span>'
+    return $item
+  }
+
   return function ctTip (chart) {
     let pointSelector = options.pointClass
     if (chart instanceof Chartist.Bar) {
@@ -38,6 +44,8 @@ const ctTip = function (options) {
     const $container = chart.container
     const $points = []
     const positions = []
+    let seriesIndex = 0
+    let pointIndex = 0
 
     let $tooltip = $('.' + options.classNames.tooltip, $container)
     if (!$tooltip) {
@@ -70,60 +78,73 @@ const ctTip = function (options) {
         }
       }
     })
-
+    // 鼠标移到图表的point上时，显示tooltip
     on($container, 'mouseover', pointSelector, e => {
       const $point = e.target
       const index = $points.indexOf($point)
       if (index > -1) {
-        changeTooltip(index)
+        seriesIndex = Math.floor(index / labelsLen)
+        pointIndex = index % labelsLen
+        changeTooltip()
       }
     })
 
-    on($container, 'mouseout', pointSelector, e => {
+    // 鼠标在图表上移动时，根据x坐标切换tooltip
+    on($container, 'mousemove', false, e => {
+      if (hasClass($tooltip, options.classNames.show)) {
+        searchIndex(e)
+      }
+    })
+
+    // 鼠标移开图表时，隐藏tooltip
+    on($container, 'mouseleave', false, e => {
       removeClass($tooltip, options.classNames.show)
     })
 
-    on($container, 'mousemove', false, e => {
-    })
-
-    on($container, 'mouseleave', false, e => {
-    })
-
-    function changeTooltip (index) {
-      const seriesIndex = Math.floor(index / labelsLen)
-      const pointIndex = index % labelsLen
+    // 切换tooltip数据
+    function changeTooltip () {
       const data = {
-        seriesIndex: seriesIndex,
-        pointIndex: pointIndex,
         conversionRate: tooltipData.conversionRate[seriesIndex].data[pointIndex],
         conversions: tooltipData.conversions[seriesIndex].data[pointIndex],
         visitors: tooltipData.visitors[seriesIndex].data[pointIndex]
       }
-      renderTooltip(data, index)
+      renderTooltip(data)
     }
 
-    function renderTooltip (data, index) {
+    // 渲染tooltip数据
+    function renderTooltip (data) {
       $('.data-conversionRate .item-data', $tooltip).innerHTML = data.conversionRate + '%'
       $('.data-conversions .item-data', $tooltip).innerHTML = data.conversions
       $('.data-visitors .item-data', $tooltip).innerHTML = data.visitors
       const $title = $('.' + options.classNames.title, $tooltip)
-      $title.innerHTML = chart.data.series[data.seriesIndex].name
-      $title.className = options.classNames.title + ' ct-legend-' + Chartist.alphaNumerate(data.seriesIndex)
-      $('.' + options.classNames.xLabel, $tooltip).innerHTML = chart.data.labels[data.pointIndex]
+      $title.innerHTML = chart.data.series[seriesIndex].name
+      $title.className = options.classNames.title + ' ct-legend-' + Chartist.alphaNumerate(seriesIndex)
+      $('.' + options.classNames.xLabel, $tooltip).innerHTML = chart.data.labels[pointIndex]
       addClass($tooltip, options.classNames.show)
       const height = $tooltip.offsetHeight
       const width = $tooltip.offsetWidth
       const offsetX = -width / 2 + options.offset.x
       const offsetY = -height + options.offset.y - 10
+      const index = seriesIndex * labelsLen + pointIndex
       $tooltip.style.left = positions[index].x + offsetX + 'px'
       $tooltip.style.top = positions[index].y + offsetY + 'px'
     }
 
-    function createDataItem (name, className) {
-      const $item = document.createElement('li')
-      $item.className = options.classNames.dataItem + ' data-' + className
-      $item.innerHTML = name + ': <span class="item-data"></span>'
-      return $item
+    // 检测是否切换tooltip
+    function searchIndex (e) {
+      if (positions.length >= 2) {
+        const width = positions[1].x - positions[0].x
+        const padding = chart.options.chartPadding
+        const axisYOffset = chart.options.axisY.offset
+        const box = getOffset($container)
+        const offsetX = e.pageX - box.left - window.pageXOffset
+        const dx = Math.max(0, offsetX - axisYOffset - padding.left)
+        const index = Math.round(dx / width)
+        if (index !== pointIndex) {
+          pointIndex = index
+          changeTooltip()
+        }
+      }
     }
   }
 }

@@ -1,3 +1,6 @@
+/**
+ * Shorthand for querySelector
+ */
 export function $ (selector, context = document) {
   return context.querySelector(selector)
 }
@@ -39,7 +42,6 @@ export function getOffset ($el) {
   const boundingRect = $el.getBoundingClientRect()
   const top = boundingRect.top + window.pageYOffset - docEl.clientTop
   const left = boundingRect.left + window.pageXOffset - docEl.clientLeft
-
   return {
     top,
     left
