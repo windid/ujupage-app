@@ -71,7 +71,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
          * password 新密码
          * password_confirmation 确认密码
          * (avatar 头像)
-         * 
+         * @return StatusCode 200
          * @remark 头像为单独参数
          */
         Route::post('account/update', ['as' => '.account.update', 'uses' => 'AccountController@update']); //修改用户信息

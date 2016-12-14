@@ -78,6 +78,6 @@ class AccountController extends Controller{
         }
         $user->save();
         
-        return $this->successOK();
+        return $this->successOK($user->toArray());
     }
 }
