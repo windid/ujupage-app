@@ -67,15 +67,11 @@ export default {
         this.activeIndex = (this.activeIndex + 1) % count
       }
     }
-  },
-  mounted () {
-    console.log(this.localElement.data.images, this.localElement.data.images.length)
   }
 }
 </script>
 
 <template>
-<div class="element-wrapper">
 <element-common
   :element="element" 
   :section-id="sectionId" 
@@ -117,15 +113,15 @@ export default {
       <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
     </div>
   </template>
+  <swiper-editor
+    slot="sidebar"
+    :id="elementId"
+    :show="editing"
+    v-model="localElement.data"
+    :images="localElement.data.images"
+    @edit-done="editDone"
+    @images-change="imagesChange"></swiper-editor>
 </element-common>
-<swiper-editor
-  :id="elementId"
-  :show="editing"
-  v-model="localElement.data"
-  :images="localElement.data.images"
-  @edit-done="editDone"
-  @images-change="imagesChange"></swiper-editor>
-</div>
 </template>
 
 <style scoped>
@@ -169,7 +165,7 @@ export default {
   right: 0;
   left: 0;
   margin: 0;
-  background: #000;
+  background: #888;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -178,8 +174,6 @@ export default {
   z-index: 10;
 }
 .swiper-container .swiper-image-list ul li img {
-  width: 100%;
-  height: 100%;
   max-height: 100%;
   max-width: 100%;
   display: block;
