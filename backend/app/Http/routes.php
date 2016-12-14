@@ -63,6 +63,19 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
          * }
          */
         Route::get('account/current', ['as' => '.account.current', 'uses' => 'AccountController@current']); //获取用户信息        
+        
+        /**
+         * POST api/auth/account/update 修改用户信息
+         * name 名字
+         * old_password 旧密码
+         * password 新密码
+         * password_confirmation 确认密码
+         * (avatar 头像)
+         * @return StatusCode 200
+         * @remark 头像为单独参数
+         */
+        Route::post('account/update', ['as' => '.account.update', 'uses' => 'AccountController@update']); //修改用户信息
+        
     });
     
     Route::group(['middleware' => 'auth'], function(){
