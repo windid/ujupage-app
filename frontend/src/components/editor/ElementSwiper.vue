@@ -13,7 +13,12 @@ export default {
       resize: {
         handles: 's,e'
       },
-      editing: false
+      editing: false,
+      constraints: {
+        minWidth: 100,
+        minHeight: 80
+      },
+      activeIndex: null
     }
   },
   computed: {
@@ -35,7 +40,31 @@ export default {
     },
     imagesChange (val) {
       if (!isEqual(this.localElement.data.images, val)) {
+        if (val.length <= 0) {
+          this.activeIndex = null
+        }
+        const oldLength = this.localElement.data.images.length
+        const newLength = val.length
+        if (newLength !== oldLength) {
+          if (newLength > 0) {
+            this.activeIndex = newLength - 1
+          } else {
+            this.activeIndex = null
+          }
+        }
         this.localElement.data.images = val
+      }
+    },
+    isActive (index) {
+      return this.activeIndex !== null && index === this.activeIndex
+    },
+    nextSlide () {
+      const count = this.localElement.data.images.length
+      if (count <= 0) return
+      if (this.activeIndex === null) {
+        this.activeIndex = 0
+      } else {
+        this.activeIndex = (this.activeIndex + 1) % count
       }
     }
   }
@@ -49,6 +78,7 @@ export default {
   :section-id="sectionId" 
   :element-id="elementId"
   :button-group="buttonGroup"
+  :dimensionContraint="constraints" 
   :resizable="resizable"
   :resize="resize"
   @drag-start="editDone">
@@ -59,7 +89,7 @@ export default {
     <div class="swiper-container" v-else>
       <div class="swiper-image-list">
         <ul @mousedown.prevent>
-          <li v-for="(image, index) in this.localElement.data.images">
+          <li v-for="(image, index) in this.localElement.data.images" :class="{active: isActive(index)}">
             <img :src="image.url">
           </li>
         </ul>
@@ -77,6 +107,7 @@ export default {
   </div>
   <template slot="main-buttons-extend">
     <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
+    <div class="btn btn-primary" title="下一张" @click.stop="nextSlide">下一张</div>
   </template>
   <template slot="button-groups">
     <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">
@@ -87,7 +118,7 @@ export default {
 <swiper-editor
   :id="elementId"
   :show="editing"
-  :value="localElement.data"
+  v-model="localElement.data"
   :images="localElement.data.images"
   @edit-done="editDone"
   @images-change="imagesChange"></swiper-editor>
@@ -135,12 +166,16 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.swiper-container .swiper-image-list ul li.active {
+  z-index: 10;
+}
 .swiper-container .swiper-image-list ul li img {
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   max-height: 100%;
   max-width: 100%;
   display: block;
+  object-fit: contain;
 }
 .swiper-bullets {
   position: absolute;
@@ -148,12 +183,14 @@ export default {
   left: 0;
   right: 0;
   height: 12px;
+  z-index: 20;
 }
 .swiper-bullets ul {
   margin: 0;
   padding: 0;
   width: 100%;
   text-align: center;
+  white-space: nowrap;
 }
 .swiper-bullets ul li {
   width: 10px;
@@ -172,6 +209,7 @@ export default {
   text-decoration: none;
   background-color: rgba(232, 228, 228, 0.6);
   font-size: 12px;
+  z-index: 20;
 }
 .swiper-buttons a.button-prev {
   left: 0;

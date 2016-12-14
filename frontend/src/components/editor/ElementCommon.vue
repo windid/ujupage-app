@@ -315,9 +315,9 @@ const getElementTop = (element) => {
       <slot name="content"></slot>
     </div>
     <template v-if="resizable">
-      <resizer class="resizable-n" v-if="this.hasResizer('n')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'top'" />
+      <resizer class="resizable-n" v-if="this.hasResizer('n')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'top'" :minSize="sizeRange.minHeight"/>
       <resizer class="resizable-e" v-if="this.hasResizer('e')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'right'" :minSize="sizeRange.minWidth" />
-      <resizer class="resizable-s" v-if="this.hasResizer('s')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'bottom'" />
+      <resizer class="resizable-s" v-if="this.hasResizer('s')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'bottom'" :minSize="sizeRange.minHeight"/>
       <resizer class="resizable-w" v-if="this.hasResizer('w')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'left'" :minSize="sizeRange.minWidth" />
     </template>
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
