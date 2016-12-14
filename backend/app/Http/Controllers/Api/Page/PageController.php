@@ -569,7 +569,7 @@ class PageController extends Controller {
         if (get_class($page) == 'Illuminate\Http\JsonResponse') {
             return $page;
         }
-        $quota = json_decode($request->get('quota', '{}'), true);
+        $quota = $request->get('quota', []);
         if ($quota) {
             foreach ($quota as $k => $v) {
                 $variation = $this->pageVariation->where('page_id', $page->id)->find($k);
