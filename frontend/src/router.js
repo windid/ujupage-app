@@ -13,7 +13,6 @@ Vue.use(VueRouter)
 // const Stats = resolve => require(['./components/stats/Stats.vue'], resolve)
 // const Leads = resolve => require(['./components/leads/Leads.vue'], resolve)
 // const Register = resolve => require(['./components/auth/Register.vue'], resolve)
-// const Active = resolve => require(['./components/auth/Active.vue'], resolve)
 // const ForgetPassword = resolve => require(['./components/auth/ForgetPassword.vue'], resolve)
 // const ResetPassword = resolve => require(['./components/auth/ResetPassword.vue'], resolve)
 
@@ -27,7 +26,6 @@ import Account from './components/account/Account'
 import Stats from './components/stats/Stats'
 import Leads from './components/leads/Leads'
 import Register from './components/auth/Register'
-import Active from './components/auth/Active'
 import ForgetPassword from './components/auth/ForgetPassword'
 import ResetPassword from './components/auth/ResetPassword'
 
@@ -46,7 +44,6 @@ const router = new VueRouter({
       }
     },
     { path: '/register', name: 'register', component: Register },
-    { path: '/active', name: 'active', component: Active },
     { path: '/forgetpassword', name: 'forgetpassword', component: ForgetPassword },
     { path: '/resetpassword/:token', name: 'resetpassword', component: ResetPassword },
     { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
