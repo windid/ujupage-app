@@ -1,9 +1,7 @@
 <script>
 import Sidebar from '../ui/Sidebar'
 import SidebarPart from '../ui/SidebarPart'
-import ColorPicker from './ColorPicker'
 import colorMixin from '../../mixins/colorMixin'
-import ImagePicker from '../ui/ImagePicker'
 import BorderEditor from './BorderEditor'
 import ShadowEditor from './ShadowEditor'
 import BackgroundEditor from './BackgroundEditor'
@@ -19,16 +17,9 @@ export default {
     SidebarPart,
     BorderEditor,
     BackgroundEditor,
-    ShadowEditor,
-    ColorPicker,
-    ImagePicker
+    ShadowEditor
   },
   mixins: [colorMixin],
-  data () {
-    return {
-
-    }
-  },
   computed: {
     shape: {
       get () {
@@ -61,11 +52,14 @@ export default {
       <div class="btn btn-success" @click="$emit('edit-done')">完成</div>
     </div>
     <div slot="body">
-      <background-editor v-if="shape.subType === 'square' || shape.subType === 'circle'" v-model="shape.style.background"></background-editor>
+      <background-editor v-if="shape.subType === 'square' || shape.subType === 'circle'" v-model="shape.style.background">
+      </background-editor>
       
-      <border-editor v-model="shape.style.border"></border-editor>
+      <border-editor v-model="shape.style.border">
+      </border-editor>
 
-      <shadow-editor v-if="shape.subType === 'square' || shape.subType === 'circle'" v-model="shape.style.shadow"></shadow-editor>
+      <shadow-editor v-if="shape.subType === 'square' || shape.subType === 'circle'" v-model="shape.style.shadow">
+      </shadow-editor>
 
       <div v-if="shape.subType === 'square' || shape.subType === 'circle'" class="sidebar-block">
         <div class="input-group">
