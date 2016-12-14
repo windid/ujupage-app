@@ -3,7 +3,8 @@ import {
   $,
   hasClass,
   addClass,
-  removeClass
+  removeClass,
+  on
 } from './util'
 
 const defaultOptions = {
@@ -47,15 +48,7 @@ const Tooltip = function (options) {
 
     removeClass($toolTip, showClass)
 
-    function on (event, selector, callback) {
-      $chart.addEventListener(event, function (e) {
-        if (!selector || hasClass(e.target, selector)) {
-          callback(e)
-        }
-      })
-    }
-
-    on('mouseover', tooltipSelector, function (event) {
+    on($chart, 'mouseover', tooltipSelector, function (event) {
       const $point = event.target
       let tooltipText = ''
 
@@ -114,11 +107,11 @@ const Tooltip = function (options) {
       }
     })
 
-    on('mouseout', tooltipSelector, function () {
+    on($chart, 'mouseout', tooltipSelector, function () {
       removeClass($toolTip, showClass)
     })
 
-    on('mousemove', null, function (event) {
+    on($chart, 'mousemove', null, function (event) {
       if (options.anchorToPoint === false) {
         setPosition(event)
       }

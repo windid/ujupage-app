@@ -45,3 +45,12 @@ export function getOffset ($el) {
     left
   }
 }
+
+export function on ($el, event, selector, handler) {
+  $el.addEventListener(event, function (e) {
+    if (!selector || hasClass(e.target, selector)) {
+      handler(e)
+    }
+  })
+}
+

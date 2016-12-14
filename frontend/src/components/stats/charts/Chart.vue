@@ -24,12 +24,15 @@ export default {
 }
 $chart-tooltip-bg: #37475a;
 $chart-tooltip-color: #fff;
+$legend-mark-size: 16px;
+$legend-mark-tooltip-size: 12px;
+
 .chartist-tooltip {
   position: absolute;
   display: inline-block;
-  min-width: 5rem;
-  padding: .5rem;
-  font-size: .8rem;
+  min-width: 5em;
+  padding: 10px 15px;
+  font-size: .8em;
   background: $chart-tooltip-bg;
   color: $chart-tooltip-color;
   pointer-events: none;
@@ -52,19 +55,31 @@ $chart-tooltip-color: #fff;
   &.tooltip-show {
     opacity: 1;
   }
+  .tooltip-title {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 5px;
+    &::before {
+      width: $legend-mark-tooltip-size;
+      height: $legend-mark-tooltip-size;
+    }
+  }
+  .tooltip-data-list {
+    list-style: none;
+    padding: 0;
+  }
 }
 
 .ct-area, .ct-line {
   pointer-events: none;
 }
-$legend-mark-size: 16px;
 
 .ct-legend-list {
   padding: 10px;
   text-align: center;
   
 }
-.ct-legend {
+.ct-legend, .tooltip-title {
   display: inline-block;
   margin: 0 10px;
   cursor: pointer;

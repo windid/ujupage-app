@@ -30,7 +30,7 @@ const defaultOptions = {
   },
   plugins: [
     Chartist.plugins.Legend(),
-    Chartist.plugins.Tooltip(),
+    // Chartist.plugins.Tooltip(),
     Chartist.plugins.ctTip()
   ]
 }
