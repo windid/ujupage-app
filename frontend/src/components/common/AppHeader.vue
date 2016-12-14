@@ -15,9 +15,9 @@ export default {
       </ol> -->
       <div class="btn-toolbar header-nav">
         <!-- <li><router-link to="/help">帮助</router-link></li> -->
-        <!-- <router-link active-class="active" to="/account" tag="div" class="btn btn-default">
+        <router-link active-class="active" to="/account" tag="div" class="btn btn-default">
           帐号 <span class="glyphicon glyphicon-user"></span>
-        </router-link> -->
+        </router-link>
         <router-link active-class="active" to="/logout" tag="div" class="btn btn-default">
           退出 <span class="glyphicon glyphicon-log-out"></span>
         </router-link>
