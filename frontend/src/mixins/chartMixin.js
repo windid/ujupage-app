@@ -2,32 +2,36 @@ import Chartist from 'chartist'
 import { merge } from 'lodash'
 import '../components/stats/charts/plugins/tooltip'
 import '../components/stats/charts/plugins/legend'
+import '../components/stats/charts/plugins/tooltips'
 
 const allChartTypes = ['line', 'bar', 'pie']
 const defaultOptions = {
+  fullWidth: true,
   axisX: {
     labelOffset: {
-      x: -16,
+      x: -17,
       y: 10
     },
     showGrid: false
   },
   axisY: {
     onlyInteger: true,
+    offset: 30,
     labelOffset: {
-      x: 0,
-      y: 5
+      x: -6,
+      y: 6
     }
   },
   chartPadding: {
     top: 15,
-    right: 15,
+    right: 30,
     bottom: 20,
     left: 20
   },
   plugins: [
     Chartist.plugins.Legend(),
-    Chartist.plugins.Tooltip()
+    Chartist.plugins.Tooltip(),
+    Chartist.plugins.ctTip()
   ]
 }
 

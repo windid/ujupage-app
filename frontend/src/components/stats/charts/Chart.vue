@@ -37,6 +37,7 @@ $chart-tooltip-color: #fff;
   transition: opacity .2s ease;
   border-radius: 2px;
   z-index: 2;
+  white-space: nowrap;
   &:before {
     content: "";
     position: absolute;
@@ -71,7 +72,7 @@ $legend-mark-size: 16px;
   font-weight: normal;
   margin-left: 5px;
   color: #999;
-  font-size: .9em;
+  font-size: $ct-text-size;
   &::before {
     display: inline-block;
     content: '';
@@ -86,6 +87,9 @@ $legend-mark-size: 16px;
       background: rgba(0,0,0,0.1);
     }
   }
+}
+.#{$ct-class-chart-line} {
+  overflow: visible !important;
 }
 @for $i from 0 to length($ct-series-names) {
   .ct-legend-#{nth($ct-series-names, $i + 1))} {

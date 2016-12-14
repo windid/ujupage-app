@@ -58,8 +58,9 @@ export default {
     },
     chartOptions () {
       return {
+        tooltipData: this.chartData,
         axisX: {
-          labelInterpolationFnc: value => {
+          labelInterpolationFnc: function (value) {
             return moment(value, 'YY-MM-DD').format('MM-DD')
           }
         },

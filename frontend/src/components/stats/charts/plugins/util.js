@@ -33,3 +33,15 @@ export function hide ($el) {
   }
   $el.style.display = 'none'
 }
+
+export function getOffset ($el) {
+  const docEl = document.documentElement
+  const boundingRect = $el.getBoundingClientRect()
+  const top = boundingRect.top + window.pageYOffset - docEl.clientTop
+  const left = boundingRect.left + window.pageXOffset - docEl.clientLeft
+
+  return {
+    top,
+    left
+  }
+}
