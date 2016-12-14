@@ -63,6 +63,9 @@ $legend-mark-tooltip-size: 12px;
       width: $legend-mark-tooltip-size;
       height: $legend-mark-tooltip-size;
     }
+    span {
+      vertical-align: middle;
+    }
   }
   .tooltip-data-list {
     list-style: none;

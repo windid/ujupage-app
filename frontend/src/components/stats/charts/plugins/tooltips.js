@@ -42,8 +42,8 @@ const ctTip = function (options) {
       pointSelector = chart.options.donut ? 'ct-slice-donut' : 'ct-slice-pie'
     }
     const $container = chart.container
-    const $points = []
-    const positions = []
+    let $points = []
+    let positions = []
     let seriesIndex = 0
     let pointIndex = 0
 
@@ -68,14 +68,17 @@ const ctTip = function (options) {
 
     const tooltipData = chart.options.tooltipData
     const labelsLen = chart.data.labels.length
-
+    chart.on('data', data => {
+      $points = []
+      positions = []
+    })
     chart.on('draw', data => {
       if (data.type === 'point') {
-        $points[data.index] = data.element._node
-        positions[data.index] = {
+        $points.push(data.element._node)
+        positions.push({
           x: data.x,
           y: data.y
-        }
+        })
       }
     })
     // 鼠标移到图表的point上时，显示tooltip
@@ -117,7 +120,7 @@ const ctTip = function (options) {
       $('.data-conversions .item-data', $tooltip).innerHTML = data.conversions
       $('.data-visitors .item-data', $tooltip).innerHTML = data.visitors
       const $title = $('.' + options.classNames.title, $tooltip)
-      $title.innerHTML = chart.data.series[seriesIndex].name
+      $title.innerHTML = '<span>' + chart.data.series[seriesIndex].name + '</span>'
       $title.className = options.classNames.title + ' ct-legend-' + Chartist.alphaNumerate(seriesIndex)
       $('.' + options.classNames.xLabel, $tooltip).innerHTML = chart.data.labels[pointIndex]
       addClass($tooltip, options.classNames.show)
