@@ -62,8 +62,9 @@ export const createProject = ({ commit }, project) => {
 
 export const loadMembers = ({ commit }, project) => {
   API.projectMember.get({ projectId: project.id }).then(response => {
-    const members = response.data
-    commit(types.LOAD_MEMBERS, { members })
+    const members = response.data.users
+    const invited = response.data.invites
+    commit(types.LOAD_MEMBERS, { members, invited })
   })
 }
 
@@ -73,8 +74,16 @@ export const inviteMember = ({ commit, state }, member) => {
   })
 }
 
-export const removeMember = ({ commit }, member, project) => {
+export const removeMember = ({ commit }, [member, project]) => {
+  API.projectMember.delete({ projectId: project.id, id: member.id }).then(response => {
+    commit(types.REMOVE_MEMBER, { member })
+  })
+}
 
+export const cancelInvite = ({ commit }, [member, project]) => {
+  API.project.cancelInvite({ id: project.id, inviteId: member.id }).then(response => {
+    commit(types.CANCEL_INVITE, { inviteId: member.id })
+  })
 }
 
 export const quitProject = ({ commit }, project) => {

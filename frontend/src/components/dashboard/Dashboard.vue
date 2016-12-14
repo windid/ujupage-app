@@ -24,8 +24,10 @@ export default {
 <template>
   <div>
     <div class="content-header">
-      <project-list></project-list>
-      <project-members></project-members>
+      <h4>
+        <project-list></project-list>
+        <project-members></project-members>
+      </h4>
     </div>
     <!-- <navbar></navbar> -->
     <workspace></workspace>

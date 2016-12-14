@@ -53,6 +53,6 @@ export default {
 
 <style scoped>
   .project-name {
-    min-width: 150px;
+    min-width: 154px;
   }
 </style>

@@ -80,11 +80,15 @@ class UserController extends Controller {
             $this->projectInvite->email = $email;
             $this->projectInvite->save();
             
-            Mail::send('auth.emails.invite', ['email' => $email, 'i' => $this->projectInvite->i], function ($m) use ($email, $user, $project) {
-                $from = config('mail')['from'];
-                $m->from($from['address'], $from['name']);
-                $m->to($email, $email)->subject($user['email'] . '邀请你加入'.$project->name.'项目');
-            });
+            Mail::send(
+                'auth.emails.invite', 
+                ['email' => $email, 'i' => $this->projectInvite->i, 'user' => $user['name'], 'project' => $project], 
+                function ($m) use ($email, $user, $project) {
+                    $from = config('mail')['from'];
+                    $m->from($from['address'], $from['name']);
+                    $m->to($email, $email)->subject($user['name'] . '邀请你加入'.$project->name);
+                }
+            );
         } else {
 
             $i_user = $this->user->where('email', $email)->first();
@@ -97,11 +101,15 @@ class UserController extends Controller {
             }
 
             $project->users()->attach($i_user, ['role' => 'member']);
-            Mail::send('auth.emails.invited', ['email' => $email, 'project' => $project], function ($m) use ($email, $user, $project) {
-                $from = config('mail')['from'];
-                $m->from($from['address'], $from['name']);
-                $m->to($email, $email)->subject($user['email'] . '已邀请你加入'.$project->name.'项目');
-            });
+            Mail::send(
+                'auth.emails.invited', 
+                ['email' => $email, 'user' => $user['name'], 'project' => $project], 
+                function ($m) use ($email, $user, $project) {
+                    $from = config('mail')['from'];
+                    $m->from($from['address'], $from['name']);
+                    $m->to($email, $email)->subject($user['name'] . '已邀请你加入'.$project->name);
+                }
+            );
         }
         
         return $this->successCreated();

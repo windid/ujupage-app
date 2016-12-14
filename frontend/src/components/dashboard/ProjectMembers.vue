@@ -1,15 +1,16 @@
 <script>
-  import Avatar from './Avatar'
+  import Member from './Member'
   import { Tooltip } from 'element-ui'
   import { mapGetters } from 'vuex'
   export default {
     components: {
-      Avatar,
+      Member,
       Tooltip
     },
     computed: {
       ...mapGetters({
-        members: 'projectMembers'
+        members: 'projectMembers',
+        invited: 'projectMembersInvited'
       })
     },
     methods: {
@@ -29,8 +30,9 @@
 </script>
 <template>
   <div style="float: right;">
-    <avatar v-for="member in members" :member="member" :key="member.email" class="avatar"></avatar>
-    <tooltip content="邀请新成员" class="avatar invite-btn" @click="invite">+</tooltip>
+    <member v-for="member in members" :member="member" class="avatar"></member>
+    <member v-for="(email, id) in invited" :member="{id: id, email: email, name: email}" class="avatar invited"></member>
+    <tooltip content="邀请新成员" class="avatar invite-btn" @click.native="invite">+</tooltip>
   </div>
 </template>
 
@@ -54,6 +56,11 @@
 
   .avatar:hover {
     border-color: #bbb;
+  }
+
+  .avatar.invited {
+    border-style: dashed;
+    background: #f9f9f9;
   }
 
   .invite-btn {
