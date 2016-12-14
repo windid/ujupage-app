@@ -48,17 +48,14 @@ export default {
     <div id="main-wrapper">
       <editor-toolbar></editor-toolbar>
       <editor-workspace></editor-workspace>
+    </div>
   </div>
 </template>
 
 <style>
 #main-wrapper {
-  height: auto;
-  position: absolute;
-  bottom: 0;
+  position: relative;
   top: 50px;
-  left: 0;
-  right: 0;
   min-width: 980px;
   background: #fff;
 }

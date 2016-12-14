@@ -12,7 +12,8 @@ export default {
     return {
       resize: {
         handles: 's,e'
-      }
+      },
+      editing: false
     }
   },
   computed: {
@@ -128,12 +129,17 @@ export default {
   bottom: 0;
   right: 0;
   left: 0;
-  padding: 0;
   margin: 0;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .swiper-container .swiper-image-list ul li img {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-height: 100%;
+  max-width: 100%;
   display: block;
 }
 .swiper-bullets {
@@ -161,6 +167,7 @@ export default {
 .swiper-buttons a {
   position: absolute;
   top: 50%;
+  transform: translateY(-50%);
   color: #fff;
   text-decoration: none;
   background-color: rgba(232, 228, 228, 0.6);

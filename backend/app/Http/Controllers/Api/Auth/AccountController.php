@@ -4,17 +4,76 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Api\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
+use App\Services\OSS;
+
 class AccountController extends Controller{
     public function current(){
         $this->user = auth()->user();
         if (!$this->user) {
             return $this->errorUnauthorized();
         }
-        return $this->successOK(json_encode([
-            'id' => $this->user->id,
-            'name' => $this->user->name,
-            'email' => $this->user->email
-        ]));
+        return $this->successOK($this->user->toArray());
+    }    
+    
+    
+    /**
+     * 修改用户信息
+     */
+    public function update(Request $request) {
+        
+        $user = auth()->user();
+        if ($request->hasFile('avatar')) {
+            $validator = validator($request->allFiles(), ['avatar' => 'required|image']);
+            if ($validator->fails()) {
+                return $this->errorValidation($validator);
+            }
+            
+            $avatar = $request->file('avatar');
+                // 定义文件名
+            $filepathOSS = str_replace('php','',$avatar->getBasename())
+                    .'.'
+                    .$avatar->getClientOriginalExtension();
+            // 定义文件夹
+            $filepathOSS = date('Ymd')
+                    .'/'
+                    .$filepathOSS;
+
+            OSS::upload($filepathOSS, $avatar->getRealPath());   
+            
+            $user->avatar = OSS::getUrlCdn($filepathOSS);
+        } else {
+            $input = [
+                'name' => $request->get('name', $user->name),
+                'old_password' => $request->get('old_password', ''),
+                'password' => $request->get('password', ''),
+                'password_confirmation' => $request->get('password_confirmation', '')
+            ];            
+            $validator = validator($input, ['name' => 'required|max:255']);
+            if ($validator->fails()) {
+                return $this->errorValidation($validator);
+            }
+            
+            $user->name = $input['name'];
+            if (!empty($input['old_password']) 
+                    && !empty($input['password']) 
+                    && !empty($input['password_confirmation'])) {
+                
+                $credential = \Illuminate\Support\Facades\Auth::attempt(['email' => $user->email
+                        , 'password' => $input['old_password']]);
+                if (!$credential) {
+                    return $this->errorUnauthorized();
+                }
+                
+                $validator = validator($input, ['password' => 'required|min:6|confirmed']);
+                if ($validator->fails()) {
+                    return $this->errorValidation($validator);
+                }
+                
+                $user->password = bcrypt($input['password']);
+            }
+        }
+        $user->save();
+        
+        return $this->successOK($user->toArray());
     }
 }
-?>

@@ -63,6 +63,19 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
          * }
          */
         Route::get('account/current', ['as' => '.account.current', 'uses' => 'AccountController@current']); //获取用户信息        
+        
+        /**
+         * POST api/auth/account/update 修改用户信息
+         * name 名字
+         * old_password 旧密码
+         * password 新密码
+         * password_confirmation 确认密码
+         * (avatar 头像)
+         * @return StatusCode 200
+         * @remark 头像为单独参数
+         */
+        Route::post('account/update', ['as' => '.account.update', 'uses' => 'AccountController@update']); //修改用户信息
+        
     });
     
     Route::group(['middleware' => 'auth'], function(){
@@ -100,6 +113,13 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              */
             Route::resource('project', 'ProjectController');
             
+            /**
+             * GET api/projects/{project_id}/destroyinvites/{invite_id} 删除未确认邀请
+             * -- project_id 项目ID
+             * -- invite_id 邀请ID
+             * @return StatusCode 204
+             */
+            Route::delete('projects/{project_id}/destroyinvites/{invite_id}', ['as' => '.destroyinvites', 'uses' => 'UserController@destroyInvites']);
             /**
              * GET api/projects/{project_id}/users 获取项目下的用户
              * -- project_id 项目ID
@@ -211,6 +231,13 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * @return StatusCode 200
              */
             Route::put('page/{id}/publish', ['as' => '.publish', 'uses' => 'PageController@publish']);
+            /**
+             * publish api/page/{page_id}/quota 分配权重
+             * -- page_id 页面ID
+             * quotas: {id: quota, id: quota, id: quota, id: quota}
+             * @return StatusCode 200
+             */
+            Route::post('page/{id}/quota', ['as' => '.quota', 'uses' => 'PageController@quota']);
             /**
              * GET api/pages/{page_id}/leads 用户提交表单数据
              * -- page_id 页面ID

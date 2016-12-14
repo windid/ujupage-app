@@ -4,7 +4,9 @@ Vue.use(VueResource)
 Vue.http.options.root = '/api'
 
 export default {
-  project: Vue.resource('project{/id}'),
+  project: Vue.resource('project{/id}', {}, {
+    cancelInvite: { method: 'DELETE', url: 'projects/{id}/destroyinvites/{inviteId}' }
+  }),
 
   projectMember: Vue.resource('projects/{projectId}/users{/id}'),
 
@@ -14,7 +16,7 @@ export default {
     duplicate: { method: 'POST', url: 'page/{id}/copy' },
     publish: { method: 'PUT', url: 'page/{id}/publish' },
     leads: { method: 'GET', url: 'page/{id}/leads' },
-    split: { method: 'POST', url: 'page/{id}/split' }
+    split: { method: 'POST', url: 'page/{id}/quota' }
   }),
 
   variation: Vue.resource('pages/{pageId}/variations{/id}', {}, {

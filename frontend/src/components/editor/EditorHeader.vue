@@ -37,7 +37,8 @@ export default {
       getInput: 'getInput',
       warning: 'warning',
       setURL: 'setURL',
-      publishPage: 'publishPage'
+      publishPage: 'publishPage',
+      traficSplit: 'traficSplit'
     }),
     publish () {
       this.saveNotice(() => {
@@ -95,6 +96,9 @@ export default {
       } else {
         cb()
       }
+    },
+    updateQuota (traficWeights) {
+      this.traficSplit(traficWeights)
     }
   }
 
@@ -140,13 +144,13 @@ export default {
 
       <div class="btn-group">
         <div class="btn btn-default" @click="showSettings = true">设置 <span class="glyphicon glyphicon-cog"></span></div>
-        <div class="btn btn-default" :class="{ disabled: saveStatus }" @click="saveVariation">保存 <span class="glyphicon glyphicon-floppy-disk"></span></div>
+        <div class="btn btn-default" :class="{ disabled: saveStatus }" @click="saveVariation()">保存 <span class="glyphicon glyphicon-floppy-disk"></span></div>
         <router-link class="btn btn-default" tag="div" :to="'/preview/' + page.id + '/' + workspace.activeVariation.id">预览 <span class="glyphicon glyphicon-eye-open"></span></router-link>
         <div class="btn btn-primary" @click="publish">发布 <span class="glyphicon glyphicon-send"></span></div>
       </div>
     </div>
     <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings = false" ></editor-settings>
-    <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @close="showSplit = false"></ab-split>
+    <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @update-quota="updateQuota" @close="showSplit = false"></ab-split>
   </div>
 </template>
 

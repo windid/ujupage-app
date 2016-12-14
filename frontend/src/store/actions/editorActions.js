@@ -19,6 +19,11 @@ export const editorInit = ({ commit, state }, [route, callback = false]) => {
   })
 }
 
+// 分配版本流量
+export const traficSplit = ({ commit, state }, traficWeights) => {
+  commit(types.TRAFIC_SPLIT, { traficWeights })
+}
+
 // 加载编辑内容
 export const loadVariation = ({ commit, state }, [variation, callback = false]) => {
   API.variation.get({ pageId: state.editor.page.id, id: variation.id }).then(response => {
@@ -32,6 +37,7 @@ export const loadVariation = ({ commit, state }, [variation, callback = false]) 
 export const createVariation = ({ commit, state }) => {
   API.variation.save({ pageId: state.editor.page.id }, {}).then(response => {
     const variation = response.data
+    variation.quota = 1
     commit(types.CREATE_VARIATION, { variation })
     loadVariation({ commit, state }, [variation])
   })
