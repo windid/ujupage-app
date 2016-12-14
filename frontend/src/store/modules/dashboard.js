@@ -1,4 +1,5 @@
 import * as types from '../mutation-types'
+import Vue from 'vue'
 
 const state = {
   projects: [],
@@ -30,6 +31,14 @@ const mutations = {
   [types.LOAD_MEMBERS] (state, { members, invited }) {
     state.projectMembers = members
     state.projectMembersInvited = invited
+  },
+
+  [types.REMOVE_MEMBER] (state, { member }) {
+    state.projectMembers.splice(state.projectMembers.indexOf(member), 1)
+  },
+
+  [types.CANCEL_INVITE] (state, { inviteId }) {
+    Vue.delete(state.projectMembersInvited, inviteId)
   },
 
   [types.CREATE_PROJECT] (state, { project }) {

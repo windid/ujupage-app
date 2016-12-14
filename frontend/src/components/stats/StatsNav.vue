@@ -73,46 +73,46 @@ export default {
 </script>
 
 <template>
-  <div class="stats-nav">
-    <h1>{{title}} - {{page.name}}</h1>
-    <div class="data-filter">
-      <div class="btn-group">
-        <div class="btn btn-default" :class="{ active: !$route.query.ver }" @click="switchVersion('')">全部</div>
-        <div class="btn btn-default" :class="{ active: $route.query.ver === 'pc' }" @click="switchVersion('pc')">桌面</div>
-        <div class="btn btn-default" :class="{ active: $route.query.ver === 'mobile' }" @click="switchVersion('mobile')">移动</div>
-      </div>
-      <dropdown :show="showVariations" @toggle="showVariations=!showVariations">
-        <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-          {{variationName}}
-          &nbsp; <span class="glyphicon" :class="showVariations ? 'glyphicon-menu-up' : 'glyphicon-menu-down'"></span>
-        </div>
-        <ul slot="dropdown-menu" class="dropdown-menu">
-          <li :class="{active: !$route.query.vid}"><a href="javascript:;" @click="switchVariation(null)">全部版本</a></li>
-          <li v-for="variation in page.variations" :class="{active: $route.query.vid === variation.id}"><a href="javascript:;" @click="switchVariation(variation)">{{variation.name}}</a></li>
-        </ul>
-      </dropdown>
-      <date-picker v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>
-    </div>
+<div>
+  <div class="content-header">
+    <h4>{{title}} - {{page.name}}</h4>
+    <ul class="nav nav-pills" style="float: right">
+      <router-link tag="li" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'overview'}, query: $route.query }"><a>数据概览</a></router-link>
+      <router-link tag="li" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'conversion'}, query: $route.query }"><a>转化详情</a></router-link>
+      <router-link tag="li" active-class="active" :to="{ name: 'stats', params: { pageId: $route.params.pageId, module: 'traffic'}, query: $route.query }"><a>流量来源</a></router-link>
+    </ul>
   </div>
+  <div class="data-filter">
+    <div class="btn-group">
+      <div class="btn btn-default" :class="{ active: !$route.query.ver }" @click="switchVersion('')">全部</div>
+      <div class="btn btn-default" :class="{ active: $route.query.ver === 'pc' }" @click="switchVersion('pc')">桌面</div>
+      <div class="btn btn-default" :class="{ active: $route.query.ver === 'mobile' }" @click="switchVersion('mobile')">移动</div>
+    </div>
+    <dropdown :show="showVariations" @toggle="showVariations=!showVariations">
+      <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        {{variationName}}
+        &nbsp; <span class="glyphicon" :class="showVariations ? 'glyphicon-menu-up' : 'glyphicon-menu-down'"></span>
+      </div>
+      <ul slot="dropdown-menu" class="dropdown-menu">
+        <li :class="{active: !$route.query.vid}"><a href="javascript:;" @click="switchVariation(null)">全部版本</a></li>
+        <li v-for="variation in page.variations" :class="{active: $route.query.vid === variation.id}"><a href="javascript:;" @click="switchVariation(variation)">{{variation.name}}</a></li>
+      </ul>
+    </dropdown>
+    <date-picker v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>
+  </div>
+</div>
 </template>
 
 <style scoped>
-.stats-nav {
-  padding:15px;
-  height: 60px;
-  border-bottom: 1px solid #ddd;
-  box-shadow: 0 0 8px #eee;
-}
 
-.stats-nav h1 {
-  font-size: 22px;
-  padding: 5px 0;
-  margin: 0;
-  float: left;
+.content-header h4 {
+  display: inline-block;
 }
 
 .data-filter {
-  float: right;
+  border-bottom: 1px solid #e9e9e9;
+  padding: 10px 20px;
+  text-align: right;
 }
 
 .data-filter > .btn-group {

@@ -13,54 +13,56 @@ export default {
         <li><router-link to="/project">Wendell的项目 <span class="caret"></span></router-link></li>
         <li>Data</li>
       </ol> -->
-      <ul class="nav nav-pills header-nav">
+      <div class="btn-toolbar header-nav">
         <!-- <li><router-link to="/help">帮助</router-link></li> -->
-        <!-- <li><router-link to="/account">我的帐号</router-link></li> -->
-        <li><router-link to="/logout">退出登陆</router-link></li>
-      </ul>
+        <!-- <router-link active-class="active" to="/account" tag="div" class="btn btn-default">
+          帐号 <span class="glyphicon glyphicon-user"></span>
+        </router-link> -->
+        <router-link active-class="active" to="/logout" tag="div" class="btn btn-default">
+          退出 <span class="glyphicon glyphicon-log-out"></span>
+        </router-link>
+      </div>
     </template>
   </div>
 </div>
 </template>
 
-<style>
+<style scoped>
+
 #header-wrapper {
+  position: relative;
   height: 50px;
-  top: 0;
   width: 100%;
-  z-index: 1000000;
-  position: fixed;
-  box-shadow: 0 3px 8px #eee;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  min-width: 1000px;
+  background: #f9f9f9;
+  box-shadow: 0 2px 3px #ddd;
 }
 
 .header {
   position: relative;
-  width: 100%;
-  background: #f9f9f9;
-  height: 48px;
-  transition: all .5s;
-  z-index: 1000001;
+  margin:0 auto;
+  width: 1000px;
+  height: 50px;
   overflow: hidden;
 }
 
-.header > .breadcrumb {
+/*.header > .breadcrumb {
   margin: 6px 0 0 80px;
   background: transparent;
-}
+}*/
 
 .logo {
   display: inline-block;
   height: 30px;
   width: 80px;
   float: left;
-  margin: 10px 20px;
+  margin: 11px 0;
   background-image: url("../../assets/img/logo.png");
 }
 
 .header-nav {
-  margin: 5px 20px;
-  float: right;  
+  margin: 8px 0;
+  float: right;
 }
+
 </style>

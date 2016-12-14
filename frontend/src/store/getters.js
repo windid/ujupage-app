@@ -15,6 +15,10 @@ export const currentProject = state => state.dashboard.currentProject
 
 export const projectMembers = state => state.dashboard.projectMembers
 
+export const projectAdmins = state => state.dashboard.projectMembers.filter(m => m.pivot.role === 'admin')
+
+export const isProjectAdmin = state => state.dashboard.projectMembers.filter(m => m.pivot.role === 'admin' && m.id === state.user.current.id).length > 0
+
 export const projectMembersInvited = state => state.dashboard.projectMembersInvited
 
 export const allPageGroups = state => state.dashboard.pageGroups.filter(p => p.is_default !== 1)

@@ -20,7 +20,7 @@ export default {
 <template>
 <transition name="fade">
   <div v-show="show" class="modal-mask" @mousedown.stop>
-    <div class="modal-wrapper" @click="$emit('close')">
+    <div class="modal-wrapper" @click.stop="$emit('close')" >
       <div class="modal-container" :style="{width: width, height: height}" @click.stop>
         
         <div class="modal-header">
@@ -46,12 +46,12 @@ export default {
 <style>
 .modal-mask {
   position: fixed;
-  z-index: 1010000;
+  z-index: 103000;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, .6);
   display: table;
 }
 
@@ -70,12 +70,12 @@ export default {
 }
 
 .modal-header {
-  height: 65px;
+  height: 60px;
   padding:12px;
 }
 
 .modal-body {
-  height:calc(100% - 119px);
+  height:calc(100% - 114px);
   padding:12px;
   background: #eee;
   border:1px solid #ccc;

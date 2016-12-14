@@ -121,7 +121,7 @@ use AuthenticatesAndRegistersUsers,
 
                 $from = config('mail')['from'];
                 $m->from($from['address'], $from['name']);
-                $m->to($data['email'], $data['name'])->subject('你的激活链接');
+                $m->to($data['email'], $data['name'])->subject('验证您的邮箱');
 
                 UserActive::create([
                     'email' => $data['email'],
@@ -155,7 +155,8 @@ use AuthenticatesAndRegistersUsers,
         } else {
             return $this->errorInvalidRequest();
         }
-        return $this->successCreated();
+        // return $this->successCreated();        
+        return redirect('/');
     }
 
     
@@ -194,7 +195,7 @@ use AuthenticatesAndRegistersUsers,
             $user->save();
             
             //return redirect()->intended('/');
-            return $this->successCreated(['id' => $user->id, 'email' => $user->email]);
+            return $this->successCreated(['id' => $user->id, 'name' => $user->name, 'email' => $user->email]);
         }
         
         return $this->errorUnauthorized();

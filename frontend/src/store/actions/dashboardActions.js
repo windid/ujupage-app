@@ -5,16 +5,12 @@ import cookieHandler from '../../utils/cookieHandler'
 import * as types from '../mutation-types'
 
 export const dashboardInit = ({ commit, state }, [route, callback = false]) => {
-  if (state.dashboard.projects.length > 0) {
-    if (callback) callback()
-    return
-  }
   API.project.get().then(response => {
     const projects = response.data
     commit(types.LOAD_PROJECTS, { projects })
     // 加载默认项目，第一优先取路由传递的projectId，其次是Cookie，再次是用户默认项目，如果都没有，取项目列表的第一个。
     const projectId = getParameter('id') || cookieHandler.get('projectId')
-    const currentProject = projects.find(p => p.id === projectId) || projects.find(p => p.is_default === 1) || projects[0]
+    const currentProject = projects.find(p => p.id === parseInt(projectId)) || projects.find(p => p.is_default === 1) || projects[0]
     switchProject({ commit }, [currentProject, callback])
   })
 }
@@ -66,8 +62,9 @@ export const createProject = ({ commit }, project) => {
 
 export const loadMembers = ({ commit }, project) => {
   API.projectMember.get({ projectId: project.id }).then(response => {
-    const members = response.data
-    commit(types.LOAD_MEMBERS, { members })
+    const members = response.data.users
+    const invited = response.data.invites
+    commit(types.LOAD_MEMBERS, { members, invited })
   })
 }
 
@@ -77,8 +74,16 @@ export const inviteMember = ({ commit, state }, member) => {
   })
 }
 
-export const removeMember = ({ commit }, member, project) => {
+export const removeMember = ({ commit }, [member, project]) => {
+  API.projectMember.delete({ projectId: project.id, id: member.id }).then(response => {
+    commit(types.REMOVE_MEMBER, { member })
+  })
+}
 
+export const cancelInvite = ({ commit }, [member, project]) => {
+  API.project.cancelInvite({ id: project.id, inviteId: member.id }).then(response => {
+    commit(types.CANCEL_INVITE, { inviteId: member.id })
+  })
 }
 
 export const quitProject = ({ commit }, project) => {
@@ -129,7 +134,6 @@ export const renamePage = ({ commit }, [page, newName]) => {
 
 export const movePage = ({ commit }, [page, pageGroup]) => {
   API.page.update({ id: page.id }, { name: page.name, group_id: pageGroup.id }).then(response => {
-    console.log(response)
     commit(types.REMOVE_PAGE, { page })
   })
 }

@@ -31,7 +31,10 @@ class UserController extends Controller {
     public function index($project_id) {
         $users = $this->user->projects()->find($project_id)->users()->withPivot('role')->get()->toArray();
         
-        return $this->successOK($users);
+        $invites = $this->projectInvite->where('project_id', $project_id)->lists('email', 'id')->toArray();
+        
+        
+        return $this->successOK([ 'users' => $users, 'invites' => $invites]);
     }
     
     /**
@@ -77,11 +80,15 @@ class UserController extends Controller {
             $this->projectInvite->email = $email;
             $this->projectInvite->save();
             
-            Mail::send('auth.emails.invite', ['email' => $email, 'i' => $this->projectInvite->i], function ($m) use ($email, $user, $project) {
-                $from = config('mail')['from'];
-                $m->from($from['address'], $from['name']);
-                $m->to($email, $email)->subject($user['email'] . '邀请你加入'.$project->name.'项目');
-            });
+            Mail::send(
+                'auth.emails.invite', 
+                ['email' => $email, 'i' => $this->projectInvite->i, 'user' => $user['name'], 'project' => $project], 
+                function ($m) use ($email, $user, $project) {
+                    $from = config('mail')['from'];
+                    $m->from($from['address'], $from['name']);
+                    $m->to($email, $email)->subject($user['name'] . '邀请你加入'.$project->name);
+                }
+            );
         } else {
 
             $i_user = $this->user->where('email', $email)->first();
@@ -94,11 +101,15 @@ class UserController extends Controller {
             }
 
             $project->users()->attach($i_user, ['role' => 'member']);
-            Mail::send('auth.emails.invited', ['email' => $email, 'project' => $project], function ($m) use ($email, $user, $project) {
-                $from = config('mail')['from'];
-                $m->from($from['address'], $from['name']);
-                $m->to($email, $email)->subject($user['email'] . '已邀请你加入'.$project->name.'项目');
-            });
+            Mail::send(
+                'auth.emails.invited', 
+                ['email' => $email, 'user' => $user['name'], 'project' => $project], 
+                function ($m) use ($email, $user, $project) {
+                    $from = config('mail')['from'];
+                    $m->from($from['address'], $from['name']);
+                    $m->to($email, $email)->subject($user['name'] . '已邀请你加入'.$project->name);
+                }
+            );
         }
         
         return $this->successCreated();
@@ -125,6 +136,28 @@ class UserController extends Controller {
                 || $user_id == $this->user->id) {
             $project->users()->detach($user_id);
         }
+                
+        return $this->successNoConnect();
+    }
+    
+    /**
+    * 删除未确认邀请
+    * @param int $project_id
+    * @param int $invite_id
+    * @return json
+    * 
+    */
+    public function destroyInvites($project_id, $invite_id) {
+        $project = $this->user->projects()->find($project_id);
+        if (!$project) {
+            return $this->errorNotFound();
+        }        
+        
+        $invite = $this->projectInvite->where('project_id', $project_id)->find($invite_id);  
+        if (!$invite) {
+            return $this->errorNotFound();
+        }
+        $invite->delete();
                 
         return $this->successNoConnect();
     }

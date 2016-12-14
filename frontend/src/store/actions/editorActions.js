@@ -19,12 +19,17 @@ export const editorInit = ({ commit, state }, [route, callback = false]) => {
   })
 }
 
+// 分配版本流量
+export const traficSplit = ({ commit, state }, traficWeights) => {
+  commit(types.TRAFIC_SPLIT, { traficWeights })
+}
+
 // 加载编辑内容
 export const loadVariation = ({ commit, state }, [variation, callback = false]) => {
   API.variation.get({ pageId: state.editor.page.id, id: variation.id }).then(response => {
     const content = JSON.parse(response.data.html_json)
     commit(types.LOAD_VARIATION, { variation, content })
-    if (callback) callback()
+    callback && callback()
   })
 }
 
@@ -32,6 +37,7 @@ export const loadVariation = ({ commit, state }, [variation, callback = false]) 
 export const createVariation = ({ commit, state }) => {
   API.variation.save({ pageId: state.editor.page.id }, {}).then(response => {
     const variation = response.data
+    variation.quota = 1
     commit(types.CREATE_VARIATION, { variation })
     loadVariation({ commit, state }, [variation])
   })
@@ -69,10 +75,11 @@ export const saveSettings = ({ commit }, settings) => {
 }
 
 // 保存
-export const saveVariation = ({ commit, state }) => {
+export const saveVariation = ({ commit, state }, callback = false) => {
   const content = JSON.stringify(state.editor.content)
   API.variation.update({ pageId: state.editor.page.id, id: state.editor.workspace.activeVariation.id }, { htmljson: content }).then(response => {
     commit(types.SAVE_VARIATION)
+    callback && callback()
   })
 }
 
@@ -92,7 +99,7 @@ export const publishPage = ({ commit, state }, successCb) => {
 
 // 添加板块
 export const addSection = ({ commit }) => {
-  const section = defaultSection
+  const section = merge({}, defaultSection)
   commit(types.ADD_SECTION, { section })
   commit(types.SAVE_CONTENT_STATE)
 }
@@ -229,7 +236,7 @@ export const addElement = ({ commit, state, getters }, type) => {
 
   // 计算元素应该进入哪个板块，以及在板块中的高
   const scrollTop = document.body.scrollTop || document.documentElement.scrollTop
-  const element = elementTypes[type]
+  const element = merge({}, elementTypes[type])
   const elementTopInPage = scrollTop + 150
   let sumSectionsHeight = 0
   let sectionHeight = 0

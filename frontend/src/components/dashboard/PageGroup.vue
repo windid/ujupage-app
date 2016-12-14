@@ -37,16 +37,22 @@ export default {
           this.removePageGroup(this.pageGroup)
         }
       })
+    },
+    focusInput () {
+      this.$nextTick(() => {
+        this.$refs.nameInput.focus()
+        this.$refs.nameInput.select()
+      })
     }
   },
   watch: {
     'editing': function (val) {
-      if (val) {
-        this.$nextTick(() => {
-          this.$refs.nameInput.focus()
-          this.$refs.nameInput.select()
-        })
-      }
+      val && this.focusInput()
+    }
+  },
+  mounted () {
+    if (this.editing) {
+      this.focusInput()
     }
   }
 }
@@ -77,16 +83,10 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
 .page-group {
   background: #f9f9f9;
   cursor: pointer;
-  width: 200px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  float: left;
-  margin: 10px;
-  box-shadow: 0 0 8px #ddd;
 }
 
 .page-group-header {
@@ -98,21 +98,21 @@ export default {
   white-space: nowrap;
 }
 
-.page-group-name {
-  line-height: 35px;
+.page-group-name > span {
+  line-height: 34px;
 }
 
 .page-group-body {
-  height: 136px;
-  font-size: 100px;
+  height: 64px;
+  font-size: 48px;
   color: #ccc;
   text-align: center;
   background: #f9f9f9;
 }
 
 .page-group-footer {
-  height: 50px;
+  height: 58px;
   text-align: right;
-  padding: 10px;
+  padding: 15px;
 }
 </style>

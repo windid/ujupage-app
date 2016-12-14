@@ -21,6 +21,7 @@ class ParseHtml {
 
         self::$page['settings'] = $content['settings'];
         self::$page['settings']['hasmap'] = 0;
+        self::$page['settings']['hasswiper'] = 0;
         self::$page['sections'] = $content['sections'];
         self::$page['elements'] = $content['elements'];
         self::$page['style'] = array('common'=>array(), 'pc'=>array(), 'mobile'=>array());
@@ -164,10 +165,10 @@ class ParseHtml {
             case 'video':
                 self::parseElementVideo($element_id, $element);
                 break;
-            case 'Timer':
+            case 'timer':
                 self::parseElementTimer($element_id, $element);
                 break;
-            case 'Swiper':
+            case 'swiper':
                 self::parseElementSwiper($element_id, $element);
                 break;
             default:
@@ -275,7 +276,7 @@ class ParseHtml {
     }
 
     protected static function parseElementSwiper ($element_id, $element) {
-        
+        self::$page['settings']['hasswiper'] = 1;
     }
 
     protected static function parseBackground ($background) {

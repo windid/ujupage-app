@@ -325,16 +325,14 @@ export default {
   height:146px;
   text-align: center;
   cursor: pointer;
+  background-color: #fff;
+  box-shadow: 0px 0px 8px #999;
 }
 
 .image-item:hover, .image-uploading{
-  outline: 1px solid #ccc;
-  background-color: #fff;
 }
 
 .image-item.selected{
-  outline: 2px solid #bbb;
-  background-color: #fff;
 }
 
 .image-item-operation{

@@ -23,15 +23,45 @@ export default {
 
 <style>
 
+body {
+  background: #f9fbfe !important;
+  overflow-y: scroll;
+}
+
 #app, .page {
   height: 100%;
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 
 .main-wrapper {
-  height: calc(100% - 50px);
+  /*height: calc(100% - 50px);*/
   position: relative;
-  top: 50px;
+  padding: 0;
+}
+
+.content {
+  position: relative;
+  margin: 24px auto;
+  width: 1000px;
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+  box-shadow: 0 1px 8px #ddd;
+  background: #fff;
+}
+
+.content-header {
+  padding: 10px 20px;
+  border-bottom: 1px solid #e9e9e9;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  background: #f6f6f6;
+}
+
+.content-body {
+  min-height: 300px;
+  padding: 10px 20px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 a:focus {
@@ -44,6 +74,10 @@ a:focus {
   box-shadow: 0px 0px 8px #ddd;
 }
 
+.btn, .nav > li > a, .dropdown-menu > li, .dropdown-menu > li > a {
+  transition: all .2s ease;
+}
+
 .input-group-btn .btn {
   height: 34px;
 }
@@ -54,11 +88,6 @@ a:focus {
 
 .fl{
   float: left;
-}
-
-.main-wrapper {
-  position: relative;
-  top:50px;
 }
 
 .fade-enter-active, .fade-leave-active {
@@ -101,45 +130,4 @@ a:focus {
           transform: rotate(3deg) translate(0px, -4px);
 }
 
-/* Remove these to get rid of the spinner */
-#nprogress .spinner {
-  display: block;
-  position: fixed;
-  z-index: 10010000;
-  top: 15px;
-  right: 15px;
-}
-
-#nprogress .spinner-icon {
-  width: 18px;
-  height: 18px;
-  box-sizing: border-box;
-
-  border: solid 2px transparent;
-  border-top-color: #29d;
-  border-left-color: #29d;
-  border-radius: 50%;
-
-  -webkit-animation: nprogress-spinner 400ms linear infinite;
-          animation: nprogress-spinner 400ms linear infinite;
-}
-
-.nprogress-custom-parent {
-  overflow: hidden;
-  position: relative;
-}
-
-.nprogress-custom-parent #nprogress .spinner,
-.nprogress-custom-parent #nprogress .bar {
-  position: absolute;
-}
-
-@-webkit-keyframes nprogress-spinner {
-  0%   { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-@keyframes nprogress-spinner {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
 </style>

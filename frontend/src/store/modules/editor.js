@@ -90,6 +90,15 @@ const mutations = {
     state.workspace.activeVariation.id === variation.id && (state.workspace.activeVariation = variation)
   },
 
+  // 流量分配
+  [types.TRAFIC_SPLIT] (state, { traficWeights }) {
+    state.page.variations.forEach(variation => {
+      variation.quota = traficWeights[variation.id]
+      console.log(traficWeights[variation.id], variation.id)
+    })
+    // console.log(state.page.variations, traficWeights)
+  },
+
   // 保存设置
   [types.SAVE_SETTINGS] (state, { settings }) {
     state.content.settings = settings
