@@ -31,12 +31,13 @@
     methods: {
       ...mapActions(['loading', 'loadingDone']),
       save () {
-        const variations = {}
+        const quota = {}
         this.variations.forEach((variation, index) => {
-          variations[variation.id] = this.weights[index]
+          quota[variation.id] = this.weights[index]
         })
         this.loading()
-        API.page.split({ id: this.pageId }, { variations: variations }).then(response => {
+        API.page.split({ id: this.pageId }, { quota: quota }).then(response => {
+          this.$emit('update-quota', quota)
           this.$emit('close')
           this.loadingDone()
         }, response => {
