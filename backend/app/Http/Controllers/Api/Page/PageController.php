@@ -529,11 +529,11 @@ class PageController extends Controller {
             $str = $v['variation_name'] . ',' . $v['created_at'];
             $order = [];
             
-            foreach ($v['utms'] as $kk => $vv) {
-                $order[$fields_val[$kk]] = $vv; 
-            }
             foreach ($v['fields'] as $kk => $vv) {
                 $order[$fields_val[$kk]] = $vv;
+            }
+            foreach ($v['utms'] as $kk => $vv) {
+                $order[$fields_val[$kk]] = $vv; 
             }
             
             ksort($order);            
