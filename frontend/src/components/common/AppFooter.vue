@@ -13,6 +13,7 @@
     padding: 0 20px 20px 20px;
     margin: 0 auto;
     color: #aaa;
+    font-size: 12px;
   }
   .footer-nav {
     float: right;
