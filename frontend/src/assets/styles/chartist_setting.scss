@@ -28,18 +28,18 @@ $ct-container-ratio: (1/1.618) !default;
 
 // Text styles for labels
 $ct-text-color: rgba(0, 0, 0, 0.4) !default;
-$ct-text-size: 0.75rem !default;
+$ct-text-size: .9em !default;
 $ct-text-align: flex-start !default;
 $ct-text-justify: flex-start !default;
 $ct-text-line-height: 1;
 
 // Grid styles
-$ct-grid-color: rgba(0, 0, 0, 0.2) !default;
-$ct-grid-dasharray: 2px !default;
+$ct-grid-color: #dde4ea !default;
+$ct-grid-dasharray: 0 !default;
 $ct-grid-width: 1px !default;
 
 // Line chart properties
-$ct-line-width: 3px !default;
+$ct-line-width: 2px !default;
 $ct-line-dasharray: false !default;
 $ct-point-size: 8px !default;
 // Line chart point, can be either round or square

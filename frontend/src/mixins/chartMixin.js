@@ -7,8 +7,16 @@ const allChartTypes = ['line', 'bar', 'pie']
 const defaultOptions = {
   axisX: {
     labelOffset: {
-      x: 0,
+      x: -16,
       y: 10
+    },
+    showGrid: false
+  },
+  axisY: {
+    onlyInteger: true,
+    labelOffset: {
+      x: 0,
+      y: 5
     }
   },
   chartPadding: {
@@ -29,7 +37,7 @@ export default {
       type: String,
       default: 'line',
       validator (val) {
-        return allChartTypes.indexOf(val.toLowerCase()) !== -1
+        return allChartTypes.indexOf(val.toLowerCase()) > -1
       }
     },
     stats: Object,

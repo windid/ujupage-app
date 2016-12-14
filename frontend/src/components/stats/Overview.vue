@@ -66,8 +66,7 @@ export default {
         axisY: {
           labelInterpolationFnc: value => {
             return this.currentTab === 'conversionRate' ? value + '%' : value
-          },
-          onlyInteger: this.currentTab !== 'conversionRate'
+          }
         }
       }
     },
