@@ -22,7 +22,7 @@ export default {
       if (this.msg.onConfirm) {
         if (this.msg.type === 'input') {
           const val = this.$refs.msgInput.value
-          this.error = this.msg.onConfirm(val) || ''
+          this.error = this.msg.onConfirm(val.trim()) || ''
         } else {
           this.msg.onConfirm()
         }

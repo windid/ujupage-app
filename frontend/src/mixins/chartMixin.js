@@ -1,6 +1,5 @@
 import Chartist from 'chartist'
 import { merge } from 'lodash'
-import '../components/stats/charts/plugins/tooltip'
 import '../components/stats/charts/plugins/legend'
 import '../components/stats/charts/plugins/tooltips'
 
@@ -30,7 +29,6 @@ const defaultOptions = {
   },
   plugins: [
     Chartist.plugins.Legend(),
-    // Chartist.plugins.Tooltip(),
     Chartist.plugins.ctTip()
   ]
 }
@@ -56,11 +54,6 @@ export default {
       type: Array
     }
   },
-  data () {
-    return {
-      $chart: null // 使用$开头，使其不被Vue实例代理
-    }
-  },
   computed: {
     chartType () {
       return this.type[0].toUpperCase() + this.type.slice(1)
@@ -70,12 +63,12 @@ export default {
     }
   },
   mounted () {
-    this.$data.$chart = new Chartist[this.chartType](this.$refs.chart, this.stats, merge({}, defaultOptions, this.options), this.responsiveOptions)
+    this._chart = new Chartist[this.chartType](this.$refs.chart, this.stats, merge({}, defaultOptions, this.options), this.responsiveOptions)
   },
   watch: {
     stats (val) {
       this.$nextTick(() => {
-        this.$data.$chart.update(this.stats, merge({}, defaultOptions, this.options))
+        this._chart.update(this.stats, merge({}, defaultOptions, this.options))
       })
     }
   }

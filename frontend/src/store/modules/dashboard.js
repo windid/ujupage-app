@@ -1,5 +1,6 @@
 import * as types from '../mutation-types'
 import Vue from 'vue'
+import { find } from 'lodash'
 
 const state = {
   projects: [],
@@ -47,7 +48,7 @@ const mutations = {
 
   [types.LOAD_PAGEGROUPS] (state, { pageGroups }) {
     state.pageGroups = pageGroups
-    state.defaultPageGroup = pageGroups.find(p => p.is_default === 1)
+    state.defaultPageGroup = find(pageGroups, p => p.is_default === 1)
   },
 
   [types.SET_CURRENT_PAGEGROUP] (state, { pageGroup }) {
