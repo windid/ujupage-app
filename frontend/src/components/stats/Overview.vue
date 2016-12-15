@@ -40,12 +40,12 @@ export default {
         data['visitors'][currentDate] = {}
         if (this.report.variations) {
           this.report.variations.forEach(variation => {
-            var variationData = variation.dates.find(d => d.report_date === currentDate)
+            var variationData = find(variation.dates, d => d.report_date === currentDate)
             data['conversions'][currentDate][variation.name] = variationData ? variationData.total_conversions : 0
             data['conversionRate'][currentDate][variation.name] = (Math.round((variationData ? variationData.cv : 0) * 1000) / 10.0).toString() + '%'
             data['visitors'][currentDate][variation.name] = variationData ? variationData.total_visitors : 0
           })
-          const totalData = this.report.gather_date.find(d => d.report_date === currentDate)
+          const totalData = find(this.report.gather_date, d => d.report_date === currentDate)
           data['conversions'][currentDate]['total'] = totalData ? totalData.total_conversions : 0
           data['conversionRate'][currentDate]['total'] = (Math.round((totalData ? totalData.cv : 0) * 1000) / 10.0).toString() + '%'
           data['visitors'][currentDate]['total'] = totalData ? totalData.total_visitors : 0

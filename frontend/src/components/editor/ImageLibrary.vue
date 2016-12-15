@@ -3,7 +3,7 @@ import Vue from 'vue'
 import Modal from '../ui/Modal'
 import API from '../../API'
 import { mapGetters, mapActions } from 'vuex'
-import { merge } from 'lodash'
+import { merge, find } from 'lodash'
 
 Vue.filter('imageThumbs', function (value) {
   const arr = value.split('.')
@@ -57,7 +57,7 @@ export default {
       this.currentTab = tab
       API.imageFolder.get({ project_id: this.projectId }).then(response => {
         this.folders = response.data
-        this.currentFolder = this.folders.find(f => f.is_default === 1) || this.folders[0]
+        this.currentFolder = find(this.folders, f => f.is_default === 1) || this.folders[0]
         this.switchFolder(this.currentFolder)
       })
     },

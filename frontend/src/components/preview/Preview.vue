@@ -2,6 +2,7 @@
 import PreviewHeader from './PreviewHeader'
 import API from '../../API'
 import '../../style/devices.min.css'
+import { find } from 'lodash'
 
 export default {
   components: {
@@ -23,7 +24,7 @@ export default {
   },
   watch: {
     '$route.params.variationId': function (variationId) {
-      this.currentVariation = this.variations.find(v => v.id === parseInt(variationId))
+      this.currentVariation = find(this.variations, v => v.id === parseInt(variationId))
     }
   },
   created () {
@@ -32,7 +33,7 @@ export default {
       document.title = this.page.name + ' - 预览 - 聚页'
       API.variation.get({ pageId: this.$route.params.pageId }).then(response => {
         this.variations = response.data
-        this.currentVariation = this.variations.find(v => v.id === parseInt(this.$route.params.variationId))
+        this.currentVariation = find(this.variations, v => v.id === parseInt(this.$route.params.variationId))
         this.loading = false
       })
     })
