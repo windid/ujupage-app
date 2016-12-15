@@ -360,7 +360,7 @@ export default {
         height: '240px'
       },
       'mobile': {
-        left: '30px',
+        left: '20px',
         top: '10px',
         width: '320px',
         height: '240px'

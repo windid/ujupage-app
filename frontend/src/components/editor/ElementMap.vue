@@ -27,9 +27,6 @@ export default {
       }
     }
   },
-  mounted () {
-    this.initMap()
-  },
   methods: {
     initMap () {
       const marked = this.localElement.data.position !== null
@@ -117,6 +114,24 @@ export default {
         this.localElement = merge({}, val)
         this.initMap()
       }
+    }
+  },
+  mounted () {
+    if (!window.GaodeMapScript) {
+      const mapScript = document.createElement('script')
+      const script = document.getElementsByTagName('script')[0]
+      mapScript.type = 'text/javascript'
+      mapScript.async = true
+      mapScript.defer = true
+      mapScript.src = '//webapi.amap.com/maps?v=1.3&key=e3b78e84d1aedba49bc8a84c4e113e01&plugin=AMap.ToolBar'
+      script.parentNode.insertBefore(mapScript, script)
+      const vm = this
+      mapScript.onload = function () {
+        vm.initMap()
+      }
+      window.GaodeMapScript = mapScript
+    } else {
+      this.initMap()
     }
   }
 }

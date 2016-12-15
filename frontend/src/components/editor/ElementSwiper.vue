@@ -165,7 +165,7 @@ export default {
   right: 0;
   left: 0;
   margin: 0;
-  background: #888;
+  background: #999;
   display: flex;
   justify-content: center;
   align-items: center;
