@@ -24,7 +24,7 @@
 </script>
 
 <template>
-  <div class="sidebar-part">
+  <div class="sidebar-part container-fluid">
     <div class="part-header">
       <div @click="expanded = !expanded" class="part-title">
         <span class="caret" :class="{'rotate' : !expanded}"></span> {{title}}
@@ -35,17 +35,11 @@
       </div>
       <div style="clear: both;"></div>
     </div>
-    <div class="slide" :style="{'max-height': expanded ? '300px' : '0'}">
-      <slot name="content"></slot>
-    </div>
+    <slot v-if="expanded" name="content"></slot>
   </div>
 </template>
 
 <style scoped>
-  .slide {
-    transition: max-height 0.4s ease;
-    overflow: hidden;
-  }
   .sidebar-part {
     border-bottom: 1px solid #eee;
     padding: 10px 0;
