@@ -12,3 +12,7 @@ export const statsInit = ({ commit, state }, [route, callback = false]) => {
     })
   })
 }
+
+export const statsTraficSplit = ({ commit }, traficWeights) => {
+  commit(types.STATS_TRAFIC_SPLIT, { traficWeights })
+}

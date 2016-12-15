@@ -20,7 +20,7 @@ export const editorInit = ({ commit, state }, [route, callback = false]) => {
 }
 
 // 分配版本流量
-export const traficSplit = ({ commit, state }, traficWeights) => {
+export const traficSplit = ({ commit }, traficWeights) => {
   commit(types.TRAFIC_SPLIT, { traficWeights })
 }
 

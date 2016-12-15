@@ -95,11 +95,10 @@ var Site = {
     $("a").each(function (){
       var link = $(this)
       var href = link.attr('href')
-      var name = href.substring(1)
+      if (!href || href.substring(0, 11) === 'javascript:') return
       $(this).click(function(e) {
         e.preventDefault()
         if(href && href[0] === '#') {
-          // var element = $(href)
           var element = document.getElementById(href.substring(1))
           var scrollTop = element ? element.offsetTop : 0
           $("#container").animate({

@@ -94,9 +94,7 @@ const mutations = {
   [types.TRAFIC_SPLIT] (state, { traficWeights }) {
     state.page.variations.forEach(variation => {
       variation.quota = traficWeights[variation.id]
-      console.log(traficWeights[variation.id], variation.id)
     })
-    // console.log(state.page.variations, traficWeights)
   },
 
   // 保存设置

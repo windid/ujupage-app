@@ -74,7 +74,7 @@
 
 @endforeach
 
-  <button type="submit" class="element-button form-group" id="element-{{$element_id}}-button">
+  <button type="submit" class="btn element-button form-group" id="element-{{$element_id}}-button">
     @if (isset($element['button']['image']) && $element['button']['image'])
       <img class="element-button-image" src="{{$element['button']['image']}}" alt="{{$element['button']['text']}}">
     @else

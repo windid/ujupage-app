@@ -22,6 +22,7 @@ class AccountController extends Controller{
     public function update(Request $request) {
         
         $user = auth()->user();
+        $old_name = '';
         if ($request->hasFile('avatar')) {
             $validator = validator($request->allFiles(), ['avatar' => 'required|image']);
             if ($validator->fails()) {
@@ -52,7 +53,7 @@ class AccountController extends Controller{
             if ($validator->fails()) {
                 return $this->errorValidation($validator);
             }
-            
+            $old_name = $user->name;
             $user->name = $input['name'];
             if (!empty($input['old_password']) 
                     && !empty($input['password']) 
@@ -73,7 +74,14 @@ class AccountController extends Controller{
             }
         }
         $user->save();
-        
+        /*
+        if (!empty($old_name)) {            
+            $project = \App\Models\Project\Project::where('user_id', $user->id)
+                    ->where('name', 'like', '%' . $user->name . '%')
+                    ->where('is_default', '1')->first();
+            $project->name = str_replace($old_name, $user->name, $project->name);
+            $project->save();
+        }*/
         return $this->successOK($user->toArray());
     }
 }

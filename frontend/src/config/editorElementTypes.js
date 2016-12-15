@@ -307,19 +307,20 @@ export default {
     },
     style: {
       pc: {
-        left: '330px',
+        left: '320px',
         top: '10px',
-        width: '300px',
-        height: '150px'
+        width: '320px',
+        height: '200px'
       },
       'mobile': {
-        left: '50px',
+        left: '20px',
         top: '10px',
-        width: '200px',
-        height: '120px'
+        width: '320px',
+        height: '200px'
       }
     }
   },
+
   'timer': {
     type: 'timer',
     data: {
@@ -331,15 +332,15 @@ export default {
     },
     style: {
       'pc': {
-        left: '330px',
+        left: '320px',
         top: '10px',
-        width: '300px',
+        width: '320px',
         height: 'auto'
       },
       'mobile': {
-        left: '50px',
+        left: '20px',
         top: '10px',
-        width: '220px',
+        width: '320px',
         height: 'auto'
       }
     }
@@ -353,16 +354,16 @@ export default {
     },
     style: {
       'pc': {
-        left: '330px',
+        left: '320px',
         top: '10px',
-        width: '300px',
-        height: '200px'
+        width: '320px',
+        height: '240px'
       },
       'mobile': {
-        left: '30px',
+        left: '20px',
         top: '10px',
-        width: '300px',
-        height: '180px'
+        width: '320px',
+        height: '240px'
       }
     }
   },
@@ -377,16 +378,16 @@ export default {
     },
     style: {
       'pc': {
-        left: '330px',
+        left: '320px',
         top: '10px',
-        width: '300px',
-        height: '160px'
+        width: '320px',
+        height: '240px'
       },
       'mobile': {
-        left: '50px',
+        left: '20px',
         top: '10px',
-        width: '220px',
-        height: '120px'
+        width: '320px',
+        height: '240px'
       }
     }
   }

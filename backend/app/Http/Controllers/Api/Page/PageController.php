@@ -546,7 +546,8 @@ class PageController extends Controller {
                 $pre_index = $ok;
             }
             
-            $values[] = iconv('utf-8', 'gbk', $str);
+            $values[] = mb_convert_encoding($str, 'gbk');
+            // $values[] = iconv('utf-8', 'gbk', $str);
         }        
 
         header("Content-type:text/csv");

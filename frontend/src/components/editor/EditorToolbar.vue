@@ -13,7 +13,7 @@ export default {
         } },
         { name: '图片', style: 'picture', action: () => this.newElement('image') },
         { name: '文字', style: 'font', action: () => this.newElement('text') },
-        { name: '按钮', style: 'expand', action: () => this.newElement('button') },
+        { name: '按钮', style: 'hand-up', action: () => this.newElement('button') },
         { name: '形状', style: 'stop', action: () => this.showShapePicker() }
       ],
       advancedTools: [

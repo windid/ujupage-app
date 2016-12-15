@@ -1,10 +1,7 @@
 <script>
 import Sidebar from '../ui/Sidebar'
-import ImagePicker from '../ui/ImagePicker'
-
+import ImagePicker from './ImagePicker'
 import { mapActions } from 'vuex'
-import { clone } from 'lodash'
-import Vue from 'vue'
 
 export default {
   name: 'swiper-editor',
@@ -13,42 +10,27 @@ export default {
     Sidebar,
     ImagePicker
   },
-  data () {
-    return {
-      imageList: clone(this.images)
-    }
-  },
   methods: {
     ...mapActions([
       'getImage'
     ]),
     selectImage () {
       this.getImage([(image) => {
-        // todo
-        this.imageList.push(image)
+        this.imageList.push(image.url)
       }])
     },
-    imageChange (image, id) {
-      if (image === null) {
-        this.imageList.splice(id, 1)
-      } else {
-        Vue.set(this.imageList, id, image)
-      }
-    },
-    getId (ns, index) {
-      let suffix = ''
-      if (arguments.length >= 2) {
-        suffix = '-' + index
-      }
-      return ns + '-' + this.id + suffix
+    imageRemoved (index) {
+      this.imageList.splice(index, 1)
     }
   },
-  watch: {
-    'imageList': function (val) {
-      this.$emit('images-change', val)
-    },
-    'images': function (val) {
-      this.imageList = clone(val)
+  computed: {
+    imageList: {
+      get () {
+        return this.images
+      },
+      set (val) {
+        this.$emit('images-change', val)
+      }
     }
   }
 }
@@ -61,27 +43,22 @@ export default {
   <div slot="body" class="swiper-editor-body">
     <div class="swiper-property">
       <div class="swiper-auto">
-        <input type="checkbox" :id="getId('auto')" v-model="value.auto"></input> <label :for="getId('auto')">自动播放</label>
+        <label><input type="checkbox" v-model="value.auto"></input> 自动播放</label>
+        <label><input type="checkbox" v-model="value.button"></input> 翻页按钮</label>
       </div>
-      <div class="swiper-button">
-        <input type="checkbox" :id="getId('button')" v-model="value.button"></input> <label :for="getId('button')">翻页按钮</label>
-      </div>
-      <div class="swiper-effect">
-        <input type="radio" :name="getId('effect')" value="1" :id="getId('effect', 1)" v-model="value.effect">
-        <label :for="getId('effect', 1)">水平滚动</label>
-        <input type="radio" :name="getId('effect')" value="2" :id="getId('effect', 2)" v-model="value.effect">
-        <label :for="getId('effect', 2)">垂直滚动</label>
-        <input type="radio" :name="getId('effect')" value="3" :id="getId('effect', 3)" v-model="value.effect">
-        <label :for="getId('effect', 3)">淡入淡出</label>
-      </div>
+      <!-- <div class="swiper-effect">
+        <label><input type="radio" value="horizontal" v-model="value.effect"> 水平滚动</label>
+        <label><input type="radio" value="vertical" v-model="value.effect"> 垂直滚动</label>
+        <label><input type="radio" value="fade" v-model="value.effect"> 淡入淡出</label>
+      </div> -->
     </div>
-    <div style="text-align: right; margin-bottom: 12px;">
-      <button class="swiper-add-image-btn" @click.stop="selectImage">+ 添加图片</button>
+    <div style="margin-bottom: 12px;">
+      <div class="btn btn-primary" @click.stop="selectImage">+ 添加图片</div>
     </div>
     <div>
       <ul class="swiper-image-list">
         <li v-for="(image, index) in imageList">
-          <image-picker :value="image" @image-change="imageChange" :id="index"></image-picker>
+          <image-picker v-model="imageList[index]" @image-removed="imageRemoved(index)"></image-picker>
         </li>
       </ul>
     </div>
@@ -92,18 +69,9 @@ export default {
 <style scoped>
 label {
   font-weight: normal;
+  margin: 5px;
 }
-.swiper-add-image-btn {
-  -webkit-appearance: none;
-  outline: none;
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: 16px;
-}
-.swiper-add-image-btn:hover {
-  color: #337ab7;
-}
+
 .swiper-image-list {
   margin: 0;
   padding: 0;
@@ -112,13 +80,14 @@ label {
   justify-content: space-between;
 }
 .swiper-image-list li {
+  width: 120px;
   list-style-type: none;
   padding: 0;
   margin-bottom: 12px;
 }
 .swiper-property {
   border-bottom: 1px solid #eee;
-  margin-bottom: 8px;
-  padding-top: 8px;
+  margin-bottom: 20px;
+  padding: 12px 0;
 }
 </style>
