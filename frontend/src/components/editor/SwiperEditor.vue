@@ -44,15 +44,13 @@ export default {
     <div class="swiper-property">
       <div class="swiper-auto">
         <label><input type="checkbox" v-model="value.auto"></input> 自动播放</label>
-      </div>
-      <div class="swiper-button">
         <label><input type="checkbox" v-model="value.button"></input> 翻页按钮</label>
       </div>
-      <div class="swiper-effect">
-        <label><input type="radio" value="1" v-model="value.effect"> 水平滚动</label>
-        <label><input type="radio" value="2" v-model="value.effect"> 垂直滚动</label>
-        <label><input type="radio" value="3" v-model="value.effect"> 淡入淡出</label>
-      </div>
+      <!-- <div class="swiper-effect">
+        <label><input type="radio" value="horizontal" v-model="value.effect"> 水平滚动</label>
+        <label><input type="radio" value="vertical" v-model="value.effect"> 垂直滚动</label>
+        <label><input type="radio" value="fade" v-model="value.effect"> 淡入淡出</label>
+      </div> -->
     </div>
     <div style="margin-bottom: 12px;">
       <div class="btn btn-primary" @click.stop="selectImage">+ 添加图片</div>
@@ -89,7 +87,7 @@ label {
 }
 .swiper-property {
   border-bottom: 1px solid #eee;
-  margin-bottom: 8px;
-  padding-top: 8px;
+  margin-bottom: 20px;
+  padding: 12px 0;
 }
 </style>
