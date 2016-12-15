@@ -157,6 +157,11 @@ export default {
         }
       })
     }
+  },
+  watch: {
+    '$store.state.user.current': function (val) {
+      this.user = { ...val }
+    }
   }
 }
 </script>
