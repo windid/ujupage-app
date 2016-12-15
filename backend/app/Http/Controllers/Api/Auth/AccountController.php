@@ -74,13 +74,14 @@ class AccountController extends Controller{
             }
         }
         $user->save();
+        /*
         if (!empty($old_name)) {            
             $project = \App\Models\Project\Project::where('user_id', $user->id)
                     ->where('name', 'like', '%' . $user->name . '%')
                     ->where('is_default', '1')->first();
             $project->name = str_replace($old_name, $user->name, $project->name);
             $project->save();
-        }
+        }*/
         return $this->successOK($user->toArray());
     }
 }
