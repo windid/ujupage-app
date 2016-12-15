@@ -45,10 +45,10 @@ export default {
 </script>
 
 <template>
-<div class="button-background-selector" @click="selectImage">
-  <div v-if="image && image.url" class="button-background-thumbnail-wrapper">
-    <img :src="image.url" class="button-background-thumbnail"/>
-    <div class="button-background-thumbnail-action">
+<div class="image-picker" @click="selectImage">
+  <div v-if="image && image.url" class="image-thumbnail-wrapper">
+    <img :src="image.url" class="image-thumbnail"/>
+    <div class="image-thumbnail-action">
       <div @click.stop="selectImage">更换</div>
       <div @click.stop="deleteImage">删除</div>
     </div>
@@ -58,25 +58,30 @@ export default {
 </template>
 
 <style scoped>
-  .button-background-selector {
+  .image-picker {
     position: relative;
     width: 120px;
     height: 120px;
     /* border: 1px dashed #444; */
     background-color: #eee;
     cursor: pointer;
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
     border-radius: 3px;
     overflow: hidden;
   }
-  .button-background-thumbnail {
+  .image-thumbnail-wrapper {
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .image-thumbnail {
     max-width: 100%;
     max-height: 100%;
     height: auto;
   }
-  .button-background-thumbnail-action {
+  .image-thumbnail-action {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -87,16 +92,16 @@ export default {
     flex-direction: column;
     display: none;
   }
-  .button-background-selector:hover .button-background-thumbnail-action {
+  .image-picker:hover .image-thumbnail-action {
     display: flex;
   }
-  .button-background-thumbnail-action div {
+  .image-thumbnail-action div {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  .button-background-thumbnail-action div:hover {
+  .image-thumbnail-action div:hover {
     background-color: #444;
   }
 </style>

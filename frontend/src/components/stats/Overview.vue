@@ -1,14 +1,16 @@
 <script>
 import StatsNav from './StatsNav'
+import AbSplit from '../common/AbSplit'
 import moment from 'moment'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Chart from './charts/Chart'
 import { find } from 'lodash'
 
 export default {
   components: {
     StatsNav,
-    Chart
+    Chart,
+    AbSplit
   },
   props: ['report', 'params'],
   filters: {
@@ -18,7 +20,8 @@ export default {
   },
   data () {
     return {
-      currentTab: 'conversionRate'
+      currentTab: 'conversionRate',
+      showSplit: false
     }
   },
   computed: {
@@ -127,6 +130,13 @@ export default {
         series: this.chartData[this.currentTab]
       }
     }
+  },
+  methods: {
+    ...mapActions(['statsTraficSplit']),
+
+    updateTraficSplit (traficWeights) {
+      this.statsTraficSplit(traficWeights)
+    }
   }
 }
 
@@ -143,7 +153,6 @@ export default {
             <th width="120px">转化率</th>
             <th width="120px">访客数</th>
             <th width="120px">转化次数</th>
-            <th width="120px">流量分配</th>
           </tr>
         </thead>
         <tbody>
@@ -152,15 +161,11 @@ export default {
             <td><strong>{{variation.cv | percentage}}</strong></td>
             <td>{{variation.total_visitors}}</td>
             <td>{{variation.total_conversions}}</td>
-            <td>
-              <div class="input-group">
-                <input type="number" class="form-control" :value="variation.quota">
-                <div class="input-group-addon">%</div>
-              </div>
-            </td>
           </tr>
         </tbody>
       </table>
+      <p><a href="javascript:;" @click="showSplit = true">版本流量分配</a></p>
+      <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @update-split="updateTraficSplit" @close="showSplit = false"></ab-split>
       <div class="data-tab">
         <div class="btn-group">
           <div class="btn btn-default" :class="{ active: currentTab === 'conversionRate'}" @click="currentTab = 'conversionRate'">转化率</div>

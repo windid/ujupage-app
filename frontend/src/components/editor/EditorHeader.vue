@@ -97,7 +97,7 @@ export default {
         cb()
       }
     },
-    updateQuota (traficWeights) {
+    updateTraficSplit (traficWeights) {
       this.traficSplit(traficWeights)
     }
   }
@@ -150,7 +150,7 @@ export default {
       </div>
     </div>
     <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings = false" ></editor-settings>
-    <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @update-quota="updateQuota" @close="showSplit = false"></ab-split>
+    <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @update-split="updateTraficSplit" @close="showSplit = false"></ab-split>
   </div>
 </template>
 
