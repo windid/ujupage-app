@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     ...mapActions(['getInput', 'createProject', 'switchProject']),
-    createProject () {
+    newProject () {
       this.getInput({
         header: '请输入新项目名称',
         onConfirm: (val) => {
@@ -46,7 +46,7 @@ export default {
     <ul slot="dropdown-menu" class="dropdown-menu projects-menu">
       <li v-for="project in projects"><a href="javascript:;" @click="switchProject([project])">{{project.name}}</a></li>
       <li role="separator" class="divider"></li>
-      <li v-if="$store.state.user.current.id == 2"><a href="javascript:;" @click="createProject"> <span class="glyphicon glyphicon-plus"></span> 新建项目</a></li>
+      <li v-if="$store.state.user.current.id == 2"><a href="javascript:;" @click="newProject"> <span class="glyphicon glyphicon-plus"></span> 新建项目</a></li>
     </ul>
   </dropdown>
 </template>
