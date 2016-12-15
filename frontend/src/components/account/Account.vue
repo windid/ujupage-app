@@ -1,47 +1,41 @@
 <script>
-import { Tooltip, Dialog, Button, Loading } from 'element-ui'
+import { Tooltip, Button, Loading, Message } from 'element-ui'
 import API from '../../API'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
     Tooltip,
-    'el-dialog': Dialog,
     'el-button': Button
   },
   data () {
     return {
       changePassword: false,
       user: { ...this.$store.state.user.current },
-      avatarUrl: this.$store.state.user.current.avatar || null,
       uploading: false,
-      dialogVisible: false,
-      dialog: {
-        title: '',
-        content: ''
-      },
       messages: {
         avatarTooSmall: {
-          title: '修改头像',
+          type: 'warning',
           content: '图片宽度和高度不能小于160像素'
         },
         fieldEmpty: (name) => ({
-          title: name + '为空',
+          type: 'warning',
           content: name + '不能为空'
         }),
         passNotMatch: {
-          title: '新密码不相同',
+          type: 'error',
           content: '两次输入的新密码不相同'
         },
         editSuccess: {
-          title: '修改成功',
+          type: 'success',
           content: '用户信息已修改成功'
         },
         authFail: {
-          title: '修改失败',
+          type: 'error',
           content: '用户验证失败'
         },
         avatarFail: {
-          title: '修改失败',
+          type: 'error',
           content: '用户头像修改失败'
         }
       },
@@ -52,10 +46,10 @@ export default {
   },
   computed: {
     avatarClip () {
-      if (this.avatarUrl) {
-        return this.avatarUrl + '?x-oss-process=image/resize,m_fill,h_120,w_120'
+      if (this.user && this.user.avatar) {
+        return this.user.avatar + '?x-oss-process=image/resize,m_fill,h_120,w_120'
       }
-      return ''
+      return null
     }
   },
   created () {
@@ -65,6 +59,12 @@ export default {
     this.$refs.file.addEventListener('change', this.avatarLoad)
   },
   methods: {
+    ...mapActions([
+      'editUser'
+    ]),
+    editDone () {
+      this.editUser(this.user)
+    },
     avatarSelect () {
       this.$refs.file.value = null
       this.$refs.file.click()
@@ -91,7 +91,8 @@ export default {
             if (response.ok) {
               const url = response.body.avatar
               if (url && typeof url === 'string' && url.length > 0) {
-                this.avatarUrl = url
+                this.user.avatar = url
+                this.editDone()
               }
             } else {
               this.showDialog(this.messages.avatarFail)
@@ -109,12 +110,11 @@ export default {
       const URL = window.URL || window.webkitURL
       img.src = URL.createObjectURL(image)
     },
-    hideDialog () {
-      this.dialogVisible = false
-    },
     showDialog (message) {
-      this.dialog = message
-      this.dialogVisible = true
+      Message[message.type]({
+        message: message.content,
+        showClose: true
+      })
     },
     save () {
       const isEmpty = (str) => typeof str === 'string' && str.length <= 0
@@ -147,6 +147,8 @@ export default {
       response => {
         if (response.ok) {
           this.showDialog(this.messages.editSuccess)
+          this.user = response.body
+          this.editDone()
         }
       },
       response => {
@@ -169,7 +171,7 @@ export default {
         <div class="col-md-2">
           <div class="avatar-wrapper" @click="avatarSelect" ref="avatar">
             <tooltip content="设置头像" class="avatar">
-              <img v-if="avatarUrl" :src="avatarClip" />
+              <img v-if="avatarClip" :src="avatarClip" />
               <span v-else class="glyphicon glyphicon-user"></span>
             </tooltip>
             <form hidden class="hidden"  enctype="multipart/form-data">
@@ -215,12 +217,6 @@ export default {
         </div>
       </div>
     </div>
-    <el-dialog :title="dialog.title" v-model="dialogVisible" size="tiny">
-      <span>{{this.dialog.content}}</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click.stop="hideDialog">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 

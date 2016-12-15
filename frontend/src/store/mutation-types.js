@@ -1,6 +1,7 @@
 // user
 export const LOG_IN = 'LOG_IN'
 export const LOG_OUT = 'LOG_OUT'
+export const EDIT_USER = 'EDIT_USER'
 
 // projects
 export const LOAD_PROJECTS = 'LOAD_PROJECTS'
