@@ -67,7 +67,6 @@ const ctTip = function (options) {
     }
 
     const tooltipData = chart.options.tooltipData
-    // const labelsLen = chart.data.labels.length
 
     chart.on('draw', data => {
       if (data.type === 'point') {
@@ -145,7 +144,7 @@ const ctTip = function (options) {
         const offsetX = e.pageX - box.left - window.pageXOffset
         const dx = Math.max(0, offsetX - axisYOffset - padding.left)
         const index = Math.round(dx / width)
-        if (index !== pointIndex) {
+        if (index !== pointIndex && index < positions[0].length) {
           pointIndex = index
           changeTooltip()
         }
