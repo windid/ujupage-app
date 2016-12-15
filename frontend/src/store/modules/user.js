@@ -10,6 +10,9 @@ const mutations = {
   },
   [types.LOG_OUT] (state) {
     state.current = null
+  },
+  [types.EDIT_USER] (state, { userInfo }) {
+    state.current = userInfo
   }
 }
 
