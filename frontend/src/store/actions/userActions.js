@@ -57,3 +57,7 @@ export const resetPassword = ({ commit }, [token, password, success, error]) => 
 export const activeEmail = ({ commit }) => {
 
 }
+
+export const editUser = ({ commit }, userInfo) => {
+  commit(types.EDIT_USER, { userInfo })
+}

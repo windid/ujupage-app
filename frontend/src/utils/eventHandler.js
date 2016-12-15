@@ -15,13 +15,6 @@ const eventHandler = {
           target.removeEventListener(eventType, callback, false)
         }
       }
-    } else if (target.attachEvent) {
-      target.attachEvent('on' + eventType, callback)
-      return {
-        remove () {
-          target.detachEvent('on' + eventType, callback)
-        }
-      }
     }
   }
 }
