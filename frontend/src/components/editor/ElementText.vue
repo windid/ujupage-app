@@ -46,7 +46,8 @@ function restoreSelection (savedSel) {
 
 function detectSelection (el) {
   const r = {
-    link: false
+    link: false,
+    color: null
   }
   if (window.getSelection) {
     var sel = window.getSelection()
@@ -56,6 +57,12 @@ function detectSelection (el) {
       if (e.tagName === 'A') {
         if (sel.containsNode(e, true)) {
           r.link = true
+        }
+      }
+      if (e.tagName === 'FONT') {
+        const color = e.getAttribute('color')
+        if (color) {
+          r.color = color
         }
       }
     })
@@ -76,7 +83,8 @@ export default {
       addingLink: false,
       linkAddress: '',
       userSelection: null,
-      linkSelected: false
+      linkSelected: false,
+      localColor: 1
     }
   },
   computed: {
@@ -159,8 +167,19 @@ export default {
       }
     },
     contentMouseUp (e) {
-      const l = detectSelection(this.$refs.content).link
-      this.linkSelected = l
+      const detection = detectSelection(this.$refs.content)
+      this.linkSelected = detection.link
+    },
+    colorInputFocus () {
+      this.userSelection = saveSelection()
+    },
+    colorInput (val, fromInputElement) {
+      if (!fromInputElement) {
+        if (this.userSelection) {
+          restoreSelection(this.userSelection)
+        }
+        this.styleColor(this.getColor(val))
+      }
     },
     merge: merge
   },
@@ -197,8 +216,7 @@ export default {
       :contenteditable="editing" 
       spellcheck="false" 
       :style="merge({}, localElement.fontStyle, {
-        cursor: editing ? 'text' : 'pointer',
-        color: getColor(localElement.fontStyle.color)
+        cursor: editing ? 'text' : 'pointer'
       })"
     >
     </div>
@@ -208,9 +226,9 @@ export default {
     <template slot="button-groups">
       <div v-show="buttonGroup === 'edit' && !addingLink" class="btn-group el-btn-group"
       @mousedown.prevent>
-        <color-picker v-model="localElement.fontStyle.color">
+        <color-picker v-model="localColor" @inputFocus="colorInputFocus" @input="colorInput">
           <tooltip class="btn btn-default dropdown-toggle" data-toggle="dropdown" content="颜色" >
-            <span class="glyphicon glyphicon-text-color" :style="{color:getColor(localElement.fontStyle.color)}"></span> 
+            <span class="glyphicon glyphicon-text-color" :style="{color:getColor(localColor)}"></span> 
             <span class="caret"></span>
           </tooltip>
         </color-picker>
@@ -220,13 +238,13 @@ export default {
         <tooltip class="btn btn-default" content="加粗" @click.native="styleText('bold')">B</tooltip>
         <tooltip class="btn btn-default" content="斜体" @click.native="styleText('italic')"><i>I</i></tooltip>
         <tooltip class="btn btn-default" content="下划线" @click.native="styleText('underline')"><u>U</u></tooltip>
-        <tooltip class="btn btn-default" content="链接" @click.native="link"><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></tooltip>
+        <tooltip class="btn btn-default" :class="{unlink: linkSelected}" content="链接" @click.native="link"><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></tooltip>
         <div class="btn btn-success" title="完成编辑" @click="editDone">完成</div>
       </div>
       <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks"
       @mousedown.prevent>
         <div class="btn-group">
-          <input type="text" class="form-control" placeholder="所要添加的链接地址" v-model="linkAddress" ref="linkAddressInput"></input>
+          <input type="text" class="form-control" placeholder="所要添加的链接地址" v-model="linkAddress" ref="linkAddressInput" @mousedown.stop></input>
         </div>
         <button type="submit" class="btn btn-default" @click.stop="cancelLink">取消</button>
         <button type="submit" class="btn btn-success" @click.stop="addLink">添加</button>
@@ -268,6 +286,9 @@ export default {
   border: 1px solid #ccc;
 }
 
+.btn.unlink {
+  background-color: #eee;
+}
 .glyphicon.unlink {
   text-decoration: line-through;
 }
