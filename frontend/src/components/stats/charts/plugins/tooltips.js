@@ -144,7 +144,7 @@ const ctTip = function (options) {
         const offsetX = e.pageX - box.left - window.pageXOffset
         const dx = Math.max(0, offsetX - axisYOffset - padding.left)
         const index = Math.round(dx / width)
-        if (index !== pointIndex && index < positions[0].length) {
+        if (index >= 0 && index !== pointIndex && index < positions[0].length) {
           pointIndex = index
           changeTooltip()
         }

@@ -67,9 +67,8 @@ export default {
   },
   watch: {
     stats (val) {
-      console.log(val)
       this.$nextTick(() => {
-        this._chart.update(this.stats, merge({}, defaultOptions, this.options))
+        this._chart.update(this.stats, merge({}, defaultOptions, this.options, this.responsiveOptions))
       })
     }
   }
