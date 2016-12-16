@@ -120,15 +120,16 @@ export default {
   font-weight:bold;
 }
 
-.page-item-name a, .page-item-url {
-  display: block;
+.page-item-name a, .page-item-url a {
+  display: inline-block;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  vertical-align: top;
 }
 
 .page-item-url {
-  color: #bbb;
   span, a {
     color: #bbb;
     font-size: 12px;
