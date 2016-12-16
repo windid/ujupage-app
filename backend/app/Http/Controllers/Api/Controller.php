@@ -12,8 +12,8 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     
-    public function err(string $msg = '错误') {
-        return response()->json(array_merge(['err' => $msg], ['result' => 'false']), 500);
+    public function err(string $msg = '错误', $code = 500) {
+        return response()->json(array_merge(['err' => $msg], ['result' => 'false']), $code);
     }
     
     public function dump(array $merge = []) {
