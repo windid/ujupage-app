@@ -79,12 +79,12 @@ export default {
     <div class="page-item-body"></div>
     <div class="page-item-footer">
       <div class="btn-group fr">
-        <div class="btn btn-default btn-sm" @click="$router.push('/leads/' + pageItem.id)">
+        <router-link class="btn btn-default btn-sm" :to="'/leads/' + pageItem.id">
           商机 <span class="glyphicon glyphicon-user"></span>
-        </div>
-        <div class="btn btn-default btn-sm" @click="$router.push('/stats/' + pageItem.id + '/overview')">
+        </router-link>
+        <router-link class="btn btn-default btn-sm" :to="'/stats/' + pageItem.id + '/overview'">
           分析 <span class="glyphicon glyphicon-stats"></span>
-        </div>
+        </router-link>
         <dropdown :show="showMenu" dir="up" @toggle="showMenu = !showMenu">
           <slot>
             <div class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
