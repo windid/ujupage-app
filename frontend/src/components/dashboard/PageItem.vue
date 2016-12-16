@@ -112,20 +112,28 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 
 .page-item-header{
   position:relative;
   padding:10px;
   font-weight:bold;
+  
+}
+
+.page-item-name a, .page-item-url {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.page-item-url span, .page-item-url a{
+.page-item-url {
   color: #bbb;
-  font-size: 12px;
+  span, a {
+    color: #bbb;
+    font-size: 12px;
+  }
 }
 
 .page-item-body{

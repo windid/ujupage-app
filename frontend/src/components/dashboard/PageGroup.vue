@@ -83,7 +83,7 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .page-group {
   background: #f9f9f9;
   cursor: pointer;
@@ -93,9 +93,11 @@ export default {
   position: relative;
   padding: 10px;
   font-weight: bold;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  .page-group-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .page-group-name > span {
