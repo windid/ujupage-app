@@ -21,7 +21,8 @@ export default {
   data () {
     return {
       show: false,
-      color: this.value
+      color: this.value,
+      hasFocus: false
     }
   },
   computed: mapGetters({
@@ -32,6 +33,15 @@ export default {
       this.color = newColor + ''
       this.$emit('input', this.color)
       this.show = false
+    },
+    inputFocus () {
+      if (!this.hasFocus) {
+        this.hasFocus = true
+        this.$emit('inputFocus')
+      }
+    },
+    inputBlur () {
+      this.hasFocus = false
     },
     inputColor (e) {
       let newColor = e.target.value
@@ -63,7 +73,7 @@ export default {
       </div>
       <div class="input-group color-block" @mousedown.stop>
         <div class="input-group-addon" :style="{background:getColor(color)}"> &nbsp; </div>
-        <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色" @focus="$emit('inputFocus')">
+        <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色" @mousedown.stop="inputFocus" @blur.stop="inputBlur">
         <div class="input-group-btn" @click="inputDone">
           <div class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></div>
         </div>

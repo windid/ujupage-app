@@ -147,6 +147,7 @@ export default {
       this.addingLink = false
       setTimeout(() => {
         restoreSelection(this.userSelection)
+        this.userSelection = null
         this.$refs.content.focus()
         if (this.linkAddress) {
           execCommand('createLink', false, this.linkAddress)
@@ -158,6 +159,7 @@ export default {
       this.addingLink = false
       setTimeout(() => {
         restoreSelection(this.userSelection)
+        this.userSelection = null
         this.$refs.content.focus()
       }, 10)
     },
@@ -261,6 +263,10 @@ export default {
 </template>
 
 <style>
+[contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
 .element-text-content {
   outline:none
 }
