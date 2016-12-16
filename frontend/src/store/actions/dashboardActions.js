@@ -109,7 +109,7 @@ export const setEditingPageGroup = ({ commit }, pageGroup) => {
 }
 
 export const renamePageGroup = ({ commit, state }, newName) => {
-  const pageGroup = state.pageGroups.editing
+  const pageGroup = state.dashboard.editingPageGroup
   API.pageGroup.update({ projectId: state.dashboard.currentProject.id, id: pageGroup.id }, { name: newName }).then(response => {
     commit(types.RENAME_PAGEGROUP, { pageGroup, newName })
   })

@@ -118,7 +118,6 @@ export default {
   position:relative;
   padding:10px;
   font-weight:bold;
-  
 }
 
 .page-item-name a, .page-item-url {
