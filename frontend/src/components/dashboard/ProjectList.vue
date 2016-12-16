@@ -27,7 +27,7 @@ export default {
           const project = {
             name: val || '未命名项目'
           }
-          this.createProject([project])
+          this.createProject(project)
         }
       })
     }

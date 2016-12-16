@@ -88,7 +88,7 @@ export default {
 <style scoped>
 .msg-mask {
   position: fixed;
-  z-index: 1100000;
+  z-index: 110000;
   top: 0;
   left: 0;
   width: 100%;

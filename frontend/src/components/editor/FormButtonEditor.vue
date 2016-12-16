@@ -59,7 +59,7 @@ export default {
 
 <template>
   <div>
-    <sidebar-part title="按钮文字" :expand="true">
+    <sidebar-part title="按钮文字" :expand="true" :quickSelector="false">
       <div slot="content">
         <div class="input-group" style="margin-bottom:10px;">
           <div class="input-group-addon"> 文字 </div>
