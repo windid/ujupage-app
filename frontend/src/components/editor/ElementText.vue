@@ -47,22 +47,23 @@ function restoreSelection (savedSel) {
 function detectSelection (el) {
   const r = {
     link: false,
-    color: null
+    color: []
   }
   if (window.getSelection) {
     var sel = window.getSelection()
     var nodes = el.getElementsByTagName('*')
     Array.prototype.forEach.call(nodes, (e) => {
-      // 检查是否包含 <a> 标签
-      if (e.tagName === 'A') {
-        if (sel.containsNode(e, true)) {
+      if (sel.containsNode(e, true)) {
+        // 检查是否包含 <a> 标签
+        if (!r.link && e.tagName === 'A') {
           r.link = true
         }
-      }
-      if (e.tagName === 'FONT') {
-        const color = e.getAttribute('color')
-        if (color) {
-          r.color = color
+        // 检查该范围内含有的颜色
+        if (e.tagName === 'FONT') {
+          const color = e.getAttribute('color')
+          if (color) {
+            r.color.push(color)
+          }
         }
       }
     })
@@ -169,6 +170,11 @@ export default {
     contentMouseUp (e) {
       const detection = detectSelection(this.$refs.content)
       this.linkSelected = detection.link
+      if (detection.color.length === 1) {
+        this.localColor = this.getColor(detection.color[0])
+      } else {
+        this.localColor = 1
+      }
     },
     colorInputFocus () {
       this.userSelection = saveSelection()
@@ -177,6 +183,7 @@ export default {
       if (!fromInputElement) {
         if (this.userSelection) {
           restoreSelection(this.userSelection)
+          this.userSelection = null
         }
         this.styleColor(this.getColor(val))
       }
