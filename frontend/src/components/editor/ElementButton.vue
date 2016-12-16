@@ -83,7 +83,7 @@ export default {
     <div slot="content" :class="{'element-button-text': !localElement.image}"
       @dblclick="edit" 
       :style="buttonStyles">
-      <img v-if="localElement.image" :src="localElement.image" :style="{width: '100%', height: 'auto'}" @mousedown.prevent>
+      <img v-if="localElement.image" :src="localElement.image" :style="{width: 'auto', 'max-width':'100%', height:'auto'}" @mousedown.prevent>
       <span v-else>{{localElement.text}}</span>
     </div>
     
