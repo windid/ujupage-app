@@ -132,6 +132,8 @@ export default {
 <style scoped>
 .color-type {
   float: left;
+  margin: 0 5px;
+  padding: 5px 0;
   transition: border-color .3s ease;
 }
 
@@ -146,7 +148,6 @@ export default {
 
 .color-selector {
   float: left;
-  margin: 5px;
   border-radius: 50%;
   cursor: pointer;
   transform: rotate(45deg);
