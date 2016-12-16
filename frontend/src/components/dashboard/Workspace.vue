@@ -58,9 +58,9 @@ export default {
     </div>
     <transition-group name="page-list" mode="out-in" tag="div">
       <template v-if="currentPageGroup.is_default === 1">
-        <page-group v-for="pageGroup in pageGroups" :key="pageGroup.id" :page-group="pageGroup" class="page-list-item"></page-group>
+        <page-group v-for="pageGroup in pageGroups" :key="'group' + pageGroup.id" :page-group="pageGroup" class="page-list-item"></page-group>
       </template>
-      <page-item v-for="pageItem in pages" :key="pageItem.id" :page-item="pageItem" class="page-list-item"></page-item>
+      <page-item v-for="pageItem in pages" :key="'item' + pageItem.id" :page-item="pageItem" class="page-list-item"></page-item>
     </transition-group>
     <div style="clear: both"></div>
   </div>
