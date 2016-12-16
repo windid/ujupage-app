@@ -81,7 +81,7 @@ export default {
         }
       },
       mainColor: 'grey',
-      show: true
+      show: false
     }
   },
   computed: mapGetters({
