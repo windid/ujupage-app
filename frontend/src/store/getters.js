@@ -17,7 +17,7 @@ export const projectMembers = state => state.dashboard.projectMembers
 
 export const projectAdmins = state => state.dashboard.projectMembers.filter(m => m.pivot.role === 'admin')
 
-export const isProjectAdmin = state => state.dashboard.projectMembers.filter(m => m.pivot.role === 'admin' && m.id === state.user.current.id).length > 0
+export const isProjectAdmin = state => state.dashboard.projectMembers.some(m => m.pivot.role === 'admin' && m.id === state.user.current.id)
 
 export const projectMembersInvited = state => state.dashboard.projectMembersInvited
 

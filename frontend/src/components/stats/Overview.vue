@@ -63,8 +63,10 @@ export default {
       return {
         tooltipData: this.chartData,
         axisX: {
-          labelInterpolationFnc: function (value) {
-            return moment(value, 'YY-MM-DD').format('MM-DD')
+          labelInterpolationFnc: function (value, index, labels) {
+            const len = labels.length
+            const step = len > 16 ? Math.round(len / 10) : 1
+            return index % step === 0 ? moment(value, 'YY-MM-DD').format('MM-DD') : ''
           }
         },
         axisY: {

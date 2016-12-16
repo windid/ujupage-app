@@ -5,8 +5,7 @@
 
   const testChinese = (str) => {
     const re = /[^\u4e00-\u9fa5]/
-    if (re.test(str)) return false
-    return true
+    return !re.test(str)
   }
 
   export default {

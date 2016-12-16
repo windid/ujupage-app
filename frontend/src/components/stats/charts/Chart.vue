@@ -37,7 +37,7 @@ $legend-mark-tooltip-size: 12px;
   color: $chart-tooltip-color;
   pointer-events: none;
   opacity: 0;
-  transition: opacity .2s ease;
+  transition: all .2s ease;
   border-radius: 2px;
   z-index: 2;
   white-space: nowrap;
