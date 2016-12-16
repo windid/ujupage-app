@@ -39,6 +39,10 @@ export default {
         newColor = '#' + newColor
       }
       this.color = newColor
+      this.$emit('input', this.color, true)
+    },
+    inputDone () {
+      this.show = false
       this.$emit('input', this.color)
     }
   }
@@ -57,10 +61,10 @@ export default {
         <div class="color-block common-color-block" @click="setColor('')" :class="{'selected':color === ''}">透</div>
         <div style="clear:both"></div>
       </div>
-      <div class="input-group color-block">
+      <div class="input-group color-block" @mousedown.stop>
         <div class="input-group-addon" :style="{background:getColor(color)}"> &nbsp; </div>
-        <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色">
-        <div class="input-group-btn" @click="show=false">
+        <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色" @focus="$emit('inputFocus')">
+        <div class="input-group-btn" @click="inputDone">
           <div class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></div>
         </div>
       </div>
