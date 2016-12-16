@@ -1,6 +1,6 @@
 import API from '../../API'
 import * as types from '../mutation-types'
-import { merge } from 'lodash'
+import { merge, find } from 'lodash'
 import elementTypes from '../../config/editorElementTypes'
 import defaultSection from '../../config/editorSection'
 
@@ -13,7 +13,7 @@ export const editorInit = ({ commit, state }, [route, callback = false]) => {
       page.variations = response.data
       commit(types.LOAD_PAGE, { page })
       const variationId = route.params.variationId || page.variations[0].id
-      const variation = page.variations.find(v => v.id === parseInt(variationId))
+      const variation = find(page.variations, v => v.id === parseInt(variationId))
       loadVariation({ commit, state }, [variation, callback])
     })
   })
