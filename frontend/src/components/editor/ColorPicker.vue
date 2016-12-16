@@ -73,7 +73,7 @@ export default {
       </div>
       <div class="input-group color-block" @mousedown.stop>
         <div class="input-group-addon" :style="{background:getColor(color)}"> &nbsp; </div>
-        <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色" @focus="inputFocus" @blur="inputBlur">
+        <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色" @mousedown.stop="inputFocus" @blur.stop="inputBlur">
         <div class="input-group-btn" @click="inputDone">
           <div class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></div>
         </div>
