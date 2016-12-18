@@ -60,7 +60,7 @@ class TemplateController extends Controller {
     * 
     */    
     public function index() {
-        $tags = explode(',', request('tags', []));
+        $tags = explode(',', request('tags', ''));
         array_walk($tags, [$this, 'toInt']);
         
         $templates = $this->hubTemplate

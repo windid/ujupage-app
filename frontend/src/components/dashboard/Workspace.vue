@@ -31,19 +31,6 @@ export default {
     },
     goToDefault () {
       this.$store.dispatch('switchPageGroup', [this.defaultPageGroup])
-    },
-    newPage () {
-      this.$store.dispatch('getInput', {
-        header: '请输入页面名称',
-        onConfirm: (val) => {
-          const page = {
-            name: val || '未命名页面',
-            group_id: this.currentPageGroup.id
-          }
-          this.createPage(page)
-          // this.$store.dispatch('createPage', page)
-        }
-      })
     }
   }
 }
@@ -52,7 +39,8 @@ export default {
 <template>
   <div id="workspace" class="content-body">
     <div class="workspace-nav">
-      <div class="btn btn-primary" @click="newPage">新建着陆页 <span class="glyphicon glyphicon-file"></span></div>
+      <!-- <div class="btn btn-primary" @click="newPage">新建着陆页 <span class="glyphicon glyphicon-file"></span></div> -->
+      <router-link to="/templates/all" class="btn btn-primary">新建着陆页 <span class="glyphicon glyphicon-file"></span></router-link>
       <div v-show="currentPageGroup.is_default === 1" class="btn btn-default" title="新建文件夹" @click.stop="newPageGroup"><span class="glyphicon glyphicon-plus"></span> <span class="glyphicon glyphicon-folder-open"></span></div>
       <div v-show="currentPageGroup.name !== 'default'" class="btn btn-default" @click="goToDefault()"><span class="glyphicon glyphicon-level-up"></span> 返回上层</div>
     </div>
