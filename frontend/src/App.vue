@@ -1,6 +1,9 @@
 <script>
 import MessageBox from './components/ui/MessageBox.vue'
 import Spinner from './components/ui/Spinner.vue'
+import Vue from 'vue'
+import { Loading } from 'element-ui'
+Vue.use(Loading)
 
 export default {
   name: 'App',
