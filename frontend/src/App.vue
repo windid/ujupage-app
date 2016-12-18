@@ -57,6 +57,10 @@ body {
   background: #f6f6f6;
 }
 
+.content-header h4 {
+  display: inline-block;
+}
+
 .content-body {
   min-height: 300px;
   padding: 10px 20px;
