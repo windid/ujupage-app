@@ -44,6 +44,13 @@ function restoreSelection (savedSel) {
   }
 }
 
+function clearSelection () {
+  if (window.getSelection) {
+    const sel = window.getSelection()
+    sel.removeAllRanges()
+  }
+}
+
 function detectSelection (el) {
   const r = {
     link: false,
@@ -123,6 +130,8 @@ export default {
         this.modifyElement([this.elementId, this.localElement])
       }
       this.addingLink = false
+      this.userSelection = null
+      clearSelection()
     },
     styleColor (color) {
       execCommand('foreColor', false, color)
@@ -267,8 +276,18 @@ export default {
   -webkit-user-select: text;
   user-select: text;
 }
+[contenteditable="false"] {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; 
+}
 .element-text-content {
   outline:none
+}
+.element-text-content *::selection {
+  background: #337ab7;
+  color: #fff;
 }
 
 .element-text-content p{
