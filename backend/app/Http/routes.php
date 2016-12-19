@@ -630,6 +630,13 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
         Route::get('template/copy/{template_id}', ['as' => '.hub.template.copy', 'uses' => 'TemplateController@copy']);
         
         /**
+        * GET api/hub/template/preview/{template_id} 预览模板
+        * @return StatusCode 200
+        * @return string $content 页面内容
+        */ 
+        Route::get('template/preview/{template_id}', ['as' => '.hub.template.preview', 'uses' => 'TemplateController@preview']);
+        
+        /**
         * GET api/hub/template 获取模板库
         * tags 标签ID 多选:1,2,3
         * @return StatusCode 200

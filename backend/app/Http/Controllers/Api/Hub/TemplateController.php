@@ -60,9 +60,10 @@ class TemplateController extends Controller {
     * 
     */    
     public function index() {
-        $tags = explode(',', request('tags', ''));
+        $tags = request()->has('tags') ? explode(',', request('tags')) : [];
         array_walk($tags, [$this, 'toInt']);
         
+        \DB::enableQueryLog();
         $templates = $this->hubTemplate
                 ->join('hub_template_tag_relateds', 'template_id', '=', $this->hubTemplate->getTable() . '.id')
                 ->groupBy($this->hubTemplate->getTable() . '.id')
@@ -71,6 +72,7 @@ class TemplateController extends Controller {
         if (!empty($tags)) {
             $templates = $templates->whereIn('tag_id', $tags);
         }
+        
         return $this->successOK($templates->get()->toArray());
     }
     
@@ -198,6 +200,25 @@ class TemplateController extends Controller {
             }  
         }  
         return '版本 '.$result; 
+    }
+    
+    /**
+     * GET api/hub/template/preview/{template_id} 预览模板
+     * @return StatusCode 200
+     * @return string $content 页面内容
+     */
+    public function preview($template_id) {
+        $template = $this->hubTemplate->find($template_id);
+        if (!$template) {
+            return $this->errorNotFound();
+        }
+        
+        $templateVariation = $this->pageVariation->find($template->variation_id);
+        if (!$templateVariation) {
+            return $this->errorNotFound();
+        }
+        
+        return $templateVariation->html;
     }
 }
     
