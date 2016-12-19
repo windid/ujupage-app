@@ -67,7 +67,7 @@
         this.weights = [...weights]
       },
       inputWeight (e) {
-        this.changeWeight(parseInt(e.target.dataset['index']), parseInt(e.target.value) || 0)
+        this.changeWeight(parseInt(e.target.getAttribute('data-index')), parseInt(e.target.value) || 0)
       }
     },
     created () {
