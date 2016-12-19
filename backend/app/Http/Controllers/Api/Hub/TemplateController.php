@@ -201,5 +201,24 @@ class TemplateController extends Controller {
         }  
         return '版本 '.$result; 
     }
+    
+    /**
+     * GET api/hub/template/preview/{template_id} 预览模板
+     * @return StatusCode 200
+     * @return string $content 页面内容
+     */
+    public function preview($template_id) {
+        $template = $this->hubTemplate->find($template_id);
+        if (!$template) {
+            return $this->errorNotFound();
+        }
+        
+        $templateVariation = $this->pageVariation->find($template->variation_id);
+        if (!$templateVariation) {
+            return $this->errorNotFound();
+        }
+        
+        return $templateVariation->html;
+    }
 }
     
