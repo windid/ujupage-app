@@ -217,15 +217,16 @@ class TemplateController extends Controller {
         if (!$templateVariation) {
             return $this->errorNotFound();
         }
+        $content = \App\Services\ParseHtml::decode($templateVariation->toArray());
         if (request()->has('color')) {
             $templateVariation = $templateVariation->toArray();
             $content = json_decode($templateVariation['html_json'],true);
             $content['colorSet'] = explode(',', request('color', ''));
            
             $templateVariation['html_json'] = $content;
-            return \App\Services\ParseHtml::decode($templateVariation);
+            $content = \App\Services\ParseHtml::decode($templateVariation);
         }
-        return \App\Services\ParseHtml::decode($templateVariation);
+        return view('preview.variation', compact('content'));
     }
 }
     
