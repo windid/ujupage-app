@@ -40,7 +40,7 @@ export default {
   <div id="workspace" class="content-body">
     <div class="workspace-nav">
       <!-- <div class="btn btn-primary" @click="newPage">新建着陆页 <span class="glyphicon glyphicon-file"></span></div> -->
-      <router-link to="/templates/all" class="btn btn-primary">新建着陆页 <span class="glyphicon glyphicon-file"></span></router-link>
+      <router-link :to="'/templates/all?gid=' + currentPageGroup.id" class="btn btn-primary">新建着陆页 <span class="glyphicon glyphicon-file"></span></router-link>
       <div v-show="currentPageGroup.is_default === 1" class="btn btn-default" title="新建文件夹" @click.stop="newPageGroup"><span class="glyphicon glyphicon-plus"></span> <span class="glyphicon glyphicon-folder-open"></span></div>
       <div v-show="currentPageGroup.name !== 'default'" class="btn btn-default" @click="goToDefault()"><span class="glyphicon glyphicon-level-up"></span> 返回上层</div>
     </div>
