@@ -196,24 +196,41 @@ export default {
       const self = this.$el.getBoundingClientRect()
       const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
       const box = document.getElementById(boxContainer).getBoundingClientRect()
-      if (direction === 'right') {
+      if (direction === 'right' || direction === 'bottom') {
         this.widthMost = box.right - self.left
-      } else if (direction === 'left') {
-        this.widthMost = self.right - box.left
-      } else if (direction === 'top') {
-        this.heightMost = self.bottom - box.top
-      } else if (direction === 'bottom') {
         this.heightMost = box.bottom - self.top
+      } else if (direction === 'left' || direction === 'top') {
+        this.widthMost = self.right - box.left
+        this.heightMost = self.bottom - box.top
       }
       this.$emit('resize-start', direction)
     },
     resizeAction (direction, saveToStore, size) {
+      const width = parseInt(this.$el.style.width)
+      const height = parseInt(this.$el.style.height)
+      let newWidth, newHeight
       if (direction === 'top' || direction === 'bottom') {
-        size = Math.min(this.heightMost, size)
-        this.$el.style.height = `${size}px`
+        newHeight = Math.min(this.heightMost, size)
+        if (this.resize.aspectRatio) {
+          newWidth = newHeight * width / height
+          if (newWidth > this.widthMost) {
+            newWidth = this.widthMost
+            newHeight = newWidth * height / width
+          }
+          this.$el.style.width = `${newWidth}px`
+        }
+        this.$el.style.height = `${newHeight}px`
       } else if (direction === 'left' || direction === 'right') {
-        size = Math.min(this.widthMost, size)
-        this.$el.style.width = `${size}px`
+        newWidth = Math.min(this.widthMost, size)
+        if (this.resize.aspectRatio) {
+          newHeight = newWidth * height / width
+          if (newHeight > this.heightMost) {
+            newHeight = this.heightMost
+            newWidth = newHeight * width / height
+          }
+          this.$el.style.height = `${newHeight}px`
+        }
+        this.$el.style.width = `${newWidth}px`
       }
       if (saveToStore) {
         // resize ends

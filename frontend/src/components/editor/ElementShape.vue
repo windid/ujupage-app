@@ -15,6 +15,10 @@ export default {
       resize: {
         handles: this.element.subType === 'line' ? 'e' : (this.element.subType === 'vline' ? 's' : 's,e'),
         aspectRatio: this.element.subType === 'circle'
+      },
+      constraints: {
+        minHeight: 6,
+        minWidth: 6
       }
     }
   },
@@ -80,6 +84,7 @@ export default {
     :draggable="draggable" 
     :resize="resize" 
     :resizable="resizable" 
+    :dimensionContraint="constraints"
     :fixed-editable="true"
     @change-button-group="changeButtonGroup" 
     @change-draggable="changeDraggable" 
