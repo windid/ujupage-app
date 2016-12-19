@@ -315,10 +315,16 @@ const getElementTop = (element) => {
       <slot name="content"></slot>
     </div>
     <template v-if="resizable">
-      <resizer class="resizable-n" v-if="this.hasResizer('n')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'top'" :minSize="sizeRange.minHeight"/>
-      <resizer class="resizable-e" v-if="this.hasResizer('e')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'right'" :minSize="sizeRange.minWidth" />
-      <resizer class="resizable-s" v-if="this.hasResizer('s')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'bottom'" :minSize="sizeRange.minHeight"/>
-      <resizer class="resizable-w" v-if="this.hasResizer('w')" :autoStyle="false" @resize-start="resizeStart" @resize-end="resizeAction" @resizing="resizeAction" :side="'left'" :minSize="sizeRange.minWidth" />
+      <resizer v-for="(side, dir) in {'n': 'top', 'e': 'right', 's': 'bottom', 'w': 'left'}" 
+        v-if="hasResizer(dir)" 
+        :class="'resizable-' + dir" 
+        :autoStyle="false" 
+        @resize-start="resizeStart" 
+        @resize-end="resizeAction" 
+        @resizing="resizeAction" 
+        :side="side" 
+        :minSize="sizeRange.minHeight"
+      />
     </template>
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
@@ -413,9 +419,8 @@ const getElementTop = (element) => {
   z-index: 101000;
 }
 
-.is-dragging {
+.resize-handle {
   z-index: 100000;
-  cursor: move;
 }
 
 .resizable-e {
