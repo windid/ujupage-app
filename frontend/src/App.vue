@@ -1,6 +1,9 @@
 <script>
 import MessageBox from './components/ui/MessageBox.vue'
 import Spinner from './components/ui/Spinner.vue'
+import Vue from 'vue'
+import { Loading } from 'element-ui'
+Vue.use(Loading)
 
 export default {
   name: 'App',
@@ -55,6 +58,10 @@ body {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   background: #f6f6f6;
+}
+
+.content-header h4 {
+  display: inline-block;
 }
 
 .content-body {

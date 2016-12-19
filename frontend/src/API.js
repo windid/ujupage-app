@@ -23,6 +23,8 @@ export default {
     duplicate: { method: 'POST', url: 'pages/{pageId}/variations{/id}/copy' }
   }),
 
+  template: Vue.resource('hub/template{/id}'),
+
   image: Vue.resource('storage/image{/id}'),
 
   imageFolder: Vue.resource('storage/folder{/id}'),

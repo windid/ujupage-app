@@ -105,10 +105,6 @@ export default {
 
 <style scoped>
 
-.content-header h4 {
-  display: inline-block;
-}
-
 .data-filter {
   border-bottom: 1px solid #e9e9e9;
   padding: 10px 20px;

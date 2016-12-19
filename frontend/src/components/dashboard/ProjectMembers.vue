@@ -18,6 +18,7 @@
       invite () {
         this.$store.dispatch('getInput', {
           header: '请输入新成员的邮箱地址',
+          inputAddon: '<span class="glyphicon glyphicon-user"></span>',
           onConfirm: (email) => {
             const member = {
               email: email
