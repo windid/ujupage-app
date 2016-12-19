@@ -39,9 +39,9 @@
         API.page.split({ id: this.pageId }, { quota: quota }).then(response => {
           this.$emit('update-split', quota)
           this.$emit('close')
-          this.loadingDone()
-        }, response => {
+        }).catch(() => {
           this.error = '保存失败，请稍后再试！'
+        }).finally(() => {
           this.loadingDone()
         })
       },
