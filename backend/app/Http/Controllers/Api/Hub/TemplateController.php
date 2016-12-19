@@ -225,7 +225,7 @@ class TemplateController extends Controller {
             $templateVariation['html_json'] = $content;
             return \App\Services\ParseHtml::decode($templateVariation);
         }
-        return $templateVariation->html;
+        return \App\Services\ParseHtml::decode($templateVariation->html);
     }
 }
     
