@@ -11,8 +11,11 @@ class ParseHtml {
     protected static $elements = array('pc'=>array(),'mobile'=>array());
     
     public static function decode($array) {
-        $content = json_decode($array['html_json'],true);
-
+        if (is_array($array['html_json'])) {
+            $content = $array['html_json'];
+        } else {
+            $content = json_decode($array['html_json'],true);
+        }
         if (!isset($content['colorSet'])){
             return false;
         }
