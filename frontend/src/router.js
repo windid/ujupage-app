@@ -24,6 +24,8 @@ import Preview from './components/preview/Preview'
 import Dashboard from './components/dashboard/Dashboard'
 import Account from './components/account/Account'
 import Stats from './components/stats/Stats'
+import TemplateList from './components/template/TemplateList'
+import Template from './components/template/Template'
 import Leads from './components/leads/Leads'
 import Register from './components/auth/Register'
 import ForgetPassword from './components/auth/ForgetPassword'
@@ -54,7 +56,9 @@ const router = new VueRouter({
         { path: '', name: 'dashboard', component: Dashboard, meta: { preFetch: 'dashboardInit' }},
         { path: '/account', name: 'account', component: Account },
         { path: '/leads/:pageId', name: 'leads', component: Leads },
-        { path: '/stats/:pageId/:module', name: 'stats', component: Stats, meta: { preFetch: 'statsInit' }}
+        { path: '/stats/:pageId/:module', name: 'stats', component: Stats, meta: { preFetch: 'statsInit' }},
+        { path: '/templates/:tag', name: 'templates', component: TemplateList },
+        { path: '/template/:templateId', name: 'template', component: Template }
       ]
     }
   ]

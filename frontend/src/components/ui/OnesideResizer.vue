@@ -50,6 +50,15 @@ export default {
     horizontal: function () {
       return this.side === 'left' || this.side === 'right'
     },
+    cursor: function () {
+      const s = this.style.cursor
+      if (s) return s
+      if (this.horizontal) {
+        return 'ew-resize'
+      } else {
+        return 'ns-resize'
+      }
+    },
     plus: function () {
       return this.side === 'right' || this.side === 'bottom'
     },
@@ -103,7 +112,7 @@ export default {
         } else {
           this.oldCursor = null
         }
-        document.body.style.cursor = this.style.cursor
+        document.body.style.cursor = this.cursor
         document.addEventListener('mousemove', this.drag)
         document.addEventListener('mouseup', this.dragEnd)
         this.$emit('resize-start', this.side)

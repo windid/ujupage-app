@@ -606,4 +606,48 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
         
         
     });
+    
+    Route::group(['namespace' => 'Hub', 'prefix' => 'hub'], function(){
+        /**
+         * GET api/hub/template/tag 获取标签
+         * @return StatusCode 200
+         * @return {
+         *   [
+         *      id 标签ID
+         *      tag 名称
+         *   ]
+         * }
+         */
+        Route::get('template/tag', ['as' => '.hub.template.tag', 'uses' => 'TemplateController@tag']);
+        
+        /**
+        * GET api/hub/template/copy/{template_id} 复制模板到项目中
+        * group_id (必选) 分组ID
+        * page_name (必选) 页面名称
+        * page_id (可选) 页面ID
+        * @return StatusCode 200
+        */ 
+        Route::get('template/copy/{template_id}', ['as' => '.hub.template.copy', 'uses' => 'TemplateController@copy']);
+        
+        /**
+        * GET api/hub/template/preview/{template_id} 预览模板
+        * @return StatusCode 200
+        * @return string $content 页面内容
+        */ 
+        Route::get('template/preview/{template_id}', ['as' => '.hub.template.preview', 'uses' => 'TemplateController@preview']);
+        
+        /**
+        * GET api/hub/template 获取模板库
+        * tags 标签ID 多选:1,2,3
+        * @return StatusCode 200
+        * @return {
+        *    id 模板ID
+        *    image_url 图片地址
+        *  }
+        * }
+        * 
+        */    
+        Route::resource('template', 'TemplateController');
+    });
+    
 });

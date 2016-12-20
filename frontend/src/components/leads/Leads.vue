@@ -131,15 +131,12 @@ export default {
   <div class="content-header">
     <h4>商机列表 - {{page.name}} &nbsp; 
       <div class="btn btn-default" @click="download"><span class="glyphicon glyphicon-save"></span></div>
-      <date-picker style="float:right;" v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>
     </h4>
+    <date-picker style="float:right; margin-top: 10px" v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>
   </div>
-  <div class="content-body">
-    <div v-if="loading" class="loading">
-      <div class="loading-icon"></div>
-    </div>
+  <div class="content-body" v-loading="loading">
   
-    <div v-if="!loading" class="leads">
+    <div class="leads">
       <p v-if="leads.length === 0">该页面暂无表单提交数据</p>
       <table v-if="leads.length > 0" class="table table-bordered table-striped table-hover">
         <thead>
