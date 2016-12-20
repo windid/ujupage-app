@@ -179,7 +179,7 @@ class TemplateController extends Controller {
         $pageVariation->save();
         $page->increment('variation_history');            
         
-        $this->successCreated();
+        $this->successCreated(['page_id' => $pageVariation->page_id, 'variation_id' => $pageVariation->id]);
     }
     
     /**
