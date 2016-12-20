@@ -141,6 +141,13 @@ class TemplateController extends Controller {
             return $this->errorUnauthorized();
         }
         
+        if (request()->has('color')) { 
+            $colorSet = explode(',', request('color', ''));
+            if (count($colorSet) != 5) {
+                return $this->err('color is error', 422);
+            }
+        }
+        
         if (request()->has('page_id')) {
             $page = $this->initPGP(request('page_id', 0));
             if (get_class($page) == 'Illuminate\Http\JsonResponse') {
@@ -180,8 +187,8 @@ class TemplateController extends Controller {
         if (request()->has('color')) {
             $templateVariation = $pageVariation->toArray();
             $templateVariation['html_json'] = json_decode($templateVariation['html_json'],true);
-            $templateVariation['html_json']['colorSet'] = explode(',', request('color', ''));
-           
+            $templateVariation['html_json']['colorSet'] = $colorSet;
+            
             $content = \App\Services\ParseHtml::decode($templateVariation);
             $pageVariation->html = view('preview.variation', compact('content'));
             $pageVariation->html_json = json_encode($templateVariation['html_json']);
