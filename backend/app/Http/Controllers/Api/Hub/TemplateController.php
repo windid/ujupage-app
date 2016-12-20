@@ -166,8 +166,7 @@ class TemplateController extends Controller {
         } else {
             return $this->err('page_id or page_name not be null', 422);
         }
-        
-        
+                
         $pageVariation = new PageVariation;
         $pageVariation->page_id = $page->id;
         $pageVariation->user_id = $this->user->id;
@@ -175,11 +174,22 @@ class TemplateController extends Controller {
         $pageVariation->setting = '[]';
         $pageVariation->html_json = $templateVariation->html_json;
         $pageVariation->html = $templateVariation->html;
-        $pageVariation->quota = 1;
+        $pageVariation->quota = 1;                
+        $pageVariation->save();
+                
+        if (request()->has('color')) {
+            $templateVariation = $pageVariation->toArray();
+            $templateVariation['html_json'] = json_decode($templateVariation['html_json'],true);
+            $templateVariation['html_json']['colorSet'] = explode(',', request('color', ''));
+           
+            $content = \App\Services\ParseHtml::decode($templateVariation);
+            $pageVariation->html = view('preview.variation', compact('content'));
+            $pageVariation->html_json = json_encode($templateVariation['html_json']);
+        }
         $pageVariation->save();
         $page->increment('variation_history');            
         
-        $this->successCreated();
+        return $this->successCreated(['page_id' => $pageVariation->page_id, 'variation_id' => $pageVariation->id]);
     }
     
     /**
