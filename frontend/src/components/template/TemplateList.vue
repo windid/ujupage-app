@@ -13,7 +13,7 @@
       }
     },
     methods: {
-      ...mapActions(['getInput', 'createPage']),
+      ...mapActions(['getInput', 'createPage', 'createEmptyVariation']),
       createEmptyPage () {
         if (this.pageGroupId) {
           this.getInput({
@@ -30,7 +30,9 @@
             }
           })
         } else if (this.pageId) {
-
+          this.createEmptyVariation([this.pageId, (variation) => {
+            this.$router.push('/editor/' + this.pageId + '/' + variation.id)
+          }])
         }
       }
     },

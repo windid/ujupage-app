@@ -1,9 +1,11 @@
 <script>
 import Dropdown from '../ui/Dropdown'
+import ColorSchemes from '../ui/ColorSchemes'
 
 export default {
   components: {
-    Dropdown
+    Dropdown,
+    ColorSchemes
   },
   props: {
     version: {
@@ -18,6 +20,9 @@ export default {
   methods: {
     switchVersion (version) {
       this.$emit('switch-version', version)
+    },
+    updateColors (colorScheme) {
+      this.$emit('update-colors', colorScheme)
     }
   }
 }
@@ -44,6 +49,14 @@ export default {
       <div class="btn-group">
         <div class="btn btn-default">
           <span class="glyphicon glyphicon-question-sign"></span>
+        </div>
+      </div>
+
+      <color-schemes @update-colors="updateColors"></color-schemes>
+
+      <div class="btn-group">
+        <div class="btn btn-primary" @click="$emit('use-template')">
+          使用这个模板
         </div>
       </div>
     </div>

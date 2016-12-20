@@ -34,12 +34,13 @@ export const loadVariation = ({ commit, state }, [variation, callback = false]) 
 }
 
 // 新建版本
-export const createVariation = ({ commit, state }) => {
-  API.variation.save({ pageId: state.editor.page.id }, {}).then(response => {
+export const createEmptyVariation = ({ commit, state }, [pageId, callback = false]) => {
+  API.variation.save({ pageId }, {}).then(response => {
     const variation = response.data
     variation.quota = 1
     commit(types.CREATE_VARIATION, { variation })
-    loadVariation({ commit, state }, [variation])
+    callback && callback(variation)
+    // loadVariation({ commit, state }, [variation])
   })
 }
 
@@ -47,6 +48,7 @@ export const createVariation = ({ commit, state }) => {
 export const duplicateVariation = ({ commit, state }, variation) => {
   API.variation.duplicate({ pageId: state.editor.page.id, id: variation.id }, {}).then(response => {
     const variation = response.data
+    variation.quota = 1
     commit(types.CREATE_VARIATION, { variation })
     loadVariation({ commit, state }, [variation])
   })

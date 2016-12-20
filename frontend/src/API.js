@@ -20,10 +20,12 @@ export default {
   }),
 
   variation: Vue.resource('pages/{pageId}/variations{/id}', {}, {
-    duplicate: { method: 'POST', url: 'pages/{pageId}/variations{/id}/copy' }
+    duplicate: { method: 'POST', url: 'pages/{pageId}/variations/{id}/copy' }
   }),
 
-  template: Vue.resource('hub/template{/id}'),
+  template: Vue.resource('hub/template{/id}', {}, {
+    copy: { method: 'GET', url: 'hub/template/copy/{id}' }
+  }),
 
   image: Vue.resource('storage/image{/id}'),
 

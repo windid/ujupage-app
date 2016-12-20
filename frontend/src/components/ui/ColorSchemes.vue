@@ -1,11 +1,11 @@
 <script>
 import Dropdown from '../ui/Dropdown.vue'
-import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     Dropdown
   },
+  props: ['colorSet'],
   data () {
     return {
       // colorSchemes: [
@@ -83,13 +83,7 @@ export default {
       mainColor: 'grey',
       show: false
     }
-  },
-  computed: mapGetters({
-    colorSet: 'editorColorSet'
-  }),
-  methods: mapActions({
-    setColorSet: 'setColorSet'
-  })
+  }
 }
 </script>
 
@@ -107,14 +101,14 @@ export default {
           </div>
         </div>
         <div class="color-schemes-wrapper">
-          <div v-for="colorScheme in colorTypes[mainColor].colorSchemes" @click="setColorSet(colorScheme)">
+          <div v-for="colorScheme in colorTypes[mainColor].colorSchemes" @click="$emit('update-colors', colorScheme)">
             <ul class="list-inline color-schemes-group">
               <li v-for="color in colorScheme" :style="{background:color}" :title="color"></li>
             </ul>
           </div>
         </div>
         
-        <div>
+        <div v-if="!!colorSet">
           <div style="text-align:center">当前选择</div>
           <ul class="list-inline color-schemes-group">
             <li v-for="color in colorSet" :style="{background:color}" :title="color"></li>

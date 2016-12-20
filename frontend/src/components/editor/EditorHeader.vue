@@ -1,5 +1,5 @@
 <script>
-import ColorSchemes from './ColorSchemes'
+import ColorSchemes from '../ui/ColorSchemes'
 import EditorSettings from './EditorSettings'
 import AbTest from './AbTest'
 import AbSplit from '../common/AbSplit'
@@ -25,7 +25,8 @@ export default {
     undoButton: 'undoButton',
     redoButton: 'redoButton',
     saveStatus: 'saveStatus',
-    page: 'editingPage'
+    page: 'editingPage',
+    colorSet: 'editorColorSet'
   }),
   methods: {
     ...mapActions({
@@ -38,7 +39,8 @@ export default {
       warning: 'warning',
       setURL: 'setURL',
       publishPage: 'publishPage',
-      traficSplit: 'traficSplit'
+      traficSplit: 'traficSplit',
+      setColorSet: 'setColorSet'
     }),
     publish () {
       this.saveNotice(() => {
@@ -140,7 +142,7 @@ export default {
         </tooltip>
       </div>
       
-      <color-schemes></color-schemes>
+      <color-schemes :color-set="colorSet" @update-colors="setColorSet"></color-schemes>
 
       <div class="btn-group">
         <div class="btn btn-default" @click="showSettings = true">设置 <span class="glyphicon glyphicon-cog"></span></div>
