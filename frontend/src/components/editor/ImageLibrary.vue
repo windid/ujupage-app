@@ -1,12 +1,14 @@
 <script>
 import Modal from '../ui/Modal'
+import { Tooltip } from 'element-ui'
 import API from '../../API'
 import { mapGetters, mapActions } from 'vuex'
 import { merge, find } from 'lodash'
 
 export default {
   components: {
-    Modal
+    Modal,
+    Tooltip
   },
   data () {
     return {
@@ -15,19 +17,22 @@ export default {
       currentImageIndex: null,
       images: [],
       folders: [],
+      projectFolders: [],
+      personalFolders: [],
       viewingImage: {},
       currentFolder: {},
-      uploading: []
+      uploading: [],
+      projectId: 0
     }
   },
   computed: {
     ...mapGetters({
       'imageLibrary': 'imageLibrary',
       'page': 'editingPage'
-    }),
-    projectId () {
-      return (this.currentTab === 'project') ? this.page.project_id : 0
-    }
+    })
+    // projectId () {
+    //   return (this.currentTab === 'project') ? this.page.project_id : 0
+    // }
   },
   methods: {
     ...mapActions({
@@ -45,16 +50,19 @@ export default {
       this.imageLibrary.onCancel && this.imageLibrary.onCancel()
       this.closeImageLibrary()
     },
-    switchTab (tab) {
+    myImage () {
       this.mainStatus = 'loading'
-      this.currentTab = tab
-      API.imageFolder.get({ project_id: this.projectId }).then(response => {
-        this.folders = response.data
-        this.currentFolder = find(this.folders, f => f.is_default === 1) || this.folders[0]
+      this.currentTab = 'my'
+      API.imageFolder.get({ project_id: this.page.project_id }).then(response => {
+        this.projectFolders = response.data
+      })
+      API.imageFolder.get({ project_id: 0 }).then(response => {
+        this.personalFolders = response.data
+        this.currentFolder = find(this.personalFolders, f => f.is_default === 1) || this.personalFolders[0]
         this.switchFolder(this.currentFolder)
       })
     },
-    switchFolder (folder) {
+    switchFolder (folder, projectId = 0) {
       this.currentFolder = folder
       this.viewingImage = {}
       this.currentImageIndex = null
@@ -65,7 +73,7 @@ export default {
         this.mainStatus = 'failed'
       })
     },
-    addFolder () {
+    addFolder (projectId) {
       const vm = this
       this.getInput({
         header: '请输入新文件夹名',
@@ -73,12 +81,17 @@ export default {
         onConfirm (val) {
           const data = {
             dirname: val,
-            project_id: vm.projectId
+            project_id: projectId
           }
           API.imageFolder.save({}, data).then(response => {
             const folder = response.data
             folder.total_image = 0
-            vm.folders.push(folder)
+            if (projectId === 0) {
+              vm.personalFolders.push(folder)
+            } else {
+              vm.projectFolders.push(folder)
+            }
+            vm.currentFolder = folder
           })
         }
       })
@@ -102,15 +115,18 @@ export default {
         }
       })
     },
-    removeFolder (folder) {
+    removeFolder (folder, projectId) {
       const vm = this
       this.confirm({
         header: '确定删除？',
         content: '文件夹「' + folder.dirname + '」内的图片也将同时被全部删除。',
         onConfirm () {
           API.imageFolder.delete({ id: folder.id }).then(response => {
-            vm.folders.splice(vm.folders.indexOf(folder), 1)
-            vm.images = []
+            if (projectId === 0) {
+              vm.personalFolders.splice(vm.personalFolders.indexOf(folder), 1)
+            } else {
+              vm.projectFolders.splice(vm.projectFolders.indexOf(folder), 1)
+            }
           })
         }
       })
@@ -181,7 +197,7 @@ export default {
   watch: {
     'imageLibrary.show': function (show) {
       if (show) {
-        this.switchTab(this.currentTab)
+        this.myImage()
       }
     }
   }
@@ -190,11 +206,11 @@ export default {
 </script>
 
 <template>
-  <modal :show="imageLibrary.show" @close="close" width="990px" height="600px">
+  <modal :show="imageLibrary.show" @close="close" width="980px" height="600px">
     <div slot="header">
       <ul class="nav nav-pills">
-        <li :class="{active: currentTab === 'project'}" @click="switchTab('project')"><a href="javascript:;">项目图片库</a></li>
-        <li :class="{active: currentTab === 'my'}" @click="switchTab('my')"><a href="javascript:;">个人图片库</a></li>
+        <!-- <li :class="{active: currentTab === 'project'}" @click="switchTab('project')"><a href="javascript:;">项目图片库</a></li> -->
+        <li :class="{active: currentTab === 'my'}" @click="myImage"><a href="javascript:;">我的图片</a></li>
         <li :class="{active: currentTab === 'free'}"><a href="javascript:;" @click.prevent="currentTab = 'free'">免费图库</a></li>
       </ul>
     </div>
@@ -205,17 +221,36 @@ export default {
 
       <div v-show="mainStatus === 'imageList'" class="image-list" key="image-list">
         <div class="images-sidebar">
+          <h5>个人文件夹 
+            <tooltip content="只有您自己可见"><span class="glyphicon glyphicon-question-sign"></span></tooltip>
+          </h5>
           <div class="list-group">
-            <a v-for="(folder, index) in folders" class="list-group-item" href="javascript:;" :class="{ 'selected': folder === currentFolder }" @click="switchFolder(folder)">
+            <a v-for="(folder, index) in personalFolders" class="list-group-item" href="javascript:;" :class="{ 'selected': folder === currentFolder }" @click="switchFolder(folder)">
               &nbsp;
               <span class="folder-name"><span :class="'glyphicon glyphicon-folder-' + (folder === currentFolder ? 'open' : 'close')"></span> &nbsp; {{folder.dirname}}</span>
               <span class="badge">{{folder.total_image}}</span>
               <div class="btn-group" v-if="folder.is_default === 0">
                 <div class="btn btn-default" title="重命名" @click="renameFolder(folder)"><span class="glyphicon glyphicon-pencil"></span></div>
-                <div class="btn btn-danger" title="删除" @click="removeFolder(folder)"><span class="glyphicon glyphicon-trash"></span></div>
+                <div class="btn btn-danger" title="删除" @click="removeFolder(folder, 0)"><span class="glyphicon glyphicon-trash"></span></div>
               </div>
             </a>
-            <a href="javascript:;" class="list-group-item" style="text-align:center" @click="addFolder"> <span class="glyphicon glyphicon-plus"></span> </a>
+            <a href="javascript:;" class="list-group-item" style="text-align:center" @click="addFolder(0)"> <span class="glyphicon glyphicon-plus"></span> </a>
+          </div>
+
+          <h5>项目文件夹
+            <tooltip content="参与协作的项目成员可见"><span class="glyphicon glyphicon-question-sign"></span></tooltip>
+          </h5>
+          <div class="list-group">
+            <a v-for="(folder, index) in projectFolders" class="list-group-item" href="javascript:;" :class="{ 'selected': folder === currentFolder }" @click="switchFolder(folder, page.project_id)">
+              &nbsp;
+              <span class="folder-name"><span :class="'glyphicon glyphicon-folder-' + (folder === currentFolder ? 'open' : 'close')"></span> &nbsp; {{folder.dirname}}</span>
+              <span class="badge">{{folder.total_image}}</span>
+              <div class="btn-group" v-if="folder.is_default === 0">
+                <div class="btn btn-default" title="重命名" @click="renameFolder(folder)"><span class="glyphicon glyphicon-pencil"></span></div>
+                <div class="btn btn-danger" title="删除" @click="removeFolder(folder, page.project_id)"><span class="glyphicon glyphicon-trash"></span></div>
+              </div>
+            </a>
+            <a href="javascript:;" class="list-group-item" style="text-align:center" @click="addFolder(page.project_id)"> <span class="glyphicon glyphicon-plus"></span> </a>
           </div>
 
         </div>
@@ -299,7 +334,7 @@ export default {
   float:left;
   border-right:1px solid #ddd;
   padding-right:15px;
-  width: 200px;
+  width: 220px;
   height:100%;
 }
 
@@ -309,18 +344,17 @@ export default {
 
 .images-content{
   position: relative;
-  margin-left: 210px;
-  width: calc(100% - 210px);
+  margin-left: 230px;
+  width: calc(100% - 230px);
 }
 
 .image-item, .image-uploading {
   transition: all .3s ease;
   position: relative;
   float: left;
-  width: 156px;
-  padding: 3px;
+  width: 150px;
   margin: 0 13px 20px 13px;
-  height: 156px;
+  height: 150px;
   text-align: center;
   cursor: pointer;
   display: table;
@@ -344,7 +378,9 @@ export default {
 .image-item-operation{
   width: 150px;
   position: absolute;
-  bottom: 3px;
+  padding: 3px;
+  bottom: 0px;
+  background: rgba(210, 210, 210, .4);
 }
 
 .image-upload-button{
@@ -383,17 +419,24 @@ export default {
 
 .folder-name {
   float: left;
-  max-width: 120px;
+  max-width: 140px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .list-group-item.selected {
-  background: #f6f6f6;
+  background: #eee;
 }
 
-.list-group-item.selected::before {
+.list-group-item > .badge {
+  background-color: #ccc;
+}
+
+.list-group-item.selected > .badge {
+  background-color: #777;
+}
+/*.list-group-item.selected::before {
   position: absolute;
   left: 0;
   top: 0;
@@ -401,7 +444,7 @@ export default {
   background: #337ab7;
   width: 8px;
   height: 100%;
-}
+}*/
 
 .list-group-item > .btn-group {
   display: none;
