@@ -112,18 +112,12 @@ export default {
   border-radius: 10px;
   box-shadow: 0 0 8px #ddd;
   /* 禁止文本选择 */
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 }
 
 
 .toolbar-header {
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
+  border-radius: 10px 10px 0 0;
   background-color: #555;
   line-height: 35px;
   color: #fff;
@@ -132,14 +126,9 @@ export default {
 .toolbar-body {
   position: relative;
   overflow: hidden;
-  border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
+  border-radius: 0 0 10px 10px;
   border:1px solid #ccc;
   background-color:#fff;
-}
-
-.basic-tools {
-  position: relative;
 }
 
 .advanced-tools {
@@ -171,7 +160,6 @@ export default {
 
 .tool:hover {
   border-color: #98CFE9;
-  color: #333;
 }
 
 .tool span {
@@ -232,7 +220,7 @@ export default {
   border-right: 3px solid #BEE1F1;
 }
 
-.shape-box:hover, .shape-circle:hover, .shape-line:hover, .shape-vline:hover {
+.shape:hover, .shape-line:hover, .shape-vline:hover{
   border-color: #98CFE9;
 }
 
