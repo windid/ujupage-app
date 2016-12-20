@@ -27,7 +27,6 @@ export default {
     document.title = this.$store.getters.editingPage.name + ' - 编辑 - 聚页'
     this._unloadEvent = eventHandler.listen(window, 'beforeunload', e => {
       const msg = '您对该页面所作修改尚未保存，现在离开导致您所作的修改丢失，确定吗?'
-      e = e || window.event
       if (!this.saveStatus) {
         e.returnValue = msg
         return msg
