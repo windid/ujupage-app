@@ -63,22 +63,25 @@ export default {
 .modal-container {
   position: relative;
   margin: 0 auto;
-  margin-top:60px;
+  margin-top: 60px;
   background-color: #fff;
   border-radius: 6px;
+  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
 }
 
 .modal-header {
   height: 60px;
-  padding:12px;
+  padding: 12px;
+  background: #f6f6f6;
+  border-bottom: 1px solid #eee;
 }
 
 .modal-body {
-  height:calc(100% - 114px);
-  padding:12px;
-  background: #eee;
-  border:1px solid #ccc;
+  height: calc(100% - 114px);
+  padding: 12px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
   overflow: auto;
   position: relative;
 }

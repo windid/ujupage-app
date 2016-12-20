@@ -1,15 +1,8 @@
 <script>
-import Vue from 'vue'
 import Modal from '../ui/Modal'
 import API from '../../API'
 import { mapGetters, mapActions } from 'vuex'
 import { merge, find } from 'lodash'
-
-Vue.filter('imageThumbs', function (value) {
-  const arr = value.split('.')
-  const ext = arr[arr.length - 1]
-  return value + '@140w_140h.' + ext
-})
 
 export default {
   components: {
@@ -17,7 +10,7 @@ export default {
   },
   data () {
     return {
-      currentTab: 'project',
+      currentTab: 'my',
       mainStatus: 'loading',
       currentImageIndex: null,
       images: [],
@@ -45,8 +38,8 @@ export default {
     }),
     getThumbs (imageSrc) {
       const arr = imageSrc.split('.')
-      const ext = arr[arr.length - 1]
-      return imageSrc + '@140w_140h.' + ext
+      const ext = arr[arr.length - 1] || 'jpg'
+      return imageSrc + '@150w_150h.' + ext
     },
     close () {
       this.imageLibrary.onCancel && this.imageLibrary.onCancel()
@@ -197,12 +190,12 @@ export default {
 </script>
 
 <template>
-  <modal :show="imageLibrary.show" @close="close" width="1020px" height="600px">
+  <modal :show="imageLibrary.show" @close="close" width="990px" height="600px">
     <div slot="header">
       <ul class="nav nav-pills">
         <li :class="{active: currentTab === 'project'}" @click="switchTab('project')"><a href="javascript:;">项目图片库</a></li>
         <li :class="{active: currentTab === 'my'}" @click="switchTab('my')"><a href="javascript:;">个人图片库</a></li>
-        <!-- <li :class="{active: currentTab === 'store'}"><a href="#" @click="currentTab = 'store'">图片商店</a></li> -->
+        <li :class="{active: currentTab === 'free'}"><a href="javascript:;" @click.prevent="currentTab = 'free'">免费图库</a></li>
       </ul>
     </div>
     <div slot="body" class="images-wrapper">
@@ -222,15 +215,19 @@ export default {
                 <div class="btn btn-danger" title="删除" @click="removeFolder(folder)"><span class="glyphicon glyphicon-trash"></span></div>
               </div>
             </a>
+            <a href="javascript:;" class="list-group-item" style="text-align:center" @click="addFolder"> <span class="glyphicon glyphicon-plus"></span> </a>
           </div>
-          <div class="btn btn-default" @click="addFolder">新建文件夹 + </div>
+
         </div>
+
         <div class="images-content">
           <div v-for="(image, index) in images" class="image-item" v-bind:class="{selected: currentImageIndex === index}" @click="selectImage(index)" @dblclick="pickImage(index)" :key="index">
-            <img :src="getThumbs(image.url)" :alt="image.alt" style="max-width:140px;max-height:140px">
-            <div v-show="currentImageIndex === index" class="image-item-operation">
-              <div class="btn btn-primary btn-sm fl" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
-              <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div>
+            <div class="image-item-wrapper">
+              <img :src="getThumbs(image.url)" :alt="image.alt" style="max-width:150px;max-height:150px">
+              <div v-show="currentImageIndex === index" class="image-item-operation">
+                <div class="btn btn-primary btn-sm fl" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
+                <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div>
+              </div>
             </div>
           </div>
           <div v-for="item in uploading" class="image-uploading" :key="'uploading' + item">
@@ -239,7 +236,7 @@ export default {
             </div>
             <div>图片上传中</div>
           </div>
-          <div v-if="images.length === 0" key="empty">这个文件夹中暂时还没有图片。</div>
+          <div v-if="images.length === 0 && uploading.length === 0" key="empty">这个文件夹中暂时还没有图片。</div>
         </div>
       </div>
 
@@ -300,7 +297,7 @@ export default {
 
 .images-sidebar{
   float:left;
-  border-right:1px solid #ccc;
+  border-right:1px solid #ddd;
   padding-right:15px;
   width: 200px;
   height:100%;
@@ -316,27 +313,36 @@ export default {
   width: calc(100% - 210px);
 }
 
-.image-item, .image-uploading{
+.image-item, .image-uploading {
+  transition: all .3s ease;
   position: relative;
-  float:left;
-  width:146px;
+  float: left;
+  width: 156px;
   padding: 3px;
-  margin: 3px;
-  height:146px;
+  margin: 0 13px 20px 13px;
+  height: 156px;
   text-align: center;
   cursor: pointer;
+  display: table;
   background-color: #fff;
-  box-shadow: 0px 0px 8px #999;
+  border-radius: 4px;
+  box-shadow: 0 0 8px #ccc;
 }
 
-.image-item:hover, .image-uploading{
+.image-item-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.image-item:hover, .image-uploading:hover{
+  box-shadow: 0 2px 10px #aaa;
 }
 
 .image-item.selected{
 }
 
 .image-item-operation{
-  width: 140px;
+  width: 150px;
   position: absolute;
   bottom: 3px;
 }
@@ -400,7 +406,7 @@ export default {
 .list-group-item > .btn-group {
   display: none;
   position: absolute;
-  right: -40px;
+  right: -30px;
   top: 3px;
 }
 
