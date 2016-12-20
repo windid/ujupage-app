@@ -141,6 +141,13 @@ class TemplateController extends Controller {
             return $this->errorUnauthorized();
         }
         
+        if (request()->has('color')) { 
+            $colorSet = explode(',', request('color', ''));
+            if (count($colorSet) != 5) {
+                return $this->err('color is error', 422);
+            }
+        }
+        
         if (request()->has('page_id')) {
             $page = $this->initPGP(request('page_id', 0));
             if (get_class($page) == 'Illuminate\Http\JsonResponse') {
@@ -166,8 +173,7 @@ class TemplateController extends Controller {
         } else {
             return $this->err('page_id or page_name not be null', 422);
         }
-        
-        
+                
         $pageVariation = new PageVariation;
         $pageVariation->page_id = $page->id;
         $pageVariation->user_id = $this->user->id;
@@ -175,11 +181,22 @@ class TemplateController extends Controller {
         $pageVariation->setting = '[]';
         $pageVariation->html_json = $templateVariation->html_json;
         $pageVariation->html = $templateVariation->html;
-        $pageVariation->quota = 1;
+        $pageVariation->quota = 1;                
+        $pageVariation->save();
+                
+        if (request()->has('color')) {
+            $templateVariation = $pageVariation->toArray();
+            $templateVariation['html_json'] = json_decode($templateVariation['html_json'],true);
+            $templateVariation['html_json']['colorSet'] = $colorSet;
+            
+            $content = \App\Services\ParseHtml::decode($templateVariation);
+            $pageVariation->html = view('preview.variation', compact('content'));
+            $pageVariation->html_json = json_encode($templateVariation['html_json']);
+        }
         $pageVariation->save();
         $page->increment('variation_history');            
         
-        $this->successCreated();
+        return $this->successCreated(['page_id' => $pageVariation->page_id, 'variation_id' => $pageVariation->id]);
     }
     
     /**
@@ -217,8 +234,16 @@ class TemplateController extends Controller {
         if (!$templateVariation) {
             return $this->errorNotFound();
         }
-        
-        return $templateVariation->html;
+        $content = \App\Services\ParseHtml::decode($templateVariation->toArray());
+        if (request()->has('color')) {
+            $templateVariation = $templateVariation->toArray();
+            $content = json_decode($templateVariation['html_json'],true);
+            $content['colorSet'] = explode(',', request('color', ''));
+           
+            $templateVariation['html_json'] = $content;
+            $content = \App\Services\ParseHtml::decode($templateVariation);
+        }
+        return view('preview.variation', compact('content'));
     }
 }
     
