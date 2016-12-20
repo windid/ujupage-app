@@ -65,12 +65,20 @@ export default {
       startTop: 0,
       startPosLeft: 0,
       startPosTop: 0,
-      horizontalMost: [0, 0],
-      verticalMost: [0, 0],
-      widthMost: 0,
-      heightMost: 0,
+      horizontalMax: [0, 0],
+      verticalMax: [0, 0],
+      widthMax: 0,
+      heightMax: 0,
       fixedEditing: false,
-      documentScrollPx: 0
+      documentScrollPx: 0,
+      // key*, 方向键移动相关的属性
+      keyMoveTimer: null,
+      keyMoveTimestamp: null,
+      keyMoveCount: 0,
+      keyMove: {
+        x: 0,
+        y: 0
+      }
     }
   },
   computed: {
@@ -109,6 +117,58 @@ export default {
       'duplicateElement',
       'modifyElement'
     ]),
+    selectElement () {
+      this.setActiveElementId(this.elementId)
+      document.addEventListener('keydown', this.onKey)
+    },
+    onKey (event) {
+      const code = event.which || event.keyCode
+      // 37 left, 39 right
+      // 38 up, 40 down
+      if (code >= 37 && code <= 40) {
+        event.stopPropagation()
+        event.preventDefault()
+        this.keyMoveCount ++
+        if (this.keyMoveTimer == null) {
+          this.dragBegin()
+          this.keyMove = {
+            x: 0,
+            y: 0
+          }
+        } else {
+          window.clearTimeout(this.keyMoveTimer)
+        }
+        const scale = this.keyMoveCount >= 8 ? 2 : 1
+        switch (code - 37) {
+          case 0:
+            this.keyMove.x += -1 * scale
+            break
+          case 1:
+            this.keyMove.y += -1 * scale
+            break
+          case 2:
+            this.keyMove.x += 1 * scale
+            break
+          case 3:
+            this.keyMove.y += 1 * scale
+            break
+        }
+        this.keyMoveTimer = setTimeout(() => {
+          this.keyMoveTimer = null
+          this.keyMoveCount = 0
+          this.dragEnd(this.keyMove)
+        }, 800)
+        const newTime = new Date()
+        if (this.keyMoveTimestamp !== null) {
+          if (newTime - this.keyMoveTimestamp <= 200) {
+            return
+          } else {
+            this.keyMoveTimestamp = newTime
+          }
+        }
+        this.dragMove(this.keyMove)
+      }
+    },
     showToolbar () {
       this.$emit('change-button-group', 'main')
 
@@ -131,14 +191,14 @@ export default {
       this.fixedEditing = false
       this.$emit('change-button-group', 'main')
     },
-    computeMoveMost (movement) {
+    computeMoveMax (movement) {
       const getMin = (v, range) => {
         const i = v < 0 ? 0 : 1
         return [Math.max, Math.min][i](range[i], v)
       }
       return {
-        x: getMin(movement.x, this.horizontalMost),
-        y: getMin(movement.y, this.verticalMost)
+        x: getMin(movement.x, this.horizontalMax),
+        y: getMin(movement.y, this.verticalMax)
       }
     },
     dragBegin () {
@@ -152,8 +212,8 @@ export default {
       const self = this.$el.getBoundingClientRect()
       const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
       const box = document.getElementById(boxContainer).getBoundingClientRect()
-      this.horizontalMost = [box.left - self.left, box.right - self.right]
-      this.verticalMost = [box.top - self.top, box.bottom - self.bottom]
+      this.horizontalMax = [box.left - self.left, box.right - self.right]
+      this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
     },
     dragMove (movement) {
@@ -161,7 +221,7 @@ export default {
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
       }
-      const move = this.computeMoveMost(movement)
+      const move = this.computeMoveMax(movement)
       this.$el.style.left = `${this.startPosLeft + move.x}px`
       this.$el.style.top = `${this.startPosTop + move.y}px`
       this.elPositionInPage.left = this.startPosLeft + move.x
@@ -170,7 +230,7 @@ export default {
     dragEnd (movement) {
       if (movement.x === 0 && movement.y === 0) return
       this.$emit('change-button-group', 'main')
-      const move = this.computeMoveMost(movement)
+      const move = this.computeMoveMax(movement)
       this.elPositionInPage.left = this.startPosLeft + move.x
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
@@ -196,24 +256,41 @@ export default {
       const self = this.$el.getBoundingClientRect()
       const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
       const box = document.getElementById(boxContainer).getBoundingClientRect()
-      if (direction === 'right') {
-        this.widthMost = box.right - self.left
-      } else if (direction === 'left') {
-        this.widthMost = self.right - box.left
-      } else if (direction === 'top') {
-        this.heightMost = self.bottom - box.top
-      } else if (direction === 'bottom') {
-        this.heightMost = box.bottom - self.top
+      if (direction === 'right' || direction === 'bottom') {
+        this.widthMax = box.right - self.left
+        this.heightMax = box.bottom - self.top
+      } else if (direction === 'left' || direction === 'top') {
+        this.widthMax = self.right - box.left
+        this.heightMax = self.bottom - box.top
       }
       this.$emit('resize-start', direction)
     },
     resizeAction (direction, saveToStore, size) {
+      const width = parseInt(this.$el.style.width)
+      const height = parseInt(this.$el.style.height)
+      let newWidth, newHeight
       if (direction === 'top' || direction === 'bottom') {
-        size = Math.min(this.heightMost, size)
-        this.$el.style.height = `${size}px`
+        newHeight = Math.min(this.heightMax, size)
+        if (this.resize.aspectRatio) {
+          newWidth = newHeight * width / height
+          if (newWidth > this.widthMax) {
+            newWidth = this.widthMax
+            newHeight = newWidth * height / width
+          }
+          this.$el.style.width = `${newWidth}px`
+        }
+        this.$el.style.height = `${newHeight}px`
       } else if (direction === 'left' || direction === 'right') {
-        size = Math.min(this.widthMost, size)
-        this.$el.style.width = `${size}px`
+        newWidth = Math.min(this.widthMax, size)
+        if (this.resize.aspectRatio) {
+          newHeight = newWidth * height / width
+          if (newHeight > this.heightMax) {
+            newHeight = this.heightMax
+            newWidth = newHeight * width / height
+          }
+          this.$el.style.height = `${newHeight}px`
+        }
+        this.$el.style.width = `${newWidth}px`
       }
       if (saveToStore) {
         // resize ends
@@ -266,6 +343,13 @@ export default {
     'workspace.activeElementId': function (elementId) {
       if (this.elementId === elementId) {
         this.showToolbar()
+      } else {
+        document.removeEventListener('keydown', this.onKey)
+        if (this.keyMoveTimer !== null) {
+          clearTimeout(this.keyMoveTimer)
+          this.keyMoveTimer = null
+          this.dragEnd(this.keyMove)
+        }
       }
     }
   },
@@ -275,6 +359,11 @@ export default {
     if (this.workspace.activeElementId === this.elementId) {
       this.showToolbar()
       this.resizeEnable()
+    }
+  },
+  destroy () {
+    if (this.keyMoveTimer !== null) {
+      clearTimeout(this.keyMoveTimer)
     }
   }
 }
@@ -294,7 +383,7 @@ const getElementTop = (element) => {
 </script>
 
 <template>
-  <div class="element" @click="setActiveElementId(elementId)" @mousedown.stop="onDragBegin"
+  <div class="element" @click.stop="selectElement" @mousedown.stop="onDragBegin"
     :style="{
       display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
       left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,
