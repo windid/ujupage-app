@@ -5,6 +5,7 @@ import AbTest from './AbTest'
 import AbSplit from '../common/AbSplit'
 import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
+import { urlKeyRE } from '../../utils'
 
 export default {
   components: {
@@ -49,8 +50,8 @@ export default {
             placeholder: '自定义url',
             hint: '可由数字、英文字母组成，至少3位以上。',
             onConfirm: (val) => {
-              if (val.length < 3) {
-                return '自定义url地址不能少于3位'
+              if (!urlKeyRE.test(val)) {
+                return '自定义url地址不能少于3位，且只能包含数字和字母'
               }
               this.setURL([val, () => {
                 this.doPublish()
