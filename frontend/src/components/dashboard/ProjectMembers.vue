@@ -2,6 +2,8 @@
   import Member from './Member'
   import { Tooltip } from 'element-ui'
   import { mapGetters } from 'vuex'
+  import { emailRE } from '../../utils'
+
   export default {
     components: {
       Member,
@@ -20,10 +22,14 @@
           header: '请输入新成员的邮箱地址',
           inputAddon: '<span class="glyphicon glyphicon-user"></span>',
           onConfirm: (email) => {
-            const member = {
-              email: email
+            if (emailRE.test(email)) {
+              const member = {
+                email: email
+              }
+              this.$store.dispatch('inviteMember', member)
+            } else {
+              return '请输入正确的邮箱格式'
             }
-            this.$store.dispatch('inviteMember', member)
           }
         })
       }
