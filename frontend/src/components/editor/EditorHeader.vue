@@ -99,7 +99,38 @@ export default {
     },
     updateTraficSplit (traficWeights) {
       this.traficSplit(traficWeights)
+    },
+    onKey (event) {
+      if (event.ctrlKey || event.metaKey) {
+        let keyCaptured = false
+        const code = event.which || event.keyCode
+        if (code === 83) {
+          // ctrl + s 保存
+          keyCaptured = true
+          this.saveVariation()
+        } else if (code === 90) {
+          if (event.shiftKey) {
+            // shift + ctrl + z 前进
+            keyCaptured = true
+            this.redo()
+          } else if (event.altKey) {
+            // alt + ctrl + z 后退
+            keyCaptured = true
+            this.undo()
+          }
+        }
+        if (keyCaptured) {
+          event.stopPropagation()
+          event.preventDefault()
+        }
+      }
     }
+  },
+  mounted () {
+    document.addEventListener('keydown', this.onKey)
+  },
+  destroy () {
+    document.removeEventListener('keydown', this.onKey)
   }
 
 }
