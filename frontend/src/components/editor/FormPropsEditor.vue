@@ -68,3 +68,45 @@ export default {
     </div>
   </div>
 </template>
+
+<style scoped>
+
+.float-color-picker {
+  float: left;
+  width: 55px;
+  text-align: center;
+  cursor: pointer;
+  margin-left: 13px;
+}
+
+.float-color-picker:first-child {
+  margin: 0;
+}
+
+.color-groups .btn-group {
+  width:100%;
+}
+
+.float-color-block {
+  height: 30px;
+  width: 100%;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+}
+
+.font-size-input {
+  float: left;
+  max-width: 106px;
+}
+
+.corner-radius-input {
+  float: right;
+  max-width: 120px;
+}
+
+.float-color-block-text {
+  text-align: center;
+  font-size: 14px;
+}
+
+</style>
