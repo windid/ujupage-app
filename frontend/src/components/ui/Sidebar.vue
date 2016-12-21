@@ -39,16 +39,18 @@ export default {
 
 </template>
 
-<style>
+<style lang="scss">
+$sidebar-width: 300px;
+
 .sidebar {
   position: fixed;
   z-index: 102000;
-  width: 300px;
+  width: $sidebar-width;
   top: 50px;
   right: 0;
   height: calc(100% - 50px);
   background-color: #fff;
-  font-size:14px;
+  font-size: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
 }
 
@@ -72,7 +74,7 @@ export default {
 }
 
 .sidebar-enter, .sidebar-leave-active {
-  right: -300px;
+  right: -$sidebar-width;
 }
 
 .sidebar-block{
