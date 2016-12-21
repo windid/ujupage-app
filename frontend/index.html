@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="renderer" content="webkit">
   <meta name="force-rendering" content="webkit">
+  <!--[if lte IE 10]>
+  <link rel="stylesheet" href="/js/ie-blocker/ie-blocker.css">
+  <script src="/js/ie-blocker/ie-blocker.zhCN.js"></script>
+  <![endif]-->
   <title>聚页</title>
   <style>
 body {
@@ -48,6 +52,7 @@ body {
   0%   { -webkit-transform: rotate(0deg); }
   100% { -webkit-transform: rotate(360deg); }
 }
+
 @keyframes loader {
   0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -55,7 +60,14 @@ body {
   </style>
 </head>
 <body>
-
+<!--[if lte IE 10]>
+<div id="bb-container">
+    <div class="bb-modal">
+        ...
+    </div>
+    <div class="bb-mask"></div>
+</div>
+<![endif]-->
 <div id="app">
   <div class="loading">
     <div class="loading-icon"></div>
