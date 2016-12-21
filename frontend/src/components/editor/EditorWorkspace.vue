@@ -44,7 +44,8 @@ export default {
   position: relative;
   /* 禁止文本选择 */
   user-select: none;
-  margin-bottom: 30px;
+  /*margin-bottom: 30px;*/
+  background: #fff;
 }
 
 #content-area{

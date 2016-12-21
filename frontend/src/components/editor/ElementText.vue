@@ -264,7 +264,6 @@ export default {
 
 <style>
 [contenteditable] {
-  -webkit-user-select: text;
   user-select: text;
 }
 .element-text-content {
