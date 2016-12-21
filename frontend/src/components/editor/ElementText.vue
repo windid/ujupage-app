@@ -234,7 +234,8 @@ export default {
       :contenteditable="editing" 
       spellcheck="false" 
       :style="merge({}, localElement.fontStyle, {
-        cursor: editing ? 'text' : 'pointer'
+        cursor: editing ? 'text' : 'pointer',
+        color: getColor(localElement.fontStyle.color)
       })"
     >
     </div>

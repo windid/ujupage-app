@@ -7,6 +7,11 @@ import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
 import eventHandler from '../../utils/eventHandler'
 
+let EDIT_CACHE = {
+  id: null,
+  mountedId: null
+}
+
 export default {
   name: 'element-common',
   mixins: [mouseDrag],
@@ -72,9 +77,10 @@ export default {
       fixedEditing: false,
       documentScrollPx: 0,
       // key*, 方向键移动相关的属性
+      mountedId: null,
+      keyEventAttached: false,
       keyMoveTimer: null,
       keyMoveTimestamp: null,
-      keyMoveCount: 0,
       keyMove: {
         x: 0,
         y: 0
@@ -119,7 +125,6 @@ export default {
     ]),
     selectElement () {
       this.setActiveElementId(this.elementId)
-      document.addEventListener('keydown', this.onKey)
     },
     onKey (event) {
       const code = event.which || event.keyCode
@@ -128,43 +133,43 @@ export default {
       if (code >= 37 && code <= 40) {
         event.stopPropagation()
         event.preventDefault()
-        this.keyMoveCount ++
-        if (this.keyMoveTimer == null) {
+        if (this.keyMoveTimer === null) {
+          if (!this.draggable) return
           this.dragBegin()
           this.keyMove = {
             x: 0,
             y: 0
           }
         } else {
-          window.clearTimeout(this.keyMoveTimer)
+          clearTimeout(this.keyMoveTimer)
         }
-        const scale = this.keyMoveCount >= 8 ? 2 : 1
+
+        this.dragging = true
         switch (code - 37) {
           case 0:
-            this.keyMove.x += -1 * scale
+            this.keyMove.x += -1
             break
           case 1:
-            this.keyMove.y += -1 * scale
+            this.keyMove.y += -1
             break
           case 2:
-            this.keyMove.x += 1 * scale
+            this.keyMove.x += 1
             break
           case 3:
-            this.keyMove.y += 1 * scale
+            this.keyMove.y += 1
             break
         }
         this.keyMoveTimer = setTimeout(() => {
           this.keyMoveTimer = null
-          this.keyMoveCount = 0
+          this.keyMoveTimestamp = null
+          this.dragging = false
           this.dragEnd(this.keyMove)
         }, 800)
         const newTime = new Date()
-        if (this.keyMoveTimestamp !== null) {
-          if (newTime - this.keyMoveTimestamp <= 200) {
-            return
-          } else {
-            this.keyMoveTimestamp = newTime
-          }
+        if (this.keyMoveTimestamp !== null && newTime - this.keyMoveTimestamp <= 100) {
+          return
+        } else {
+          this.keyMoveTimestamp = newTime
         }
         this.dragMove(this.keyMove)
       }
@@ -202,7 +207,15 @@ export default {
       }
     },
     dragBegin () {
-      var style = window.getComputedStyle(this.$el)
+      if (!this.keyEventAttached) {
+        document.addEventListener('keydown', this.onKey, false)
+        this.keyEventAttached = true
+      }
+      EDIT_CACHE = {
+        id: this.elementId,
+        mountedId: this.mountedId
+      }
+      const style = window.getComputedStyle(this.$el, null)
       const getSize = (key) => parseInt(style[key].replace(/px$/, ''))
       this.startPosLeft = getSize('left')
       this.startPosTop = getSize('top')
@@ -344,7 +357,10 @@ export default {
       if (this.elementId === elementId) {
         this.showToolbar()
       } else {
-        document.removeEventListener('keydown', this.onKey)
+        if (this.keyEventAttached) {
+          document.removeEventListener('keydown', this.onKey, false)
+          this.keyEventAttached = false
+        }
         if (this.keyMoveTimer !== null) {
           clearTimeout(this.keyMoveTimer)
           this.keyMoveTimer = null
@@ -354,16 +370,26 @@ export default {
     }
   },
   mounted () {
+    this.mountedId = new Date().getTime()
     this.resizeDisable()
     this.element.fixed && this.element.fixedScrollPx > 0 && this.watchScroll()
     if (this.workspace.activeElementId === this.elementId) {
       this.showToolbar()
       this.resizeEnable()
     }
+    if (EDIT_CACHE.id === this.elementId && EDIT_CACHE.mountedId !== this.mountedId) {
+      // 新复制的元素
+      document.addEventListener('keydown', this.onKey)
+      this.keyEventAttached = true
+    }
   },
-  destroy () {
+  destroyed () {
     if (this.keyMoveTimer !== null) {
       clearTimeout(this.keyMoveTimer)
+      this.keyMoveTimer = null
+    }
+    if (this.keyEventAttached) {
+      document.removeEventListener('keydown', this.onKey, false)
     }
   }
 }
