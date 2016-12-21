@@ -18,7 +18,8 @@ export default {
   data () {
     return {
       showSettings: false,
-      showSplit: false
+      showSplit: false,
+      osWindows: window.navigator.userAgent.indexOf('Windows') >= 0
     }
   },
   computed: mapGetters({
@@ -112,15 +113,19 @@ export default {
           keyCaptured = true
           this.saveVariation()
         } else if (code === 90) {
-          if (event.shiftKey) {
-            // shift + ctrl + z 前进
+          if (event.shiftKey && !this.osWindows) {
+            // mac: shift + ctrl + z 前进
             keyCaptured = true
             this.redo()
-          } else if (event.altKey) {
-            // alt + ctrl + z 后退
+          } else {
+            // ctrl + z 后退
             keyCaptured = true
             this.undo()
           }
+        } else if (code === 82 && this.osWindows) {
+          // windows: ctrl + r 前进
+          keyCaptured = true
+          this.redo()
         }
         if (keyCaptured) {
           event.stopPropagation()
