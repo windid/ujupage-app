@@ -6,6 +6,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { merge, find } from 'lodash'
 
 export default {
+  name: 'ImageLibrary',
   components: {
     Modal,
     Tooltip
@@ -22,7 +23,9 @@ export default {
       viewingImage: {},
       currentFolder: {},
       uploading: [],
-      projectId: 0
+      projectId: 0,
+      imageUrlEditing: false,
+      imageUrl: ''
     }
   },
   computed: {
@@ -30,9 +33,6 @@ export default {
       'imageLibrary': 'imageLibrary',
       'page': 'editingPage'
     })
-    // projectId () {
-    //   return (this.currentTab === 'project') ? this.page.project_id : 0
-    // }
   },
   methods: {
     ...mapActions({
@@ -41,16 +41,19 @@ export default {
       getInput: 'getInput',
       warning: 'warning'
     }),
+
     getThumbs (imageSrc) {
       const arr = imageSrc.split('.')
       const ext = arr[arr.length - 1] || 'jpg'
       return imageSrc + '@150w_150h.' + ext
     },
+
     close () {
       this.imageLibrary.onCancel && this.imageLibrary.onCancel()
       this.closeImageLibrary()
     },
-    myImage () {
+
+    myImages () {
       this.mainStatus = 'loading'
       this.currentTab = 'my'
       API.imageFolder.get({ project_id: this.page.project_id }).then(response => {
@@ -62,6 +65,7 @@ export default {
         this.switchFolder(this.currentFolder)
       })
     },
+
     switchFolder (folder, projectId = 0) {
       this.currentFolder = folder
       this.viewingImage = {}
@@ -73,6 +77,7 @@ export default {
         this.mainStatus = 'failed'
       })
     },
+
     addFolder (projectId) {
       const vm = this
       this.getInput({
@@ -96,6 +101,7 @@ export default {
         }
       })
     },
+
     renameFolder (folder) {
       const vm = this
       this.getInput({
@@ -115,6 +121,7 @@ export default {
         }
       })
     },
+
     removeFolder (folder, projectId) {
       const vm = this
       this.confirm({
@@ -131,6 +138,7 @@ export default {
         }
       })
     },
+
     uploadImage (e) {
       const files = e.target.files
       if (files.length === 0) return
@@ -151,19 +159,52 @@ export default {
         this.uploading.pop()
       })
     },
+
+    editImageUrl () {
+      this.imageUrlEditing = true
+      this.$nextTick(() => {
+        this.$refs.imageUrl.focus()
+      })
+    },
+
+    uploadImageFromUrl () {
+      if (this.imageUrl) {
+        const data = new window.FormData()
+        data.append('url', this.imageUrl)
+        data.append('folder_id', this.currentFolder.id)
+        data.append('project_id', this.projectId)
+        this.uploading.push('1')
+        API.image.save({}, data).then(response => {
+          this.uploading.pop()
+          this.images.push(response.data)
+          this.currentFolder.total_image ++
+        }, response => {
+          this.warning({
+            header: '上传失败',
+            content: '图片地址不对或超过了10M'
+          })
+          this.uploading.pop()
+        })
+      }
+      this.imageUrlEditing = false
+    },
+
     pickImage (index) {
       if (index !== null && this.images[index]) {
         this.imageLibrary.onSelect(this.images[index])
         this.closeImageLibrary()
       }
     },
+
     selectImage (index) {
       this.currentImageIndex = index
     },
+
     viewImage (index) {
       this.viewingImage = merge({}, this.images[index])
       this.mainStatus = 'view'
     },
+
     modifyImage (e) {
       const data = {
         folder_id: this.currentFolder.id,
@@ -173,10 +214,8 @@ export default {
       API.image.update({ id: this.viewingImage.id }, data).then(response => {
         this.images[this.currentImageIndex] = merge(this.images[this.currentImageIndex], data)
       })
-      // imageAPI.modify(image, data => {
-      //   this.images[this.currentImageIndex] = merge(this.images[this.currentImageIndex], image)
-      // })
     },
+
     removeImage () {
       this.confirm({
         header: '确定删除？',
@@ -194,12 +233,8 @@ export default {
       })
     }
   },
-  watch: {
-    'imageLibrary.show': function (show) {
-      if (show) {
-        this.myImage()
-      }
-    }
+  mounted () {
+    this.myImages()
   }
 }
 
@@ -210,8 +245,8 @@ export default {
     <div slot="header">
       <ul class="nav nav-pills">
         <!-- <li :class="{active: currentTab === 'project'}" @click="switchTab('project')"><a href="javascript:;">项目图片库</a></li> -->
-        <li :class="{active: currentTab === 'my'}" @click="myImage"><a href="javascript:;">我的图片</a></li>
-        <li :class="{active: currentTab === 'free'}"><a href="javascript:;" @click.prevent="currentTab = 'free'">免费图库</a></li>
+        <li :class="{active: currentTab === 'my'}" @click="myImages"><a href="javascript:;">我的图片</a></li>
+        <!-- <li :class="{active: currentTab === 'free'}"><a href="javascript:;" @click.prevent="currentTab = 'free'">免费图库</a></li> -->
       </ul>
     </div>
     <div slot="body" class="images-wrapper">
@@ -221,11 +256,11 @@ export default {
 
       <div v-show="mainStatus === 'imageList'" class="image-list" key="image-list">
         <div class="images-sidebar">
-          <h5>个人文件夹 
-            <tooltip content="只有您自己可见"><span class="glyphicon glyphicon-question-sign"></span></tooltip>
-          </h5>
           <div class="list-group">
-            <a v-for="(folder, index) in personalFolders" class="list-group-item" href="javascript:;" :class="{ 'selected': folder === currentFolder }" @click="switchFolder(folder)">
+            <div class="list-group-item block-title">个人文件夹
+              <tooltip placement="right" content="只有您自己可见"><span class="glyphicon glyphicon-question-sign"></span></tooltip>
+            </div>
+            <a v-for="(folder, index) in personalFolders" class="list-group-item" href="javascript:;" :class="{ 'active': folder === currentFolder }" @click="switchFolder(folder)">
               &nbsp;
               <span class="folder-name"><span :class="'glyphicon glyphicon-folder-' + (folder === currentFolder ? 'open' : 'close')"></span> &nbsp; {{folder.dirname}}</span>
               <span class="badge">{{folder.total_image}}</span>
@@ -237,11 +272,11 @@ export default {
             <a href="javascript:;" class="list-group-item" style="text-align:center" @click="addFolder(0)"> <span class="glyphicon glyphicon-plus"></span> </a>
           </div>
 
-          <h5>项目文件夹
-            <tooltip content="参与协作的项目成员可见"><span class="glyphicon glyphicon-question-sign"></span></tooltip>
-          </h5>
           <div class="list-group">
-            <a v-for="(folder, index) in projectFolders" class="list-group-item" href="javascript:;" :class="{ 'selected': folder === currentFolder }" @click="switchFolder(folder, page.project_id)">
+            <div class="list-group-item block-title">项目文件夹
+              <tooltip placement="right" content="参与协作的项目成员可见"><span class="glyphicon glyphicon-question-sign"></span></tooltip>
+            </div>
+            <a v-for="(folder, index) in projectFolders" class="list-group-item" href="javascript:;" :class="{ 'active': folder === currentFolder }" @click="switchFolder(folder, page.project_id)">
               &nbsp;
               <span class="folder-name"><span :class="'glyphicon glyphicon-folder-' + (folder === currentFolder ? 'open' : 'close')"></span> &nbsp; {{folder.dirname}}</span>
               <span class="badge">{{folder.total_image}}</span>
@@ -306,19 +341,19 @@ export default {
         上传图片
         <input type="file" name="files[]" class="image-upload-input" accept="image/*" @change="uploadImage">
       </div>
-      <!-- <div v-el:image-url-editor class="fl">
-        <div v-show="!imageUrlEditing" class="btn btn-default btn-sm" @click="inputImageUrl">
+      <div class="fl">
+        <div v-show="!imageUrlEditing" class="btn btn-default btn-sm" @click="editImageUrl">
           <span class="glyphicon glyphicon-link"></span>
           粘贴网址
         </div>
         <div v-show="imageUrlEditing" class="input-group input-group-sm shadow image-url-input">
           <div class="input-group-addon"> 图片网址 </div>
-          <input v-el:image-url-input type="text" class="form-control input-text-shadow">
-          <div class="input-group-btn" @click="inputImageUrlDone">
-            <div class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></div>
+          <input ref="imageUrl" v-model="imageUrl" @keyup.enter="uploadImageFromUrl" type="text" class="form-control input-text-shadow">
+          <div class="input-group-btn">
+            <div class="btn btn-success" @click="uploadImageFromUrl"><span class="glyphicon glyphicon-ok"></span></div>
           </div>
         </div>
-      </div> -->
+      </div>
       <span v-if="currentImageIndex !== null">
         名称: {{images[currentImageIndex].name}} &nbsp;
         尺寸: {{images[currentImageIndex].width}} X {{images[currentImageIndex].height}} &nbsp;
@@ -332,7 +367,7 @@ export default {
 
 .images-sidebar{
   float:left;
-  border-right:1px solid #ddd;
+  border-right:1px solid #eee;
   padding-right:15px;
   width: 220px;
   height:100%;
@@ -417,6 +452,10 @@ export default {
   margin-top:20px;
 }
 
+.block-title {
+  background: #f6f6f6;
+}
+
 .folder-name {
   float: left;
   max-width: 140px;
@@ -424,27 +463,6 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.list-group-item.selected {
-  background: #eee;
-}
-
-.list-group-item > .badge {
-  background-color: #ccc;
-}
-
-.list-group-item.selected > .badge {
-  background-color: #777;
-}
-/*.list-group-item.selected::before {
-  position: absolute;
-  left: 0;
-  top: 0;
-  content: "";
-  background: #337ab7;
-  width: 8px;
-  height: 100%;
-}*/
 
 .list-group-item > .btn-group {
   display: none;
