@@ -24,7 +24,7 @@ export default {
       <div class="modal-container" :style="{width: width, height: height}" @click.stop>
         
         <div class="modal-header">
-          <button type="button" class="close fr" aria-label="Close" @click="$emit('close')"><span aria-hidden="true">&times;</span></button>
+          <div class="close fr" aria-label="Close" @click="$emit('close')"><span aria-hidden="true">&times;</span></div>
           <slot name="header"></slot>
         </div>
         
@@ -34,7 +34,7 @@ export default {
 
         <div class="modal-footer">
           <slot name="footer">
-            <button class="btn btn-primary btn-sm" @click="$emit('close')">确定</button>
+            <div class="btn btn-primary btn-sm" @click="$emit('close')">确定</div>
           </slot>
         </div>
       </div>
@@ -57,13 +57,13 @@ export default {
 
 .modal-wrapper {
   display: table-cell;
+  vertical-align: middle;
   height: 100%;
 }
 
 .modal-container {
   position: relative;
   margin: 0 auto;
-  margin-top: 60px;
   background-color: #fff;
   border-radius: 6px;
   overflow: hidden;

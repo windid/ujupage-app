@@ -17,7 +17,7 @@ export default {
         color: 3
       },
       mask: {
-        color: 1,
+        color: 3,
         opacity: 0
       }
     },
@@ -38,7 +38,7 @@ export default {
         color: 3
       },
       mask: {
-        color: 1,
+        color: 3,
         opacity: 0
       }
     }
