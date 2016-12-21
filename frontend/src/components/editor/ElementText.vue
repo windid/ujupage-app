@@ -1,6 +1,6 @@
 <script>
 import elementMixin from '../../mixins/elementMixin'
-import colorMixin from '../../mixins/colorMixin.js'
+import colorMixin from '../../mixins/colorMixin'
 import ColorPicker from './ColorPicker'
 import FontSize from './FontSize'
 import LineHeight from './LineHeight'
@@ -273,7 +273,6 @@ export default {
 
 <style>
 [contenteditable] {
-  -webkit-user-select: text;
   user-select: text;
 }
 [contenteditable="false"] {

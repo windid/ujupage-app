@@ -43,13 +43,9 @@ export default {
 .workspace {
   position: relative;
   /* 禁止文本选择 */
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
-  margin-bottom: 30px;
+  /*margin-bottom: 30px;*/
+  background: #fff;
 }
 
 #content-area{
