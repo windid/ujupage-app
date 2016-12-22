@@ -288,7 +288,7 @@ class ParseHtml {
     }
 
     protected static function parseElementIcon ($element_id, $element) {
-        self::$page['setting']['hasIcon'] = 1;
+        self::$page['settings']['hasIcon'] = 1;
         self::$page['style']['pc']['element-'.$element_id]['font-size'] = $element['style']['pc']['width'];
         self::$page['style']['mobile']['element-'.$element_id]['font-size'] = $element['style']['mobile']['width'];
         self::$page['style']['common']['element-'.$element_id]['color'] = self::getColor($element['data']['color']);
