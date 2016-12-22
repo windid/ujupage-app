@@ -18,6 +18,16 @@ export default {
   },
   beforeDestroy () {
     if (this._closeEvent) this._closeEvent.remove()
+  },
+  watch: {
+    show (val) {
+      const body = document.body
+      if (val) {
+        body.classList.add('no-scroll')
+      } else {
+        body.classList.remove('no-scroll')
+      }
+    }
   }
 }
 </script>

@@ -13,6 +13,16 @@ export default {
       type: String,
       default: 'auto'
     }
+  },
+  watch: {
+    show (val) {
+      const body = document.body
+      if (val) {
+        body.classList.add('no-scroll')
+      } else {
+        body.classList.remove('no-scroll')
+      }
+    }
   }
 }
 </script>
@@ -43,30 +53,38 @@ export default {
 </transition>
 </template>
 
-<style>
+<style lang="scss">
 .modal-mask {
   position: fixed;
   z-index: 2000;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, .6);
-  display: table;
+
 }
 
 .modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
   height: 100%;
+  text-align: center;
+  overflow-y: auto;
+  &::after {
+    display: inline-block;
+    content: '';
+    height: 100%;
+    vertical-align: middle;
+  }
 }
 
 .modal-container {
   position: relative;
-  margin: 0 auto;
+  display: inline-block;
+  margin: 30px auto;
   background-color: #fff;
   border-radius: 6px;
   overflow: hidden;
+  vertical-align: middle;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
 }
 

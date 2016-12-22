@@ -30,7 +30,9 @@ body {
   background: #f9fbfe !important;
   overflow-y: scroll;
 }
-
+.no-scroll {
+  overflow: hidden;
+}
 #app, .page {
   height: 100%;
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
