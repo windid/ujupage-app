@@ -221,7 +221,7 @@ export default {
         mountedId: this.mountedId
       }
       const style = window.getComputedStyle(this.$el, null)
-      const getSize = (key) => parseInt(style[key].replace(/px$/, ''))
+      const getSize = (key) => parseInt(style[key])
       this.startPosLeft = getSize('left')
       this.startPosTop = getSize('top')
       this.setActiveElementId(this.elementId)

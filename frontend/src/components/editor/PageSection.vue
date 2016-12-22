@@ -88,7 +88,7 @@ export default {
     },
     height: function () {
       const height = this.section.style[this.workspace.version]['height']
-      return parseInt(height.replace(/px$/, ''))
+      return parseInt(height)
     }
   },
   methods: {
