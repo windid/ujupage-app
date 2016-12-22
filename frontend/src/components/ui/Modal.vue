@@ -14,6 +14,11 @@ export default {
       default: 'auto'
     }
   },
+  data () {
+    return {
+      mouseOnBody: false
+    }
+  },
   watch: {
     show (val) {
       const body = document.body
@@ -30,7 +35,7 @@ export default {
 <template>
 <transition name="fade">
   <div v-show="show" class="modal-mask" @mousedown.stop>
-    <div class="modal-wrapper" @click.stop="$emit('close')" >
+    <div class="modal-wrapper" @click.stop="$emit('close')" :class="{'no-scroll': mouseOnBody}">
       <div class="modal-container" :style="{width: width, height: height}" @click.stop>
         
         <div class="modal-header">
@@ -38,7 +43,10 @@ export default {
           <slot name="header"></slot>
         </div>
         
-        <div class="modal-body container-fluid">
+        <div class="modal-body container-fluid"
+          ref="modalBody"
+          @mouseenter="mouseOnBody = true"
+          @mouseleave="mouseOnBody = false">
           <slot name="body"></slot>
         </div>
 
@@ -62,7 +70,6 @@ export default {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, .6);
-
 }
 
 .modal-wrapper {
