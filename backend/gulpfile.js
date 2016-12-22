@@ -16,6 +16,7 @@ require('laravel-elixir-webpack');
 elixir(function(mix) {
   //bootstrap sass单独打包
   mix.sass('bootstrap.scss', '../public/css/bootstrap.css');
+  mix.sass('glyphicons.scss', '../public/css/glyphicons.css');
   //编辑器
   // mix.sass('editor.scss');
   //用户认证（登陆、注册等）

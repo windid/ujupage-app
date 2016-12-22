@@ -34,12 +34,13 @@ export const loadVariation = ({ commit, state }, [variation, callback = false]) 
 }
 
 // 新建版本
-export const createVariation = ({ commit, state }) => {
-  API.variation.save({ pageId: state.editor.page.id }, {}).then(response => {
+export const createEmptyVariation = ({ commit, state }, [pageId, callback = false]) => {
+  API.variation.save({ pageId }, {}).then(response => {
     const variation = response.data
     variation.quota = 1
     commit(types.CREATE_VARIATION, { variation })
-    loadVariation({ commit, state }, [variation])
+    callback && callback(variation)
+    // loadVariation({ commit, state }, [variation])
   })
 }
 
@@ -47,6 +48,7 @@ export const createVariation = ({ commit, state }) => {
 export const duplicateVariation = ({ commit, state }, variation) => {
   API.variation.duplicate({ pageId: state.editor.page.id, id: variation.id }, {}).then(response => {
     const variation = response.data
+    variation.quota = 1
     commit(types.CREATE_VARIATION, { variation })
     loadVariation({ commit, state }, [variation])
   })
@@ -87,6 +89,8 @@ export const saveVariation = ({ commit, state }, callback = false) => {
 export const setURL = ({ commit, state }, [url, successCb, errorCb]) => {
   API.page.update({ id: state.editor.page.id }, { url: url }).then(response => {
     successCb(response.data)
+  }).catch(err => {
+    errorCb(err)
   })
 }
 
@@ -295,17 +299,16 @@ export const duplicateElement = ({ commit, state, getters }, elementId) => {
 
 // 获取元素所在的板块Id
 const getSectionIds = (state, elementId) => {
-  let sectionId = 0
   let pcSectionId = null
   let mobileSectionId = null
-  state.editor.content.sections.forEach(section => {
+  state.editor.content.sections.some((section, index) => {
     if (section.elements.pc.indexOf(elementId) >= 0) {
-      pcSectionId = sectionId
+      pcSectionId = index
     }
     if (section.elements.mobile.indexOf(elementId) >= 0) {
-      mobileSectionId = sectionId
+      mobileSectionId = index
     }
-    sectionId++
+    return pcSectionId && mobileSectionId
   })
   return {
     pc: pcSectionId,

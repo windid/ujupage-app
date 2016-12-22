@@ -88,7 +88,7 @@ export default {
     },
     height: function () {
       const height = this.section.style[this.workspace.version]['height']
-      return parseInt(height.replace(/px$/, ''))
+      return parseInt(height)
     }
   },
   methods: {
@@ -143,7 +143,7 @@ export default {
       <transition name="fade">
         <div class="btn-group-vertical page-section-operation" v-show="showButton" :style="{left: workspace.width + 5 + 'px'}">
           <template v-if="editing">
-            <div class="btn btn-success" title="完成" @click="setActiveSectionId(null)"><span class="glyphicon glyphicon-ok"></span></div>
+            <div class="btn btn-success" title="完成"><span class="glyphicon glyphicon-ok"></span></div>
           </template>
           <template v-if="!editing">
             <div class="btn btn-primary" title="修改" @click.stop="setActiveSectionId(sectionId)"><span class="glyphicon glyphicon-pencil"></span></div>

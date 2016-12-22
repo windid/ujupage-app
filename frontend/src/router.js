@@ -51,14 +51,14 @@ const router = new VueRouter({
     { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
     { path: '/editor/:pageId/:variationId', name: 'variation', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
     { path: '/preview/:pageId/:variationId', name: 'preview', component: Preview, meta: { requiresAuth: true }},
+    { path: '/template/:templateId', name: 'template', component: Template },
     { path: '/', component: Home, meta: { requiresAuth: true },
       children: [
         { path: '', name: 'dashboard', component: Dashboard, meta: { preFetch: 'dashboardInit' }},
         { path: '/account', name: 'account', component: Account },
         { path: '/leads/:pageId', name: 'leads', component: Leads },
         { path: '/stats/:pageId/:module', name: 'stats', component: Stats, meta: { preFetch: 'statsInit' }},
-        { path: '/templates/:tag', name: 'templates', component: TemplateList },
-        { path: '/template/:templateId', name: 'template', component: Template }
+        { path: '/templates/:tag', name: 'templates', component: TemplateList }
       ]
     }
   ]

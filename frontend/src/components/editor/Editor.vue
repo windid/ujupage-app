@@ -3,6 +3,7 @@ import EditorHeader from './EditorHeader.vue'
 import EditorToolbar from './EditorToolbar.vue'
 import EditorWorkspace from './EditorWorkspace.vue'
 import { mapGetters, mapActions } from 'vuex'
+import eventHandler from '../../utils/eventHandler'
 
 export default {
   name: 'editor',
@@ -24,6 +25,16 @@ export default {
   },
   mounted () {
     document.title = this.$store.getters.editingPage.name + ' - 编辑 - 聚页'
+    this._unloadEvent = eventHandler.listen(window, 'beforeunload', e => {
+      const msg = '您对该页面所作修改尚未保存，现在离开导致您所作的修改丢失，确定吗?'
+      if (!this.saveStatus) {
+        e.returnValue = msg
+        return msg
+      }
+    })
+  },
+  beforeDestroy () {
+    this._unloadEvent.remove()
   },
   beforeRouteLeave (to, from, next) {
     if (!this.saveStatus) {
@@ -54,10 +65,11 @@ export default {
 
 <style>
 #main-wrapper {
-  position: relative;
+  position: absolute;
+  width: 100%;
   top: 50px;
   min-width: 980px;
-  background: #fff;
+  padding-bottom: 30px;
 }
 
 .dropdown-menu-narrow{

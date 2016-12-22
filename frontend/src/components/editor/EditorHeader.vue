@@ -1,10 +1,11 @@
 <script>
-import ColorSchemes from './ColorSchemes'
+import ColorSchemes from '../ui/ColorSchemes'
 import EditorSettings from './EditorSettings'
 import AbTest from './AbTest'
 import AbSplit from '../common/AbSplit'
 import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
+import { urlKeyRE } from '../../utils'
 
 export default {
   components: {
@@ -26,7 +27,8 @@ export default {
     undoButton: 'undoButton',
     redoButton: 'redoButton',
     saveStatus: 'saveStatus',
-    page: 'editingPage'
+    page: 'editingPage',
+    colorSet: 'editorColorSet'
   }),
   methods: {
     ...mapActions({
@@ -39,7 +41,8 @@ export default {
       warning: 'warning',
       setURL: 'setURL',
       publishPage: 'publishPage',
-      traficSplit: 'traficSplit'
+      traficSplit: 'traficSplit',
+      setColorSet: 'setColorSet'
     }),
     publish () {
       this.saveNotice(() => {
@@ -50,8 +53,8 @@ export default {
             placeholder: '自定义url',
             hint: '可由数字、英文字母组成，至少3位以上。',
             onConfirm: (val) => {
-              if (val.length < 3) {
-                return '自定义url地址不能少于3位'
+              if (!urlKeyRE.test(val)) {
+                return '自定义url地址不能少于3位，且只能包含数字和字母'
               }
               this.setURL([val, () => {
                 this.doPublish()
@@ -183,12 +186,12 @@ export default {
         </tooltip>
       </div>
       
-      <color-schemes></color-schemes>
+      <color-schemes :color-set="colorSet" @update-colors="setColorSet"></color-schemes>
 
       <div class="btn-group">
         <div class="btn btn-default" @click="showSettings = true">设置 <span class="glyphicon glyphicon-cog"></span></div>
         <div class="btn btn-default" :class="{ disabled: saveStatus }" @click="saveVariation()">保存 <span class="glyphicon glyphicon-floppy-disk"></span></div>
-        <router-link class="btn btn-default" tag="div" :to="'/preview/' + page.id + '/' + workspace.activeVariation.id">预览 <span class="glyphicon glyphicon-eye-open"></span></router-link>
+        <router-link class="btn btn-default" :to="'/preview/' + page.id + '/' + workspace.activeVariation.id">预览 <span class="glyphicon glyphicon-eye-open"></span></router-link>
         <div class="btn btn-primary" @click="publish">发布 <span class="glyphicon glyphicon-send"></span></div>
       </div>
     </div>

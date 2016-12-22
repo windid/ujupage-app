@@ -115,9 +115,11 @@ export const renamePageGroup = ({ commit, state }, newName) => {
   })
 }
 
-export const createPage = ({ commit }, page) => {
+export const createPage = ({ commit }, [page, callback = false]) => {
   API.page.save({}, page).then(response => {
-    commit(types.CREATE_PAGE, { page: response.data })
+    page = response.data
+    commit(types.CREATE_PAGE, { page })
+    callback && callback(page)
   })
 }
 

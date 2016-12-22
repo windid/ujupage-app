@@ -39,9 +39,9 @@
         API.page.split({ id: this.pageId }, { quota: quota }).then(response => {
           this.$emit('update-split', quota)
           this.$emit('close')
-          this.loadingDone()
-        }, response => {
+        }).catch(() => {
           this.error = '保存失败，请稍后再试！'
+        }).finally(() => {
           this.loadingDone()
         })
       },
@@ -67,7 +67,7 @@
         this.weights = [...weights]
       },
       inputWeight (e) {
-        this.changeWeight(parseInt(e.target.dataset['index']), parseInt(e.target.value) || 0)
+        this.changeWeight(parseInt(e.target.getAttribute('data-index')), parseInt(e.target.value) || 0)
       }
     },
     created () {

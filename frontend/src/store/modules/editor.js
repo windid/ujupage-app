@@ -76,7 +76,9 @@ const mutations = {
 
   // 创建新的AB测试版本
   [types.CREATE_VARIATION] (state, { variation }) {
-    state.page.variations.push(variation)
+    if (state.page.variations) {
+      state.page.variations.push(variation)
+    }
   },
 
   // 删除AB测试版本

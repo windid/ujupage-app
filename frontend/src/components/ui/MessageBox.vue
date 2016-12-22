@@ -51,7 +51,7 @@ export default {
 
 <template>
 <transition name="fade">
-  <div class="msg-mask" v-if="show" tabindex="-1" @keyup.enter="ok" @keyup.esc="cancel">
+  <div class="msg-mask" @click.stop v-if="show" tabindex="-1" @keyup.enter="ok" @keyup.esc="cancel">
     <div class="msg-wrapper">
       <div class="msg-container" :style="{width:msg.width}">
         

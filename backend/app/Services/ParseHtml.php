@@ -11,8 +11,11 @@ class ParseHtml {
     protected static $elements = array('pc'=>array(),'mobile'=>array());
     
     public static function decode($array) {
-        $content = json_decode($array['html_json'],true);
-
+        if (is_array($array['html_json'])) {
+            $content = $array['html_json'];
+        } else {
+            $content = json_decode($array['html_json'],true);
+        }
         if (!isset($content['colorSet'])){
             return false;
         }
@@ -49,8 +52,8 @@ class ParseHtml {
     }
 
     protected static function parseSection($section_id, $section){
-        self::$page['style']['pc']['section-'.$section_id] = self::parseSectionStyles($section['style']['pc']);
-        self::$page['style']['mobile']['section-'.$section_id] = self::parseSectionStyles($section['style']['mobile']);
+        self::$page['style']['pc']['section-'.$section_id] = self::parseSectionStyles($section['style']['pc'], 'pc');
+        self::$page['style']['mobile']['section-'.$section_id] = self::parseSectionStyles($section['style']['mobile'], 'mobile');
 
         if (isset($section['style']['pc']['mask'])) {
             self::$page['style']['pc']['section-'.$section_id.' .section-inner'] = [
@@ -80,18 +83,19 @@ class ParseHtml {
         self::$page['style']['mobile']['content']['height'] .= "px";
     }
 
-    protected static function parseSectionStyles ($sectionStyles) {
+    protected static function parseSectionStyles ($sectionStyles, $version) {
+        $section_width = $version === 'pc' ? '960px' : '360px';
         $styles = [
             'height' => $sectionStyles['height']
         ];
         if (isset($sectionStyles['border'])) {
             $border = self::parseBorder($sectionStyles['border']);
             $styles['border-top'] = $border;
-            $style['border-bottom'] = $border;
+            $styles['border-bottom'] = $border;
         }
         if (isset($sectionStyles['background'])) {
             $styles['background'] = self::parseBackground($sectionStyles['background']);
-            $styles['width'] = $sectionStyles['background']['stretch'] ? '100%' : '960px';
+            $styles['width'] = $sectionStyles['background']['stretch'] ? '100%' : $section_width;
             $styles['margin'] = $sectionStyles['background']['stretch'] ? '' : '0 auto';
             $styles['background-size'] = $sectionStyles['background']['size'];
             if ($sectionStyles['background']['fixed'] ) {

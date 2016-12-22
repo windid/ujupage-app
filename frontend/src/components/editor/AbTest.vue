@@ -15,8 +15,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'loadVariation',
-      'createVariation',
+      'createEmptyVariation',
       'duplicateVariation',
       'removeVariation',
       'renameVariation',
@@ -55,7 +54,7 @@ export default {
       })
     },
     create () {
-      this.createVariation()
+      this.createEmptyVariation()
       this.show = false
     },
     switchVariation (variation) {
@@ -92,9 +91,7 @@ export default {
         </tooltip>
       </li>
       <li role="separator" class="divider"></li>
-      <li @click="create()">
-        新建一个版本
-      </li>
+      <router-link :to="'/templates/all?pid=' + page.id" tag="li">新建一个版本</router-link>
       <li role="separator" class="divider"></li>
       <li @click="$emit('absplit')">
         <span>版本流量分配</span>

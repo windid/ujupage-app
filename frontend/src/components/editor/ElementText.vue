@@ -1,6 +1,6 @@
 <script>
 import elementMixin from '../../mixins/elementMixin'
-import colorMixin from '../../mixins/colorMixin.js'
+import colorMixin from '../../mixins/colorMixin'
 import ColorPicker from './ColorPicker'
 import FontSize from './FontSize'
 import LineHeight from './LineHeight'
@@ -101,15 +101,11 @@ export default {
       return !this.editing && this.draggableFromChild
     }
   },
-  mounted () {
-    this.$refs.content.innerHTML = this.localElement.content
-  },
   methods: {
     edit () {
       if (this.editing) return
 
       this.editing = true
-      this.changeDraggable(false)
       this.buttonGroup = 'edit'
       this.$nextTick(() => {
         const contentBox = this.$refs.content
@@ -124,7 +120,6 @@ export default {
       this.editing = false
       this.buttonGroup = 'main'
       this.localElement.content = this.$refs.content.innerHTML
-      this.changeDraggable(true)
 
       if (!isEqual(this.element, this.localElement)) {
         this.modifyElement([this.elementId, this.localElement])
@@ -200,12 +195,6 @@ export default {
       }
     },
     merge: merge
-  },
-  watch: {
-    'element': function (val) {
-      this.localElement = merge({}, val)
-      this.$refs.content.innerHTML = this.localElement.content
-    }
   }
 }
 
@@ -227,6 +216,7 @@ export default {
     <div 
       class="element-text-content" 
       ref="content" slot="content" 
+      v-html="localElement.content"
       @dblclick="edit" 
       @click.prevent
       @dragstart="contentDragStart"
@@ -274,13 +264,9 @@ export default {
 
 <style>
 [contenteditable] {
-  -webkit-user-select: text;
   user-select: text;
 }
 [contenteditable="false"] {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none; 
 }
 .element-text-content {

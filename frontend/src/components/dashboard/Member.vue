@@ -2,11 +2,7 @@
   import { Tooltip } from 'element-ui'
   import eventHandler from '../../utils/eventHandler'
   import { mapGetters, mapActions } from 'vuex'
-
-  const testChinese = (str) => {
-    const re = /[^\u4e00-\u9fa5]/
-    return !re.test(str)
-  }
+  import { chineseRE } from '../../utils'
 
   export default {
     name: 'member',
@@ -32,7 +28,7 @@
       memberName () {
         const name = this.member.name || this.member.email
         const shortName = name.substr(name.length - 2, 2)
-        if (testChinese(shortName)) {
+        if (chineseRE.test(shortName)) {
           return shortName
         } else {
           return name.substr(0, 2).toUpperCase()

@@ -10,6 +10,7 @@
   <meta name="keywords" content="{{$content['settings']['seo']['keywords']}}">
   <meta name="description" content="{{$content['settings']['seo']['description']}}">
   <link href="//app.ujupage.com/css/bootstrap.css" rel="stylesheet">
+  <link href="//app.ujupage.com/css/glyphicons.css" rel="stylesheet">
   <script src="//app.ujupage.com/js/libs/jquery-1.12.3.min.js"></script>
   <script src="//app.ujupage.com/js/page.js?20161215"></script>
   <!-- <script src="/js/page.js"></script> -->
@@ -61,8 +62,7 @@
 
   .section-inner {
     position: relative;
-    width: 960px;
-    margin: 0 auto;
+    width: 100%;
     height: 100%;
   }
 

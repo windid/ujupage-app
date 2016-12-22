@@ -24,7 +24,7 @@ export default {
       <div class="modal-container" :style="{width: width, height: height}" @click.stop>
         
         <div class="modal-header">
-          <button type="button" class="close fr" aria-label="Close" @click="$emit('close')"><span aria-hidden="true">&times;</span></button>
+          <div class="close fr" aria-label="Close" @click="$emit('close')"><span aria-hidden="true">&times;</span></div>
           <slot name="header"></slot>
         </div>
         
@@ -34,7 +34,7 @@ export default {
 
         <div class="modal-footer">
           <slot name="footer">
-            <button class="btn btn-primary btn-sm" @click="$emit('close')">确定</button>
+            <div class="btn btn-primary btn-sm" @click="$emit('close')">确定</div>
           </slot>
         </div>
       </div>
@@ -46,7 +46,7 @@ export default {
 <style>
 .modal-mask {
   position: fixed;
-  z-index: 103000;
+  z-index: 2000;
   top: 0;
   left: 0;
   width: 100%;
@@ -57,28 +57,31 @@ export default {
 
 .modal-wrapper {
   display: table-cell;
+  vertical-align: middle;
   height: 100%;
 }
 
 .modal-container {
   position: relative;
   margin: 0 auto;
-  margin-top:60px;
   background-color: #fff;
   border-radius: 6px;
+  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
 }
 
 .modal-header {
   height: 60px;
-  padding:12px;
+  padding: 12px;
+  background: #f6f6f6;
+  border-bottom: 1px solid #eee;
 }
 
 .modal-body {
-  height:calc(100% - 114px);
-  padding:12px;
-  background: #eee;
-  border:1px solid #ccc;
+  height: calc(100% - 114px);
+  padding: 12px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
   overflow: auto;
   position: relative;
 }
