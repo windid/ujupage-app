@@ -178,6 +178,7 @@ export default {
           this.uploading.pop()
           this.images.push(response.data)
           this.currentFolder.total_image ++
+          this.imageUrl = ''
         }, response => {
           this.warning({
             header: '上传失败',
