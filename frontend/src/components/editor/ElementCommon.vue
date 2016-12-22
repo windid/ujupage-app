@@ -414,7 +414,7 @@ const getElementTop = (element) => {
 </script>
 
 <template>
-  <div class="element" @click.stop="selectElement" @mousedown.stop="onDragBegin"
+  <div class="element" @click="selectElement" @mousedown.stop="onDragBegin"
     :style="{
       display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
       left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,
