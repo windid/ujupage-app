@@ -100,6 +100,10 @@
     height:auto;
   }
 
+  .element-icon {
+    top: 0;
+  }
+
   .form-group {
     position: relative;
   }
