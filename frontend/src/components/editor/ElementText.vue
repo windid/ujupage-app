@@ -101,15 +101,11 @@ export default {
       return !this.editing && this.draggableFromChild
     }
   },
-  mounted () {
-    this.$refs.content.innerHTML = this.localElement.content
-  },
   methods: {
     edit () {
       if (this.editing) return
 
       this.editing = true
-      this.changeDraggable(false)
       this.buttonGroup = 'edit'
       this.$nextTick(() => {
         const contentBox = this.$refs.content
@@ -124,7 +120,6 @@ export default {
       this.editing = false
       this.buttonGroup = 'main'
       this.localElement.content = this.$refs.content.innerHTML
-      this.changeDraggable(true)
 
       if (!isEqual(this.element, this.localElement)) {
         this.modifyElement([this.elementId, this.localElement])
