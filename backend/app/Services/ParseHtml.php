@@ -272,7 +272,7 @@ class ParseHtml {
     }
 
     protected static function parseElementMap ($element_id, $element) {
-        self::$page['settings']['hasmap'] = 1;
+        self::$page['settings']['hasMap'] = 1;
     }
 
     protected static function parseElementVideo ($element_id, $element) {
@@ -280,7 +280,14 @@ class ParseHtml {
     }
 
     protected static function parseElementSwiper ($element_id, $element) {
-        self::$page['settings']['hasswiper'] = 1;
+        self::$page['settings']['hasSwiper'] = 1;
+    }
+
+    protected static function parseElementIcon ($element_id, $element) {
+        self::$page['setting']['hasIcon'] = 1;
+        self::$page['style']['pc']['element-'.$element_id]['font-size'] = $element['style']['pc']['width'];
+        self::$page['style']['mobile']['element-'.$element_id]['font-size'] = $element['style']['mobile']['width'];
+        self::$page['style']['common']['element-'.$element_id]['color'] = self::getColor($element['data']['color']);
     }
 
     protected static function parseBackground ($background) {
