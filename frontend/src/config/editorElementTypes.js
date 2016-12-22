@@ -44,7 +44,7 @@ export default {
     props: {
       backgroundColor: '3',
       color: '0',
-      borderRadius: '5px',
+      borderRadius: '0px',
       fontSize: '18px',
       fontWeight: 'normal'
     },
@@ -120,7 +120,7 @@ export default {
       props: {
         backgroundColor: '3',
         color: '0',
-        borderRadius: '5px',
+        borderRadius: '0px',
         fontSize: '18px',
         fontWeight: 'normal'
       },
@@ -388,6 +388,28 @@ export default {
         top: '10px',
         width: '320px',
         height: '240px'
+      }
+    }
+  },
+
+  'icon': {
+    type: 'icon',
+    data: {
+      color: '4',
+      icon: 'comment'
+    },
+    style: {
+      'pc': {
+        left: '464px',
+        top: '10px',
+        width: 'auto',
+        height: 'auto'
+      },
+      'mobile': {
+        left: '164px',
+        top: '10px',
+        width: '32px',
+        height: '32px'
       }
     }
   }

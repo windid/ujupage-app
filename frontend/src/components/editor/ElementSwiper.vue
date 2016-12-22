@@ -78,6 +78,7 @@ export default {
   :element-id="elementId"
   :button-group="buttonGroup"
   :dimensionContraint="constraints" 
+  @change-button-group="changeButtonGroup"
   :resizable="resizable"
   :resize="resize"
   @drag-start="editDone">

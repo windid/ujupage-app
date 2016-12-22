@@ -14,15 +14,16 @@ export default {
         { name: '图片', style: 'picture', action: () => this.newElement('image') },
         { name: '文字', style: 'font', action: () => this.newElement('text') },
         { name: '按钮', style: 'hand-up', action: () => this.newElement('button') },
-        { name: '形状', style: 'stop', action: () => this.showShapePicker() }
+        { name: '形状', style: 'stop', action: () => this.showShapePicker() },
+        { name: '表单', style: 'edit', action: () => this.newElement('form') }
       ],
       advancedTools: [
-        { name: '表单', style: 'edit', action: () => this.newElement('form') },
+        { name: '图标', style: 'comment', action: () => this.newElement('icon') },
         { name: '视频', style: 'film', action: () => this.newElement('video') },
         { name: '地图', style: 'map-marker', action: () => this.newElement('map') },
         // { name: '音乐', style: 'music', action: () => this.newElement('music') },
         { name: '轮播图', style: 'transfer', action: () => this.newElement('swiper') },
-        // { name: '倒计时', style: 'time', action: () => this.newElement('timer') },
+        { name: '倒计时', style: 'time', action: () => this.comming('timer') },
         { name: 'HTML', style: 'header', action: () => this.newElement('html') }
       ],
       showAdvanced: false,
@@ -43,7 +44,7 @@ export default {
     },
     comming () {
       this.warning({
-        content: '工程狮们正在紧张的开发这个组件，等几天再来试试吧。'
+        content: '攻城狮们正在争分夺秒开发这个组件，等几天再来试试吧。'
       })
     }
   },
@@ -146,6 +147,7 @@ export default {
 }
 
 .tool {
+  transition: all .3s ease;
   width: 66px;
   height: 66px;
   margin:10px;
@@ -160,6 +162,7 @@ export default {
 
 .tool:hover {
   border-color: #98CFE9;
+  box-shadow: 0 1px 10px #ccc;
 }
 
 .tool span {

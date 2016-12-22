@@ -9,6 +9,7 @@ import ElementImage from './ElementImage'
 import ElementShape from './ElementShape'
 import ElementVideo from './ElementVideo'
 import ElementTimer from './ElementTimer'
+import ElementIcon from './ElementIcon'
 import ElementMap from './ElementMap'
 import ElementSwiper from './ElementSwiper'
 import resizer from '../ui/OnesideResizer'
@@ -36,6 +37,7 @@ export default {
     ElementShape,
     ElementVideo,
     ElementTimer,
+    ElementIcon,
     ElementMap,
     ElementSwiper,
     resizer

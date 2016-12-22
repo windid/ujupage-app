@@ -137,6 +137,7 @@ export default {
     :section-id="sectionId" 
     :element-id="elementId"
     :button-group="buttonGroup"
+    @change-button-group="changeButtonGroup"
     :resizable="resizable"
     :resize="resize"
     @resizing="resizing"

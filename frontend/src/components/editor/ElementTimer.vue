@@ -2,6 +2,7 @@
 import ElementCommon from './ElementCommon'
 import TimerEditor from './TimerEditor'
 import colorMixin from '../../mixins/colorMixin.js'
+import elementMixin from '../../mixins/elementMixin'
 
 import { mapGetters, mapActions } from 'vuex'
 import { merge, isEqual } from 'lodash'
@@ -9,7 +10,7 @@ import { merge, isEqual } from 'lodash'
 export default {
   name: 'element-timer',
   props: ['element', 'elementId', 'sectionId'],
-  mixins: [colorMixin],
+  mixins: [colorMixin, elementMixin],
   components: {
     ElementCommon,
     TimerEditor
@@ -58,10 +59,6 @@ export default {
       this.editing = true
       this.buttonGroup = 'edit'
     },
-    changeButtonGroup () {
-    },
-    changeDraggable () {
-    },
     editDone () {
       this.editing = false
       this.buttonGroup = 'main'
@@ -70,13 +67,6 @@ export default {
       }
     },
     editChange () {
-    }
-  },
-  watch: {
-    'element': function (val) {
-      if (!isEqual(this.timerElement, val)) {
-        this.timerElement = merge({}, val)
-      }
     }
   }
 }
