@@ -200,12 +200,6 @@ export default {
       }
     },
     merge: merge
-  },
-  watch: {
-    'element': function (val) {
-      this.localElement = merge({}, val)
-      this.$refs.content.innerHTML = this.localElement.content
-    }
   }
 }
 
@@ -227,6 +221,7 @@ export default {
     <div 
       class="element-text-content" 
       ref="content" slot="content" 
+      v-html="localElement.content"
       @dblclick="edit" 
       @click.prevent
       @dragstart="contentDragStart"
@@ -277,9 +272,6 @@ export default {
   user-select: text;
 }
 [contenteditable="false"] {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none; 
 }
 .element-text-content {

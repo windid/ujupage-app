@@ -186,10 +186,10 @@ export default {
 
 <template>
 <div class='resize-handle'
-  v-bind:style='style'
+  :style='style'
   @click.stop
   @mousedown.stop='dragStart'
-  v-bind:class='"resize-handle-"+side'>
+  :class='"resize-handle-"+side'>
 </div>
 </template>
 
