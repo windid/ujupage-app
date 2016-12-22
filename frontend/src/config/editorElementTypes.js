@@ -44,7 +44,7 @@ export default {
     props: {
       backgroundColor: '3',
       color: '0',
-      borderRadius: '5px',
+      borderRadius: '0px',
       fontSize: '18px',
       fontWeight: 'normal'
     },
@@ -120,7 +120,7 @@ export default {
       props: {
         backgroundColor: '3',
         color: '0',
-        borderRadius: '5px',
+        borderRadius: '0px',
         fontSize: '18px',
         fontWeight: 'normal'
       },
