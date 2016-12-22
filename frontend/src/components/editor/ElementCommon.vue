@@ -127,15 +127,22 @@ export default {
       this.setActiveElementId(this.elementId)
     },
     onKey (event) {
+      if (event && event.target) {
+        const tagName = event.target.tagName
+        const contentEditable = event.target.isContentEditable
+        if (tagName === 'INPUT' || tagName === 'TEXTAREA' || contentEditable) {
+          return
+        }
+      }
       const code = event.which || event.keyCode
-      // 37 left, 39 right
-      // 38 up, 40 down
       if (code === 8 || code === 46) {
         // 删除, `backspace` or `delete`
         this.removeElement([this.elementId])
         event.stopPropagation()
         event.preventDefault()
       } else if (code >= 37 && code <= 40) {
+        // 37 left, 39 right
+        // 38 up, 40 down
         event.stopPropagation()
         event.preventDefault()
         if (this.keyMoveTimer === null) {
@@ -221,7 +228,7 @@ export default {
         mountedId: this.mountedId
       }
       const style = window.getComputedStyle(this.$el, null)
-      const getSize = (key) => parseInt(style[key].replace(/px$/, ''))
+      const getSize = (key) => parseInt(style[key])
       this.startPosLeft = getSize('left')
       this.startPosTop = getSize('top')
       this.setActiveElementId(this.elementId)

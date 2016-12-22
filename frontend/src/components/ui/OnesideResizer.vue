@@ -87,12 +87,12 @@ export default {
   data () {
     return {
       extraOffset: 0,
-      prevPosition: null
+      prevPosition: 0
     }
   },
   methods: {
     getSize () {
-      if (this.size == null) {
+      if (!this.size) {
         const style = window.getComputedStyle(this.$parent.$el)
         return parseInt(this.horizontal ? style.width : style.height)
       }
@@ -107,11 +107,7 @@ export default {
         } else {
           this.startPos = e.clientY
         }
-        if (document.body.style.cursor != null) {
-          this.oldCursor = document.body.style.cursor
-        } else {
-          this.oldCursor = null
-        }
+        this.oldCursor = document.body.style.cursor
         document.body.style.cursor = this.cursor
         document.addEventListener('mousemove', this.drag)
         document.addEventListener('mouseup', this.dragEnd)
@@ -142,7 +138,7 @@ export default {
       if (outOfWindow) {
         offset += 2
       } else {
-        offset = null
+        offset = 0
       }
       newSize = this.startSize + moved
       newSize = Math.max(newSize, this.minSize)
@@ -164,7 +160,7 @@ export default {
       } else if (newSize > this.maxSize) {
         newSize = this.maxSize
       }
-      this.prevPosition = null
+      this.prevPosition = 0
       this.extraOffset = 0
       document.body.style.cursor = this.oldCursor
       document.removeEventListener('mousemove', this.drag)
@@ -190,10 +186,10 @@ export default {
 
 <template>
 <div class='resize-handle'
-  v-bind:style='style'
+  :style='style'
   @click.stop
   @mousedown.stop='dragStart'
-  v-bind:class='"resize-handle-"+side'>
+  :class='"resize-handle-"+side'>
 </div>
 </template>
 
