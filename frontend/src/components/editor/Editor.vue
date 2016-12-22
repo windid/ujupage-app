@@ -65,10 +65,11 @@ export default {
 
 <style>
 #main-wrapper {
-  position: relative;
+  position: absolute;
+  width: 100%;
   top: 50px;
   min-width: 980px;
-  background: #fff;
+  padding-bottom: 30px;
 }
 
 .dropdown-menu-narrow{

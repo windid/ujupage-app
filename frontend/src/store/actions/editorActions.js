@@ -299,17 +299,16 @@ export const duplicateElement = ({ commit, state, getters }, elementId) => {
 
 // 获取元素所在的板块Id
 const getSectionIds = (state, elementId) => {
-  let sectionId = 0
   let pcSectionId = null
   let mobileSectionId = null
-  state.editor.content.sections.forEach(section => {
+  state.editor.content.sections.some((section, index) => {
     if (section.elements.pc.indexOf(elementId) >= 0) {
-      pcSectionId = sectionId
+      pcSectionId = index
     }
     if (section.elements.mobile.indexOf(elementId) >= 0) {
-      mobileSectionId = sectionId
+      mobileSectionId = index
     }
-    sectionId++
+    return pcSectionId && mobileSectionId
   })
   return {
     pc: pcSectionId,
