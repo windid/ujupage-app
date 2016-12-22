@@ -176,6 +176,9 @@ class ParseHtml {
             case 'swiper':
                 self::parseElementSwiper($element_id, $element);
                 break;
+            case 'icon':
+                self::parseElementIcon($element_id, $element);
+                break;
             default:
                 break;
         }
