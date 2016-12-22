@@ -127,6 +127,13 @@ export default {
       this.setActiveElementId(this.elementId)
     },
     onKey (event) {
+      if (event && event.target) {
+        const tagName = event.target.tagName
+        const contentEditable = event.target.isContentEditable
+        if (tagName === 'INPUT' || tagName === 'TEXTAREA' || contentEditable) {
+          return
+        }
+      }
       const code = event.which || event.keyCode
       if (code === 8 || code === 46) {
         // 删除, `backspace` or `delete`
