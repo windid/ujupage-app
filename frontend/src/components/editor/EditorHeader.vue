@@ -102,6 +102,13 @@ export default {
       this.traficSplit(traficWeights)
     },
     onKey (event) {
+      if (event.target) {
+        const tagName = event.target.tagName
+        const contentEditable = event.target.isContentEditable
+        if (tagName === 'INPUT' || tagName === 'TEXTAREA' || contentEditable) {
+          return
+        }
+      }
       if (event.ctrlKey || event.metaKey) {
         let keyCaptured = false
         const code = event.which || event.keyCode

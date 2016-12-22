@@ -128,14 +128,14 @@ export default {
     },
     onKey (event) {
       const code = event.which || event.keyCode
-      // 37 left, 39 right
-      // 38 up, 40 down
       if (code === 8 || code === 46) {
         // 删除, `backspace` or `delete`
         this.removeElement([this.elementId])
         event.stopPropagation()
         event.preventDefault()
       } else if (code >= 37 && code <= 40) {
+        // 37 left, 39 right
+        // 38 up, 40 down
         event.stopPropagation()
         event.preventDefault()
         if (this.keyMoveTimer === null) {
