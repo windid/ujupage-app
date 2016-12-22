@@ -23,8 +23,9 @@ class ParseHtml {
         self::$color_set = $content['colorSet'];
 
         self::$page['settings'] = $content['settings'];
-        self::$page['settings']['hasmap'] = 0;
-        self::$page['settings']['hasswiper'] = 0;
+        self::$page['settings']['hasMap'] = 0;
+        self::$page['settings']['hasSwiper'] = 0;
+        self::$page['settings']['hasIcon'] = 0;
         self::$page['sections'] = $content['sections'];
         self::$page['elements'] = $content['elements'];
         self::$page['style'] = array('common'=>array(), 'pc'=>array(), 'mobile'=>array());
