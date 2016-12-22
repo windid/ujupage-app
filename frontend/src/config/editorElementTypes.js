@@ -390,5 +390,27 @@ export default {
         height: '240px'
       }
     }
+  },
+
+  'icon': {
+    type: 'icon',
+    data: {
+      color: '4',
+      icon: 'comment'
+    },
+    style: {
+      'pc': {
+        left: '464px',
+        top: '10px',
+        width: 'auto',
+        height: 'auto'
+      },
+      'mobile': {
+        left: '164px',
+        top: '10px',
+        width: '32px',
+        height: '32px'
+      }
+    }
   }
 }
