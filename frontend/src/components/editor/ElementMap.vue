@@ -145,6 +145,7 @@ export default {
   :button-group="buttonGroup"
   :resizable="resizable"
   :resize="resize"
+  @change-button-group="changeButtonGroup"
   @drag-start="editDone">
 </div>
   <div class="element-map" slot="content" @dblclick.stop="edit">
