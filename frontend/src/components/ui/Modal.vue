@@ -24,6 +24,7 @@ export default {
   },
   watch: {
     show (val) {
+      console.log(this)
       const $body = $(document.body)
       const $editorHeader = $('.editor-header')
       this.$nextTick(() => {
