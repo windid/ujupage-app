@@ -17,15 +17,116 @@ export default {
       mainStatus: 'loading',
       currentImageIndex: null,
       images: [],
-      folders: [],
       projectFolders: [],
       personalFolders: [],
       viewingImage: {},
       currentFolder: {},
+      defaultFolder: {},
       uploading: [],
       projectId: 0,
       imageUrlEditing: false,
-      imageUrl: ''
+      imageUrl: '',
+      freeImages: [
+        { image: '16324.jpg', width: '1280', height: '854' },
+        { image: '16330.jpg', width: '1280', height: '854' },
+        { image: '16958.jpg', width: '1280', height: '854' },
+        { image: '19368.jpg', width: '1280', height: '861' },
+        { image: '19386.jpg', width: '1280', height: '854' },
+        { image: '45530.jpg', width: '1280', height: '853' },
+        { image: '45531.jpg', width: '1280', height: '855' },
+        { image: '45532.jpg', width: '1280', height: '854' },
+        { image: '51046.jpg', width: '1280', height: '854' },
+        { image: '61109.jpg', width: '1280', height: '854' },
+        { image: '66264.jpg', width: '1280', height: '854' },
+        { image: '66529.jpg', width: '1280', height: '922' },
+        { image: '66599.jpg', width: '1280', height: '854' },
+        { image: '66609.jpg', width: '1280', height: '720' },
+        { image: '66617.jpg', width: '1280', height: '845' },
+        { image: '66698.jpg', width: '1280', height: '854' },
+        { image: '66724.jpg', width: '1280', height: '854' },
+        { image: '66794.jpg', width: '1280', height: '854' },
+        { image: '66821.jpg', width: '1280', height: '854' },
+        { image: '67203.jpg', width: '1280', height: '848' },
+        { image: '67272.jpg', width: '1280', height: '849' },
+        { image: '67281.jpg', width: '1280', height: '894' },
+        { image: '67326.jpg', width: '1280', height: '779' },
+        { image: '67332.jpg', width: '1280', height: '775' },
+        { image: '67394.jpg', width: '1280', height: '854' },
+        { image: '67396.jpg', width: '1280', height: '854' },
+        { image: '67399.jpg', width: '1280', height: '854' },
+        { image: '67407.jpg', width: '1280', height: '854' },
+        { image: '67410.jpg', width: '1280', height: '853' },
+        { image: '67414.jpg', width: '1280', height: '854' },
+        { image: '67450.jpg', width: '1280', height: '854' },
+        { image: '67455.jpg', width: '1280', height: '853' },
+        { image: '67476.jpg', width: '1280', height: '854' },
+        { image: '67566.jpg', width: '1280', height: '854' },
+        { image: '67567.jpg', width: '1280', height: '645' },
+        { image: '67572.jpg', width: '1280', height: '854' },
+        { image: '67579.jpg', width: '1280', height: '841' },
+        { image: '67583.jpg', width: '1280', height: '854' },
+        { image: '67584.jpg', width: '1280', height: '854' },
+        { image: '67588.jpg', width: '1280', height: '854' },
+        { image: '67591.jpg', width: '1280', height: '854' },
+        { image: '67603.jpg', width: '1280', height: '854' },
+        { image: '67609.jpg', width: '1280', height: '854' },
+        { image: '67614.jpg', width: '1280', height: '779' },
+        { image: '67650.jpg', width: '1280', height: '854' },
+        { image: '67663.jpg', width: '1280', height: '854' },
+        { image: '67670.jpg', width: '1280', height: '854' },
+        { image: '67672.jpg', width: '1280', height: '854' },
+        { image: '67681.jpg', width: '1280', height: '857' },
+        { image: '67686.jpg', width: '1280', height: '851' },
+        { image: '67699.jpg', width: '1280', height: '854' },
+        { image: '67701.jpg', width: '1280', height: '854' },
+        { image: '67718.jpg', width: '1280', height: '854' },
+        { image: '67720.jpg', width: '1280', height: '854' },
+        { image: '67788.jpg', width: '1280', height: '960' },
+        { image: '67795.jpg', width: '1280', height: '854' },
+        { image: '67800.jpg', width: '1280', height: '854' },
+        { image: '67832.jpg', width: '1280', height: '854' },
+        { image: '67836.jpg', width: '1280', height: '853' },
+        { image: '67840.jpg', width: '1280', height: '854' },
+        { image: '67854.jpg', width: '1280', height: '854' },
+        { image: '67855.jpg', width: '1280', height: '854' },
+        { image: '67874.jpg', width: '1280', height: '848' },
+        { image: '67875.jpg', width: '1280', height: '850' },
+        { image: '67878.jpg', width: '1280', height: '722' },
+        { image: '67889.jpg', width: '1280', height: '855' },
+        { image: '67890.jpg', width: '1280', height: '854' },
+        { image: '67896.jpg', width: '1280', height: '854' },
+        { image: '67899.jpg', width: '1280', height: '854' },
+        { image: '67903.jpg', width: '1280', height: '831' },
+        { image: '67905.jpg', width: '1280', height: '854' },
+        { image: '67930.jpg', width: '1280', height: '700' },
+        { image: '67932.jpg', width: '1280', height: '853' },
+        { image: '67934.jpg', width: '1280', height: '854' },
+        { image: '67936.jpg', width: '1280', height: '707' },
+        { image: '67937.jpg', width: '1280', height: '854' },
+        { image: '67938.jpg', width: '1280', height: '864' },
+        { image: '67946.jpg', width: '1280', height: '854' },
+        { image: '67958.jpg', width: '1280', height: '854' },
+        { image: '67984.jpg', width: '1280', height: '854' },
+        { image: '67985.jpg', width: '1280', height: '721' },
+        { image: '68041.jpg', width: '1280', height: '855' },
+        { image: '68052.jpg', width: '1280', height: '724' },
+        { image: '68053.jpg', width: '1280', height: '854' },
+        { image: '68054.jpg', width: '1280', height: '854' },
+        { image: '68061.jpg', width: '1280', height: '854' },
+        { image: '68063.jpg', width: '1280', height: '854' },
+        { image: '68073.jpg', width: '1280', height: '855' },
+        { image: '68080.jpg', width: '1280', height: '855' },
+        { image: '68092.jpg', width: '1280', height: '864' },
+        { image: '68098.jpg', width: '1280', height: '853' },
+        { image: '68108.jpg', width: '1280', height: '854' },
+        { image: '68109.jpg', width: '1280', height: '854' },
+        { image: '68111.jpg', width: '1280', height: '854' },
+        { image: '68112.jpg', width: '1280', height: '854' },
+        { image: '68114.jpg', width: '1280', height: '854' },
+        { image: '68123.jpg', width: '1280', height: '854' },
+        { image: '68128.jpg', width: '1280', height: '800' },
+        { image: '68132.jpg', width: '1280', height: '854' }
+      ]
     }
   },
   computed: {
@@ -53,15 +154,25 @@ export default {
       this.closeImageLibrary()
     },
 
-    myImages () {
-      this.mainStatus = 'loading'
+    getFreeImages () {
+      this.currentTab = 'free'
+      this.currentImageIndex = null
+    },
+
+    getMyImages () {
       this.currentTab = 'my'
+      this.currentImageIndex = null
       API.imageFolder.get({ project_id: this.page.project_id }).then(response => {
         this.projectFolders = response.data
       })
+      if (this.personalFolders.length > 0) {
+        return
+      }
+      this.mainStatus = 'loading'
       API.imageFolder.get({ project_id: 0 }).then(response => {
         this.personalFolders = response.data
-        this.currentFolder = find(this.personalFolders, f => f.is_default === 1) || this.personalFolders[0]
+        this.defaultFolder = find(this.personalFolders, f => f.is_default === 1) || this.personalFolders[0]
+        this.currentFolder = this.defaultFolder
         this.switchFolder(this.currentFolder)
       })
     },
@@ -97,6 +208,7 @@ export default {
               vm.projectFolders.push(folder)
             }
             vm.currentFolder = folder
+            vm.images = []
           })
         }
       })
@@ -134,6 +246,7 @@ export default {
             } else {
               vm.projectFolders.splice(vm.projectFolders.indexOf(folder), 1)
             }
+            vm.currentFolder = vm.defaultFolder
           })
         }
       })
@@ -191,7 +304,14 @@ export default {
     },
 
     pickImage (index) {
-      if (index !== null && this.images[index]) {
+      if (this.currentTab === 'free' && index !== null) {
+        this.imageLibrary.onSelect({
+          url: '//s1.ujustatic.com/freeimg/' + this.freeImages[index].image,
+          width: this.freeImages[index].width,
+          height: this.freeImages[index].height
+        })
+        this.closeImageLibrary()
+      } else if (index !== null && this.images[index]) {
         this.imageLibrary.onSelect(this.images[index])
         this.closeImageLibrary()
       }
@@ -235,7 +355,7 @@ export default {
     }
   },
   mounted () {
-    this.myImages()
+    this.getMyImages()
   }
 }
 
@@ -246,11 +366,22 @@ export default {
     <div slot="header">
       <ul class="nav nav-pills">
         <!-- <li :class="{active: currentTab === 'project'}" @click="switchTab('project')"><a href="javascript:;">项目图片库</a></li> -->
-        <li :class="{active: currentTab === 'my'}" @click="myImages"><a href="javascript:;">我的图片</a></li>
-        <!-- <li :class="{active: currentTab === 'free'}"><a href="javascript:;" @click.prevent="currentTab = 'free'">免费图库</a></li> -->
+        <li :class="{active: currentTab === 'my'}" @click="getMyImages"><a href="javascript:;">我的图片</a></li>
+        <li :class="{active: currentTab === 'free'}"><a href="javascript:;" @click="getFreeImages">免费图库</a></li>
       </ul>
     </div>
-    <div slot="body" class="images-wrapper">
+    <div slot="body" class="images-wrapper" v-if="currentTab === 'free'" style="padding: 0 25px;">
+      <div v-for="(image, index) in freeImages" class="image-item" v-bind:class="{selected: currentImageIndex === index}" @click="selectImage(index)" @dblclick="pickImage(index)" :key="index">
+            <div class="image-item-wrapper">
+              <img :src="'//s1.ujustatic.com/freeimg/' + image.image + '@150w_150h'">
+              <div v-show="currentImageIndex === index" class="image-item-operation">
+                <div class="btn btn-primary btn-sm fr" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
+                <!-- <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div> -->
+              </div>
+            </div>
+          </div>
+    </div>
+    <div slot="body" class="images-wrapper" v-if="currentTab === 'my'">
       <div v-show="mainStatus === 'loading'" class="loading" key="loading">
         <div class="loading-icon"></div>
       </div>
@@ -294,10 +425,10 @@ export default {
         <div class="images-content">
           <div v-for="(image, index) in images" class="image-item" v-bind:class="{selected: currentImageIndex === index}" @click="selectImage(index)" @dblclick="pickImage(index)" :key="index">
             <div class="image-item-wrapper">
-              <img :src="getThumbs(image.url)" :alt="image.alt" style="max-width:150px;max-height:150px">
+              <img :src="getThumbs(image.url)" :alt="image.alt">
               <div v-show="currentImageIndex === index" class="image-item-operation">
-                <div class="btn btn-primary btn-sm fl" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
-                <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div>
+                <div class="btn btn-default btn-sm fl" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div>
+                <div class="btn btn-primary btn-sm fr" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
               </div>
             </div>
           </div>
@@ -307,7 +438,9 @@ export default {
             </div>
             <div>图片上传中</div>
           </div>
-          <div v-if="images.length === 0 && uploading.length === 0" key="empty">这个文件夹中暂时还没有图片。</div>
+          <div v-if="images.length === 0 && uploading.length === 0" key="empty" style="line-height: 300px;">
+            <p class="text-muted">这个文件夹中暂时还没有图片。</p>
+          </div>
         </div>
       </div>
 
@@ -336,7 +469,7 @@ export default {
       </div>
     </div>
 
-    <div slot="footer">
+    <div slot="footer" v-if="currentTab === 'my'">
       <div class="btn btn-primary btn-sm image-upload-button">
         <span class="glyphicon glyphicon-cloud-upload"></span>
         上传图片
@@ -360,6 +493,11 @@ export default {
         尺寸: {{images[currentImageIndex].width}} X {{images[currentImageIndex].height}} &nbsp;
       </span> 
     </div>
+    <div slot="footer" v-if="currentTab === 'free'">
+      <span v-if="currentImageIndex !== null">
+        尺寸: {{freeImages[currentImageIndex].width}} X {{freeImages[currentImageIndex].height}} &nbsp;
+      </span> 
+    </div>
   </modal>
 </template>
 
@@ -372,6 +510,7 @@ export default {
   padding-right:15px;
   width: 220px;
   height:100%;
+  text-align: left;
 }
 
 .images-wrapper, .image-list {
