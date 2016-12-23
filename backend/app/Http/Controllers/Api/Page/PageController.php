@@ -390,6 +390,10 @@ class PageController extends Controller {
         
         $fields_val = ['版本名', '提交时间'];
         foreach ($fields as $v) {
+            $code = mb_detect_encoding($v->_id, array('ASCII','GB2312','GBK','UTF-8')); 
+            if ($code == 'UTF-8') {
+                continue;
+            }
             $fields_val[] = $v->_id;
         }
         $fields_val = array_flip($fields_val);
@@ -405,35 +409,6 @@ class PageController extends Controller {
                 ->orderBy('created_at', 'desc')
                 ->get();
                     
-        /* 
-        dd($pageforms->toArray());
-        $values = [];
-        foreach ($pageforms as $k => $v) {
-            $order = [];
-            
-            foreach ($v['utms'] as $kk => $vv) {
-                $order[$kk] = $vv; 
-            }
-            foreach ($v['fields'] as $kk => $vv) {
-                $order[$kk] = $vv;
-            }
-            $v = array_merge($v->toArray(), $order);
-            unset($v['fields'], $v['utms']);
-            $values[] = $v;
-        }   
-        $pageForm = new PageForm;
-        $pageforms = $pageForm->where('page_id', $page->id)->skip(($curpage - 1) * $page_size)->take($page_size)
-                ->orderBy('created_at', 'desc')
-                ->where(function($query) use ($start_time, $end_time) {
-                    if ($start_time > 0 && $end_time > 0) {
-                        return $query->where('created_at', '>=', new \DateTime($start_time))
-                                ->where('created_at', '<=', new \DateTime($end_time));
-                    }
-                })
-                ->select('id', 'page_id', 'variation_id', 'variation_name', 'fields', 'utms', 'created_at')
-                ->get()->toArray();
-         * 
-         */
         $total = $pageForm->where('page_id', $page->id)
                     ->where(function($query) use ($start_time, $end_time) {
                         if ($start_time > 0 && $end_time > 0) {
@@ -513,9 +488,13 @@ class PageController extends Controller {
         $client->ujupage_com->{$out}->drop();
         
         /*******************获取所有字段***********************/
-        
+       
         $fields_val = ['版本名', '提交时间'];
         foreach ($fields as $v) {
+            $code = mb_detect_encoding($v->_id, array('ASCII','GB2312','GBK','UTF-8')); 
+            if ($code == 'UTF-8') {
+                continue;
+            }
             $fields_val[] = $v->_id;
         }
         $fields_val = array_flip($fields_val);
@@ -535,9 +514,17 @@ class PageController extends Controller {
         foreach ($pageforms as $k => $v) {
             $str = $v['variation_name'] . ',' . $v['created_at'];
             $order = [];
+            $nrow = false;
             
             foreach ($v['fields'] as $kk => $vv) {
-                $order[$fields_val[$kk]] = $vv;
+                if (isset($fields_val[$kk])) {
+                    $order[$fields_val[$kk]] = $vv;
+                } else {
+                    $nrow = true;
+                }
+            }
+            if ($nrow) {
+                continue;
             }
             foreach ($v['utms'] as $kk => $vv) {
                 $order[$fields_val[$kk]] = $vv; 
