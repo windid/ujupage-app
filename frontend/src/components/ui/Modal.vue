@@ -1,4 +1,6 @@
 <script>
+import { getScrollbarWidth, isBodyOverflow } from '../../utils/env'
+
 export default {
   props: {
     show: {
@@ -24,8 +26,12 @@ export default {
       const body = document.body
       if (val) {
         body.classList.add('no-scroll')
+        if (isBodyOverflow()) {
+          body.style.paddingRight = getScrollbarWidth() + 'px'
+        }
       } else {
         body.classList.remove('no-scroll')
+        body.style.paddingRight = '0'
       }
     }
   }
