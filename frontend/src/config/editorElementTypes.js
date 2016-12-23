@@ -402,8 +402,8 @@ export default {
       'pc': {
         left: '464px',
         top: '10px',
-        width: 'auto',
-        height: 'auto'
+        width: '32px',
+        height: '32px'
       },
       'mobile': {
         left: '164px',
