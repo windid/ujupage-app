@@ -65,9 +65,9 @@ export default {
 
 <style>
 #main-wrapper {
-  position: absolute;
+  position: relative;
   width: 100%;
-  top: 50px;
+  maring-top: 50px;
   min-width: 980px;
   padding-bottom: 30px;
 }

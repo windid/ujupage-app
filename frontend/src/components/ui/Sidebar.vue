@@ -1,6 +1,5 @@
 <script>
 import eventHandler from '../../utils/eventHandler'
-import { getScrollbarWidth } from '../../utils/env'
 
 export default {
   props: {
@@ -24,18 +23,6 @@ export default {
   },
   beforeDestroy () {
     if (this._closeEvent) this._closeEvent.remove()
-  },
-  watch: {
-    bodyScrollable (val) {
-      const body = document.body
-      if (val) {
-        body.classList.remove('no-scroll')
-        body.style.paddingRight = '0'
-      } else {
-        body.classList.add('no-scroll')
-        body.style.paddingRight = getScrollbarWidth() + 'px'
-      }
-    }
   }
 }
 </script>

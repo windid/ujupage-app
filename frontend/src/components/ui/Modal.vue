@@ -1,5 +1,6 @@
 <script>
 import { getScrollbarWidth } from '../../utils/env'
+import $ from '../../utils/query'
 
 export default {
   props: {
@@ -23,14 +24,18 @@ export default {
   },
   watch: {
     show (val) {
-      const body = document.body
-      if (val) {
-        body.classList.add('no-scroll')
-        body.style.paddingRight = getScrollbarWidth() + 'px'
-      } else {
-        body.classList.remove('no-scroll')
-        body.style.paddingRight = '0'
-      }
+      const $body = $(document.body)
+      const $editorHeader = $('.editor-header')
+      this.$nextTick(() => {
+        if (val) {
+          const paddingRight = getScrollbarWidth() + 'px'
+          $body.addClass('no-scroll').css('padding-right', paddingRight)
+          $editorHeader.css('padding-right', paddingRight)
+        } else {
+          $body.css('padding-right', '0px').removeClass('no-scroll')
+          $editorHeader.css('padding-right', '0px')
+        }
+      })
     }
   }
 }
@@ -39,7 +44,7 @@ export default {
 <template>
 <transition name="fade">
   <div v-show="show" class="modal-mask" @mousedown.stop>
-    <div class="modal-wrapper" @click.stop="$emit('close')" :class="{'no-scroll': mouseOnBody}">
+    <div class="modal-wrapper" @click.stop="$emit('close')">
       <div class="modal-container" :style="{width: width, height: height}" @click.stop>
         
         <div class="modal-header">
@@ -91,7 +96,7 @@ export default {
 .modal-container {
   position: relative;
   display: inline-block;
-  margin: 30px auto;
+  margin: 20px auto;
   background-color: #fff;
   border-radius: 6px;
   overflow: hidden;

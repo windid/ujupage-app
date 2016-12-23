@@ -48,11 +48,13 @@ $.fn.extend({
     this.each((el) => {
       el.style.display = ''
     })
+    return this
   },
   hide () {
     this.each((el) => {
       el.style.display = 'none'
     })
+    return this
   },
   hasClass (className) {
     return this.length > 0 && this[0].classList.contains(className)
@@ -61,17 +63,19 @@ $.fn.extend({
     this.each((el) => {
       el.classList.add(className)
     })
+    return this
   },
   removeClass (className) {
     this.each((el) => {
       el.classList.remove(className)
     })
+    return this
   },
   css (props, value) {
     if (util.isPlainObject(props)) {
       for (const prop in props) {
         this.each(el => {
-          el.style[util.camelize(prop)] = props[prop] 
+          el.style[util.camelize(prop)] = props[prop]
         })
       }
     } else {
@@ -83,6 +87,7 @@ $.fn.extend({
         })
       }
     }
+    return this
   }
 })
 
