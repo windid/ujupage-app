@@ -1,3 +1,5 @@
+import { util } from 'vue'
+
 const $ = function (selector, context = document) {
   return new $.fn.Init(selector, context)
 }
@@ -34,36 +36,58 @@ $.extend = $.fn.extend = function (dest, src) {
 }
 
 $.fn.extend({
-  each: function (fn) {
+  each (fn) {
     for (let i = 0; i < this.length; i++) {
-      fn.apply(this[i], this[i], i)
+      fn.call(this[i], this[i], i)
     }
   }
 })
 
 $.fn.extend({
-  show: function () {
+  show () {
     this.each((el) => {
       el.style.display = ''
     })
+    return this
   },
-  hide: function () {
+  hide () {
     this.each((el) => {
       el.style.display = 'none'
     })
+    return this
   },
-  hasClass: function (className) {
+  hasClass (className) {
     return this.length > 0 && this[0].classList.contains(className)
   },
-  addClass: function (className) {
+  addClass (className) {
     this.each((el) => {
       el.classList.add(className)
     })
+    return this
   },
-  removeClass: function (className) {
+  removeClass (className) {
     this.each((el) => {
       el.classList.remove(className)
     })
+    return this
+  },
+  css (props, value) {
+    if (util.isPlainObject(props)) {
+      for (const prop in props) {
+        this.each(el => {
+          el.style[util.camelize(prop)] = props[prop]
+        })
+      }
+    } else {
+      if (!value && this.length > 0) {
+        return window.getComputedStyle(this[0]).getPropertyValue(props)
+      } else {
+        this.each(el => {
+          el.style[props] = value
+        })
+      }
+    }
+    return this
   }
 })
 

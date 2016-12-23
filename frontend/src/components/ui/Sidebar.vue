@@ -8,6 +8,11 @@ export default {
       require: true
     }
   },
+  data () {
+    return {
+      bodyScrollable: true
+    }
+  },
   mounted () {
     var el = this.$el
     this._closeEvent = eventHandler.listen(window, 'click', (e) => {
@@ -18,16 +23,6 @@ export default {
   },
   beforeDestroy () {
     if (this._closeEvent) this._closeEvent.remove()
-  },
-  watch: {
-    show (val) {
-      const body = document.body
-      if (val) {
-        body.classList.add('no-scroll')
-      } else {
-        body.classList.remove('no-scroll')
-      }
-    }
   }
 }
 </script>
@@ -40,7 +35,9 @@ export default {
       <slot name="header">
       </slot>
     </div>
-    <div class="sidebar-body">
+    <div class="sidebar-body"
+      @mouseenter="bodyScrollable = false"
+      @mouseleave="bodyScrollable = true">
       <slot name="body">
       </slot>
     </div>
