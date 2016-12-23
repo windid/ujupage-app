@@ -24,7 +24,9 @@ export default {
 
 <template>
   <div class="workspace">
-    <div id="content-area" :style="{height: height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}"></div>
+    <div id="content-area" :style="{height: height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}">
+      <div id="alignment-lines"></div>
+    </div>
     <fixed-container></fixed-container>
     <div class="section-wrapper">
       <page-section 
@@ -58,4 +60,25 @@ export default {
   z-index: 1;
 }
 
+#alignment-lines {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+</style>
+
+<style> 
+/* 对齐线 */
+.align-line {
+  position: absolute;
+  z-index: 9999999;
+}
+.align-line-horizontal {
+  height: 1px;
+  border-top: 1px solid red;
+}
+.align-line-vertical {
+  width: 1px;
+  border-left: 1px solid red;
+}
 </style>
