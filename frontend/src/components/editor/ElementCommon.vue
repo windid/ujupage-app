@@ -62,29 +62,23 @@ function findAlignments (dimen) {
       }
       lines.push(line)
     })
-    const container = document.getElementById('alignment-lines')
-    container.innerHTML = ''
-    lines.forEach((line) => {
-      const node = document.createElement('div')
-      node.classList.add('align-line')
-      node.classList.add(line.vertical ? 'align-line-vertical' : 'align-line-horizontal')
-      const left = line.vertical ? line.x - 1 : line.y
-      const top = line.vertical ? line.y : line.x - 1
-      const lengthName = line.vertical ? 'height' : 'width'
-      node.setAttribute('style', `
-      left: ${left}px;
-      top: ${top}px;
-      ${lengthName}: ${line.length}px;
-      `)
-      container.appendChild(node)
-    })
   })
-  Object.keys(alignments).forEach((key) => {
-    const sizes = alignments[key]
-    if (sizes.length > 0) {
-      if (key === 'left' || key === 'right' || key === 'hcenter') {
-      }
-    }
+
+  const container = document.getElementById('alignment-lines')
+  container.innerHTML = ''
+  lines.forEach((line) => {
+    const node = document.createElement('div')
+    node.classList.add('align-line')
+    node.classList.add(line.vertical ? 'align-line-vertical' : 'align-line-horizontal')
+    const left = line.vertical ? line.x - 1 : line.y
+    const top = line.vertical ? line.y : line.x - 1
+    const lengthName = line.vertical ? 'height' : 'width'
+    node.setAttribute('style', `
+    left: ${left}px;
+    top: ${top}px;
+    ${lengthName}: ${line.length}px;
+    `)
+    container.appendChild(node)
   })
 }
 
