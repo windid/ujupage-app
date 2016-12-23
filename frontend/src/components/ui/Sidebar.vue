@@ -20,9 +20,19 @@ export default {
         this.$emit('close')
       }
     })
+    let prevTop = document.body.scrollTop
+    const $body = this.$refs.sidebarBody
+    this._scrollEvent = eventHandler.listen(window, 'scroll', e => {
+      if (!this.bodyScrollable && $body && $body.scrollHeight > $body.offsetHeight) {
+        document.body.scrollTop = prevTop
+      } else {
+        prevTop = document.body.scrollTop
+      }
+    })
   },
   beforeDestroy () {
     if (this._closeEvent) this._closeEvent.remove()
+    this._scrollEvent.remove()
   }
 }
 </script>
@@ -36,6 +46,7 @@ export default {
       </slot>
     </div>
     <div class="sidebar-body"
+      ref="sidebarBody"
       @mouseenter="bodyScrollable = false"
       @mouseleave="bodyScrollable = true">
       <slot name="body">
