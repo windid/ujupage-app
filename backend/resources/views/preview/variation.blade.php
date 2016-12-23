@@ -17,7 +17,7 @@
   <script src="//app.ujupage.com/js/page.js?20161215"></script>
   <!-- <script src="/js/page.js"></script> -->
   @if ($content['settings']['hasMap'])
-  <script src="http://webapi.amap.com/maps?v=1.3&key=e3b78e84d1aedba49bc8a84c4e113e01&plugin=AMap.Scale,AMap.OverView,AMap.ToolBar"></script>
+  <script src="//webapi.amap.com/maps?v=1.3&key=e3b78e84d1aedba49bc8a84c4e113e01&plugin=AMap.Scale,AMap.OverView,AMap.ToolBar"></script>
   @endif
   @if ($content['settings']['hasSwiper'])
   <script src="//app.ujupage.com/js/swiper.js?20161215"></script>
