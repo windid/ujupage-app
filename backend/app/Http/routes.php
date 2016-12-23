@@ -563,6 +563,7 @@ Route::group(['prefix' => 'api', ['as' => 'api'], 'namespace' => 'Api'], functio
              * POST api/storage/image 上传文件
              * project_id 项目ID
              * dirname 目录名称
+             * file 上传文件 || url 文件地址
              * @return StatusCode 201
              * @return {
              *   id 图片ID
