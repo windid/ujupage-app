@@ -32,7 +32,6 @@ export default {
       this.editing = false
     },
     changeColor (val) {
-      console.log(val)
       this.modifyElement([this.elementId, { data: { color: val }}])
     },
     changeIcon (val) {
