@@ -1,5 +1,7 @@
 <script>
 import eventHandler from '../../utils/eventHandler'
+import { getScrollbarWidth } from '../../utils/env'
+import $ from '../../utils/query'
 
 export default {
   props: {
@@ -20,19 +22,35 @@ export default {
         this.$emit('close')
       }
     })
-    let prevTop = document.body.scrollTop
-    const $body = this.$refs.sidebarBody
-    this._scrollEvent = eventHandler.listen(window, 'scroll', e => {
-      if (!this.bodyScrollable && $body && $body.scrollHeight > $body.offsetHeight) {
-        document.body.scrollTop = prevTop
-      } else {
-        prevTop = document.body.scrollTop
-      }
-    })
   },
   beforeDestroy () {
     if (this._closeEvent) this._closeEvent.remove()
-    this._scrollEvent.remove()
+  },
+  computed: {
+    style () {
+      let paddingRight = getScrollbarWidth()
+      if (this.bodyScrollable) {
+        paddingRight = 0
+      }
+      return { paddingRight: paddingRight + 'px' }
+    }
+  },
+  watch: {
+    bodyScrollable (val) {
+      const $body = $(document.body)
+      const $editorHeader = $('.editor-header')
+      const sidebarBody = this.$refs.sidebarBody
+      this.$nextTick(() => {
+        if (val) {
+          $body.css('padding-right', '0px').removeClass('no-scroll')
+          $editorHeader.css('padding-right', '0px')
+        } else if (sidebarBody && sidebarBody.scrollHeight > sidebarBody.offsetHeight) {
+          const paddingRight = getScrollbarWidth() + 'px'
+          $body.addClass('no-scroll').css('padding-right', paddingRight)
+          $editorHeader.css('padding-right', paddingRight)
+        }
+      })
+    }
   }
 }
 </script>
@@ -40,7 +58,7 @@ export default {
 <template>
 
 <transition name="sidebar">
-  <div v-if="show" class="sidebar" @mousedown.stop>
+  <div v-if="show" class="sidebar" @mousedown.stop :style="style">
     <div class="sidebar-header">
       <slot name="header">
       </slot>
@@ -70,6 +88,7 @@ $sidebar-width: 300px;
   background-color: #fff;
   font-size: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+  box-sizing: content-box;
 }
 
 .sidebar-header {
