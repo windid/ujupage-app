@@ -12,16 +12,12 @@ let EDIT_CACHE = {
   mountedId: null
 }
 
-const ALIGNEMNT_DATA = []
+var ALIGNEMNT_DATA = []
 
 function removeAligment (mid) {
-  const len = ALIGNEMNT_DATA.length
-  for (let i = 0; i < len; i++) {
-    if (ALIGNEMNT_DATA[i].mid === mid) {
-      ALIGNEMNT_DATA.splice(i, 1)
-      break
-    }
-  }
+  ALIGNEMNT_DATA = ALIGNEMNT_DATA.filter((e) => {
+    return e.mid !== mid
+  })
 }
 
 function clearAlignments () {
