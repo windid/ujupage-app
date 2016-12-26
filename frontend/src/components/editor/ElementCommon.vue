@@ -424,6 +424,8 @@ export default {
           height: parseInt(this.$el.style.height)
         }])
         this.$emit('resize-end')
+        this.updateAlignmentInfo()
+        clearAlignments()
       } else {
         this.resizing = true
         this.$emit('change-draggable', false)
