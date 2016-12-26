@@ -45,7 +45,7 @@ export default {
     },
     inputColor (e) {
       let newColor = e.target.value
-      if (newColor.toString().substr(0, 1) !== '#') {
+      if (newColor.toString().charAt(0) !== '#') {
         newColor = '#' + newColor
       }
       this.color = newColor
