@@ -26,28 +26,22 @@ export default {
   beforeDestroy () {
     if (this._closeEvent) this._closeEvent.remove()
   },
-  computed: {
-    style () {
-      let paddingRight = getScrollbarWidth()
-      if (this.bodyScrollable) {
-        paddingRight = 0
-      }
-      return { paddingRight: paddingRight + 'px' }
-    }
-  },
   watch: {
     bodyScrollable (val) {
       const $body = $(document.body)
       const $editorHeader = $('.editor-header')
       const sidebarBody = this.$refs.sidebarBody
+      const $sidebar = $(this.$el)
       this.$nextTick(() => {
         if (val) {
           $body.css('padding-right', '0px').removeClass('no-scroll')
           $editorHeader.css('padding-right', '0px')
-        } else if (sidebarBody && sidebarBody.scrollHeight > sidebarBody.offsetHeight) {
+          $sidebar.css('padding-right', '0px')
+        } else if (sidebarBody && sidebarBody.scrollHeight > sidebarBody.clientHeight) {
           const paddingRight = getScrollbarWidth() + 'px'
           $body.addClass('no-scroll').css('padding-right', paddingRight)
           $editorHeader.css('padding-right', paddingRight)
+          $sidebar.css('padding-right', paddingRight)
         }
       })
     }
@@ -58,7 +52,7 @@ export default {
 <template>
 
 <transition name="sidebar">
-  <div v-if="show" class="sidebar" @mousedown.stop :style="style">
+  <div v-if="show" class="sidebar" @mousedown.stop>
     <div class="sidebar-header">
       <slot name="header">
       </slot>
