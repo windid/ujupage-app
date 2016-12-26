@@ -56,6 +56,9 @@ export default {
         this.modifyElement([this.elementId, newPropsObj])
       }
       this.buttonGroup = 'main'
+    },
+    imageOnload () {
+      this.$refs.element.updateAlignmentInfo()
     }
   },
   watch: {
@@ -69,6 +72,7 @@ export default {
 <template>
   <element-common
     :element="element" 
+    ref="element"
     :section-id="sectionId" 
     :element-id="elementId" 
     :button-group="buttonGroup" 
@@ -82,8 +86,9 @@ export default {
   >
     <div slot="content" :class="{'element-button-text': !localElement.image}"
       @dblclick="edit" 
+      ref="content"
       :style="buttonStyles">
-      <img v-if="localElement.image" :src="localElement.image" :style="{width: 'auto', 'max-width':'100%', height:'auto'}" @mousedown.prevent>
+      <img v-if="localElement.image" :src="localElement.image" :style="{width: 'auto', 'max-width':'100%', height:'auto'}" @mousedown.prevent @load="imageOnload">
       <span v-else>{{localElement.text}}</span>
     </div>
     

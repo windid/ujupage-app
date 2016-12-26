@@ -38,6 +38,9 @@ export default {
         this.modifyElement([this.elementId, newPropsObj])
       }
       this.buttonGroup = 'main'
+    },
+    imageOnload () {
+      this.$refs.element.updateAlignmentInfo()
     }
   },
   watch: {
@@ -73,9 +76,6 @@ export default {
         this.removeElement([this.elementId, false])
       }])
     }
-    this.$refs.image.addEventListener('load', () => {
-      this.$refs.element.updateAlignmentInfo()
-    }, false)
   }
 }
 </script>
@@ -95,7 +95,7 @@ export default {
     @change-draggable="changeDraggable"
   >
     <div slot="content" @dblclick="edit" @mousedown.prevent>
-      <img v-bind:src="element.src" :style="{width:'100%',height:'auto'}" @mousedown.prevent ref="image">
+      <img v-bind:src="element.src" :style="{width:'100%',height:'auto'}" @mousedown.prevent @load="imageOnload">
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>

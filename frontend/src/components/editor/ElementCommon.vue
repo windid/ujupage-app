@@ -14,6 +14,21 @@ let EDIT_CACHE = {
 
 const ALIGNEMNT_DATA = []
 
+function removeAligment (mid) {
+  const len = ALIGNEMNT_DATA.length
+  for (let i = 0; i < len; i++) {
+    if (ALIGNEMNT_DATA[i].mid === mid) {
+      ALIGNEMNT_DATA.splice(i, 1)
+      break
+    }
+  }
+}
+
+function clearAlignments () {
+  const container = document.getElementById('alignment-lines')
+  container.innerHTML = ''
+}
+
 function findAlignments (dimen) {
   const ALIGNMENT_SIDES = [
     {
@@ -54,11 +69,14 @@ function findAlignments (dimen) {
       const value = dimen.rect[group.value]
       const min = Math.min(...sizes, value)
       const max = Math.max(...sizes, value)
+      const vertical = i === 0
       const line = {
-        vertical: i === 0,
+        vertical,
         length: max - min,
-        y: min,
-        x: dimen.rect[key]
+        min,
+        max,
+        vAxis: dimen.rect[key],
+        dots: [...sizes, value]
       }
       lines.push(line)
     })
@@ -66,18 +84,28 @@ function findAlignments (dimen) {
 
   const container = document.getElementById('alignment-lines')
   container.innerHTML = ''
+  if (lines.length > 0) {
+    // console.log(dimen)
+  }
   lines.forEach((line) => {
     const node = document.createElement('div')
     node.classList.add('align-line')
     node.classList.add(line.vertical ? 'align-line-vertical' : 'align-line-horizontal')
-    const left = line.vertical ? line.x - 1 : line.y
-    const top = line.vertical ? line.y : line.x - 1
+    const left = line.vertical ? line.vAxis - 1 : line.min
+    const top = line.vertical ? line.min : line.vAxis - 1
     const lengthName = line.vertical ? 'height' : 'width'
-    node.setAttribute('style', `
-    left: ${left}px;
-    top: ${top}px;
-    ${lengthName}: ${line.length}px;
-    `)
+    node.setAttribute('style', `left: ${left}px; top: ${top}px; ${lengthName}: ${line.length}px;`)
+    const ruler = document.createElement('div')
+    ruler.setAttribute('style', 'position: relative; width: 100%; height: 100%;')
+
+    line.dots.forEach((e) => {
+      const dot = document.createElement('div')
+      const side = line.vertical ? 'top' : 'left'
+      const subSide = line.vertical ? 'left' : 'top'
+      dot.setAttribute('style', `position: absolute; ${side}: ${e - line.min - 2}px; ${subSide}: -2px; width: 4px; height: 4px; background: red;`)
+      ruler.appendChild(dot)
+    })
+    node.appendChild(ruler)
     container.appendChild(node)
   })
 }
@@ -331,6 +359,7 @@ export default {
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
       this.updateAlignmentInfo()
+      clearAlignments()
     },
     // dragEnable () {
     //   // calbacks
@@ -523,6 +552,7 @@ export default {
     }
     // 从位置信息中删除
     // ALIGNEMNT_DATA
+    removeAligment(this.mountedId)
   }
 }
 
