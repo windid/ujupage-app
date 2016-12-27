@@ -12,6 +12,100 @@ let EDIT_CACHE = {
   mountedId: null
 }
 
+var ALIGNEMNT_DATA = []
+
+function removeAligment (mid) {
+  ALIGNEMNT_DATA = ALIGNEMNT_DATA.filter((e) => {
+    return e.mid !== mid
+  })
+}
+
+function clearAlignments () {
+  const container = document.getElementById('alignment-lines')
+  container.innerHTML = ''
+}
+
+function findAlignments (dimen) {
+  const ALIGNMENT_SIDES = [
+    {
+      sides: ['left', 'right', 'hcenter'],
+      value: 'vcenter'
+    },
+    {
+      sides: ['top', 'bottom', 'vcenter'],
+      value: 'hcenter'
+    }]
+  const alignments = {
+    left: [],
+    right: [],
+    top: [],
+    bottom: [],
+    vcenter: [],
+    hcenter: []
+  }
+  ALIGNEMNT_DATA.forEach((a) => {
+    if (a.mid !== dimen.mid) {
+      ALIGNMENT_SIDES.forEach((group) => {
+        group.sides.forEach((key) => {
+          group.sides.forEach((subKey) => {
+            if (dimen.rect[key] === a.rect[subKey]) {
+              alignments[key].push(a.rect[group.value])
+            }
+          })
+        })
+      })
+    }
+  })
+  const lines = []
+  ALIGNMENT_SIDES.forEach((group, i) => {
+    const sides = group.sides
+    sides.forEach((key) => {
+      const sizes = alignments[key]
+      if (sizes.length <= 0) return
+      const value = dimen.rect[group.value]
+      const min = Math.min(...sizes, value)
+      const max = Math.max(...sizes, value)
+      const vertical = i === 0
+      const line = {
+        vertical,
+        length: max - min,
+        min,
+        max,
+        vAxis: dimen.rect[key],
+        dots: [...sizes, value]
+      }
+      lines.push(line)
+    })
+  })
+
+  const container = document.getElementById('alignment-lines')
+  container.innerHTML = ''
+  if (lines.length > 0) {
+    // console.log(dimen)
+  }
+  lines.forEach((line) => {
+    const node = document.createElement('div')
+    node.classList.add('align-line')
+    node.classList.add(line.vertical ? 'align-line-vertical' : 'align-line-horizontal')
+    const left = line.vertical ? line.vAxis - 1 : line.min
+    const top = line.vertical ? line.min : line.vAxis - 1
+    const lengthName = line.vertical ? 'height' : 'width'
+    node.setAttribute('style', `left: ${left}px; top: ${top}px; ${lengthName}: ${line.length}px;`)
+    const ruler = document.createElement('div')
+    ruler.setAttribute('style', 'position: relative; width: 100%; height: 100%;')
+
+    line.dots.forEach((e) => {
+      const dot = document.createElement('div')
+      const side = line.vertical ? 'top' : 'left'
+      const subSide = line.vertical ? 'left' : 'top'
+      dot.setAttribute('style', `position: absolute; ${side}: ${e - line.min - 2}px; ${subSide}: -2px; width: 4px; height: 4px; background: red;`)
+      ruler.appendChild(dot)
+    })
+    node.appendChild(ruler)
+    container.appendChild(node)
+  })
+}
+
 export default {
   name: 'element-common',
   mixins: [mouseDrag],
@@ -251,6 +345,7 @@ export default {
       this.$el.style.top = `${this.startPosTop + move.y}px`
       this.elPositionInPage.left = this.startPosLeft + move.x
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
+      this.findAlignments()
     },
     dragEnd (movement) {
       if (movement.x === 0 && movement.y === 0) return
@@ -259,6 +354,8 @@ export default {
       this.elPositionInPage.left = this.startPosLeft + move.x
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
+      this.updateAlignmentInfo()
+      clearAlignments()
     },
     // dragEnable () {
     //   // calbacks
@@ -327,10 +424,13 @@ export default {
           height: parseInt(this.$el.style.height)
         }])
         this.$emit('resize-end')
+        this.updateAlignmentInfo()
+        clearAlignments()
       } else {
         this.resizing = true
         this.$emit('change-draggable', false)
         this.$emit('resizing', direction, size)
+        this.findAlignments()
       }
     },
     resizeEnable () {
@@ -344,6 +444,50 @@ export default {
     //     }
     //   }
     // },
+    getAlignmentInfo () {
+      const elRectangle = this.$el.getBoundingClientRect()
+      const containerRect = document.getElementById('content-area').getBoundingClientRect()
+      const left = elRectangle.left - containerRect.left
+      const right = elRectangle.right - containerRect.left
+      const top = elRectangle.top - containerRect.top
+      const bottom = elRectangle.bottom - containerRect.top
+      const hcenter = left + elRectangle.width / 2
+      const vcenter = top + elRectangle.height / 2
+      const rect = {
+        left,
+        right,
+        top,
+        bottom,
+        hcenter,
+        vcenter
+      }
+      return rect
+    },
+    updateAlignmentInfo (ifNew) {
+      const rect = this.getAlignmentInfo()
+      if (ifNew) {
+        ALIGNEMNT_DATA.push({
+          mid: this.mountedId,
+          rect: rect
+        })
+      } else {
+        const index = ALIGNEMNT_DATA.findIndex((e) => e.mid === this.mountedId)
+        if (index >= 0) {
+          ALIGNEMNT_DATA[index].rect = rect
+        } else {
+          ALIGNEMNT_DATA.push({
+            mid: this.mountedId,
+            rect: rect
+          })
+        }
+      }
+    },
+    findAlignments () {
+      findAlignments({
+        mid: this.mountedId,
+        rect: this.getAlignmentInfo()
+      })
+    },
     watchScroll () {
       this.watchEvent = eventHandler.listen(window, 'scroll', (e) => {
         this.documentScrollPx = document.body.scrollTop
@@ -394,6 +538,7 @@ export default {
       document.addEventListener('keydown', this.onKey)
       this.keyEventAttached = true
     }
+    this.updateAlignmentInfo(true)
   },
   destroyed () {
     if (this.keyMoveTimer !== null) {
@@ -403,6 +548,9 @@ export default {
     if (this.keyEventAttached) {
       document.removeEventListener('keydown', this.onKey, false)
     }
+    // 从位置信息中删除
+    // ALIGNEMNT_DATA
+    removeAligment(this.mountedId)
   }
 }
 
