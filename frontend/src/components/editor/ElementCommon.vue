@@ -13,6 +13,7 @@ let EDIT_CACHE = {
 }
 
 var ALIGNEMNT_DATA = []
+var IDs = []
 
 function removeAligment (mid) {
   ALIGNEMNT_DATA = ALIGNEMNT_DATA.filter((e) => {
@@ -23,6 +24,24 @@ function removeAligment (mid) {
 function clearAlignments () {
   const container = document.getElementById('alignment-lines')
   container.innerHTML = ''
+  clearHighlights()
+}
+
+function highlights () {
+  const wrapper = document.getElementById('main-wrapper').querySelector('.section-wrapper')
+  IDs.forEach(id => {
+    const e = wrapper.querySelector('#element-' + id)
+    e.parentNode.classList.add('highlighted')
+  })
+}
+
+function clearHighlights () {
+  const wrapper = document.getElementById('main-wrapper').querySelector('.section-wrapper')
+  IDs.forEach(id => {
+    const e = wrapper.querySelector('#element-' + id)
+    e.parentNode.classList.remove('highlighted')
+  })
+  IDs = []
 }
 
 function findAlignments (dimen) {
@@ -43,12 +62,16 @@ function findAlignments (dimen) {
     vcenter: [],
     hcenter: []
   }
+
+  clearHighlights()
   ALIGNEMNT_DATA.forEach((a) => {
-    if (a.mid !== dimen.mid) {
+    if (a.id !== dimen.id) {
       ALIGNMENT_SIDES.forEach((group) => {
-        group.sides.forEach((key) => {
-          group.sides.forEach((subKey) => {
+        const sides = group.sides
+        sides.forEach((key) => {
+          sides.forEach((subKey) => {
             if (dimen.rect[key] === a.rect[subKey]) {
+              IDs.push(a.id)
               alignments[key].push(a.rect[group.value])
             }
           })
@@ -80,9 +103,6 @@ function findAlignments (dimen) {
 
   const container = document.getElementById('alignment-lines')
   container.innerHTML = ''
-  if (lines.length > 0) {
-    // console.log(dimen)
-  }
   lines.forEach((line) => {
     const node = document.createElement('div')
     node.classList.add('align-line')
@@ -104,6 +124,7 @@ function findAlignments (dimen) {
     node.appendChild(ruler)
     container.appendChild(node)
   })
+  highlights()
 }
 
 export default {
@@ -445,7 +466,7 @@ export default {
     //   }
     // },
     getAlignmentInfo () {
-      const elRectangle = this.$el.getBoundingClientRect()
+      const elRectangle = this.$refs.box.getBoundingClientRect()
       const containerRect = document.getElementById('content-area').getBoundingClientRect()
       const left = elRectangle.left - containerRect.left
       const right = elRectangle.right - containerRect.left
@@ -468,6 +489,7 @@ export default {
       if (ifNew) {
         ALIGNEMNT_DATA.push({
           mid: this.mountedId,
+          id: this.elementId,
           rect: rect
         })
       } else {
@@ -477,6 +499,7 @@ export default {
         } else {
           ALIGNEMNT_DATA.push({
             mid: this.mountedId,
+            id: this.elementId,
             rect: rect
           })
         }
@@ -484,6 +507,7 @@ export default {
     },
     findAlignments () {
       findAlignments({
+        id: this.elementId,
         mid: this.mountedId,
         rect: this.getAlignmentInfo()
       })
@@ -570,6 +594,7 @@ const getElementTop = (element) => {
 
 <template>
   <div class="element" @click="selectElement" @mousedown.stop="onDragBegin"
+    ref="box"
     :style="{
       display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
       left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,
@@ -745,4 +770,10 @@ const getElementTop = (element) => {
   border-style: solid;
   border-color: transparent transparent #03ddff transparent;
 }
+</style>
+
+<style>
+  .highlighted {
+    outline: 1px solid red;
+  }
 </style>
