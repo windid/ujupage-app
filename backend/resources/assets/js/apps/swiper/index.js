@@ -15,7 +15,6 @@ window.makeSlider = function (config) {
   el.css('width', W).css('height', H)
   el.find('li').each(function() {
     $(this).css('height', H)
-    $(this).css('line-height', H)
     var src = $(this).attr('data-src')
     var fileExtension = src.replace(/^.*\.([a-zA-z0-9]+)$/, '$1')
     if (!fileExtension) {
