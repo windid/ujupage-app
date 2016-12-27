@@ -2,7 +2,7 @@
   <div class="app-footer">
     <span>&copy; 2017 优矩广告</span>
     <div class="footer-nav">
-      <a href="mailto:support@ujupage.com">support@ujupage.com</a>
+      需要帮助请发邮件至：<a href="mailto:support@ujupage.com">support@ujupage.com</a>
     </div>
   </div>
 </template>

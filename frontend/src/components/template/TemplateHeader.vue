@@ -46,11 +46,11 @@ export default {
     </div>
 
     <div class="btn-toolbar fr">
-      <div class="btn-group">
+      <!-- <div class="btn-group">
         <div class="btn btn-default">
           <span class="glyphicon glyphicon-question-sign"></span>
         </div>
-      </div>
+      </div> -->
 
       <color-schemes @update-colors="updateColors"></color-schemes>
 

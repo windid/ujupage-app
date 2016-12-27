@@ -172,11 +172,11 @@ export default {
     </div>
 
     <div class="btn-toolbar fr">
-      <div class="btn-group">
+      <!-- <div class="btn-group">
         <tooltip class="btn btn-default" content="帮助">
           <span class="glyphicon glyphicon-question-sign"></span>
         </tooltip>
-      </div>
+      </div> -->
       <div class="btn-group">
         <tooltip content="撤销" class="btn btn-default" :class="{ disabled: !undoButton }" @click.native="undo">
           <span class="glyphicon glyphicon-share-alt flipx"></span>
