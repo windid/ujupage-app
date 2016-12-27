@@ -58,9 +58,10 @@ function detectSelection (el) {
   }
   if (window.getSelection) {
     var sel = window.getSelection()
-    var nodes = el.getElementsByTagName('*')
-    Array.prototype.forEach.call(nodes, (e) => {
-      if (sel.containsNode(e, true)) {
+    if (sel.rangeCount > 0) {
+      const range = sel.getRangeAt(0)
+      const nodes = range.cloneContents().querySelectorAll('*')
+      Array.prototype.forEach.call(nodes, (e) => {
         // 检查是否包含 <a> 标签
         if (!r.link && e.tagName === 'A') {
           r.link = true
@@ -72,8 +73,8 @@ function detectSelection (el) {
             r.color.push(color)
           }
         }
-      }
-    })
+      })
+    }
   }
   return r
 }

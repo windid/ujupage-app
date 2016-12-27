@@ -1,6 +1,7 @@
 <script>
 import Auth from './Auth'
 import { mapActions } from 'vuex'
+import { emailRE } from '../../utils'
 
 export default {
   components: {
@@ -31,8 +32,8 @@ export default {
         this.error = '姓名长度不能超过20个字符'
         return
       }
-      const emailPattern = /^[A-Za-z0-9]+([-_.][A-Za-z0-9]+)*@([A-Za-z0-9]+[-.])+[A-Za-z0-9]{2,5}$/
-      if (!emailPattern.test(email)) {
+      // const emailPattern = /^[A-Za-z0-9]+([-_.][A-Za-z0-9]+)*@([A-Za-z0-9]+[-.])+[A-Za-z0-9]{2,5}$/
+      if (!emailRE.test(email)) {
         this.error = '邮箱地址格式不正确。'
         return
       }

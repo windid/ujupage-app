@@ -1,5 +1,7 @@
 <script>
 import eventHandler from '../../utils/eventHandler'
+import { getScrollbarWidth } from '../../utils/env'
+import $ from '../../utils/query'
 
 export default {
   props: {
@@ -23,6 +25,26 @@ export default {
   },
   beforeDestroy () {
     if (this._closeEvent) this._closeEvent.remove()
+  },
+  watch: {
+    bodyScrollable (val) {
+      const $body = $(document.body)
+      const $editorHeader = $('.editor-header')
+      const sidebarBody = this.$refs.sidebarBody
+      const $sidebar = $(this.$el)
+      this.$nextTick(() => {
+        if (val) {
+          $body.css('padding-right', '0px').removeClass('no-scroll')
+          $editorHeader.css('padding-right', '0px')
+          $sidebar.css('padding-right', '0px')
+        } else if (sidebarBody && sidebarBody.scrollHeight > sidebarBody.clientHeight) {
+          const paddingRight = getScrollbarWidth() + 'px'
+          $body.addClass('no-scroll').css('padding-right', paddingRight)
+          $editorHeader.css('padding-right', paddingRight)
+          $sidebar.css('padding-right', paddingRight)
+        }
+      })
+    }
   }
 }
 </script>
@@ -36,6 +58,7 @@ export default {
       </slot>
     </div>
     <div class="sidebar-body"
+      ref="sidebarBody"
       @mouseenter="bodyScrollable = false"
       @mouseleave="bodyScrollable = true">
       <slot name="body">
@@ -59,6 +82,7 @@ $sidebar-width: 300px;
   background-color: #fff;
   font-size: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+  box-sizing: content-box;
 }
 
 .sidebar-header {

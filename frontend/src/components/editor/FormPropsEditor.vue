@@ -38,14 +38,14 @@ export default {
 
       <div  class="float-color-picker">
         <div class="float-color-block-text">标签</div>
-        <color-picker v-model="formProps.labelColor">
+        <color-picker v-model="formProps.labelColor" position="right">
           <div class="float-color-block" data-toggle="dropdown" :style="{background:getColor(formProps.labelColor)}"></div>
         </color-picker>
       </div>
 
       <div  class="float-color-picker">
         <div class="float-color-block-text">边框</div>
-        <color-picker v-model="formProps.borderColor">
+        <color-picker v-model="formProps.borderColor" position="right">
           <div class="float-color-block" data-toggle="dropdown" :style="{background:getColor(formProps.borderColor)}"></div>
         </color-picker>
       </div>

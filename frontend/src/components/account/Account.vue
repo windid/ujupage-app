@@ -55,9 +55,6 @@ export default {
   created () {
     document.title = '我的账号 - 聚页'
   },
-  mounted () {
-    this.$refs.file.addEventListener('change', this.avatarLoad)
-  },
   methods: {
     ...mapActions([
       'editUser'
@@ -86,24 +83,17 @@ export default {
             text: '正在上传',
             target: this.$refs.avatar
           })
-          API.user.edit(data).then(
-          response => {
-            if (response.ok) {
-              const url = response.body.avatar
-              if (url && typeof url === 'string' && url.length > 0) {
-                this.user.avatar = url
-                this.editDone()
-              }
-            } else {
-              this.showDialog(this.messages.avatarFail)
+          API.user.edit(data).then(response => {
+            const url = response.body.avatar
+            if (url && typeof url === 'string' && url.length > 0) {
+              this.user.avatar = url
+              this.editDone()
             }
-            loader.close()
-          },
-          response => {
-            // failed
-            loader.close()
+          }).catch(() => {
             console.error('用户头像上传失败')
             this.showDialog(this.messages.avatarFail)
+          }).finally(() => {
+            loader.close()
           })
         }
       }
@@ -145,11 +135,9 @@ export default {
       data.append('name', name)
       API.user.edit(data).then(
       response => {
-        if (response.ok) {
-          this.showDialog(this.messages.editSuccess)
-          this.user = response.body
-          this.editDone()
-        }
+        this.showDialog(this.messages.editSuccess)
+        this.user = response.body
+        this.editDone()
       },
       response => {
         if (response.status === 401) {
@@ -180,7 +168,7 @@ export default {
               <span v-else class="glyphicon glyphicon-user"></span>
             </tooltip>
             <form hidden class="hidden"  enctype="multipart/form-data">
-              <input type="file" ref="file" accept="image/x-png,image/jpg,image/jpeg"></input>
+              <input type="file" ref="file" accept="image/x-png,image/jpg,image/jpeg" @change="avatarLoad">
             </form>
           </div>
         </div>

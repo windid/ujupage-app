@@ -167,7 +167,7 @@ export default {
         </tbody>
       </table>
       <p><a href="javascript:;" @click="showSplit = true">版本流量分配</a></p>
-      <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @update-split="updateTraficSplit" @close="showSplit = false"></ab-split>
+      <ab-split :page-id="page.id" :variations="page.variations" :show="showSplit" @update-split="updateTraficSplit" @close="showSplit = false"></ab-split>
       <div class="data-tab">
         <div class="btn-group">
           <div class="btn btn-default" :class="{ active: currentTab === 'conversionRate'}" @click="currentTab = 'conversionRate'">转化率</div>
