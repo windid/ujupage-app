@@ -56,14 +56,14 @@ class ParseHtml {
         self::$page['style']['pc']['section-'.$section_id] = self::parseSectionStyles($section['style']['pc'], 'pc');
         self::$page['style']['mobile']['section-'.$section_id] = self::parseSectionStyles($section['style']['mobile'], 'mobile');
 
-        if (isset($section['style']['pc']['mask'])) {
+        if (isset($section['style']['pc']['mask']) && isset($section['style']['pc']['background'])) {
             self::$page['style']['pc']['section-'.$section_id.' .section-inner'] = [
                 'opacity'          => $section['style']['pc']['mask']['opacity'] / 100,
                 'background-color' => self::getColor($section['style']['pc']['mask']['color'])
             ];
         }
         
-        if (isset($section['style']['pc']['mask'])) {
+        if (isset($section['style']['mobile']['mask']) && isset($section['style']['mobile']['background'])) {
             self::$page['style']['mobile']['section-'.$section_id.' .section-inner'] = [
                 'opacity' => $section['style']['mobile']['mask']['opacity'] / 100,
                 'background-color' => self::getColor($section['style']['mobile']['mask']['color'])
