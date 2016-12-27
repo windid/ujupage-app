@@ -80,12 +80,12 @@ export default {
 
       <div v-for="(field, index) in localElement.fields" class="form-group">
         <template v-if="field.type === 'text'">
-          <div v-if="!localElement.props.labelInside"><label :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label></div>
+          <label v-if="!localElement.props.labelInside" :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label>
           <input type="text" class="form-control form-field-input" :style="fieldStyles" :value="localElement.props.labelInside ? field.label : ''">
         </template>
 
         <template v-if="field.type === 'textarea'">
-          <div v-if="!localElement.props.labelInside"><label :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label></div>
+          <label v-if="!localElement.props.labelInside" :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label>
           <textarea class="form-control form-field-input" :style="fieldStyles" rows="3">{{localElement.props.labelInside ? field.label : ''}}</textarea>
         </template>
 
@@ -156,32 +156,31 @@ export default {
   </element-common>
 </template>
 
-<style>
-.form-field-wrapper{
-  margin:6px 0;
+<style scoped>
+
+label {
+  font-size: 16px;
 }
 
-.form-field-input{
+.form-field-input {
   font-size: 16px;
   height: 40px;
-  line-height: 20px;
-  padding: 4px 10px;
 }
 
 .form-field-input .caret{
-  float:right;
-  margin-top:12px;
-  margin-right:2px;
+  float: right;
+  margin-top: 12px;
+  margin-right: 2px;
 }
 
 .form-field-dropdown{
-  float:left;
-  width:auto;
+  float: left;
+  width: auto;
 }
 
 .options-in-line{
   display: inline-block;
-  margin-right:10px;
+  margin-right: 10px;
 }
 
 .shadow-inside{
