@@ -191,11 +191,12 @@ class PageController extends Controller {
         }
         
         $page->url = $request->get('url', $page->url);
-        $chkPage = $this->page->where('url', $page->url)->where('id', '!=', $page->id)->first();
-        if ($chkPage) {
-            return $this->err('used page url, please not repeat.', '422');
+        if ($page->url != '') {
+            $chkPage = $this->page->where('url', $page->url)->where('id', '!=', $page->id)->first();
+            if ($chkPage) {
+                return $this->err('used page url, please not repeat.', '422');
+            }
         }
-        
         
         $page->setting = $request->get('setting', '');        
         $pagegroup->pages()->save($page);
