@@ -12,121 +12,6 @@ let EDIT_CACHE = {
   mountedId: null
 }
 
-var ALIGNEMNT_DATA = []
-var IDs = []
-
-function removeAligment (mid) {
-  ALIGNEMNT_DATA = ALIGNEMNT_DATA.filter((e) => {
-    return e.mid !== mid
-  })
-}
-
-function clearAlignments () {
-  const container = document.getElementById('alignment-lines')
-  container.innerHTML = ''
-  clearHighlights()
-}
-
-function highlights () {
-  const wrapper = document.getElementById('main-wrapper').querySelector('.section-wrapper')
-  IDs.forEach(id => {
-    const e = wrapper.querySelector('#element-' + id)
-    e.parentNode.classList.add('highlighted')
-  })
-}
-
-function clearHighlights () {
-  const wrapper = document.getElementById('main-wrapper').querySelector('.section-wrapper')
-  IDs.forEach(id => {
-    const e = wrapper.querySelector('#element-' + id)
-    e.parentNode.classList.remove('highlighted')
-  })
-  IDs = []
-}
-
-function findAlignments (dimen) {
-  const ALIGNMENT_SIDES = [
-    {
-      sides: ['left', 'right', 'hcenter'],
-      value: 'vcenter'
-    },
-    {
-      sides: ['top', 'bottom', 'vcenter'],
-      value: 'hcenter'
-    }]
-  const alignments = {
-    left: [],
-    right: [],
-    top: [],
-    bottom: [],
-    vcenter: [],
-    hcenter: []
-  }
-
-  clearHighlights()
-  ALIGNEMNT_DATA.forEach((a) => {
-    if (a.id !== dimen.id) {
-      ALIGNMENT_SIDES.forEach((group) => {
-        const sides = group.sides
-        sides.forEach((key) => {
-          sides.forEach((subKey) => {
-            if (dimen.rect[key] === a.rect[subKey]) {
-              IDs.push(a.id)
-              alignments[key].push(a.rect[group.value])
-            }
-          })
-        })
-      })
-    }
-  })
-  const lines = []
-  ALIGNMENT_SIDES.forEach((group, i) => {
-    const sides = group.sides
-    sides.forEach((key) => {
-      const sizes = alignments[key]
-      if (sizes.length <= 0) return
-      const value = dimen.rect[group.value]
-      const min = Math.min(...sizes, value)
-      const max = Math.max(...sizes, value)
-      const vertical = i === 0
-      const line = {
-        vertical,
-        length: max - min,
-        min,
-        max,
-        vAxis: dimen.rect[key],
-        dots: [...sizes, value]
-      }
-      lines.push(line)
-    })
-  })
-
-  const container = document.getElementById('alignment-lines')
-  container.innerHTML = ''
-  lines.forEach((line) => {
-    const node = document.createElement('div')
-    node.classList.add('align-line')
-    node.classList.add(line.vertical ? 'align-line-vertical' : 'align-line-horizontal')
-    const left = line.vertical ? line.vAxis - 1 : line.min
-    const top = line.vertical ? line.min : line.vAxis - 1
-    const lengthName = line.vertical ? 'height' : 'width'
-    node.setAttribute('style', `left: ${left}px; top: ${top}px; ${lengthName}: ${line.length}px;`)
-    const ruler = document.createElement('div')
-    ruler.setAttribute('style', 'position: relative; width: 100%; height: 100%;')
-
-    line.dots.forEach((e) => {
-      const dot = document.createElement('div')
-      const side = line.vertical ? 'top' : 'left'
-      const subSide = line.vertical ? 'left' : 'top'
-      dot.setAttribute('style', `position: absolute; ${side}: ${e - line.min - 2}px; ${subSide}: -2px; width: 4px; height: 4px; background: red;`)
-      ruler.appendChild(dot)
-    })
-    node.appendChild(ruler)
-    container.appendChild(node)
-  })
-  highlights()
-}
-
 export default {
   name: 'element-common',
   mixins: [mouseDrag],
@@ -204,8 +89,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      workspace: 'editorWorkspace'
+      workspace: 'editorWorkspace',
+      alignIds: 'getAlignIds'
     }),
+    hasAligned () {
+      return this.alignIds.indexOf(this.elementId) >= 0
+    },
     // 直接watch element.fixed居然无效，只好用计算属性来监听，不确定是不是Vue的bug
     // 如果元素被固定，那么不允许拖动
     isFixed () {
@@ -236,7 +125,13 @@ export default {
       'resizeElement',
       'indexElement',
       'duplicateElement',
-      'modifyElement'
+      'modifyElement',
+      // 对齐
+      'addAlignElement',
+      'modifyAlignElement',
+      'removeAlignElement',
+      'updateAlign',
+      'clearAlign'
     ]),
     selectElement () {
       this.setActiveElementId(this.elementId)
@@ -376,7 +271,7 @@ export default {
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
       this.updateAlignmentInfo()
-      clearAlignments()
+      this.clearAlign()
     },
     // dragEnable () {
     //   // calbacks
@@ -446,7 +341,7 @@ export default {
         }])
         this.$emit('resize-end')
         this.updateAlignmentInfo()
-        clearAlignments()
+        this.clearAlign()
       } else {
         this.resizing = true
         this.$emit('change-draggable', false)
@@ -485,28 +380,19 @@ export default {
       return rect
     },
     updateAlignmentInfo (ifNew) {
-      const rect = this.getAlignmentInfo()
+      const element = {
+        mid: this.mountedId,
+        id: this.elementId,
+        rect: this.getAlignmentInfo()
+      }
       if (ifNew) {
-        ALIGNEMNT_DATA.push({
-          mid: this.mountedId,
-          id: this.elementId,
-          rect: rect
-        })
+        this.addAlignElement(element)
       } else {
-        const index = ALIGNEMNT_DATA.findIndex((e) => e.mid === this.mountedId)
-        if (index >= 0) {
-          ALIGNEMNT_DATA[index].rect = rect
-        } else {
-          ALIGNEMNT_DATA.push({
-            mid: this.mountedId,
-            id: this.elementId,
-            rect: rect
-          })
-        }
+        this.modifyAlignElement(element)
       }
     },
     findAlignments () {
-      findAlignments({
+      this.updateAlign({
         id: this.elementId,
         mid: this.mountedId,
         rect: this.getAlignmentInfo()
@@ -574,7 +460,7 @@ export default {
     }
     // 从位置信息中删除
     // ALIGNEMNT_DATA
-    removeAligment(this.mountedId)
+    this.removeAlignElement(this.mountedId)
   }
 }
 
@@ -595,6 +481,7 @@ const getElementTop = (element) => {
 <template>
   <div class="element" @click="selectElement" @mousedown.stop="onDragBegin"
     ref="box"
+    :class="{'align-highlighted': hasAligned}"
     :style="{
       display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
       left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,
@@ -773,7 +660,7 @@ const getElementTop = (element) => {
 </style>
 
 <style>
-  .highlighted {
+  .align-highlighted {
     outline: 1px solid red;
   }
 </style>

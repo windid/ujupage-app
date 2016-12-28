@@ -16,7 +16,8 @@ export default {
     ...mapGetters({
       workspace: 'editorWorkspace',
       height: 'editorHeight',
-      sections: 'editorSections'
+      sections: 'editorSections',
+      alignLines: 'getAlignLines'
     })
   }
 }
@@ -25,7 +26,27 @@ export default {
 <template>
   <div class="workspace">
     <div id="content-area" :style="{height: height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}">
-      <div id="alignment-lines"></div>
+      <div id="alignment-lines">
+        <div class="align-line" v-for="line in alignLines"
+        :class="line.vertical ? 'align-line-vertical' : 'align-line-horizontal'"
+        :style="{
+          left: (line.vertical ? line.vAxis - 1 : line.min) + 'px',
+          top: (line.vertical ? line.min : line.vAxis - 1) + 'px',
+          [line.vertical ? 'height' : 'width']: line.length + 'px'
+        }">
+          <div style='position: relative; width: 100%; height: 100%;'>
+            <div class="dot" v-for="dot in line.dots"
+            :style="{
+              position: 'absolute',
+              [line.dotSide.main]: (dot - line.min - 2) + 'px',
+              [line.dotSide.sub]: '-2px',
+              width: '4px',
+              height: '4px',
+              background: 'red'
+            }"></div>
+          </div>
+        </div>
+      </div>
     </div>
     <fixed-container></fixed-container>
     <div class="section-wrapper">
