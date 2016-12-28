@@ -1,5 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { cloneDeep } from 'lodash'
 
 import mouseDrag from '../../mixins/mouseDrag'
 import resizer from '../ui/OnesideResizer'
@@ -77,6 +78,7 @@ export default {
       fixedEditing: false,
       documentScrollPx: 0,
       // key*, 方向键移动相关的属性
+      bounds: null,
       mountedId: null,
       keyEventAttached: false,
       keyMoveTimer: null,
@@ -229,6 +231,7 @@ export default {
       }
     },
     dragBegin () {
+      this.bounds = this.getAlignmentInfo()
       if (!this.keyEventAttached) {
         document.addEventListener('keydown', this.onKey, false)
         this.keyEventAttached = true
@@ -261,7 +264,12 @@ export default {
       this.$el.style.top = `${this.startPosTop + move.y}px`
       this.elPositionInPage.left = this.startPosLeft + move.x
       this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
-      this.findAlignments()
+      this.findAlignments({
+        x: move.x,
+        y: move.y,
+        w: 0,
+        h: 0
+      })
     },
     dragEnd (movement) {
       if (movement.x === 0 && movement.y === 0) return
@@ -272,6 +280,7 @@ export default {
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
       this.updateAlignmentInfo()
       this.clearAlign()
+      this.bounds = null
     },
     // dragEnable () {
     //   // calbacks
@@ -291,6 +300,7 @@ export default {
       return handles.indexOf(handle) > -1
     },
     resizeStart (direction) {
+      this.bounds = this.getAlignmentInfo()
       const self = this.$el.getBoundingClientRect()
       const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
       const box = document.getElementById(boxContainer).getBoundingClientRect()
@@ -342,6 +352,7 @@ export default {
         this.$emit('resize-end')
         this.updateAlignmentInfo()
         this.clearAlign()
+        this.bounds = null
       } else {
         this.resizing = true
         this.$emit('change-draggable', false)
@@ -391,11 +402,24 @@ export default {
         this.modifyAlignElement(element)
       }
     },
-    findAlignments () {
+    findAlignments (offSet) {
+      let rect
+      if (offSet) {
+        rect = cloneDeep(this.bounds)
+        // console.log(rect, offSet)
+        rect.left += offSet.x
+        rect.right += offSet.x
+        rect.top += offSet.y
+        rect.bottom += offSet.y
+        rect.hcenter += offSet.x
+        rect.vcenter += offSet.y
+      } else {
+        rect = this.getAlignmentInfo()
+      }
       this.updateAlign({
         id: this.elementId,
         mid: this.mountedId,
-        rect: this.getAlignmentInfo()
+        rect: rect
       })
     },
     watchScroll () {
