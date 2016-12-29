@@ -92,3 +92,7 @@ export const undoButton = state => state.editor.history.index > 0
 export const redoButton = state => state.editor.history.states.length > state.editor.history.index + 1
 
 export const saveStatus = state => isEqual(state.editor.content, state.editor.history.saved)
+
+export const getAlignLines = state => state.editor.align.lines
+
+export const getAlignIds = state => state.editor.align.activeIds

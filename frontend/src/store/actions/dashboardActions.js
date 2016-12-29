@@ -1,6 +1,4 @@
-// import projectAPI from '../../api/projectAPI'
 import API from '../../API'
-import getParameter from '../../utils/getParameter'
 import cookieHandler from '../../utils/cookieHandler'
 import * as types from '../mutation-types'
 import { find } from 'lodash'
@@ -10,7 +8,7 @@ export const dashboardInit = ({ commit, state }, [route, callback = false]) => {
     const projects = response.data
     commit(types.LOAD_PROJECTS, { projects })
     // 加载默认项目，第一优先取路由传递的projectId，其次是Cookie，再次是用户默认项目，如果都没有，取项目列表的第一个。
-    const projectId = getParameter('id') || cookieHandler.get('projectId')
+    const projectId = route.query.id || cookieHandler.get('projectId')
     const currentProject = find(projects, p => p.id === parseInt(projectId)) || find(projects, p => p.is_default === 1) || projects[0]
     switchProject({ commit }, [currentProject, callback])
   })
@@ -21,6 +19,7 @@ export const switchProject = ({ commit }, [project, callback = false]) => {
   commit(types.EMPTY_PAGEGROUPS)
   commit(types.EMPTY_PAGES)
   commit(types.SET_CURRENT_PROJECT, { project })
+  console.log(project.id)
   cookieHandler.set('projectId', project.id, 365)
 
   loadMembers({ commit }, project)

@@ -24,6 +24,13 @@ const state = {
   // 编辑的页面内容
   content: {},
 
+  // 元素的尺寸数据，主要用于缩放及移动过程中的对齐
+  align: {
+    activeIds: [],
+    elements: [],
+    lines: []
+  },
+
   // 历史记录，用于撤销重做
   history: {
     states: [],
@@ -225,6 +232,98 @@ const mutations = {
       state.content.sections[sectionIds['mobile']].elements.mobile.splice(state.content.sections[sectionIds['mobile']].elements.mobile.indexOf(elementId), 1)
     }
     Vue.delete(state.content.elements, elementId)
+  },
+
+  // 对齐辅助功能的数据的操作
+  [types.ALIGN_ADD_ELEMENT] (state, element) {
+    state.align.elements.push(element)
+  },
+
+  [types.ALIGN_MODIFY_ELEMENT] (state, element) {
+    const index = state.align.elements.findIndex((e) => e.mid === element.mid)
+    if (index >= 0) {
+      state.align.elements[index] = element
+    } else {
+      state.align.elements.push(element)
+    }
+  },
+
+  [types.ALIGN_REMOVE_ELEMENT] (state, mid) {
+    state.align.elements = state.align.elements.filter(e => mid !== e.mid)
+  },
+
+  [types.ALIGN_UPDATE] (state, element) {
+    // 更新对齐的线和元素
+    const ALIGNMENT_SIDES = [
+      {
+        sides: ['left', 'right', 'hcenter'],
+        value: 'vcenter'
+      },
+      {
+        sides: ['top', 'bottom', 'vcenter'],
+        value: 'hcenter'
+      }]
+    const alignments = {
+      left: [],
+      right: [],
+      top: [],
+      bottom: [],
+      vcenter: [],
+      hcenter: []
+    }
+    // clear
+    state.align.lines = []
+    state.align.activeIds = []
+    // find alignments
+    state.align.elements.forEach((e) => {
+      if (e.id !== element.id) {
+        ALIGNMENT_SIDES.forEach((group) => {
+          const sides = group.sides
+          sides.forEach((key) => {
+            sides.forEach((subKey) => {
+              if (element.rect[key] === e.rect[subKey]) {
+                if (state.align.activeIds.indexOf(e.id) < 0) {
+                  state.align.activeIds.push(e.id)
+                }
+                alignments[key].push(e.rect[group.value])
+              }
+            })
+          })
+        })
+      }
+    })
+
+    const lines = []
+    ALIGNMENT_SIDES.forEach((group, i) => {
+      const sides = group.sides
+      sides.forEach((key) => {
+        const sizes = alignments[key]
+        if (sizes.length <= 0) return
+        const value = element.rect[group.value]
+        const min = Math.min(...sizes, value)
+        const max = Math.max(...sizes, value)
+        const vertical = (i === 0)
+        const line = {
+          vertical,
+          length: max - min,
+          min,
+          max,
+          vAxis: element.rect[key],
+          dotSide: {
+            main: vertical ? 'top' : 'left',
+            sub: vertical ? 'left' : 'top'
+          },
+          dots: [...sizes, value]
+        }
+        lines.push(line)
+      })
+    })
+    state.align.lines = lines
+  },
+
+  [types.ALIGN_CLEAR] (state) {
+    state.align.lines = []
+    state.align.activeIds = []
   }
 
 }
