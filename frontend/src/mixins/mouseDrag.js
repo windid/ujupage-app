@@ -36,7 +36,8 @@ export default {
       windowOldCursor: '',
       dragStartX: 0,
       dragStartY: 0,
-      dragStartTime: 0
+      dragStartTime: 0,
+      lastMovement: null
     }
   },
   methods: {
@@ -52,31 +53,50 @@ export default {
       document.addEventListener('mouseup', this.onDragEnd)
     },
     onDragMove (e) {
-      const x = e.clientX - this.dragStartX
-      const y = e.clientY - this.dragStartY
       this.dragging = true
-      if (movable(x, y, this.dragStartTime)) {
-        this.dragMove({ x, y })
-      }
+      this.onDragCommon(e, (movement, forward) => {
+        this.dragMove(movement, forward)
+      })
     },
     onDragEnd (e) {
       document.body.style.cursor = this.windowOldCursor
-      const x = e.clientX - this.dragStartX
-      const y = e.clientY - this.dragStartY
       this.dragging = false
-      if (movable(x, y, this.dragStartTime)) {
-        this.dragEnd({ x, y })
-      }
+      this.dragRelease()
+      this.onDragCommon(e, (movement, forward) => {
+        this.dragEnd(movement, forward)
+        this.lastMovement = null
+      })
       document.removeEventListener('mousemove', this.onDragMove)
       document.removeEventListener('mouseup', this.onDragEnd)
+    },
+    onDragCommon (e, callback) {
+      const x = e.clientX - this.dragStartX
+      const y = e.clientY - this.dragStartY
+      if (movable(x, y, this.dragStartTime)) {
+        let forward
+        if (this.lastMovement === null) {
+          forward = { x, y }
+        } else {
+          forward = {
+            x: e.clientX - this.lastMovement.x,
+            y: e.clientY - this.lastMovement.y
+          }
+        }
+        this.lastMovement = {
+          x: e.clientX,
+          y: e.clientY
+        }
+        callback({ x, y }, forward)
+      }
     },
     /**
      * <h2>Virtual methods</h2>
      * These methods should be implemented in real instances.
      */
     dragBegin () {},
-    dragMove (movement) {},
-    dragEnd (movement) {},
+    dragMove (movement, forward) {},
+    dragEnd (movement, forward) {},
+    dragRelease () {},
     dragEnable () {},
     dragDisable () {}
   },
