@@ -62,6 +62,7 @@
       </ul> -->
     </div>
     <div class="content-body" v-loading="loading">
+      <p class="text-muted" style="text-align: center;">所有的模板都是响应式的，同时支持PC和移动</p>
       <div class="template empty-page" @click="createEmptyPage">空白页</div>
       <router-link tag="div" v-for="template in templates" :to="{ name: 'template', params: { templateId: template.id }, query: $route.query }" class="template">
         <img :src="template.image_url + '@300w.png'" alt="">
