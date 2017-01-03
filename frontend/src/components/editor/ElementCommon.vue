@@ -92,7 +92,8 @@ export default {
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace',
-      alignIds: 'getAlignIds'
+      alignIds: 'getAlignIds',
+      alignStatus: 'getAlignStatus'
     }),
     hasAligned () {
       return this.alignIds.indexOf(this.elementId) >= 0
@@ -133,7 +134,8 @@ export default {
       'modifyAlignElement',
       'removeAlignElement',
       'updateAlign',
-      'clearAlign'
+      'clearAlign',
+      'clearMultiSelect'
     ]),
     selectElement () {
       this.setActiveElementId(this.elementId)
@@ -231,6 +233,7 @@ export default {
       }
     },
     dragBegin () {
+      this.clearMultiSelect()
       this.bounds = this.getAlignmentInfo()
       if (!this.keyEventAttached) {
         document.addEventListener('keydown', this.onKey, false)
@@ -254,7 +257,7 @@ export default {
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
     },
-    dragMove (movement) {
+    dragMove (movement, forward) {
       if (movement.x === 0 && movement.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
@@ -271,7 +274,7 @@ export default {
         h: 0
       })
     },
-    dragEnd (movement) {
+    dragEnd (movement, forward) {
       if (movement.x === 0 && movement.y === 0) return
       this.$emit('change-button-group', 'main')
       const move = this.computeMoveMax(movement)
@@ -381,6 +384,8 @@ export default {
       const hcenter = left + elRectangle.width / 2
       const vcenter = top + elRectangle.height / 2
       const rect = {
+        width: elRectangle.width,
+        height: elRectangle.height,
         left,
         right,
         top,
@@ -406,7 +411,6 @@ export default {
       let rect
       if (offSet) {
         rect = cloneDeep(this.bounds)
-        // console.log(rect, offSet)
         rect.left += offSet.x
         rect.right += offSet.x
         rect.top += offSet.y
@@ -457,6 +461,12 @@ export default {
           this.dragEnd(this.keyMove)
         }
       }
+    },
+
+    'workspace.version': function (newVersion) {
+      setTimeout(() => {
+        this.updateAlignmentInfo()
+      }, 1800)
     }
   },
   mounted () {
