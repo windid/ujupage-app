@@ -461,6 +461,12 @@ export default {
           this.dragEnd(this.keyMove)
         }
       }
+    },
+
+    'workspace.version': function (newVersion) {
+      setTimeout(() => {
+        this.updateAlignmentInfo()
+      }, 1800)
     }
   },
   mounted () {
