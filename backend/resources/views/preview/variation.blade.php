@@ -103,6 +103,7 @@
   }
 
   .element-icon {
+    pointer-events: none;
     top: 0;
   }
 

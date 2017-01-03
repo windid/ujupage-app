@@ -187,6 +187,10 @@ class ParseHtml {
 
     protected static function parseElementText ($element_id, $element) {
         self::$page['style']['common']['element-'.$element_id] = self::parseStyles($element['fontStyle']);
+        foreach (self::$page['settings']['goals'] as $goal) {
+            $element['content'] = preg_replace('/<a(.+?)href="'.$goal.'"(.*?)>/i', '<a$1href="$2"$3 data-goal="1">' , $element['content']);
+        }
+        self::$page['elements'][$element_id]['content'] = $element['content'];
     }
 
     protected static function parseElementImage ($element_id, $element) {

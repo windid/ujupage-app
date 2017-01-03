@@ -195,7 +195,7 @@ export default {
         <div class="btn btn-primary" @click="publish">发布 <span class="glyphicon glyphicon-send"></span></div>
       </div>
     </div>
-    <editor-settings :show="showSettings" @close="showSettings = false" ></editor-settings>
+    <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings = false" ></editor-settings>
     <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @update-split="updateTraficSplit" @close="showSplit = false"></ab-split>
   </div>
 </template>
