@@ -209,7 +209,7 @@ export default {
         } else {
           this.keyMoveTimestamp = newTime
         }
-        this.dragMove(this.keyMove, forward)
+        this.dragMove(this.keyMove, forward, true)
       }
     },
     showToolbar () {
@@ -269,7 +269,7 @@ export default {
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
     },
-    dragMove (movement, forward) {
+    dragMove (movement, forward, forcable) {
       if (movement.x === 0 && movement.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
@@ -277,14 +277,14 @@ export default {
       const move = this.computeMoveMax(movement)
       let offsetX = move.x
       let offsetY = move.y
-      if (!this.alignStatus.y || Math.abs(forward.x) > 2) {
+      if (forcable || !this.alignStatus.y || Math.abs(forward.x) > 2) {
         this.$el.style.left = `${this.startPosLeft + move.x}px`
         this.elPositionInPage.left = this.startPosLeft + move.x
         this.offsetCache.x = move.x
       } else {
         offsetX = this.offsetCache.x
       }
-      if (!this.alignStatus.x || Math.abs(forward.y) > 2) {
+      if (forcable || !this.alignStatus.x || Math.abs(forward.y) > 2) {
         this.$el.style.top = `${this.startPosTop + move.y}px`
         this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
         this.offsetCache.y = move.y
@@ -303,7 +303,7 @@ export default {
       this.$emit('change-button-group', 'main')
       // const move = this.computeMoveMax(movement)
       this.elPositionInPage.left = parseInt(this.$el.style.left)
-      this.elPositionInPage.top = parseInt(this.$el.style.top)
+      this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
       this.updateAlignmentInfo()
       this.clearAlign()
