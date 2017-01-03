@@ -36,11 +36,19 @@ export default {
   created () {
     let formsInPage = false
     for (const elementId in this.elements) {
-      if (this.elements[elementId].type === 'form') {
+      const element = this.elements[elementId]
+      if (element.type === 'form') {
         formsInPage = true
       }
-      if (this.elements[elementId].link && this.elements[elementId].link.url) {
-        this.goals.push(this.elements[elementId].link.url)
+      if (element.link && element.link.url) {
+        this.goals.push(element.link.url)
+      }
+      if (element.type === 'text') {
+        const re = /<a.+?href="(.*?)".*?>/g
+        let res
+        while ((res = re.exec(element.content)) !== null) {
+          this.goals.push(res[1])
+        }
       }
     }
     if (formsInPage) {
@@ -133,8 +141,8 @@ export default {
 </modal>
 </template>
 
-<style>
+<style scoped>
 .settings-body{
-  width: 95%;
+  text-align: left;
 }
 </style>
