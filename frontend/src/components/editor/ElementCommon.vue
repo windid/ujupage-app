@@ -269,7 +269,7 @@ export default {
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
     },
-    dragMove (movement, forward, forcable) {
+    dragMove (movement, forward, forced) {
       if (movement.x === 0 && movement.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
@@ -277,14 +277,14 @@ export default {
       const move = this.computeMoveMax(movement)
       let offsetX = move.x
       let offsetY = move.y
-      if (forcable || !this.alignStatus.y || Math.abs(forward.x) > 2) {
+      if (forced || !this.alignStatus.y || Math.abs(forward.x) > 2) {
         this.$el.style.left = `${this.startPosLeft + move.x}px`
         this.elPositionInPage.left = this.startPosLeft + move.x
         this.offsetCache.x = move.x
       } else {
         offsetX = this.offsetCache.x
       }
-      if (forcable || !this.alignStatus.x || Math.abs(forward.y) > 2) {
+      if (forced || !this.alignStatus.x || Math.abs(forward.y) > 2) {
         this.$el.style.top = `${this.startPosTop + move.y}px`
         this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
         this.offsetCache.y = move.y
@@ -301,7 +301,6 @@ export default {
     dragEnd (movement, forward) {
       if (movement.x === 0 && movement.y === 0) return
       this.$emit('change-button-group', 'main')
-      // const move = this.computeMoveMax(movement)
       this.elPositionInPage.left = parseInt(this.$el.style.left)
       this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
@@ -409,8 +408,8 @@ export default {
       const right = elRectangle.right - containerRect.left
       const top = elRectangle.top - containerRect.top
       const bottom = elRectangle.bottom - containerRect.top
-      const hcenter = left + elRectangle.width / 2
-      const vcenter = top + elRectangle.height / 2
+      const hcenter = Math.round(left + elRectangle.width / 2)
+      const vcenter = Math.round(top + elRectangle.height / 2)
       const rect = {
         width: elRectangle.width,
         height: elRectangle.height,
