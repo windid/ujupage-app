@@ -294,7 +294,8 @@ const mutations = {
           const sides = group.sides
           sides.forEach((key) => {
             sides.forEach((subKey) => {
-              if (element.rect[key] === e.rect[subKey]) {
+              const distance = element.rect[key] - e.rect[subKey]
+              if (distance === 0) {
                 if (state.assist.activeIds.indexOf(e.id) < 0) {
                   state.assist.activeIds.push(e.id)
                 }

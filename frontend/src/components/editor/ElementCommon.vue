@@ -77,6 +77,11 @@ export default {
       heightMax: 0,
       fixedEditing: false,
       documentScrollPx: 0,
+      // 移动对齐相关辅助属性
+      offsetCache: {
+        x: 0,
+        y: 0
+      },
       // key*, 方向键移动相关的属性
       bounds: null,
       mountedId: null,
@@ -169,27 +174,34 @@ export default {
         } else {
           clearTimeout(this.keyMoveTimer)
         }
-
+        const forward = {
+          x: 0,
+          y: 0
+        }
         this.dragging = true
         switch (code - 37) {
           case 0:
             this.keyMove.x += -1
+            forward.x = -1
             break
           case 1:
             this.keyMove.y += -1
+            forward.y = -1
             break
           case 2:
             this.keyMove.x += 1
+            forward.x = 1
             break
           case 3:
             this.keyMove.y += 1
+            forward.y = 1
             break
         }
         this.keyMoveTimer = setTimeout(() => {
           this.keyMoveTimer = null
           this.keyMoveTimestamp = null
           this.dragging = false
-          this.dragEnd(this.keyMove)
+          this.dragEnd(this.keyMove, forward)
         }, 800)
         const newTime = new Date()
         if (this.keyMoveTimestamp !== null && newTime - this.keyMoveTimestamp <= 100) {
@@ -197,7 +209,7 @@ export default {
         } else {
           this.keyMoveTimestamp = newTime
         }
-        this.dragMove(this.keyMove)
+        this.dragMove(this.keyMove, forward, true)
       }
     },
     showToolbar () {
@@ -257,19 +269,31 @@ export default {
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
     },
-    dragMove (movement, forward) {
+    dragMove (movement, forward, forced) {
       if (movement.x === 0 && movement.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
       }
       const move = this.computeMoveMax(movement)
-      this.$el.style.left = `${this.startPosLeft + move.x}px`
-      this.$el.style.top = `${this.startPosTop + move.y}px`
-      this.elPositionInPage.left = this.startPosLeft + move.x
-      this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
+      let offsetX = move.x
+      let offsetY = move.y
+      if (forced || !this.alignStatus.y || Math.abs(forward.x) > 2) {
+        this.$el.style.left = `${this.startPosLeft + move.x}px`
+        this.elPositionInPage.left = this.startPosLeft + move.x
+        this.offsetCache.x = move.x
+      } else {
+        offsetX = this.offsetCache.x
+      }
+      if (forced || !this.alignStatus.x || Math.abs(forward.y) > 2) {
+        this.$el.style.top = `${this.startPosTop + move.y}px`
+        this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
+        this.offsetCache.y = move.y
+      } else {
+        offsetY = this.offsetCache.y
+      }
       this.findAlignments({
-        x: move.x,
-        y: move.y,
+        x: offsetX,
+        y: offsetY,
         w: 0,
         h: 0
       })
@@ -277,13 +301,16 @@ export default {
     dragEnd (movement, forward) {
       if (movement.x === 0 && movement.y === 0) return
       this.$emit('change-button-group', 'main')
-      const move = this.computeMoveMax(movement)
-      this.elPositionInPage.left = this.startPosLeft + move.x
-      this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
+      this.elPositionInPage.left = parseInt(this.$el.style.left)
+      this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
       this.updateAlignmentInfo()
       this.clearAlign()
       this.bounds = null
+      this.offsetCache = {
+        x: 0,
+        y: 0
+      }
     },
     // dragEnable () {
     //   // calbacks
@@ -381,8 +408,8 @@ export default {
       const right = elRectangle.right - containerRect.left
       const top = elRectangle.top - containerRect.top
       const bottom = elRectangle.bottom - containerRect.top
-      const hcenter = left + elRectangle.width / 2
-      const vcenter = top + elRectangle.height / 2
+      const hcenter = Math.round(left + elRectangle.width / 2)
+      const vcenter = Math.round(top + elRectangle.height / 2)
       const rect = {
         width: elRectangle.width,
         height: elRectangle.height,
