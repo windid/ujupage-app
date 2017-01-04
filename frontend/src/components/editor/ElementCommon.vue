@@ -637,11 +637,14 @@ const getElementTop = (element) => {
   position: absolute;
   width: 100%;
   height: 100%;
-  z-index: 101000;
+  z-index: 110000;
+  background: white;
+  opacity: 0;
+  filter: alpha(opacity=1);
 }
 
 .resize-handle {
-  z-index: 100000;
+  z-index: 101000;
 }
 
 .resizable-e {
