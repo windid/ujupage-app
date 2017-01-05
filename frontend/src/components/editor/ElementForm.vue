@@ -80,13 +80,13 @@ export default {
 
       <div v-for="(field, index) in localElement.fields" class="form-group">
         <template v-if="field.type === 'text'">
-          <label v-if="!localElement.props.labelInside" :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label>
-          <input type="text" class="form-control form-field-input" :style="fieldStyles" :value="localElement.props.labelInside ? field.label : ''">
+          <label :class="{'label-inside': localElement.props.labelInside}" :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label>
+          <input type="text" class="form-control form-field-input" :style="fieldStyles">
         </template>
 
         <template v-if="field.type === 'textarea'">
-          <label v-if="!localElement.props.labelInside" :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label>
-          <textarea class="form-control form-field-input" :style="fieldStyles" rows="3">{{localElement.props.labelInside ? field.label : ''}}</textarea>
+          <label :class="{'label-inside': localElement.props.labelInside}" :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label>
+          <textarea class="form-control form-field-input" :style="fieldStyles" rows="3"></textarea>
         </template>
 
         <template v-if="field.type === 'radio'">
@@ -158,8 +158,17 @@ export default {
 
 <style scoped>
 
+.form-group {
+  position: relative;
+}
+.label-inside {
+  position: absolute;
+  top: 9px;
+  left: 11px;
+}
 label {
   font-size: 16px;
+  font-weight: normal;
 }
 
 .form-field-input {
