@@ -187,7 +187,6 @@ class ParseHtml {
 
     protected static function parseElementText ($element_id, $element) {
         self::$page['style']['common']['element-'.$element_id] = self::parseStyles($element['fontStyle']);
-        echo $element['content'];
         foreach (self::$page['settings']['goals'] as $goal) {
             $goal_slashed = str_replace('/', '\/', $goal);
             $goal_slashed = str_replace('?', '\?', $goal_slashed);
