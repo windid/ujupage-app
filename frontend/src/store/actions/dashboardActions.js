@@ -19,7 +19,6 @@ export const switchProject = ({ commit }, [project, callback = false]) => {
   commit(types.EMPTY_PAGEGROUPS)
   commit(types.EMPTY_PAGES)
   commit(types.SET_CURRENT_PROJECT, { project })
-  console.log(project.id)
   cookieHandler.set('projectId', project.id, 365)
 
   loadMembers({ commit }, project)

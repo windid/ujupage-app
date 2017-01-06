@@ -15,10 +15,10 @@ export default {
         { name: '文字', style: 'font', action: () => this.newElement('text') },
         { name: '按钮', style: 'hand-up', action: () => this.newElement('button') },
         { name: '形状', style: 'stop', action: () => this.showShapePicker() },
-        { name: '表单', style: 'edit', action: () => this.newElement('form') }
+        { name: '图标', style: 'comment', action: () => this.newElement('icon') }
       ],
       advancedTools: [
-        { name: '图标', style: 'comment', action: () => this.newElement('icon') },
+        { name: '表单', style: 'edit', action: () => this.newElement('form') },
         { name: '视频', style: 'film', action: () => this.newElement('video') },
         { name: '地图', style: 'map-marker', action: () => this.newElement('map') },
         // { name: '音乐', style: 'music', action: () => this.newElement('music') },

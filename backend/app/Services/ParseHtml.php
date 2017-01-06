@@ -187,6 +187,12 @@ class ParseHtml {
 
     protected static function parseElementText ($element_id, $element) {
         self::$page['style']['common']['element-'.$element_id] = self::parseStyles($element['fontStyle']);
+        foreach (self::$page['settings']['goals'] as $goal) {
+            $goal_slashed = str_replace('/', '\/', $goal);
+            $goal_slashed = str_replace('?', '\?', $goal_slashed);
+            $element['content'] = preg_replace('/<a(.+?)href="'.$goal_slashed.'"(.*?)>/i', '<a$1href="'.$goal.'"$2 data-goal="1">' , $element['content']);
+        }
+        self::$page['elements'][$element_id]['content'] = $element['content'];
     }
 
     protected static function parseElementImage ($element_id, $element) {

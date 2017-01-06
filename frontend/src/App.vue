@@ -91,11 +91,11 @@ a:focus {
   height: 34px;
 }
 
-.fr{
+.fr {
   float: right;
 }
 
-.fl{
+.fl {
   float: left;
 }
 
@@ -114,12 +114,10 @@ a:focus {
 
 #nprogress .bar {
   background: #29d;
-
   position: fixed;
-  z-index: 10010000;
+  z-index: 1001000;
   top: 0;
   left: 0;
-
   width: 100%;
   height: 2px;
 }
