@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import * as types from '../mutation-types'
-import { merge } from 'lodash'
+import { merge, findIndex } from 'lodash'
 import randomChar from '../../utils/randomChar'
 
 const state = {
@@ -240,7 +240,7 @@ const mutations = {
   },
 
   [types.ALIGN_MODIFY_ELEMENT] (state, element) {
-    const index = state.align.elements.findIndex((e) => e.mid === element.mid)
+    const index = findIndex(state.align.elements, (e) => e.mid === element.mid)
     if (index >= 0) {
       state.align.elements[index] = element
     } else {
