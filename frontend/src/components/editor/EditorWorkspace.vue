@@ -49,6 +49,10 @@ export default {
         top: contentArea.top
       })
     },
+    multiSelect (e) {
+      if (!e.target.classList.contains('section')) return
+      this.onDragBegin(e)
+    },
     dragBegin () {
       this.$el.style.cursor = 'default'
       this.selectionVisible = true
@@ -86,7 +90,7 @@ export default {
 </script>
 
 <template>
-  <div class="workspace" @mousedown.prevent="onDragBegin">
+  <div class="workspace" @mousedown.prevent="multiSelect">
     <div id="content-area" ref="contentArea" :style="{height: height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}">
       <div id="alignment-lines">
         <div class="align-line" v-for="line in alignLines"
