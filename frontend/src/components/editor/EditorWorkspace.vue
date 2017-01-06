@@ -76,10 +76,10 @@ export default {
   left: 50%;
 }
 
-.section-wrapper {
+/*.section-wrapper {
   position: relative;
   z-index: 1;
-}
+}*/
 
 #alignment-lines {
   position: relative;
