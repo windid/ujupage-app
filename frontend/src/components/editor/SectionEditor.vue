@@ -62,6 +62,8 @@ export default {
           if (this.sync) {
             style.pc = { ...newStyle }
             style.mobile = { ...newStyle }
+            delete style.pc.height
+            delete style.mobile.height
           } else {
             style[this.workspace.version] = { ...newStyle }
           }
