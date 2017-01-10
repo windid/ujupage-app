@@ -619,7 +619,7 @@ const getElementTop = (element) => {
   font-size: 0;
 }
 
-.el-btn-group > .btn, .el-btn-group > .btn-group{
+.el-btn-group > .btn, .el-btn-group > .btn-group {
   float: none;
 }
 
