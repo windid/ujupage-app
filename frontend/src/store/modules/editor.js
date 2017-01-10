@@ -253,7 +253,6 @@ const mutations = {
   },
 
   [types.ALIGN_MODIFY_ELEMENT] (state, element) {
-    const index = findIndex(state.align.elements, (e) => e.mid === element.mid)
     if (index >= 0) {
       state.assist.elements[index] = element
     } else {
