@@ -35,6 +35,9 @@ const state = {
         y: false
       }
     },
+    multi: {
+      move: null
+    },
     selection: {
       left: 0,
       top: 0,
@@ -161,8 +164,18 @@ const mutations = {
 
   // 在移动版和桌面版之间切换
   [types.SWITCH_VERSION] (state, { version }) {
-    state.workspace.version = version
-    state.workspace.width = state.workspace.version === 'pc' ? 960 : 360
+    if (version !== state.workspace.version) {
+      state.workspace.version = version
+      state.workspace.width = state.workspace.version === 'pc' ? 960 : 360
+      state.assist.activeIds = []
+      state.assist.selection = {
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        visible: false
+      }
+    }
   },
 
   // 设置配色方案
@@ -253,6 +266,7 @@ const mutations = {
   },
 
   [types.ALIGN_MODIFY_ELEMENT] (state, element) {
+    const index = findIndex(state.assist.elements, (e) => e.mid === element.mid)
     if (index >= 0) {
       state.assist.elements[index] = element
     } else {
@@ -283,20 +297,24 @@ const mutations = {
       vcenter: [],
       hcenter: []
     }
-    // clear
-    state.assist.align.lines = []
-    state.assist.activeIds = []
+
+    const ids = []
     // find alignments
     state.assist.elements.forEach((e) => {
       if (e.id !== element.id) {
         ALIGNMENT_SIDES.forEach((group, index) => {
+          // 水平方向未移动或垂直方向未移动
+          if (!element.yUpdated && index === 0 &&
+              !element.xUpdated && index === 1) {
+            return
+          }
           const sides = group.sides
           sides.forEach((key) => {
             sides.forEach((subKey) => {
               const distance = element.rect[key] - e.rect[subKey]
               if (distance === 0) {
-                if (state.assist.activeIds.indexOf(e.id) < 0) {
-                  state.assist.activeIds.push(e.id)
+                if (ids.indexOf(e.id) < 0) {
+                  ids.push(e.id)
                 }
                 alignments[key].push(e.rect[group.value])
               }
@@ -305,11 +323,17 @@ const mutations = {
         })
       }
     })
+    state.assist.activeIds = ids
 
     let alignX = false
     let alignY = false
     const lines = []
-    ALIGNMENT_SIDES.forEach((group, i) => {
+    ALIGNMENT_SIDES.forEach((group, index) => {
+      // 水平方向未移动或垂直方向未移动
+      if (!element.yUpdated && index === 0 &&
+          !element.xUpdated && index === 1) {
+        return
+      }
       const sides = group.sides
       sides.forEach((key) => {
         const sizes = alignments[key]
@@ -317,7 +341,7 @@ const mutations = {
         const value = element.rect[group.value]
         const min = Math.min(...sizes, value)
         const max = Math.max(...sizes, value)
-        const vertical = (i === 0)
+        const vertical = (index === 0)
         if (vertical) {
           alignY = true
         } else {
@@ -365,9 +389,9 @@ const mutations = {
     }
     const origin = selection.origin
     computedRect.left -= origin.left
+    const sl = state.assist.selection
     state.assist.elements.forEach(e => {
       if (isOverlap(e.rect, computedRect)) {
-        const sl = state.assist.selection
         if (state.assist.activeIds.length <= 0) {
           sl.left = e.rect.left
           sl.right = e.rect.right
@@ -392,7 +416,13 @@ const mutations = {
 
   [types.MULTI_SELECT_CLEAR] (state) {
     state.assist.activeIds = []
-    state.assist.selection.visible = false
+    state.assist.selection = {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      visible: false
+    }
   }
 
 }

@@ -8,6 +8,7 @@ import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
 import eventHandler from '../../utils/eventHandler'
 
+// 纪录上一个操作的元素，需要用来判断在移动元素到新的section时已经发生了复制
 let EDIT_CACHE = {
   id: null,
   mountedId: null
@@ -179,23 +180,12 @@ export default {
           y: 0
         }
         this.dragging = true
-        switch (code - 37) {
-          case 0:
-            this.keyMove.x += -1
-            forward.x = -1
-            break
-          case 1:
-            this.keyMove.y += -1
-            forward.y = -1
-            break
-          case 2:
-            this.keyMove.x += 1
-            forward.x = 1
-            break
-          case 3:
-            this.keyMove.y += 1
-            forward.y = 1
-            break
+        {
+          const i = code - 37
+          const name = i % 2 === 0 ? 'x' : 'y'
+          const value = i < 2 ? -1 : 1
+          this.keyMove[name] += value
+          forward[name] = value
         }
         this.keyMoveTimer = setTimeout(() => {
           this.keyMoveTimer = null
@@ -277,14 +267,14 @@ export default {
       const move = this.computeMoveMax(movement)
       let offsetX = move.x
       let offsetY = move.y
-      if (forced || !this.alignStatus.y || Math.abs(forward.x) > 2) {
+      if (forced || !this.alignStatus.y || Math.abs(forward.x) > 1) {
         this.$el.style.left = `${this.startPosLeft + move.x}px`
         this.elPositionInPage.left = this.startPosLeft + move.x
         this.offsetCache.x = move.x
       } else {
         offsetX = this.offsetCache.x
       }
-      if (forced || !this.alignStatus.x || Math.abs(forward.y) > 2) {
+      if (forced || !this.alignStatus.x || Math.abs(forward.y) > 1) {
         this.$el.style.top = `${this.startPosTop + move.y}px`
         this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
         this.offsetCache.y = move.y
@@ -299,7 +289,7 @@ export default {
       })
     },
     dragEnd (movement, forward) {
-      if (movement.x === 0 && movement.y === 0) return
+      if (movement && movement.x === 0 && movement.y === 0) return
       this.$emit('change-button-group', 'main')
       this.elPositionInPage.left = parseInt(this.$el.style.left)
       this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
@@ -447,11 +437,17 @@ export default {
       } else {
         rect = this.getAlignmentInfo()
       }
-      this.updateAlign({
-        id: this.elementId,
-        mid: this.mountedId,
-        rect: rect
-      })
+      const xUpdated = offSet.x !== 0
+      const yUpdated = offSet.y !== 0
+      if (xUpdated || yUpdated) {
+        this.updateAlign({
+          id: this.elementId,
+          mid: this.mountedId,
+          rect: rect,
+          xUpdated,
+          yUpdated
+        })
+      }
     },
     watchScroll () {
       this.watchEvent = eventHandler.listen(window, 'scroll', (e) => {
@@ -493,7 +489,7 @@ export default {
     'workspace.version': function (newVersion) {
       setTimeout(() => {
         this.updateAlignmentInfo()
-      }, 1800)
+      }, 1200)
     }
   },
   mounted () {
@@ -520,7 +516,6 @@ export default {
       document.removeEventListener('keydown', this.onKey, false)
     }
     // 从位置信息中删除
-    // ALIGNEMNT_DATA
     this.removeAlignElement(this.mountedId)
   }
 }

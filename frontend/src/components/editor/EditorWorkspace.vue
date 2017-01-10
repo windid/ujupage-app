@@ -49,10 +49,6 @@ export default {
         top: contentArea.top
       })
     },
-    multiSelect (e) {
-      if (!e.target.classList.contains('section')) return
-      this.onDragBegin(e)
-    },
     dragBegin () {
       this.$el.style.cursor = 'default'
       this.selectionVisible = true
@@ -62,7 +58,7 @@ export default {
       this.selection.top = top + this.dragStartY - origin.top
       this.clearSelect()
     },
-    dragMove (move) {
+    dragMove (move, forward) {
       const top = document.getElementById('main-wrapper').scrollTop
       const origin = this.getStartPoint()
       this.selection = {
@@ -72,10 +68,12 @@ export default {
         height: Math.abs(move.y)
       }
       origin.top -= top + this.dragStartY
-      this.updateSelect({
-        rect: this.selection,
-        origin
-      })
+      if (forward.x !== 0 || forward.y !== 0) {
+        this.updateSelect({
+          rect: this.selection,
+          origin
+        })
+      }
     },
     dragRelease () {
       this.selectionVisible = false
@@ -90,7 +88,7 @@ export default {
 </script>
 
 <template>
-  <div class="workspace" @mousedown.prevent="multiSelect">
+  <div class="workspace" @mousedown.prevent="onDragBegin">
     <div id="content-area" ref="contentArea" :style="{height: height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}">
       <div id="alignment-lines">
         <div class="align-line" v-for="line in alignLines"
