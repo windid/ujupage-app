@@ -7,6 +7,7 @@ import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
 import eventHandler from '../../utils/eventHandler'
+import * as editorHelper from '../../utils/editorHelper'
 
 // 纪录上一个操作的元素，需要用来判断在移动元素到新的section时已经发生了复制
 let EDIT_CACHE = {
@@ -78,11 +79,6 @@ export default {
       heightMax: 0,
       fixedEditing: false,
       documentScrollPx: 0,
-      // 移动对齐相关辅助属性
-      offsetCache: {
-        x: 0,
-        y: 0
-      },
       // key*, 方向键移动相关的属性
       bounds: null,
       mountedId: null,
@@ -98,8 +94,7 @@ export default {
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace',
-      alignIds: 'getAlignIds',
-      alignStatus: 'getAlignStatus'
+      alignIds: 'getAlignIds'
     }),
     hasAligned () {
       return this.alignIds.indexOf(this.elementId) >= 0
@@ -136,9 +131,6 @@ export default {
       'duplicateElement',
       'modifyElement',
       // 对齐
-      'addAlignElement',
-      'modifyAlignElement',
-      'removeAlignElement',
       'updateAlign',
       'clearAlign',
       'clearMultiSelect'
@@ -264,22 +256,22 @@ export default {
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
       }
-      const move = this.computeMoveMax(movement)
-      let offsetX = move.x
-      let offsetY = move.y
-      if (forced || !this.alignStatus.y || Math.abs(forward.x) > 1) {
-        this.$el.style.left = `${this.startPosLeft + move.x}px`
-        this.elPositionInPage.left = this.startPosLeft + move.x
-        this.offsetCache.x = move.x
-      } else {
-        offsetX = this.offsetCache.x
+      const move = editorHelper.alignNext({
+        movement: this.computeMoveMax(movement),
+        forward
+      })
+      const offsetX = move.x
+      const offsetY = move.y
+
+      if (forced || move.xMovable) {
+        const left = this.startPosLeft + offsetX
+        this.$el.style.left = left + 'px'
+        this.elPositionInPage.left = left
       }
-      if (forced || !this.alignStatus.x || Math.abs(forward.y) > 1) {
-        this.$el.style.top = `${this.startPosTop + move.y}px`
-        this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
-        this.offsetCache.y = move.y
-      } else {
-        offsetY = this.offsetCache.y
+      if (forced || move.yMovable) {
+        const top = this.startPosTop + offsetY
+        this.$el.style.top = top + 'px'
+        this.elPositionInPage.top = this.startTop + top
       }
       this.findAlignments({
         x: offsetX,
@@ -297,10 +289,7 @@ export default {
       this.updateAlignmentInfo()
       this.clearAlign()
       this.bounds = null
-      this.offsetCache = {
-        x: 0,
-        y: 0
-      }
+      editorHelper.alignEnd()
     },
     // dragEnable () {
     //   // calbacks
@@ -419,12 +408,13 @@ export default {
         rect: this.getAlignmentInfo()
       }
       if (ifNew) {
-        this.addAlignElement(element)
+        editorHelper.elementAdd(element)
       } else {
-        this.modifyAlignElement(element)
+        editorHelper.elementUpdate(element)
       }
     },
     findAlignments (offSet) {
+      const hasOffset = arguments.length >= 1
       let rect
       if (offSet) {
         rect = cloneDeep(this.bounds)
@@ -437,16 +427,16 @@ export default {
       } else {
         rect = this.getAlignmentInfo()
       }
-      const xUpdated = offSet.x !== 0
-      const yUpdated = offSet.y !== 0
+      const xUpdated = !hasOffset || offSet.x !== 0
+      const yUpdated = !hasOffset || offSet.y !== 0
       if (xUpdated || yUpdated) {
-        this.updateAlign({
+        this.updateAlign(editorHelper.alignSearch({
           id: this.elementId,
           mid: this.mountedId,
           rect: rect,
           xUpdated,
           yUpdated
-        })
+        }))
       }
     },
     watchScroll () {
@@ -516,7 +506,7 @@ export default {
       document.removeEventListener('keydown', this.onKey, false)
     }
     // 从位置信息中删除
-    this.removeAlignElement(this.mountedId)
+    editorHelper.elementRemove(this.mountedId)
   }
 }
 
@@ -669,51 +659,48 @@ const getElementTop = (element) => {
   z-index: 101000;
 }
 
-.resizable-e {
+.resizable-e,
+.resizable-w,
+.resizable-s,
+.resizable-n {
   position: absolute;
-  top: 50%;
-  margin-top: -5px;
-  right: -12px;
   width: 0;
   height: 0;
   border-width: 5px;
   border-style: solid;
+}
+
+.resizable-s,
+.resizable-n {
+  left: 50%;
+}
+
+.resizable-e,
+.resizable-w {
+  top: 50%;
+}
+
+.resizable-e {
+  margin-top: -5px;
+  right: -12px;
   border-color: transparent transparent transparent #03ddff;
 }
 
 .resizable-w {
-  position: absolute;
-  top: 50%;
   margin-top: -5px;
   left: -12px;
-  width: 0;
-  height: 0;
-  border-width: 5px;
-  border-style: solid;
   border-color: transparent #03ddff transparent transparent;
 }
 
 .resizable-s {
-  position: absolute;
-  left: 50%;
   margin-left: -5px;
   bottom: -12px;
-  width: 0;
-  height: 0;
-  border-width: 5px;
-  border-style: solid;
   border-color: #03ddff transparent transparent transparent;
 }
 
-.resizable-n{
-  position: absolute;
-  left: 50%;
+.resizable-n {
   margin-left: -5px;
   top: -12px;
-  width: 0;
-  height: 0;
-  border-width: 5px;
-  border-style: solid;
   border-color: transparent transparent #03ddff transparent;
 }
 </style>

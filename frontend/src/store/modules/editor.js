@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import * as types from '../mutation-types'
-import { merge, findIndex } from 'lodash'
+import { merge } from 'lodash'
 import randomChar from '../../utils/randomChar'
 
 const state = {
@@ -261,112 +261,10 @@ const mutations = {
   },
 
   // 对齐辅助功能的数据的操作
-  [types.ALIGN_ADD_ELEMENT] (state, element) {
-    state.assist.elements.push(element)
-  },
-
-  [types.ALIGN_MODIFY_ELEMENT] (state, element) {
-    const index = findIndex(state.assist.elements, (e) => e.mid === element.mid)
-    if (index >= 0) {
-      state.assist.elements[index] = element
-    } else {
-      state.assist.elements.push(element)
-    }
-  },
-
-  [types.ALIGN_REMOVE_ELEMENT] (state, mid) {
-    state.assist.elements = state.assist.elements.filter(e => mid !== e.mid)
-  },
-
-  [types.ALIGN_UPDATE] (state, element) {
-    // 更新对齐的线和元素
-    const ALIGNMENT_SIDES = [
-      {
-        sides: ['left', 'right', 'hcenter'],
-        value: 'vcenter'
-      },
-      {
-        sides: ['top', 'bottom', 'vcenter'],
-        value: 'hcenter'
-      }]
-    const alignments = {
-      left: [],
-      right: [],
-      top: [],
-      bottom: [],
-      vcenter: [],
-      hcenter: []
-    }
-
-    const ids = []
-    // find alignments
-    state.assist.elements.forEach((e) => {
-      if (e.id !== element.id) {
-        ALIGNMENT_SIDES.forEach((group, index) => {
-          // 水平方向未移动或垂直方向未移动
-          if (!element.yUpdated && index === 0 &&
-              !element.xUpdated && index === 1) {
-            return
-          }
-          const sides = group.sides
-          sides.forEach((key) => {
-            sides.forEach((subKey) => {
-              const distance = element.rect[key] - e.rect[subKey]
-              if (distance === 0) {
-                if (ids.indexOf(e.id) < 0) {
-                  ids.push(e.id)
-                }
-                alignments[key].push(e.rect[group.value])
-              }
-            })
-          })
-        })
-      }
-    })
-    state.assist.activeIds = ids
-
-    let alignX = false
-    let alignY = false
-    const lines = []
-    ALIGNMENT_SIDES.forEach((group, index) => {
-      // 水平方向未移动或垂直方向未移动
-      if (!element.yUpdated && index === 0 &&
-          !element.xUpdated && index === 1) {
-        return
-      }
-      const sides = group.sides
-      sides.forEach((key) => {
-        const sizes = alignments[key]
-        if (sizes.length <= 0) return
-        const value = element.rect[group.value]
-        const min = Math.min(...sizes, value)
-        const max = Math.max(...sizes, value)
-        const vertical = (index === 0)
-        if (vertical) {
-          alignY = true
-        } else {
-          alignX = true
-        }
-        const line = {
-          vertical,
-          length: max - min,
-          min,
-          max,
-          vAxis: element.rect[key],
-          dotSide: {
-            main: vertical ? 'top' : 'left',
-            sub: vertical ? 'left' : 'top'
-          },
-          dots: [...sizes, value]
-        }
-        lines.push(line)
-      })
-    })
-    state.assist.align.lines = lines
-    state.assist.align.status = {
-      x: alignX,
-      y: alignY
-    }
+  [types.ALIGN_UPDATE] (state, data) {
+    state.assist.activeIds = data.ids
+    state.assist.align.lines = data.lines
+    state.assist.align.status = data.status
   },
 
   [types.ALIGN_CLEAR] (state) {
