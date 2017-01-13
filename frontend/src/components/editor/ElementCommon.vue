@@ -670,7 +670,7 @@ const getElementTop = (element) => {
   border-color: #03ddff transparent transparent transparent;
 }
 
-.resizable-n{
+.resizable-n {
   position: absolute;
   left: 50%;
   margin-left: -5px;

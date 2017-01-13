@@ -1,13 +1,21 @@
 <script>
 import colorMixin from '../../mixins/colorMixin.js'
 import Dropdown from '../ui/Dropdown.vue'
+import Vue from 'vue'
+import { Popover } from 'element-ui'
+import ColorSelector from './colorSelector'
 import { mapGetters } from 'vuex'
+import { getValidColor } from '../../utils/color'
+
+Vue.use(Popover)
 
 export default {
   name: 'ColorPicker',
   mixins: [colorMixin],
   components: {
-    Dropdown
+    Dropdown,
+    ElPopover: Popover,
+    ColorSelector
   },
   props: {
     value: {
@@ -54,6 +62,11 @@ export default {
     inputDone () {
       this.show = false
       this.$emit('input', this.color)
+    },
+    selectColor (c) {
+      console.log(c, getValidColor(c))
+      this.color = getValidColor(c)
+      this.inputDone()
     }
   }
 }
@@ -72,13 +85,22 @@ export default {
         <div style="clear:both"></div>
       </div>
       <div class="input-group color-block" @mousedown.stop>
-        <div class="input-group-addon" :style="{background:getColor(color)}"> &nbsp; </div>
+        <el-popover
+          class="picker-popover"
+          ref="picker"
+          width="220"
+          trigger="click"
+          content="dddd">
+          <color-selector :c="getColor(color)" @on-change="selectColor"></color-selector>
+        </el-popover>
+        <div class="input-group-addon" :style="{background:getColor(color)}" v-popover:picker> &nbsp; </div>
         <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色" @mousedown.stop="inputFocus" @blur.stop="inputBlur">
         <div class="input-group-btn" @click="inputDone">
           <div class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></div>
         </div>
       </div>
     </div>
+    
   </dropdown>
 </template>
 
