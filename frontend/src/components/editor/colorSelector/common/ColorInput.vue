@@ -32,7 +32,7 @@ export default {
     validator: {
       type: Function,
       default (val) {
-        return val >= this.min
+        return !Number.isNaN(val)
       }
     }
   },

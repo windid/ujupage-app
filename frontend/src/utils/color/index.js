@@ -21,6 +21,10 @@ function bound01 (n, max) {
   return (n % max) / parseFloat(max)
 }
 
+function getVal (val, max) {
+  return bound01(val, max) * max
+}
+
 export function rgb2hsv ({ r, g, b }) {
   r = bound01(r, 255)
   g = bound01(g, 255)
@@ -152,20 +156,23 @@ function getColor (color) {
   if (colorNames[color]) {
     color = colorNames[color]
   } else if (color === 'transparent') {
-    result.rgb = { r: 0, g: 0, b: 0, a: 0 }
+    result.rgb = { r: 0, g: 0, b: 0 }
+    result.a = 0
   }
   let match
   if ((match = matchers.rgb.exec(color))) {
-    result.rgb = { r: match[1], g: match[2], b: match[3] }
+    result.rgb = { r: getVal(match[1], 255), g: getVal(match[2], 255), b: getVal(match[3], 255) }
   }
   if ((match = matchers.rgba.exec(color))) {
-    result.rgb = { r: match[1], g: match[2], b: match[3], a: match[4] }
+    result.rgb = { r: getVal(match[1], 255), g: getVal(match[2], 255), b: getVal(match[3], 255) }
+    result.a = getVal(match[4], 1)
   }
   if ((match = matchers.hsl.exec(color))) {
-    result.hsl = { h: match[1], s: match[2], l: match[3] }
+    result.hsl = { h: getVal(match[1], 360), s: getVal(match[2], 100), l: getVal(match[3], 100) }
   }
   if ((match = matchers.hsla.exec(color))) {
-    result.hsl = { h: match[1], s: match[2], l: match[3], a: match[4] }
+    result.hsl = { h: getVal(match[1], 360), s: getVal(match[2], 100), l: getVal(match[3], 100) }
+    result.a = getVal(match[4], 1)
   }
 
   if ((match = matchers.hex6.exec(color))) {
@@ -188,17 +195,28 @@ function getColor (color) {
 export function getValidColor (c) {
   const { r, g, b } = c.rgb
   if (c.a !== 1) {
-    return `rgba(${r}, ${g}, ${b}, ${c.a})`
+    return `rgba(${r}, ${g}, ${b}, ${c.a.toFixed(2)})`
   } else {
     return '#' + rgb2hex(r, g, b)
   }
+}
+
+export function isValidColor (color) {
+  return [
+    matchers.rgb,
+    matchers.rgba,
+    matchers.hsl,
+    matchers.hsla,
+    matchers.hex3,
+    matchers.hex6
+  ].some(re => re.test(color))
 }
 
 function Color (color, old = {}) {
   if (typeof color === 'string') {
     color = getColor(color)
   }
-  color.a = color.a || old.a || 1
+  color.a = typeof color.a !== 'number' ? typeof old.a === 'number' ? old.a : 1 : color.a
   if (color.rgb) {
     color.hsl = rgb2hsl(color.rgb)
     color.hsv = rgb2hsv(color.rgb)

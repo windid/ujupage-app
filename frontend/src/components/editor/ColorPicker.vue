@@ -64,7 +64,6 @@ export default {
       this.$emit('input', this.color)
     },
     selectColor (c) {
-      console.log(c, getValidColor(c))
       this.color = getValidColor(c)
       this.inputDone()
     }
