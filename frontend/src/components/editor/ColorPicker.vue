@@ -65,6 +65,7 @@ export default {
     },
     selectColor (c) {
       this.color = getValidColor(c)
+      // console.log(this.color)
       this.inputDone()
     }
   }
@@ -92,7 +93,7 @@ export default {
           content="dddd">
           <color-selector :c="getColor(color)" @on-change="selectColor"></color-selector>
         </el-popover>
-        <div class="input-group-addon" :style="{background:getColor(color)}" v-popover:picker> &nbsp; </div>
+        <div class="input-group-addon" :style="{background:getColor(color)}" @mousedown="inputFocus" v-popover:picker> &nbsp; </div>
         <input type="text" class="form-control input-text-shadow" :value="getColor(color)" @input="inputColor" placeholder="自定义颜色" @mousedown.stop="inputFocus" @blur.stop="inputBlur">
         <div class="input-group-btn" @click="inputDone">
           <div class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></div>

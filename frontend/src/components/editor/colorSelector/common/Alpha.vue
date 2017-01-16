@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     onChange (val) {
-      this.$emit('on-change', val)
+      this.$emit('on-change', Math.round(val * 100) / 100)
     }
   }
 }

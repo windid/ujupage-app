@@ -76,7 +76,7 @@ export default {
       return val + '%'
     },
     changeSaturation (hsv) {
-      this.color = Color({ hsv })
+      this.color = Color({ hsv }, this.color)
     },
     changeHue (h) {
       const c = this.color.hsl
