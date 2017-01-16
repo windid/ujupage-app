@@ -65,7 +65,6 @@ export default {
     },
     selectColor (c) {
       this.color = getValidColor(c)
-      // console.log(this.color)
       this.inputDone()
     }
   }

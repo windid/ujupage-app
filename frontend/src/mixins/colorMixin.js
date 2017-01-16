@@ -7,9 +7,9 @@ export default {
   }),
   methods: {
     getColor (color) {
-      if (isValidColor(color)) {
+      if (isValidColor(color) || color == null) {
         return color
-      } else if (color === '' || color === null) {
+      } else if (color === '') {
         return 'transparent'
       } else if (typeof color === 'number' || /^\d$/.test(color)) {
         return this.colorSet[color]
