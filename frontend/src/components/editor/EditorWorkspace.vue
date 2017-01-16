@@ -58,7 +58,7 @@ export default {
       this.selection.top = top + this.dragStartY - origin.top
       this.clearSelect()
     },
-    dragMove (move) {
+    dragMove (move, forward) {
       const top = document.getElementById('main-wrapper').scrollTop
       const origin = this.getStartPoint()
       this.selection = {
@@ -68,10 +68,12 @@ export default {
         height: Math.abs(move.y)
       }
       origin.top -= top + this.dragStartY
-      this.updateSelect({
-        rect: this.selection,
-        origin
-      })
+      if (forward.x !== 0 || forward.y !== 0) {
+        this.updateSelect({
+          rect: this.selection,
+          origin
+        })
+      }
     },
     dragRelease () {
       this.selectionVisible = false

@@ -37,18 +37,27 @@ export default {
       dragStartX: 0,
       dragStartY: 0,
       dragStartTime: 0,
+      lastDragX: null,
+      lastDragY: null,
+      lastDragTime: null,
       lastMovement: null
     }
   },
   methods: {
     onDragBegin (e) {
       if (!this.draggable) return
-      this.dragStartTime = Date.now()
+      const now = Date.now()
+      this.dragStartTime = now
+      this.lastDragTime = now
       this.windowOldCursor = document.body.style.cursor
       document.body.style.cursor = 'move'
-      this.dragStartX = e.clientX
-      this.dragStartY = e.clientY
-      this.dragBegin({})
+      const x = e.clientX
+      const y = e.clientY
+      this.dragStartX = x
+      this.dragStartY = y
+      this.lastDragX = x
+      this.lastDragY = y
+      this.dragBegin()
       document.addEventListener('mousemove', this.onDragMove)
       document.addEventListener('mouseup', this.onDragEnd)
     },
@@ -70,21 +79,24 @@ export default {
       document.removeEventListener('mouseup', this.onDragEnd)
     },
     onDragCommon (e, callback) {
-      const x = e.clientX - this.dragStartX
-      const y = e.clientY - this.dragStartY
+      const X = e.clientX
+      const Y = e.clientY
+      // 当前位置对于初始位置的移动距离
+      const x = X - this.dragStartX
+      const y = Y - this.dragStartY
       if (movable(x, y, this.dragStartTime)) {
         let forward
         if (this.lastMovement === null) {
           forward = { x, y }
         } else {
           forward = {
-            x: e.clientX - this.lastMovement.x,
-            y: e.clientY - this.lastMovement.y
+            x: X - this.lastMovement.x,
+            y: Y - this.lastMovement.y
           }
         }
         this.lastMovement = {
-          x: e.clientX,
-          y: e.clientY
+          x: X,
+          y: Y
         }
         callback({ x, y }, forward)
       }
