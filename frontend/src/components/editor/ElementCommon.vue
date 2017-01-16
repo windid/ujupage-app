@@ -247,19 +247,25 @@ export default {
 
       editorHelper.alignBegin(this.elementId)
     },
-    dragMove (move, offset, forced) {
+    dragMove (move, offset, options) {
       if (move.x === 0 && move.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
       }
       const actualMove = this.actualMove(move)
+      let speed = 0
+      if (options.speed) {
+        speed = Math.max(options.speed.x, options.speed.y)
+      }
       const _move = editorHelper.alignNext({
         move: actualMove,
-        offset
+        offset,
+        options: {
+          speed
+        }
       })
       const moveX = _move.x
       const moveY = _move.y
-      // console.log('x', moveX)
       const left = this.startPosLeft + moveX
       this.$el.style.left = left + 'px'
       this.elPositionInPage.left = left

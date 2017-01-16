@@ -93,6 +93,7 @@ const checkAlignBreak = () => {
 export const alignNext = (path) => {
   const move = path.move
   const offset = path.offset
+  const quickMove = path.options.speed >= 2
   const alignStatus = moveCache.status
 
   let moveX = move.x
@@ -111,32 +112,34 @@ export const alignNext = (path) => {
     moveCache.offset.x += offset.x
     moveCache.offset.y += offset.y
 
-    // 是否已达到下一次的对齐位置
-    const _hasNext = hasNext(move, offset)
-    unchange = _hasNext.hasMove
-    if (_hasNext.state) {
-      shouldAlignUpdate = true
-      moveCache.x = moveX
-      moveCache.y = moveY
-    } else {
-      shouldAlignUpdate = false
-      if (alignStatus.x || alignStatus.y) {
-        const breaks = checkAlignBreak()
-        if (!breaks.x && alignStatus.x) {
-          moveX = moveCache.x
-        } else {
-          moveCache.x = moveX
-        }
-        if (!breaks.y && alignStatus.y) {
-          moveY = moveCache.y
-        } else {
-          moveCache.y = moveY
+    if (!quickMove) {
+      // 是否已达到下一次的对齐位置
+      const _hasNext = hasNext(move, offset)
+      unchange = _hasNext.hasMove
+      if (_hasNext.state) {
+        shouldAlignUpdate = true
+        moveCache.x = moveX
+        moveCache.y = moveY
+      } else {
+        shouldAlignUpdate = false
+        if (alignStatus.x || alignStatus.y) {
+          const breaks = checkAlignBreak()
+          if (!breaks.x && alignStatus.x) {
+            moveX = moveCache.x
+          } else {
+            moveCache.x = moveX
+          }
+          if (!breaks.y && alignStatus.y) {
+            moveY = moveCache.y
+          } else {
+            moveCache.y = moveY
+          }
         }
       }
     }
   }
   let alignData = null
-  if (shouldAlignUpdate) {
+  if (shouldAlignUpdate && !quickMove) {
     alignData = alignSearch({
       x: moveX,
       y: moveY
