@@ -1,7 +1,7 @@
 <template>
   <div class="field">
-    <input type="text" :value="shownValue" @input="onInput">
-    <span>{{ label.toUpperCase() }}</span>
+    <input :value="shownValue" @input="onInput">
+    <span>{{ label }}</span>
   </div>
 </template>
 
@@ -57,19 +57,22 @@ export default {
 
 <style lang="scss" scoped>
 .field {
-  width: 100%;
+  flex: 1;
   margin: 0 2px;
   box-sizing: border-box;
   color: #999;
   text-align: center;
 }
+.input-wrap {
+  position: relative;
+}
 span {
   display: block;
   font-size: 13px;
   margin-top: 5px;
+  text-transform: uppercase;
 }
 input {
-  appearance: none;
   width: 100%;
   text-align: center;
   box-sizing: border-box;
