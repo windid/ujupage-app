@@ -15,7 +15,11 @@
     methods: {
       ...mapActions(['getInput', 'createPage', 'createEmptyVariation']),
       createEmptyPage () {
-        if (this.pageGroupId) {
+        if (this.pageId) {
+          this.createEmptyVariation([this.pageId, (variation) => {
+            this.$router.push('/editor/' + this.pageId + '/' + variation.id)
+          }])
+        } else if (this.pageGroupId) {
           this.getInput({
             header: '请输入页面名称',
             inputAddon: '<span class="glyphicon glyphicon-file"></span>',
@@ -29,10 +33,6 @@
               }])
             }
           })
-        } else if (this.pageId) {
-          this.createEmptyVariation([this.pageId, (variation) => {
-            this.$router.push('/editor/' + this.pageId + '/' + variation.id)
-          }])
         }
       }
     },

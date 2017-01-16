@@ -1,11 +1,13 @@
 <script>
 import TemplateHeader from './TemplateHeader'
+import Previewer from '../common/Previewer'
 import { mapActions } from 'vuex'
 import API from '../../API'
 
 export default {
   components: {
-    TemplateHeader
+    TemplateHeader,
+    Previewer
   },
   data () {
     return {
@@ -16,6 +18,9 @@ export default {
   computed: {
     colors () {
       return encodeURIComponent(this.colorSet.toString())
+    },
+    url () {
+      return '/api/hub/template/preview/' + this.$route.params.templateId + '?color=' + this.colors
     }
   },
   methods: {
@@ -69,22 +74,7 @@ export default {
 <template>
   <div>
     <template-header :version="version" @switch-version="switchVersion" @update-colors="updateColors" @use-template="useTemplate"></template-header>
-
-    <iframe v-if="version === 'pc'" class="pc-iframe" :src="'/api/hub/template/preview/' + $route.params.templateId + '?color=' + colors" frameborder="0"></iframe>
-    <div v-if="version === 'mobile'" class="mobile-preview">           
-      <div class="marvel-device iphone6 silver">
-          <div class="top-bar"></div>
-          <div class="sleep"></div>
-          <div class="volume"></div>
-          <div class="camera"></div>
-          <div class="sensor"></div>
-          <div class="speaker"></div>
-          <div class="screen"></div>
-          <div class="home"></div>
-          <div class="bottom-bar"></div>
-          <iframe class="mobile-iframe" :src="'/api/hub/template/preview/' + $route.params.templateId + '?color=' + colors" frameborder="0"></iframe>
-      </div>
-    </div>
+    <previewer :version="version" :url="url"></previewer>
   </div>
 </template>
 

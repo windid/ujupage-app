@@ -5,6 +5,8 @@ import EditorWorkspace from './EditorWorkspace.vue'
 import { mapGetters, mapActions } from 'vuex'
 import eventHandler from '../../utils/eventHandler'
 
+const leaveMessage = '您对该页面所作修改尚未保存，现在离开导致您所作的修改丢失，确定吗?'
+
 export default {
   name: 'editor',
   components: {
@@ -26,10 +28,9 @@ export default {
   mounted () {
     document.title = this.$store.getters.editingPage.name + ' - 编辑 - 聚页'
     this._unloadEvent = eventHandler.listen(window, 'beforeunload', e => {
-      const msg = '您对该页面所作修改尚未保存，现在离开导致您所作的修改丢失，确定吗?'
       if (!this.saveStatus) {
-        e.returnValue = msg
-        return msg
+        e.returnValue = leaveMessage
+        return leaveMessage
       }
     })
   },
@@ -40,7 +41,7 @@ export default {
     if (!this.saveStatus) {
       this.confirm({
         header: '页面未保存',
-        content: '您对该页面所作修改尚未保存，现在离开导致您所作的修改丢失，确定吗?',
+        content: leaveMessage,
         onConfirm: () => {
           next()
         }

@@ -1,12 +1,14 @@
 <script>
 import PreviewHeader from './PreviewHeader'
+import Previewer from '../common/Previewer'
 import API from '../../API'
 import '../../style/devices.min.css'
 import { find } from 'lodash'
 
 export default {
   components: {
-    PreviewHeader
+    PreviewHeader,
+    Previewer
   },
   data () {
     return {
@@ -27,6 +29,11 @@ export default {
       this.currentVariation = find(this.variations, v => v.id === parseInt(variationId))
     }
   },
+  computed: {
+    url () {
+      return '/api/pages/' + this.page.id + '/variations/' + this.currentVariation.id + '/preview'
+    }
+  },
   created () {
     API.page.get({ id: this.$route.params.pageId }).then(response => {
       this.page = response.data
@@ -43,52 +50,6 @@ export default {
 <template>
 <div>
   <preview-header v-if="!loading" :current-variation="currentVariation" :variations="variations" :page="page" :version="version" @switch-version="switchVersion"></preview-header>
-
-  <iframe v-if="version === 'pc' && !loading" class="pc-iframe" :src="'/api/pages/' + page.id + '/variations/' + currentVariation.id + '/preview'" frameborder="0"></iframe>
-  <div v-if="version === 'mobile' && !loading" class="mobile-preview">           
-    <div class="marvel-device iphone6 silver">
-        <div class="top-bar"></div>
-        <div class="sleep"></div>
-        <div class="volume"></div>
-        <div class="camera"></div>
-        <div class="sensor"></div>
-        <div class="speaker"></div>
-        <div class="screen"></div>
-        <div class="home"></div>
-        <div class="bottom-bar"></div>
-        <iframe class="mobile-iframe" :src="'/api/pages/' + page.id + '/variations/' + currentVariation.id + '/preview'" frameborder="0"></iframe>
-    </div>
-  </div>
+  <previewer v-if="!loading" :version="version" :url="url"></previewer>
 </div>
 </template>
-
-<style>
-.pc-iframe{
-  position: absolute;
-  top:45px;
-  bottom:0;
-  width:100%;
-  height:calc(100% - 45px);
-}
-.mobile-preview{
-  position: relative;
-  top:10px;
-  width: 100%;
-  text-align:center;
-}
-.mobile-iframe{
-  overflow-x: hidden;
-  overflow-y: scroll;
-  z-index: 3;
-  display: block;
-  border: none;
-  height: 667px;
-  width: 375px;
-  position: absolute;
-  margin: auto;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-</style>

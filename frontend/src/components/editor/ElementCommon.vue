@@ -656,7 +656,7 @@ const getElementTop = (element) => {
   font-size: 0;
 }
 
-.el-btn-group > .btn, .el-btn-group > .btn-group{
+.el-btn-group > .btn, .el-btn-group > .btn-group {
   float: none;
 }
 
@@ -710,7 +710,7 @@ const getElementTop = (element) => {
   border-color: #03ddff transparent transparent transparent;
 }
 
-.resizable-n{
+.resizable-n {
   position: absolute;
   left: 50%;
   margin-left: -5px;

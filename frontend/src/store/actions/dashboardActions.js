@@ -3,7 +3,7 @@ import cookieHandler from '../../utils/cookieHandler'
 import * as types from '../mutation-types'
 import { find } from 'lodash'
 
-export const dashboardInit = ({ commit, state }, [route, callback = false]) => {
+export const dashboardInit = ({ commit }, [route, callback = false]) => {
   API.project.get().then(response => {
     const projects = response.data
     commit(types.LOAD_PROJECTS, { projects })
