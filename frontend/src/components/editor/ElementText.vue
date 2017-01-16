@@ -130,7 +130,7 @@ export default {
       clearSelection()
     },
     styleColor (color) {
-      console.log('style:', color)
+      execCommand('styleWithCSS', false, true)
       execCommand('foreColor', false, color)
     },
     styleText (action) {
