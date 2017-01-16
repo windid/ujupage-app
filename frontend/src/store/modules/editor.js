@@ -29,7 +29,7 @@ const state = {
     activeIds: [],
     elements: [],
     align: {
-      lines: [],
+      lines: { vertical: [], horizontal: [] },
       status: {
         x: false,
         y: false
@@ -268,7 +268,7 @@ const mutations = {
   },
 
   [types.ALIGN_CLEAR] (state) {
-    state.assist.align.lines = []
+    state.assist.align.lines = { vertical: [], horizontal: [] }
     state.assist.activeIds = []
     state.assist.align.status = {
       x: false,

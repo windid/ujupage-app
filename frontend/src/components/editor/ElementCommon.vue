@@ -1,6 +1,5 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { cloneDeep } from 'lodash'
 
 import mouseDrag from '../../mixins/mouseDrag'
 import resizer from '../ui/OnesideResizer'
@@ -80,7 +79,6 @@ export default {
       fixedEditing: false,
       documentScrollPx: 0,
       // key*, 方向键移动相关的属性
-      bounds: null,
       mountedId: null,
       keyEventAttached: false,
       keyMoveTimer: null,
@@ -167,7 +165,7 @@ export default {
         } else {
           clearTimeout(this.keyMoveTimer)
         }
-        const forward = {
+        const offset = {
           x: 0,
           y: 0
         }
@@ -177,13 +175,13 @@ export default {
           const name = i % 2 === 0 ? 'x' : 'y'
           const value = i < 2 ? -1 : 1
           this.keyMove[name] += value
-          forward[name] = value
+          offset[name] = value
         }
         this.keyMoveTimer = setTimeout(() => {
           this.keyMoveTimer = null
           this.keyMoveTimestamp = null
           this.dragging = false
-          this.dragEnd(this.keyMove, forward)
+          this.dragEnd(this.keyMove, offset)
         }, 800)
         const newTime = new Date()
         if (this.keyMoveTimestamp !== null && newTime - this.keyMoveTimestamp <= 100) {
@@ -191,7 +189,7 @@ export default {
         } else {
           this.keyMoveTimestamp = newTime
         }
-        this.dragMove(this.keyMove, forward, true)
+        this.dragMove(this.keyMove, offset, true)
       }
     },
     showToolbar () {
@@ -216,27 +214,23 @@ export default {
       this.fixedEditing = false
       this.$emit('change-button-group', 'main')
     },
-    computeMoveMax (movement) {
+    actualMove (move) {
       const getMin = (v, range) => {
         const i = v < 0 ? 0 : 1
         return [Math.max, Math.min][i](range[i], v)
       }
       return {
-        x: getMin(movement.x, this.horizontalMax),
-        y: getMin(movement.y, this.verticalMax)
+        x: getMin(move.x, this.horizontalMax),
+        y: getMin(move.y, this.verticalMax)
       }
     },
     dragBegin () {
       this.clearMultiSelect()
-      this.bounds = this.getAlignmentInfo()
       if (!this.keyEventAttached) {
         document.addEventListener('keydown', this.onKey, false)
         this.keyEventAttached = true
       }
-      EDIT_CACHE = {
-        id: this.elementId,
-        mountedId: this.mountedId
-      }
+      EDIT_CACHE = { id: this.elementId, mountedId: this.mountedId }
       const style = window.getComputedStyle(this.$el, null)
       const getSize = (key) => parseInt(style[key])
       this.startPosLeft = getSize('left')
@@ -250,45 +244,41 @@ export default {
       this.horizontalMax = [box.left - self.left, box.right - self.right]
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
+
+      editorHelper.alignBegin(this.elementId)
     },
-    dragMove (movement, forward, forced) {
-      if (movement.x === 0 && movement.y === 0) return
+    dragMove (move, offset, forced) {
+      if (move.x === 0 && move.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
       }
-      const move = editorHelper.alignNext({
-        movement: this.computeMoveMax(movement),
-        forward
+      const actualMove = this.actualMove(move)
+      const _move = editorHelper.alignNext({
+        move: actualMove,
+        offset
       })
-      const offsetX = move.x
-      const offsetY = move.y
+      const moveX = _move.x
+      const moveY = _move.y
+      // console.log('x', moveX)
+      const left = this.startPosLeft + moveX
+      this.$el.style.left = left + 'px'
+      this.elPositionInPage.left = left
 
-      if (forced || move.xMovable) {
-        const left = this.startPosLeft + offsetX
-        this.$el.style.left = left + 'px'
-        this.elPositionInPage.left = left
+      const top = this.startPosTop + moveY
+      this.$el.style.top = top + 'px'
+      this.elPositionInPage.top = this.startTop + top
+      if (_move.alignData !== null) {
+        this.updateAlign(_move.alignData)
       }
-      if (forced || move.yMovable) {
-        const top = this.startPosTop + offsetY
-        this.$el.style.top = top + 'px'
-        this.elPositionInPage.top = this.startTop + top
-      }
-      this.findAlignments({
-        x: offsetX,
-        y: offsetY,
-        w: 0,
-        h: 0
-      })
     },
-    dragEnd (movement, forward) {
-      if (movement && movement.x === 0 && movement.y === 0) return
+    dragEnd (move, offset) {
+      if (move && move.x === 0 && move.y === 0) return
       this.$emit('change-button-group', 'main')
       this.elPositionInPage.left = parseInt(this.$el.style.left)
       this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
       this.updateAlignmentInfo()
       this.clearAlign()
-      this.bounds = null
       editorHelper.alignEnd()
     },
     // dragEnable () {
@@ -361,12 +351,11 @@ export default {
         this.$emit('resize-end')
         this.updateAlignmentInfo()
         this.clearAlign()
-        this.bounds = null
       } else {
         this.resizing = true
         this.$emit('change-draggable', false)
         this.$emit('resizing', direction, size)
-        this.findAlignments()
+        // this.findAlignments()
       }
     },
     resizeEnable () {
@@ -411,32 +400,6 @@ export default {
         editorHelper.elementAdd(element)
       } else {
         editorHelper.elementUpdate(element)
-      }
-    },
-    findAlignments (offSet) {
-      const hasOffset = arguments.length >= 1
-      let rect
-      if (offSet) {
-        rect = cloneDeep(this.bounds)
-        rect.left += offSet.x
-        rect.right += offSet.x
-        rect.top += offSet.y
-        rect.bottom += offSet.y
-        rect.hcenter += offSet.x
-        rect.vcenter += offSet.y
-      } else {
-        rect = this.getAlignmentInfo()
-      }
-      const xUpdated = !hasOffset || offSet.x !== 0
-      const yUpdated = !hasOffset || offSet.y !== 0
-      if (xUpdated || yUpdated) {
-        this.updateAlign(editorHelper.alignSearch({
-          id: this.elementId,
-          mid: this.mountedId,
-          rect: rect,
-          xUpdated,
-          yUpdated
-        }))
       }
     },
     watchScroll () {

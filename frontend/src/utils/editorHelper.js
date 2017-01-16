@@ -1,4 +1,4 @@
-import { findIndex, clone, cloneDeep } from 'lodash'
+import { findIndex, clone, cloneDeep, uniq } from 'lodash'
 
 const ALIGNMENT_SIDES = [
   { sides: ['left', 'right', 'hcenter'], value: 'vcenter' },
@@ -12,16 +12,18 @@ let ALIGN_ELEMENTS = []
 /**
  * 当存在对齐时，下一个动作的位移生效的最小变化量
  */
-const ALIGN_BREAK_THRESHOLD = 3
+const ALIGN_BREAK_THRESHOLD = 5
 
-const OFFSET_CACHE = {
+const MOVE_CACHE = {
   x: 0, y: 0,
-  forward: { x: 0, y: 0 },
+  offset: { x: 0, y: 0 },
   status: { x: false, y: false }
 }
 
-let offsetCache = cloneDeep(OFFSET_CACHE)
-// let currentEl = {}
+// 是否为某次移动中的首次
+let firstMove = false
+let moveCache = cloneDeep(MOVE_CACHE)
+let currentElement = null
 
 export const elementAdd = (element) => {
   ALIGN_ELEMENTS.push(element)
@@ -40,78 +42,134 @@ export const elementRemove = (mid) => {
   ALIGN_ELEMENTS = ALIGN_ELEMENTS.filter(e => mid !== e.mid)
 }
 
-/**
- * 计算当前元素有哪些可能的对齐情况
- */
-export const alignBegin = (path) => {
-  const forward = path.forward
+// 元素操作准备开始
+export const alignBegin = (elementId) => {
+  firstMove = true
+  const index = findIndex(ALIGN_ELEMENTS, e => e.id === elementId)
+  if (index >= 0) {
+    currentElement = ALIGN_ELEMENTS[index]
+    alignFindAll()
+  }
+  alignSearch({
+    x: 0, y: 0
+  })
+}
+
+// 检测当前的移动是否已经达到下一个对齐的范围
+const hasNext = (move, offset) => {
+  const hasMove = {
+    x: moveCache.x !== move.x,
+    y: moveCache.y !== move.y
+  }
+  let next = null
+  if (ALIGN_NEXT === null) {
+    next = true
+  } else {
+    ['x', 'y'].forEach(i => {
+      const m = move[i]
+      const n = ALIGN_NEXT[i][ m > 0 ? 'positive' : 'negative']
+      const cond = n.indexOf(m) >= 0
+      next = (next === null) ? cond : (next || cond)
+
+      if (hasMove[i] || !moveCache.status[i]) {
+      }
+    })
+  }
   return {
-    x: {
-      positive: forward.x >= ALIGN_NEXT.x.positive,
-      negative: forward.x <= ALIGN_NEXT.x.negative
-    },
-    y: {
-      positive: forward.y >= ALIGN_NEXT.y.positive,
-      negative: forward.y >= ALIGN_NEXT.y.negative
-    }
+    state: next,
+    hasMove
+  }
+}
+
+const checkAlignBreak = () => {
+  const xBreak = Math.abs(moveCache.offset.x) >= ALIGN_BREAK_THRESHOLD
+  const yBreak = Math.abs(moveCache.offset.y) >= ALIGN_BREAK_THRESHOLD
+  return {
+    x: xBreak,
+    y: yBreak
   }
 }
 
 export const alignNext = (path) => {
-  const move = path.movement
-  const forward = path.forward
-  const alignStatus = offsetCache.status
-  let offsetX = move.x
-  let offsetY = move.y
-  const xBreak = Math.abs(offsetCache.forward.x) >= ALIGN_BREAK_THRESHOLD
-  if (alignStatus.y) {
-    offsetCache.forward.x += forward.x
-    if (!xBreak) {
-      offsetX = offsetCache.x
-    }
+  const move = path.move
+  const offset = path.offset
+  const alignStatus = moveCache.status
+
+  let moveX = move.x
+  let moveY = move.y
+  let shouldAlignUpdate = false
+  let unchange = null
+  if (firstMove) {
+    moveCache.offset.x = 0
+    moveCache.offset.y = 0
+    shouldAlignUpdate = true
+    firstMove = false
+
+    moveCache.x = moveX
+    moveCache.y = moveY
   } else {
-    offsetCache.forward.x = 0
-    offsetCache.x = move.x
-  }
-  const yBreak = Math.abs(offsetCache.forward.y) >= ALIGN_BREAK_THRESHOLD
-  if (alignStatus.x) {
-    offsetCache.y += forward.y
-    if (!yBreak) {
-      offsetY = offsetCache.y
+    moveCache.offset.x += offset.x
+    moveCache.offset.y += offset.y
+
+    // 是否已达到下一次的对齐位置
+    const _hasNext = hasNext(move, offset)
+    unchange = _hasNext.hasMove
+    if (_hasNext.state) {
+      shouldAlignUpdate = true
+      moveCache.x = moveX
+      moveCache.y = moveY
+    } else {
+      shouldAlignUpdate = false
+      if (alignStatus.x || alignStatus.y) {
+        const breaks = checkAlignBreak()
+        if (!breaks.x && alignStatus.x) {
+          moveX = moveCache.x
+        } else {
+          moveCache.x = moveX
+        }
+        if (!breaks.y && alignStatus.y) {
+          moveY = moveCache.y
+        } else {
+          moveCache.y = moveY
+        }
+      }
     }
-  } else {
-    offsetCache.y = 0
   }
+  let alignData = null
+  if (shouldAlignUpdate) {
+    alignData = alignSearch({
+      x: moveX,
+      y: moveY
+    })
+  } else {
+    const status = {
+      x: false,
+      y: false
+    }
+    moveCache.status = status
+    alignData = {
+      ids: [],
+      status,
+      lines: { horizontal: [], vertical: [] },
+      unchange
+    }
+  }
+
   return {
-    x: offsetX,
-    y: offsetY,
-    forward: clone(offsetCache.forward),
-    xMovable: !alignStatus.y || xBreak,
-    yMovable: !alignStatus.x || yBreak
+    x: moveX,
+    y: moveY,
+    alignData,
+    offset: clone(moveCache.offset)
   }
 }
 
-// 更新对齐的线和元素
-export const alignSearch = (element) => {
-  const alignments = {
-    left: [],
-    right: [],
-    top: [],
-    bottom: [],
-    vcenter: [],
-    hcenter: []
-  }
-
-  const ids = []
+const alignFindAll = () => {
+  if (currentElement === null) return
+  ALIGN_NEXT = null
+  const element = cloneDeep(currentElement)
   const next = {
-    x: {
-      positive: null,
-      negative: null
-    },
-    y: {
-      positive: null,
-      negative: null
-    }
+    x: { positive: [], negative: [] },
+    y: { positive: [], negative: [] }
   }
   ALIGN_ELEMENTS.forEach((e) => {
     if (e.id !== element.id) {
@@ -121,30 +179,62 @@ export const alignSearch = (element) => {
         const sides = group.sides
         sides.forEach(key => {
           sides.forEach(subKey => {
+            const distance = e.rect[subKey] - element.rect[key]
+            const directtion = distance > 0 ? 'positive' : 'negative'
+            next[field][directtion].push(distance)
+          })
+        })
+      })
+    }
+  });
+
+  ['x', 'y'].forEach(i => {
+    ['positive', 'negative'].forEach(j => {
+      next[i][j] = uniq(next[i][j])
+    })
+  })
+  ALIGN_NEXT = next
+}
+
+// 更新对齐的线和元素
+export const alignSearch = (offset) => {
+  if (currentElement === null) return
+  const element = cloneDeep(currentElement)
+  const rect = element.rect
+  if (offset) {
+    ['left', 'right', 'hcenter'].forEach(v => { rect[v] += offset.x });
+    ['top', 'bottom', 'vcenter'].forEach(v => { rect[v] += offset.y })
+  }
+  const alignments = {
+    left: [], right: [], hcenter: [],
+    top: [], bottom: [], vcenter: []
+  }
+
+  const ids = []
+  ALIGN_ELEMENTS.forEach((e) => {
+    if (e.id !== element.id) {
+      ALIGNMENT_SIDES.forEach((group, index) => {
+        const sides = group.sides
+        sides.forEach(key => {
+          sides.forEach(subKey => {
             const distance = element.rect[key] - e.rect[subKey]
             if (distance === 0) {
               if (ids.indexOf(e.id) < 0) {
                 ids.push(e.id)
               }
               alignments[key].push(e.rect[group.value])
-            } else {
-              // 缓存最接近对齐的结果，以便下一次搜索使用
-              const directtion = distance > 0 ? 'positive' : 'negative'
-              const fn = distance > 0 ? Math.min : Math.max
-              next[field][directtion] = next[field][directtion] === null ? distance : fn(next[field][directtion], distance)
             }
           })
         })
       })
     }
   })
-  ALIGN_NEXT = next
 
   const status = {
     x: false,
     y: false
   }
-  const lines = []
+  const lines = { vertical: [], horizontal: [] }
   ALIGNMENT_SIDES.forEach((group, index) => {
     // 水平方向未移动或垂直方向未移动
     const sides = group.sides
@@ -155,7 +245,7 @@ export const alignSearch = (element) => {
       const value = element.rect[group.value]
       const min = Math.min(...sizes, value)
       const max = Math.max(...sizes, value)
-      status[vertical ? 'y' : 'x'] = true
+      status[vertical ? 'x' : 'y'] = true
       const line = {
         vertical,
         length: max - min,
@@ -168,18 +258,19 @@ export const alignSearch = (element) => {
         },
         dots: [...sizes, value]
       }
-      lines.push(line)
+      lines[vertical ? 'vertical' : 'horizontal'].push(line)
     })
   })
 
-  const alignStatus = offsetCache.status
-  /** 有新对齐的情况下需要重新设置缓存 */
-  if (!alignStatus.x && status.x && element.yUpdated) {
+  if (status.x) {
+    moveCache.offset.x = 0
+    moveCache.x = offset.x
   }
-  if (!alignStatus.y && status.y && element.xUpdated) {
+  if (status.y) {
+    moveCache.offset.y = 0
+    moveCache.y = offset.y
   }
-
-  offsetCache.status = clone(status)
+  moveCache.status = clone(status)
   return {
     ids,
     lines,
@@ -188,7 +279,10 @@ export const alignSearch = (element) => {
 }
 
 export const alignEnd = () => {
-  offsetCache = cloneDeep(OFFSET_CACHE)
+  moveCache = cloneDeep(MOVE_CACHE)
+  ALIGN_NEXT = null
+  firstMove = true
+  currentElement = null
 }
 
 // 多选
