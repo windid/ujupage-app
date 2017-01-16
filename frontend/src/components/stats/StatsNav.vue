@@ -49,6 +49,23 @@ export default {
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
               picker.$emit('pick', [start, end])
             }
+          },
+          {
+            text: '本月',
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setDate(1)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '上月',
+            onClick (picker) {
+              const start = moment().subtract(1, 'M')
+              const end = moment().subtract(1, 'M')
+              picker.$emit('pick', [start.startOf('month'), end.endOf('month')])
+            }
           }
         ],
         disabledDate (d) {
