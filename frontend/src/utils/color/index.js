@@ -209,7 +209,7 @@ export function isValidColor (color) {
     matchers.hsla,
     matchers.hex3,
     matchers.hex6
-  ].some(re => re.test(color))
+  ].some(re => re.test(color)) || color === 'transparent'
 }
 
 function Color (color, old = {}) {
