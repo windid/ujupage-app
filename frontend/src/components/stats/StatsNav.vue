@@ -18,9 +18,6 @@ export default {
     }
   },
   methods: {
-    pickDate (v) {
-      console.log(v)
-    },
     newQuery (key, value) {
       return {
         ...this.$route.query,

@@ -1,7 +1,7 @@
 <template>
   <div class="date-picker-wrap btn-group btn btn-default dropdown-toggle" data-toggle="dropdown">
     <div>
-      <span>{{ showDuration }}</span>
+      <span>{{ displayRange }}</span>
        &nbsp; <span class="glyphicon" :class="'glyphicon-menu-down'"></span>
     </div>
     <date-picker
@@ -112,7 +112,7 @@ export default {
         }
       }
     },
-    showDuration () {
+    displayRange () {
       const { startDate, endDate } = this.value
       return startDate === endDate ? startDate : `${startDate} 至 ${endDate}`
     }

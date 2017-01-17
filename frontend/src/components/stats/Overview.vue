@@ -66,7 +66,7 @@ export default {
           labelInterpolationFnc: function (value, index, labels) {
             const len = labels.length
             const step = len > 16 ? Math.round(len / 10) : 1
-            return index % step === 0 ? moment(value, 'YY-MM-DD').format('MM-DD') : ''
+            return index % step === 0 ? moment(value).format('MM-DD') : ''
           }
         },
         axisY: {
