@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "chartist": "^0.10.1",
-    "element-ui": "^1.0.2",
+    "element-ui": "^1.0.9",
     "moment": "^2.15.1",
     "nprogress": "^0.2.0",
     "raven-js": "^3.9.1",

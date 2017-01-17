@@ -102,10 +102,14 @@ export default {
         return [v.startDate, v.endDate]
       },
       set (val) {
-        this.$emit('input', {
-          startDate: moment(val[0]).format('YYYY-MM-DD'),
-          endDate: moment(val[1]).format('YYYY-MM-DD')
-        })
+        const start = moment(val[0]).format('YYYY-MM-DD')
+        const end = moment(val[1]).format('YYYY-MM-DD')
+        if (start !== this.value.startDate || end !== this.value.endDate) {
+          this.$emit('input', {
+            startDate: moment(val[0]).format('YYYY-MM-DD'),
+            endDate: moment(val[1]).format('YYYY-MM-DD')
+          })
+        }
       }
     },
     showDuration () {
