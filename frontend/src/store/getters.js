@@ -93,6 +93,10 @@ export const redoButton = state => state.editor.history.states.length > state.ed
 
 export const saveStatus = state => isEqual(state.editor.content, state.editor.history.saved)
 
-export const getAlignLines = state => state.editor.align.lines
+export const getAlignLines = state => state.editor.assist.align.lines
 
-export const getAlignIds = state => state.editor.align.activeIds
+export const getAlignIds = state => state.editor.assist.activeIds
+
+export const getAlignStatus = state => state.editor.assist.align.status
+
+export const getSelectionArea = state => state.editor.assist.selection

@@ -143,7 +143,7 @@ export default {
       </transition-group>
       <!-- 板块操作按钮组 -->
       <transition name="fade">
-        <div class="btn-group-vertical page-section-operation" v-show="showButton" :style="{left: workspace.width + 5 + 'px'}">
+        <div class="btn-group-vertical page-section-operation" v-show="showButton" :style="{left: workspace.width + 5 + 'px'}" @mousedown.stop>
           <template v-if="editing">
             <div class="btn btn-success" title="完成"><span class="glyphicon glyphicon-ok"></span></div>
           </template>

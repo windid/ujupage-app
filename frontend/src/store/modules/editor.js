@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import * as types from '../mutation-types'
-import { merge, findIndex } from 'lodash'
+import { merge } from 'lodash'
 import randomChar from '../../utils/randomChar'
 
 const state = {
@@ -24,11 +24,27 @@ const state = {
   // 编辑的页面内容
   content: {},
 
-  // 元素的尺寸数据，主要用于缩放及移动过程中的对齐
-  align: {
+  // 元素的尺寸数据，主要用于缩放及移动过程中的对齐、多个元素选择操作等
+  assist: {
     activeIds: [],
     elements: [],
-    lines: []
+    align: {
+      lines: [],
+      status: {
+        x: false,
+        y: false
+      }
+    },
+    multi: {
+      move: null
+    },
+    selection: {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      visible: false
+    }
   },
 
   // 历史记录，用于撤销重做
@@ -148,8 +164,18 @@ const mutations = {
 
   // 在移动版和桌面版之间切换
   [types.SWITCH_VERSION] (state, { version }) {
-    state.workspace.version = version
-    state.workspace.width = state.workspace.version === 'pc' ? 960 : 360
+    if (version !== state.workspace.version) {
+      state.workspace.version = version
+      state.workspace.width = state.workspace.version === 'pc' ? 960 : 360
+      state.assist.activeIds = []
+      state.assist.selection = {
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        visible: false
+      }
+    }
   },
 
   // 设置配色方案
@@ -234,98 +260,84 @@ const mutations = {
     Vue.delete(state.content.elements, elementId)
   },
 
-  // 对齐辅助功能的数据的操作
-  [types.ALIGN_ADD_ELEMENT] (state, element) {
-    state.align.elements.push(element)
-  },
-
-  [types.ALIGN_MODIFY_ELEMENT] (state, element) {
-    const index = findIndex(state.align.elements, (e) => e.mid === element.mid)
-    if (index >= 0) {
-      state.align.elements[index] = element
-    } else {
-      state.align.elements.push(element)
-    }
-  },
-
-  [types.ALIGN_REMOVE_ELEMENT] (state, mid) {
-    state.align.elements = state.align.elements.filter(e => mid !== e.mid)
-  },
-
-  [types.ALIGN_UPDATE] (state, element) {
-    // 更新对齐的线和元素
-    const ALIGNMENT_SIDES = [
-      {
-        sides: ['left', 'right', 'hcenter'],
-        value: 'vcenter'
-      },
-      {
-        sides: ['top', 'bottom', 'vcenter'],
-        value: 'hcenter'
-      }]
-    const alignments = {
-      left: [],
-      right: [],
-      top: [],
-      bottom: [],
-      vcenter: [],
-      hcenter: []
-    }
-    // clear
-    state.align.lines = []
-    state.align.activeIds = []
-    // find alignments
-    state.align.elements.forEach((e) => {
-      if (e.id !== element.id) {
-        ALIGNMENT_SIDES.forEach((group) => {
-          const sides = group.sides
-          sides.forEach((key) => {
-            sides.forEach((subKey) => {
-              if (element.rect[key] === e.rect[subKey]) {
-                if (state.align.activeIds.indexOf(e.id) < 0) {
-                  state.align.activeIds.push(e.id)
-                }
-                alignments[key].push(e.rect[group.value])
-              }
-            })
-          })
-        })
-      }
-    })
-
-    const lines = []
-    ALIGNMENT_SIDES.forEach((group, i) => {
-      const sides = group.sides
-      sides.forEach((key) => {
-        const sizes = alignments[key]
-        if (sizes.length <= 0) return
-        const value = element.rect[group.value]
-        const min = Math.min(...sizes, value)
-        const max = Math.max(...sizes, value)
-        const vertical = (i === 0)
-        const line = {
-          vertical,
-          length: max - min,
-          min,
-          max,
-          vAxis: element.rect[key],
-          dotSide: {
-            main: vertical ? 'top' : 'left',
-            sub: vertical ? 'left' : 'top'
-          },
-          dots: [...sizes, value]
-        }
-        lines.push(line)
-      })
-    })
-    state.align.lines = lines
+  [types.ALIGN_UPDATE] (state, data) {
+    state.assist.activeIds = data.ids
+    state.assist.align.lines = data.lines
+    state.assist.align.status = data.status
   },
 
   [types.ALIGN_CLEAR] (state) {
-    state.align.lines = []
-    state.align.activeIds = []
+    state.assist.align.lines = []
+    state.assist.activeIds = []
+    state.assist.align.status = {
+      x: false,
+      y: false
+    }
+  },
+
+  [types.MULTI_SELECT_UPDATE] (state, selection) {
+    state.assist.activeIds = []
+    const rect = selection.rect
+    const computedRect = {
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height
+    }
+    const origin = selection.origin
+    computedRect.left -= origin.left
+    const sl = state.assist.selection
+    state.assist.elements.forEach(e => {
+      if (isOverlap(e.rect, computedRect)) {
+        if (state.assist.activeIds.length <= 0) {
+          sl.left = e.rect.left
+          sl.right = e.rect.right
+          sl.top = e.rect.top
+          sl.bottom = e.rect.bottom
+        } else {
+          sl.left = Math.min(sl.left, e.rect.left)
+          sl.top = Math.min(sl.top, e.rect.top)
+          sl.right = Math.max(sl.right, e.rect.right)
+          sl.bottom = Math.max(sl.bottom, e.rect.bottom)
+        }
+        state.assist.activeIds.push(e.id)
+      }
+    })
+  },
+
+  [types.MULTI_SELECT_DONE] (state) {
+    const ids = state.assist.activeIds
+    const hasSelection = ids.length > 0
+    state.assist.selection.visible = hasSelection
+  },
+
+  [types.MULTI_SELECT_CLEAR] (state) {
+    state.assist.activeIds = []
+    state.assist.selection = {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      visible: false
+    }
   }
 
+}
+
+function isOverlap (lhs, rhs) {
+  let x = false
+  let y = false
+  if (lhs.left >= rhs.left) {
+    x = (lhs.left - rhs.left) <= rhs.width
+  } else {
+    x = (rhs.left - lhs.left) <= lhs.width
+  }
+  if (lhs.top >= rhs.top) {
+    y = (lhs.top - rhs.top) <= rhs.height
+  } else {
+    y = (rhs.top - lhs.top) <= lhs.height
+  }
+  return x && y
 }
 
 export default {

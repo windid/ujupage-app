@@ -176,7 +176,7 @@ export default {
         </div>
       </div>
       <chart type="line" :stats="stats" :options="chartOptions"></chart>
-      <table class="report table table-bordered table-hover">
+      <!-- <table class="report table table-bordered table-hover">
         <thead>
           <tr>
             <th width="120px">时间</th>
@@ -191,7 +191,7 @@ export default {
           </tr>
         </tbody>
         
-      </table>
+      </table> -->
     </div>
   </div>
 </template>

@@ -317,22 +317,22 @@ const getSectionIds = (state, elementId) => {
 }
 
 // 对齐辅助功能
-export const addAlignElement = ({ commit, state }, element) => {
-  commit(types.ALIGN_ADD_ELEMENT, element)
-}
-
-export const modifyAlignElement = ({ commit, state }, element) => {
-  commit(types.ALIGN_MODIFY_ELEMENT, element)
-}
-
-export const removeAlignElement = ({ commit, state }, id) => {
-  commit(types.ALIGN_REMOVE_ELEMENT, id)
-}
-
 export const updateAlign = ({ commit, state }, element) => {
   commit(types.ALIGN_UPDATE, element)
 }
 
 export const clearAlign = ({ commit, state }) => {
   commit(types.ALIGN_CLEAR)
+}
+
+export const updateMultiSelect = ({ commit, state }, selection) => {
+  commit(types.MULTI_SELECT_UPDATE, selection)
+}
+
+export const doneMultiSelect = ({ commit, state }) => {
+  commit(types.MULTI_SELECT_DONE)
+}
+
+export const clearMultiSelect = ({ commit, state }) => {
+  commit(types.MULTI_SELECT_CLEAR)
 }

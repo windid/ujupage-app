@@ -7,7 +7,9 @@ import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
 import eventHandler from '../../utils/eventHandler'
+import * as editorHelper from '../../utils/editorHelper'
 
+// 纪录上一个操作的元素，需要用来判断在移动元素到新的section时已经发生了复制
 let EDIT_CACHE = {
   id: null,
   mountedId: null
@@ -129,11 +131,9 @@ export default {
       'duplicateElement',
       'modifyElement',
       // 对齐
-      'addAlignElement',
-      'modifyAlignElement',
-      'removeAlignElement',
       'updateAlign',
-      'clearAlign'
+      'clearAlign',
+      'clearMultiSelect'
     ]),
     selectElement () {
       this.setActiveElementId(this.elementId)
@@ -167,27 +167,23 @@ export default {
         } else {
           clearTimeout(this.keyMoveTimer)
         }
-
+        const forward = {
+          x: 0,
+          y: 0
+        }
         this.dragging = true
-        switch (code - 37) {
-          case 0:
-            this.keyMove.x += -1
-            break
-          case 1:
-            this.keyMove.y += -1
-            break
-          case 2:
-            this.keyMove.x += 1
-            break
-          case 3:
-            this.keyMove.y += 1
-            break
+        {
+          const i = code - 37
+          const name = i % 2 === 0 ? 'x' : 'y'
+          const value = i < 2 ? -1 : 1
+          this.keyMove[name] += value
+          forward[name] = value
         }
         this.keyMoveTimer = setTimeout(() => {
           this.keyMoveTimer = null
           this.keyMoveTimestamp = null
           this.dragging = false
-          this.dragEnd(this.keyMove)
+          this.dragEnd(this.keyMove, forward)
         }, 800)
         const newTime = new Date()
         if (this.keyMoveTimestamp !== null && newTime - this.keyMoveTimestamp <= 100) {
@@ -195,7 +191,7 @@ export default {
         } else {
           this.keyMoveTimestamp = newTime
         }
-        this.dragMove(this.keyMove)
+        this.dragMove(this.keyMove, forward, true)
       }
     },
     showToolbar () {
@@ -231,6 +227,7 @@ export default {
       }
     },
     dragBegin () {
+      this.clearMultiSelect()
       this.bounds = this.getAlignmentInfo()
       if (!this.keyEventAttached) {
         document.addEventListener('keydown', this.onKey, false)
@@ -254,33 +251,45 @@ export default {
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
     },
-    dragMove (movement) {
+    dragMove (movement, forward, forced) {
       if (movement.x === 0 && movement.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
       }
-      const move = this.computeMoveMax(movement)
-      this.$el.style.left = `${this.startPosLeft + move.x}px`
-      this.$el.style.top = `${this.startPosTop + move.y}px`
-      this.elPositionInPage.left = this.startPosLeft + move.x
-      this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
+      const move = editorHelper.alignNext({
+        movement: this.computeMoveMax(movement),
+        forward
+      })
+      const offsetX = move.x
+      const offsetY = move.y
+
+      if (forced || move.xMovable) {
+        const left = this.startPosLeft + offsetX
+        this.$el.style.left = left + 'px'
+        this.elPositionInPage.left = left
+      }
+      if (forced || move.yMovable) {
+        const top = this.startPosTop + offsetY
+        this.$el.style.top = top + 'px'
+        this.elPositionInPage.top = this.startTop + top
+      }
       this.findAlignments({
-        x: move.x,
-        y: move.y,
+        x: offsetX,
+        y: offsetY,
         w: 0,
         h: 0
       })
     },
-    dragEnd (movement) {
-      if (movement.x === 0 && movement.y === 0) return
+    dragEnd (movement, forward) {
+      if (movement && movement.x === 0 && movement.y === 0) return
       this.$emit('change-button-group', 'main')
-      const move = this.computeMoveMax(movement)
-      this.elPositionInPage.left = this.startPosLeft + move.x
-      this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
+      this.elPositionInPage.left = parseInt(this.$el.style.left)
+      this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
       this.updateAlignmentInfo()
       this.clearAlign()
       this.bounds = null
+      editorHelper.alignEnd()
     },
     // dragEnable () {
     //   // calbacks
@@ -378,9 +387,11 @@ export default {
       const right = elRectangle.right - containerRect.left
       const top = elRectangle.top - containerRect.top
       const bottom = elRectangle.bottom - containerRect.top
-      const hcenter = left + elRectangle.width / 2
-      const vcenter = top + elRectangle.height / 2
+      const hcenter = Math.round(left + elRectangle.width / 2)
+      const vcenter = Math.round(top + elRectangle.height / 2)
       const rect = {
+        width: elRectangle.width,
+        height: elRectangle.height,
         left,
         right,
         top,
@@ -397,16 +408,16 @@ export default {
         rect: this.getAlignmentInfo()
       }
       if (ifNew) {
-        this.addAlignElement(element)
+        editorHelper.elementAdd(element)
       } else {
-        this.modifyAlignElement(element)
+        editorHelper.elementUpdate(element)
       }
     },
     findAlignments (offSet) {
+      const hasOffset = arguments.length >= 1
       let rect
       if (offSet) {
         rect = cloneDeep(this.bounds)
-        // console.log(rect, offSet)
         rect.left += offSet.x
         rect.right += offSet.x
         rect.top += offSet.y
@@ -416,11 +427,17 @@ export default {
       } else {
         rect = this.getAlignmentInfo()
       }
-      this.updateAlign({
-        id: this.elementId,
-        mid: this.mountedId,
-        rect: rect
-      })
+      const xUpdated = !hasOffset || offSet.x !== 0
+      const yUpdated = !hasOffset || offSet.y !== 0
+      if (xUpdated || yUpdated) {
+        this.updateAlign(editorHelper.alignSearch({
+          id: this.elementId,
+          mid: this.mountedId,
+          rect: rect,
+          xUpdated,
+          yUpdated
+        }))
+      }
     },
     watchScroll () {
       this.watchEvent = eventHandler.listen(window, 'scroll', (e) => {
@@ -457,6 +474,12 @@ export default {
           this.dragEnd(this.keyMove)
         }
       }
+    },
+
+    'workspace.version': function (newVersion) {
+      setTimeout(() => {
+        this.updateAlignmentInfo()
+      }, 1200)
     }
   },
   mounted () {
@@ -483,8 +506,7 @@ export default {
       document.removeEventListener('keydown', this.onKey, false)
     }
     // 从位置信息中删除
-    // ALIGNEMNT_DATA
-    this.removeAlignElement(this.mountedId)
+    editorHelper.elementRemove(this.mountedId)
   }
 }
 
@@ -627,58 +649,58 @@ const getElementTop = (element) => {
   position: absolute;
   width: 100%;
   height: 100%;
-  z-index: 101000;
+  z-index: 110000;
+  background: white;
+  opacity: 0;
+  filter: alpha(opacity=1);
 }
 
 .resize-handle {
-  z-index: 100000;
+  z-index: 101000;
 }
 
-.resizable-e {
+.resizable-e,
+.resizable-w,
+.resizable-s,
+.resizable-n {
   position: absolute;
-  top: 50%;
-  margin-top: -5px;
-  right: -12px;
   width: 0;
   height: 0;
   border-width: 5px;
   border-style: solid;
+}
+
+.resizable-s,
+.resizable-n {
+  left: 50%;
+}
+
+.resizable-e,
+.resizable-w {
+  top: 50%;
+}
+
+.resizable-e {
+  margin-top: -5px;
+  right: -12px;
   border-color: transparent transparent transparent #03ddff;
 }
 
 .resizable-w {
-  position: absolute;
-  top: 50%;
   margin-top: -5px;
   left: -12px;
-  width: 0;
-  height: 0;
-  border-width: 5px;
-  border-style: solid;
   border-color: transparent #03ddff transparent transparent;
 }
 
 .resizable-s {
-  position: absolute;
-  left: 50%;
   margin-left: -5px;
   bottom: -12px;
-  width: 0;
-  height: 0;
-  border-width: 5px;
-  border-style: solid;
   border-color: #03ddff transparent transparent transparent;
 }
 
 .resizable-n {
-  position: absolute;
-  left: 50%;
   margin-left: -5px;
   top: -12px;
-  width: 0;
-  height: 0;
-  border-width: 5px;
-  border-style: solid;
   border-color: transparent transparent #03ddff transparent;
 }
 </style>
