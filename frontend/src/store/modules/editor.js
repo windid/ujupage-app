@@ -29,11 +29,7 @@ const state = {
     activeIds: [],
     elements: [],
     align: {
-      lines: { vertical: [], horizontal: [] },
-      status: {
-        x: false,
-        y: false
-      }
+      lines: { vertical: [], horizontal: [] }
     },
     multi: {
       move: null
@@ -262,18 +258,21 @@ const mutations = {
 
   // 对齐辅助功能的数据的操作
   [types.ALIGN_UPDATE] (state, data) {
-    state.assist.activeIds = data.ids
-    state.assist.align.lines = data.lines
-    state.assist.align.status = data.status
+    const neq = (lhs, rhs) => lhs.length !== 0 || rhs.length !== 0
+    if (neq(state.assist.activeIds, data.ids)) {
+      state.assist.activeIds = data.ids
+    }
+    if (neq(state.assist.align.lines.vertical, data.lines.vertical)) {
+      state.assist.align.lines.vertical = data.lines.vertical
+    }
+    if (neq(state.assist.align.lines.horizontal, data.lines.horizontal)) {
+      state.assist.align.lines.horizontal = data.lines.horizontal
+    }
   },
 
   [types.ALIGN_CLEAR] (state) {
     state.assist.align.lines = { vertical: [], horizontal: [] }
     state.assist.activeIds = []
-    state.assist.align.status = {
-      x: false,
-      y: false
-    }
   },
 
   [types.MULTI_SELECT_UPDATE] (state, selection) {
