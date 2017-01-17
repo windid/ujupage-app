@@ -26,8 +26,8 @@ var Site = {
     $("[fixed]").each(function(){
       const el = $(this)
       const fixedPx = parseInt(el.attr('fixed'))
-      $("#container").scroll(function(){
-        if ($("#container").scrollTop() > fixedPx) {
+      $('body').scroll(function(){
+        if ($('body').scrollTop() > fixedPx) {
           el.fadeIn(400);
         } else {
           el.fadeOut(400);
@@ -99,9 +99,10 @@ var Site = {
       $(this).click(function(e) {
         e.preventDefault()
         if(href && href[0] === '#') {
+          console.log(href)
           var element = document.getElementById(href.substring(1))
           var scrollTop = element ? element.offsetTop : 0
-          $("#container").animate({
+          $('body').animate({
             scrollTop: scrollTop
           })
         } else {

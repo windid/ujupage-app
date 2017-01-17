@@ -65,7 +65,6 @@ export default {
     },
     selectColor (c) {
       this.color = getValidColor(c)
-      // console.log(this.color)
       this.inputDone()
     }
   }
@@ -88,7 +87,7 @@ export default {
         <el-popover
           class="picker-popover"
           ref="picker"
-          width="220"
+          width="230"
           trigger="click"
           content="dddd">
           <color-selector :c="getColor(color)" @on-change="selectColor"></color-selector>
