@@ -17,10 +17,8 @@
 </template>
 
 <script>
-import moment from 'moment'
+import moment, { msOfDay } from '../../utils/date'
 import { DatePicker } from 'element-ui'
-
-const msOfDay = 3600 * 1000 * 24
 
 const defaultPickerOptions = {
   shortcuts: [
@@ -73,7 +71,7 @@ const defaultPickerOptions = {
       onClick (picker) {
         const start = moment().subtract(1, 'M')
         const end = moment().subtract(1, 'M')
-        picker.$emit('pick', [start.startOf('month'), end.endOf('month')])
+        picker.$emit('pick', [start.startOf('month').value(), end.endOf('month').value()])
       }
     }
   ],

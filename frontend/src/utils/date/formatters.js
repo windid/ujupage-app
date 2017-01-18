@@ -37,7 +37,7 @@ export const formatters = {
   },
   m (date) {
     return date.getMinutes()
-  }
+  },
   mm (date) {
     return addLeadingZeros(date.getMinutes(), 2)
   },
@@ -59,5 +59,5 @@ export function buildFormattingRegExp () {
   formatterKeys.sort().reverse()
   return new RegExp(
     '(\\[[^\\[]*\\])|(\\\\)?' + '(' + formatterKeys.join('|') + '|.)', 'g'
-  }
+  )
 }

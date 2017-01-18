@@ -1,7 +1,7 @@
 <script>
 import StatsNav from './StatsNav'
 import AbSplit from '../common/AbSplit'
-import moment from 'moment'
+import moment from '../../utils/date'
 import { mapGetters, mapActions } from 'vuex'
 import Chart from './charts/Chart'
 import { find } from 'lodash'
