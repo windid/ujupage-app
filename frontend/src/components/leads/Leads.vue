@@ -1,7 +1,7 @@
 <script>
 import API from '../../API'
 import { Pagination } from 'element-ui'
-import DateRangePicker from '../ui/DateRangePicker'
+import DatePicker from '../ui/DatePicker'
 import moment from 'moment'
 import Dropdown from '../ui/Dropdown'
 
@@ -9,7 +9,7 @@ export default {
   name: 'Leads',
   components: {
     [Pagination.name]: Pagination,
-    DateRangePicker,
+    DatePicker,
     Dropdown
   },
   data () {
@@ -132,7 +132,7 @@ export default {
     <h4>商机列表 - {{page.name}} &nbsp; 
       <div class="btn btn-default" @click="download"><span class="glyphicon glyphicon-save"></span></div>
     </h4>
-    <date-range-picker style="float:right; margin-top: 10px" v-model="date"></date-range-picker>
+    <date-picker style="float:right; margin-top: 10px" v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker>
   </div>
   <div class="content-body" v-loading="loading">
   
