@@ -346,11 +346,11 @@ class ParseHtml {
 
     protected static function getColor ($str) {
         if ($str === "") {
-            return "transparent";
-        } elseif (substr($str, 0, 1) === "#") {
-            return $str;
+            return $color
+        } elseif (isset(self::$color_set[$str])) {
+            return self::$color_set[$str]
         } else {
-            return self::$color_set[$str];
+            $str
         }
     }
 }
