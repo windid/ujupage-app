@@ -2,7 +2,7 @@
 import FormEditor from './FormEditor'
 import colorMixin from '../../mixins/colorMixin'
 import elementMixin from '../../mixins/elementMixin'
-import elementTypes from '../../config/editorElementTypes'
+// import elementTypes from '../../config/editorElementTypes'
 import { merge, isEqual } from 'lodash'
 
 export default {
@@ -12,7 +12,7 @@ export default {
   },
   data () {
     return {
-      localElement: merge({}, elementTypes.form, this.element)
+      localElement: merge({}, this.element)
     }
   },
   computed: {
@@ -56,7 +56,7 @@ export default {
   },
   watch: {
     'element': function (val) {
-      this.localElement = merge({}, elementTypes.form, val)
+      this.localElement = merge({}, val)
     }
   }
 }
