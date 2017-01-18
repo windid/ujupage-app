@@ -13,6 +13,10 @@ function pad2 (c) {
   return c.length === 1 ? '0' + c : '' + c
 }
 
+/**
+ * 将n根据max转化为0到1之间的浮点数，例如bound01(50, 100) = 0.5
+ * 若n > max将返回1，n < 0则返回0
+ */
 function bound01 (n, max) {
   n = minN(max, maxN(0, parseFloat(n)))
   if ((Math.abs(n - max) < 0.000001)) {
@@ -21,10 +25,13 @@ function bound01 (n, max) {
   return (n % max) / parseFloat(max)
 }
 
-function getVal (val, max) {
+function getN (val, max) {
   return bound01(val, max) * max
 }
 
+/**
+ * 将rgb转化为hsv
+ */
 export function rgb2hsv ({ r, g, b }) {
   r = bound01(r, 255)
   g = bound01(g, 255)
@@ -57,6 +64,9 @@ export function rgb2hsv ({ r, g, b }) {
   return { h: roundN(h * 360), s: roundN(s * 100), v: roundN(v * 100) }
 }
 
+/**
+ * 将hsv转化为rgb
+ */
 function hsv2rgb ({ h, s, v }) {
   h = bound01(h, 360) * 6
   s = bound01(s, 100)
@@ -75,15 +85,25 @@ function hsv2rgb ({ h, s, v }) {
   return { r: roundN(r * 255), g: roundN(g * 255), b: roundN(b * 255) }
 }
 
-export function rgb2hex (r, g, b) {
-  var hex = [
+/**
+ * rgb转为16进制串
+ */
+export function rgb2hex (r, g, b, allow3chars) {
+  const hex = [
     pad2(roundN(r).toString(16)),
     pad2(roundN(g).toString(16)),
     pad2(roundN(b).toString(16))
-  ]
-  return hex.join('')
+  ].join('')
+  let match
+  if (allow3chars && (match = /^(\w)\1(\w)\2(\w)\3$/.exec(hex))) {
+    return match.slice(1).join('')
+  }
+  return hex
 }
 
+/**
+ * 将rgb转为hsl
+ */
 export function rgb2hsl ({ r, g, b }) {
   r = bound01(r, 255)
   g = bound01(g, 255)
@@ -115,6 +135,9 @@ export function rgb2hsl ({ r, g, b }) {
   return { h: roundN(h * 360), s: roundN(s * 100), l: roundN(l * 100) }
 }
 
+/**
+ * 将hsl转为rgb
+ */
 export function hsl2rgb ({ h, s, l }) {
   let r
   let g
@@ -145,6 +168,11 @@ export function hsl2rgb ({ h, s, l }) {
   return { r: roundN(r * 255), g: roundN(g * 255), b: roundN(b * 255) }
 }
 
+/**
+ * 根据传入的表示颜色值的字符串，返回颜色对象
+ * @param  {string} color 颜色值
+ * @return {object}       { rgb, hsl, hsv, a}
+ */
 function getColor (color) {
   const result = {
     rgb: null,
@@ -161,18 +189,18 @@ function getColor (color) {
   }
   let match
   if ((match = matchers.rgb.exec(color))) {
-    result.rgb = { r: getVal(match[1], 255), g: getVal(match[2], 255), b: getVal(match[3], 255) }
+    result.rgb = { r: getN(match[1], 255), g: getN(match[2], 255), b: getN(match[3], 255) }
   }
   if ((match = matchers.rgba.exec(color))) {
-    result.rgb = { r: getVal(match[1], 255), g: getVal(match[2], 255), b: getVal(match[3], 255) }
-    result.a = getVal(match[4], 1)
+    result.rgb = { r: getN(match[1], 255), g: getN(match[2], 255), b: getN(match[3], 255) }
+    result.a = getN(match[4], 1)
   }
   if ((match = matchers.hsl.exec(color))) {
-    result.hsl = { h: getVal(match[1], 360), s: getVal(match[2], 100), l: getVal(match[3], 100) }
+    result.hsl = { h: getN(match[1], 360), s: getN(match[2], 100), l: getN(match[3], 100) }
   }
   if ((match = matchers.hsla.exec(color))) {
-    result.hsl = { h: getVal(match[1], 360), s: getVal(match[2], 100), l: getVal(match[3], 100) }
-    result.a = getVal(match[4], 1)
+    result.hsl = { h: getN(match[1], 360), s: getN(match[2], 100), l: getN(match[3], 100) }
+    result.a = getN(match[4], 1)
   }
 
   if ((match = matchers.hex6.exec(color))) {
@@ -192,15 +220,29 @@ function getColor (color) {
   return result
 }
 
+/**
+ * 根据传入的颜色对象，返回一个可用的css颜色取值
+ * 若透明度a为1，返回以#开头的16进制，否则返回rgba()
+ * @param  {object} c { rgb, hsl, hsv, a}
+ * @return {string}   #xxxxxx|rgba(x,x,x,x)
+ */
 export function getValidColor (c) {
+  if (!(typeof c.rgb === 'object')) {
+    c = Color(c)
+  }
   const { r, g, b } = c.rgb
   if (c.a !== 1) {
     return `rgba(${r}, ${g}, ${b}, ${c.a.toFixed(2)})`
   } else {
-    return '#' + rgb2hex(r, g, b)
+    return '#' + rgb2hex(r, g, b, true)
   }
 }
 
+/**
+ * 判断color是否能表示一个有效的颜色值
+ * @param  {string}  color
+ * @return {Boolean}
+ */
 export function isValidColor (color) {
   return [
     matchers.rgb,
@@ -209,7 +251,7 @@ export function isValidColor (color) {
     matchers.hsla,
     matchers.hex3,
     matchers.hex6
-  ].some(re => re.test(color)) || color === 'transparent'
+  ].some(re => re.test(color)) || color === 'transparent' || colorNames[color]
 }
 
 function Color (color, old = {}) {

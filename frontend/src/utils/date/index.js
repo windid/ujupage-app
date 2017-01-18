@@ -9,7 +9,7 @@ let cachedFormattingRegExp
 
 /**
  * 判断val是否是Date的一个实例，考虑iframe的情况，不能直接用instanceof
- * @param  {any}  val 要判断的值
+ * @param  {any}    val  要判断的值
  * @return {Boolean}     是否为Date类型
  */
 function isDate (val) {
@@ -28,7 +28,7 @@ function wrap (moment) {
  * 格式化日期
  * @param  {Date} date 日期对象实例
  * @param  {string} fm 格式字符串
- * @return {string}  格式化后的字符串
+ * @return {string}    格式化后的字符串
  */
 export function format (date, fm) {
   cachedFormattingRegExp = cachedFormattingRegExp || buildFormattingRegExp()
@@ -58,7 +58,7 @@ function removeFormattingTokens (input) {
 /**
  * 解析字符串到Date对象
  * @param  {string} dateStr 日期字符串
- * @return {Date}         Date对象实例
+ * @return {Date}           Date对象实例
  */
 export function parse (dateStr) {
   // safari不支持'2017-01-23'这种格式，转为'2017/01/23'
