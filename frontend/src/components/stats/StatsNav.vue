@@ -1,7 +1,7 @@
 <script>
 import DateRangePicker from '../ui/DateRangePicker'
 import Dropdown from '../ui/Dropdown'
-import moment from 'moment'
+import moment from '../../utils/date'
 
 export default {
   props: ['title'],
