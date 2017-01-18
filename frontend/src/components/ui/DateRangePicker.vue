@@ -1,7 +1,7 @@
 <template>
   <div class="date-picker-wrap btn-group btn btn-default dropdown-toggle" data-toggle="dropdown">
     <div>
-      <span>{{ showDuration }}</span>
+      <span>{{ displayRange }}</span>
        &nbsp; <span class="glyphicon" :class="'glyphicon-menu-down'"></span>
     </div>
     <date-picker
@@ -17,10 +17,8 @@
 </template>
 
 <script>
-import moment from 'moment'
+import moment, { msOfDay } from '../../utils/date'
 import { DatePicker } from 'element-ui'
-
-const msOfDay = 3600 * 1000 * 24
 
 const defaultPickerOptions = {
   shortcuts: [
@@ -73,7 +71,7 @@ const defaultPickerOptions = {
       onClick (picker) {
         const start = moment().subtract(1, 'M')
         const end = moment().subtract(1, 'M')
-        picker.$emit('pick', [start.startOf('month'), end.endOf('month')])
+        picker.$emit('pick', [start.startOf('month').value(), end.endOf('month').value()])
       }
     }
   ],
@@ -102,13 +100,17 @@ export default {
         return [v.startDate, v.endDate]
       },
       set (val) {
-        this.$emit('input', {
-          startDate: moment(val[0]).format('YYYY-MM-DD'),
-          endDate: moment(val[1]).format('YYYY-MM-DD')
-        })
+        const start = moment(val[0]).format('YYYY-MM-DD')
+        const end = moment(val[1]).format('YYYY-MM-DD')
+        if (start !== this.value.startDate || end !== this.value.endDate) {
+          this.$emit('input', {
+            startDate: moment(val[0]).format('YYYY-MM-DD'),
+            endDate: moment(val[1]).format('YYYY-MM-DD')
+          })
+        }
       }
     },
-    showDuration () {
+    displayRange () {
       const { startDate, endDate } = this.value
       return startDate === endDate ? startDate : `${startDate} 至 ${endDate}`
     }
