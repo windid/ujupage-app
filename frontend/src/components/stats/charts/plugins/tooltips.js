@@ -141,7 +141,7 @@ const ctTip = function (options) {
         const padding = chart.options.chartPadding
         const axisYOffset = chart.options.axisY.offset
         const box = getOffset($container)
-        const offsetX = e.pageX - box.left - window.pageXOffset
+        const offsetX = e.pageX - box.left
         const dx = Math.max(0, offsetX - axisYOffset - padding.left)
         const index = Math.round(dx / width)
         if (index >= 0 && index !== pointIndex && index < positions[0].length) {

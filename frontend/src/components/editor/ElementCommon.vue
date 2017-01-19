@@ -6,125 +6,12 @@ import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
 import eventHandler from '../../utils/eventHandler'
+import * as editorHelper from '../../utils/editorHelper'
 
+// 纪录上一个操作的元素，需要用来判断在移动元素到新的section时已经发生了复制
 let EDIT_CACHE = {
   id: null,
   mountedId: null
-}
-
-var ALIGNEMNT_DATA = []
-var IDs = []
-
-function removeAligment (mid) {
-  ALIGNEMNT_DATA = ALIGNEMNT_DATA.filter((e) => {
-    return e.mid !== mid
-  })
-}
-
-function clearAlignments () {
-  const container = document.getElementById('alignment-lines')
-  container.innerHTML = ''
-  clearHighlights()
-}
-
-function highlights () {
-  const wrapper = document.getElementById('main-wrapper').querySelector('.section-wrapper')
-  IDs.forEach(id => {
-    const e = wrapper.querySelector('#element-' + id)
-    e.parentNode.classList.add('highlighted')
-  })
-}
-
-function clearHighlights () {
-  const wrapper = document.getElementById('main-wrapper').querySelector('.section-wrapper')
-  IDs.forEach(id => {
-    const e = wrapper.querySelector('#element-' + id)
-    e.parentNode.classList.remove('highlighted')
-  })
-  IDs = []
-}
-
-function findAlignments (dimen) {
-  const ALIGNMENT_SIDES = [
-    {
-      sides: ['left', 'right', 'hcenter'],
-      value: 'vcenter'
-    },
-    {
-      sides: ['top', 'bottom', 'vcenter'],
-      value: 'hcenter'
-    }]
-  const alignments = {
-    left: [],
-    right: [],
-    top: [],
-    bottom: [],
-    vcenter: [],
-    hcenter: []
-  }
-
-  clearHighlights()
-  ALIGNEMNT_DATA.forEach((a) => {
-    if (a.id !== dimen.id) {
-      ALIGNMENT_SIDES.forEach((group) => {
-        const sides = group.sides
-        sides.forEach((key) => {
-          sides.forEach((subKey) => {
-            if (dimen.rect[key] === a.rect[subKey]) {
-              IDs.push(a.id)
-              alignments[key].push(a.rect[group.value])
-            }
-          })
-        })
-      })
-    }
-  })
-  const lines = []
-  ALIGNMENT_SIDES.forEach((group, i) => {
-    const sides = group.sides
-    sides.forEach((key) => {
-      const sizes = alignments[key]
-      if (sizes.length <= 0) return
-      const value = dimen.rect[group.value]
-      const min = Math.min(...sizes, value)
-      const max = Math.max(...sizes, value)
-      const vertical = i === 0
-      const line = {
-        vertical,
-        length: max - min,
-        min,
-        max,
-        vAxis: dimen.rect[key],
-        dots: [...sizes, value]
-      }
-      lines.push(line)
-    })
-  })
-
-  const container = document.getElementById('alignment-lines')
-  container.innerHTML = ''
-  lines.forEach((line) => {
-    const node = document.createElement('div')
-    node.classList.add('align-line')
-    node.classList.add(line.vertical ? 'align-line-vertical' : 'align-line-horizontal')
-    const left = line.vertical ? line.vAxis - 1 : line.min
-    const top = line.vertical ? line.min : line.vAxis - 1
-    const lengthName = line.vertical ? 'height' : 'width'
-    node.setAttribute('style', `left: ${left}px; top: ${top}px; ${lengthName}: ${line.length}px;`)
-    const ruler = document.createElement('div')
-    ruler.setAttribute('style', 'position: relative; width: 100%; height: 100%;')
-
-    line.dots.forEach((e) => {
-      const dot = document.createElement('div')
-      const side = line.vertical ? 'top' : 'left'
-      const subSide = line.vertical ? 'left' : 'top'
-      dot.setAttribute('style', `position: absolute; ${side}: ${e - line.min - 2}px; ${subSide}: -2px; width: 4px; height: 4px; background: red;`)
-      ruler.appendChild(dot)
-    })
-    node.appendChild(ruler)
-    container.appendChild(node)
-  })
-  highlights()
 }
 
 export default {
@@ -204,8 +91,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      workspace: 'editorWorkspace'
+      workspace: 'editorWorkspace',
+      alignIds: 'getAlignIds'
     }),
+    hasAligned () {
+      return this.alignIds.indexOf(this.elementId) >= 0
+    },
     // 直接watch element.fixed居然无效，只好用计算属性来监听，不确定是不是Vue的bug
     // 如果元素被固定，那么不允许拖动
     isFixed () {
@@ -236,7 +127,11 @@ export default {
       'resizeElement',
       'indexElement',
       'duplicateElement',
-      'modifyElement'
+      'modifyElement',
+      // 对齐
+      'updateAlign',
+      'clearAlign',
+      'clearMultiSelect'
     ]),
     selectElement () {
       this.setActiveElementId(this.elementId)
@@ -270,27 +165,23 @@ export default {
         } else {
           clearTimeout(this.keyMoveTimer)
         }
-
+        const offset = {
+          x: 0,
+          y: 0
+        }
         this.dragging = true
-        switch (code - 37) {
-          case 0:
-            this.keyMove.x += -1
-            break
-          case 1:
-            this.keyMove.y += -1
-            break
-          case 2:
-            this.keyMove.x += 1
-            break
-          case 3:
-            this.keyMove.y += 1
-            break
+        {
+          const i = code - 37
+          const name = i % 2 === 0 ? 'x' : 'y'
+          const value = i < 2 ? -1 : 1
+          this.keyMove[name] += value
+          offset[name] = value
         }
         this.keyMoveTimer = setTimeout(() => {
           this.keyMoveTimer = null
           this.keyMoveTimestamp = null
           this.dragging = false
-          this.dragEnd(this.keyMove)
+          this.dragEnd(this.keyMove, offset)
         }, 800)
         const newTime = new Date()
         if (this.keyMoveTimestamp !== null && newTime - this.keyMoveTimestamp <= 100) {
@@ -298,7 +189,7 @@ export default {
         } else {
           this.keyMoveTimestamp = newTime
         }
-        this.dragMove(this.keyMove)
+        this.dragMove(this.keyMove, offset, true)
       }
     },
     showToolbar () {
@@ -323,25 +214,23 @@ export default {
       this.fixedEditing = false
       this.$emit('change-button-group', 'main')
     },
-    computeMoveMax (movement) {
+    actualMove (move) {
       const getMin = (v, range) => {
         const i = v < 0 ? 0 : 1
         return [Math.max, Math.min][i](range[i], v)
       }
       return {
-        x: getMin(movement.x, this.horizontalMax),
-        y: getMin(movement.y, this.verticalMax)
+        x: getMin(move.x, this.horizontalMax),
+        y: getMin(move.y, this.verticalMax)
       }
     },
     dragBegin () {
+      this.clearMultiSelect()
       if (!this.keyEventAttached) {
         document.addEventListener('keydown', this.onKey, false)
         this.keyEventAttached = true
       }
-      EDIT_CACHE = {
-        id: this.elementId,
-        mountedId: this.mountedId
-      }
+      EDIT_CACHE = { id: this.elementId, mountedId: this.mountedId }
       const style = window.getComputedStyle(this.$el, null)
       const getSize = (key) => parseInt(style[key])
       this.startPosLeft = getSize('left')
@@ -355,28 +244,48 @@ export default {
       this.horizontalMax = [box.left - self.left, box.right - self.right]
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
+
+      editorHelper.alignBegin(this.elementId)
     },
-    dragMove (movement) {
-      if (movement.x === 0 && movement.y === 0) return
+    dragMove (move, offset, options) {
+      if (move.x === 0 && move.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
       }
-      const move = this.computeMoveMax(movement)
-      this.$el.style.left = `${this.startPosLeft + move.x}px`
-      this.$el.style.top = `${this.startPosTop + move.y}px`
-      this.elPositionInPage.left = this.startPosLeft + move.x
-      this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
-      this.findAlignments()
+      const actualMove = this.actualMove(move)
+      let speed = 0
+      if (options.speed) {
+        speed = Math.max(options.speed.x, options.speed.y)
+      }
+      const _move = editorHelper.alignNext({
+        move: actualMove,
+        offset,
+        options: {
+          speed
+        }
+      })
+      const moveX = _move.x
+      const moveY = _move.y
+      const left = this.startPosLeft + moveX
+      this.$el.style.left = left + 'px'
+      this.elPositionInPage.left = left
+
+      const top = this.startPosTop + moveY
+      this.$el.style.top = top + 'px'
+      this.elPositionInPage.top = this.startTop + top
+      if (_move.alignData !== null) {
+        this.updateAlign(_move.alignData)
+      }
     },
-    dragEnd (movement) {
-      if (movement.x === 0 && movement.y === 0) return
+    dragEnd (move, offset) {
+      if (move && move.x === 0 && move.y === 0) return
       this.$emit('change-button-group', 'main')
-      const move = this.computeMoveMax(movement)
-      this.elPositionInPage.left = this.startPosLeft + move.x
-      this.elPositionInPage.top = this.startTop + this.startPosTop + move.y
+      this.elPositionInPage.left = parseInt(this.$el.style.left)
+      this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
       this.updateAlignmentInfo()
-      clearAlignments()
+      this.clearAlign()
+      editorHelper.alignEnd()
     },
     // dragEnable () {
     //   // calbacks
@@ -396,6 +305,7 @@ export default {
       return handles.indexOf(handle) > -1
     },
     resizeStart (direction) {
+      this.bounds = this.getAlignmentInfo()
       const self = this.$el.getBoundingClientRect()
       const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
       const box = document.getElementById(boxContainer).getBoundingClientRect()
@@ -446,12 +356,12 @@ export default {
         }])
         this.$emit('resize-end')
         this.updateAlignmentInfo()
-        clearAlignments()
+        this.clearAlign()
       } else {
         this.resizing = true
         this.$emit('change-draggable', false)
         this.$emit('resizing', direction, size)
-        this.findAlignments()
+        // this.findAlignments()
       }
     },
     resizeEnable () {
@@ -472,9 +382,11 @@ export default {
       const right = elRectangle.right - containerRect.left
       const top = elRectangle.top - containerRect.top
       const bottom = elRectangle.bottom - containerRect.top
-      const hcenter = left + elRectangle.width / 2
-      const vcenter = top + elRectangle.height / 2
+      const hcenter = Math.round(left + elRectangle.width / 2)
+      const vcenter = Math.round(top + elRectangle.height / 2)
       const rect = {
+        width: elRectangle.width,
+        height: elRectangle.height,
         left,
         right,
         top,
@@ -485,32 +397,16 @@ export default {
       return rect
     },
     updateAlignmentInfo (ifNew) {
-      const rect = this.getAlignmentInfo()
-      if (ifNew) {
-        ALIGNEMNT_DATA.push({
-          mid: this.mountedId,
-          id: this.elementId,
-          rect: rect
-        })
-      } else {
-        const index = ALIGNEMNT_DATA.findIndex((e) => e.mid === this.mountedId)
-        if (index >= 0) {
-          ALIGNEMNT_DATA[index].rect = rect
-        } else {
-          ALIGNEMNT_DATA.push({
-            mid: this.mountedId,
-            id: this.elementId,
-            rect: rect
-          })
-        }
-      }
-    },
-    findAlignments () {
-      findAlignments({
-        id: this.elementId,
+      const element = {
         mid: this.mountedId,
+        id: this.elementId,
         rect: this.getAlignmentInfo()
-      })
+      }
+      if (ifNew) {
+        editorHelper.elementAdd(element)
+      } else {
+        editorHelper.elementUpdate(element)
+      }
     },
     watchScroll () {
       this.watchEvent = eventHandler.listen(window, 'scroll', (e) => {
@@ -547,6 +443,12 @@ export default {
           this.dragEnd(this.keyMove)
         }
       }
+    },
+
+    'workspace.version': function (newVersion) {
+      setTimeout(() => {
+        this.updateAlignmentInfo()
+      }, 1200)
     }
   },
   mounted () {
@@ -573,8 +475,7 @@ export default {
       document.removeEventListener('keydown', this.onKey, false)
     }
     // 从位置信息中删除
-    // ALIGNEMNT_DATA
-    removeAligment(this.mountedId)
+    editorHelper.elementRemove(this.mountedId)
   }
 }
 
@@ -595,6 +496,7 @@ const getElementTop = (element) => {
 <template>
   <div class="element" @click="selectElement" @mousedown.stop="onDragBegin"
     ref="box"
+    :class="{'align-highlighted': hasAligned}"
     :style="{
       display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
       left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,
@@ -708,7 +610,7 @@ const getElementTop = (element) => {
   font-size: 0;
 }
 
-.el-btn-group > .btn, .el-btn-group > .btn-group{
+.el-btn-group > .btn, .el-btn-group > .btn-group {
   float: none;
 }
 
@@ -716,64 +618,64 @@ const getElementTop = (element) => {
   position: absolute;
   width: 100%;
   height: 100%;
-  z-index: 101000;
+  z-index: 110000;
+  background: white;
+  opacity: 0;
+  filter: alpha(opacity=1);
 }
 
 .resize-handle {
-  z-index: 100000;
+  z-index: 101000;
 }
 
-.resizable-e {
+.resizable-e,
+.resizable-w,
+.resizable-s,
+.resizable-n {
   position: absolute;
-  top: 50%;
-  margin-top: -5px;
-  right: -12px;
   width: 0;
   height: 0;
   border-width: 5px;
   border-style: solid;
+}
+
+.resizable-s,
+.resizable-n {
+  left: 50%;
+}
+
+.resizable-e,
+.resizable-w {
+  top: 50%;
+}
+
+.resizable-e {
+  margin-top: -5px;
+  right: -12px;
   border-color: transparent transparent transparent #03ddff;
 }
 
 .resizable-w {
-  position: absolute;
-  top: 50%;
   margin-top: -5px;
   left: -12px;
-  width: 0;
-  height: 0;
-  border-width: 5px;
-  border-style: solid;
   border-color: transparent #03ddff transparent transparent;
 }
 
 .resizable-s {
-  position: absolute;
-  left: 50%;
   margin-left: -5px;
   bottom: -12px;
-  width: 0;
-  height: 0;
-  border-width: 5px;
-  border-style: solid;
   border-color: #03ddff transparent transparent transparent;
 }
 
-.resizable-n{
-  position: absolute;
-  left: 50%;
+.resizable-n {
   margin-left: -5px;
   top: -12px;
-  width: 0;
-  height: 0;
-  border-width: 5px;
-  border-style: solid;
   border-color: transparent transparent #03ddff transparent;
 }
 </style>
 
 <style>
-  .highlighted {
+  .align-highlighted {
     outline: 1px solid red;
   }
 </style>

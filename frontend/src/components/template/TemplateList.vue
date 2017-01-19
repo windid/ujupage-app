@@ -15,7 +15,11 @@
     methods: {
       ...mapActions(['getInput', 'createPage', 'createEmptyVariation']),
       createEmptyPage () {
-        if (this.pageGroupId) {
+        if (this.pageId) {
+          this.createEmptyVariation([this.pageId, (variation) => {
+            this.$router.push('/editor/' + this.pageId + '/' + variation.id)
+          }])
+        } else if (this.pageGroupId) {
           this.getInput({
             header: '请输入页面名称',
             inputAddon: '<span class="glyphicon glyphicon-file"></span>',
@@ -29,10 +33,6 @@
               }])
             }
           })
-        } else if (this.pageId) {
-          this.createEmptyVariation([this.pageId, (variation) => {
-            this.$router.push('/editor/' + this.pageId + '/' + variation.id)
-          }])
         }
       }
     },
@@ -62,36 +62,41 @@
       </ul> -->
     </div>
     <div class="content-body" v-loading="loading">
-      <div class="template empty-page" @click="createEmptyPage">空白页</div>
-      <router-link tag="div" v-for="template in templates" :to="{ name: 'template', params: { templateId: template.id }, query: $route.query }" class="template">
-        <img :src="template.image_url + '@300w.png'" alt="">
-      </router-link>
-      <div style="clear: both;"></div>
+      <p class="text-muted">所有的模板都是响应式的，同时支持PC和移动。每个模板都支持多达30种配色方案。</p>
+      <div>
+        <div class="template empty-page" @click="createEmptyPage">空白页</div>
+        <router-link tag="div" v-for="template in templates" :to="{ name: 'template', params: { templateId: template.id }, query: $route.query }" class="template">
+          <img :src="template.image_url + '@300w.png'" alt="">
+        </router-link>
+        <div style="clear: both;"></div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
   .template {
-    transition: all .3s ease;
+    position: relative;
+    transition: all .3s;
+    top: 0;
     border-radius: 4px;
     float: left;
     width: 300px;
-    height: 400px;
-    margin: 12px 25px 12px 0;
+    height: 240px;
+    margin: 0 25px 24px 0;
     box-shadow: 0 1px 6px #ccc;
     cursor: pointer;
     overflow: hidden;
   }
 
   .template:hover {
-    margin-top: 5px;
+    top: -5px;
     box-shadow: 0 3px 10px #ccc;
   }
 
   .empty-page {
     text-align: center;
-    line-height: 400px;
+    line-height: 240px;
     font-size: 32px;
     color: #bbb;
   }

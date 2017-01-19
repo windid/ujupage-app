@@ -6,6 +6,7 @@ import AbSplit from '../common/AbSplit'
 import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
 import { urlKeyRE } from '../../utils'
+import { isWindows } from '../../utils/env'
 
 export default {
   components: {
@@ -18,8 +19,7 @@ export default {
   data () {
     return {
       showSettings: false,
-      showSplit: false,
-      osWindows: window.navigator.userAgent.indexOf('Windows') >= 0
+      showSplit: false
     }
   },
   computed: mapGetters({
@@ -120,7 +120,7 @@ export default {
           keyCaptured = true
           this.saveVariation()
         } else if (code === 90) {
-          if (event.shiftKey && !this.osWindows) {
+          if (event.shiftKey && !isWindows) {
             // mac: shift + ctrl + z 前进
             keyCaptured = true
             this.redo()
@@ -129,7 +129,7 @@ export default {
             keyCaptured = true
             this.undo()
           }
-        } else if (code === 82 && this.osWindows) {
+        } else if (code === 82 && isWindows) {
           // windows: ctrl + r 前进
           keyCaptured = true
           this.redo()
@@ -195,7 +195,7 @@ export default {
         <div class="btn btn-primary" @click="publish">发布 <span class="glyphicon glyphicon-send"></span></div>
       </div>
     </div>
-    <editor-settings :show="showSettings" @close="showSettings = false" ></editor-settings>
+    <editor-settings v-if="showSettings" :show="showSettings" @close="showSettings = false" ></editor-settings>
     <ab-split v-if="showSplit" :page-id="page.id" :variations="page.variations" :show="showSplit" @update-split="updateTraficSplit" @close="showSplit = false"></ab-split>
   </div>
 </template>

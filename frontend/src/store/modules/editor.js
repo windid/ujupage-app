@@ -24,6 +24,25 @@ const state = {
   // 编辑的页面内容
   content: {},
 
+  // 元素的尺寸数据，主要用于缩放及移动过程中的对齐、多个元素选择操作等
+  assist: {
+    activeIds: [],
+    elements: [],
+    align: {
+      lines: { vertical: [], horizontal: [] }
+    },
+    multi: {
+      move: null
+    },
+    selection: {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      visible: false
+    }
+  },
+
   // 历史记录，用于撤销重做
   history: {
     states: [],
@@ -141,8 +160,18 @@ const mutations = {
 
   // 在移动版和桌面版之间切换
   [types.SWITCH_VERSION] (state, { version }) {
-    state.workspace.version = version
-    state.workspace.width = state.workspace.version === 'pc' ? 960 : 360
+    if (version !== state.workspace.version) {
+      state.workspace.version = version
+      state.workspace.width = state.workspace.version === 'pc' ? 960 : 360
+      state.assist.activeIds = []
+      state.assist.selection = {
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        visible: false
+      }
+    }
   },
 
   // 设置配色方案
@@ -225,8 +254,89 @@ const mutations = {
       state.content.sections[sectionIds['mobile']].elements.mobile.splice(state.content.sections[sectionIds['mobile']].elements.mobile.indexOf(elementId), 1)
     }
     Vue.delete(state.content.elements, elementId)
+  },
+
+  [types.ALIGN_UPDATE] (state, data) {
+    const neq = (lhs, rhs) => lhs.length !== 0 || rhs.length !== 0
+    if (neq(state.assist.activeIds, data.ids)) {
+      state.assist.activeIds = data.ids
+    }
+    if (neq(state.assist.align.lines.vertical, data.lines.vertical)) {
+      state.assist.align.lines.vertical = data.lines.vertical
+    }
+    if (neq(state.assist.align.lines.horizontal, data.lines.horizontal)) {
+      state.assist.align.lines.horizontal = data.lines.horizontal
+    }
+  },
+
+  [types.ALIGN_CLEAR] (state) {
+    state.assist.align.lines = { vertical: [], horizontal: [] }
+    state.assist.activeIds = []
+  },
+
+  [types.MULTI_SELECT_UPDATE] (state, selection) {
+    state.assist.activeIds = []
+    const rect = selection.rect
+    const computedRect = {
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height
+    }
+    const origin = selection.origin
+    computedRect.left -= origin.left
+    const sl = state.assist.selection
+    state.assist.elements.forEach(e => {
+      if (isOverlap(e.rect, computedRect)) {
+        if (state.assist.activeIds.length <= 0) {
+          sl.left = e.rect.left
+          sl.right = e.rect.right
+          sl.top = e.rect.top
+          sl.bottom = e.rect.bottom
+        } else {
+          sl.left = Math.min(sl.left, e.rect.left)
+          sl.top = Math.min(sl.top, e.rect.top)
+          sl.right = Math.max(sl.right, e.rect.right)
+          sl.bottom = Math.max(sl.bottom, e.rect.bottom)
+        }
+        state.assist.activeIds.push(e.id)
+      }
+    })
+  },
+
+  [types.MULTI_SELECT_DONE] (state) {
+    const ids = state.assist.activeIds
+    const hasSelection = ids.length > 0
+    state.assist.selection.visible = hasSelection
+  },
+
+  [types.MULTI_SELECT_CLEAR] (state) {
+    state.assist.activeIds = []
+    state.assist.selection = {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      visible: false
+    }
   }
 
+}
+
+function isOverlap (lhs, rhs) {
+  let x = false
+  let y = false
+  if (lhs.left >= rhs.left) {
+    x = (lhs.left - rhs.left) <= rhs.width
+  } else {
+    x = (rhs.left - lhs.left) <= lhs.width
+  }
+  if (lhs.top >= rhs.top) {
+    y = (lhs.top - rhs.top) <= rhs.height
+  } else {
+    y = (rhs.top - lhs.top) <= lhs.height
+  }
+  return x && y
 }
 
 export default {

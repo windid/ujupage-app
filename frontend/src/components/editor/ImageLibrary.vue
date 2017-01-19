@@ -366,20 +366,20 @@ export default {
     <div slot="header">
       <ul class="nav nav-pills">
         <!-- <li :class="{active: currentTab === 'project'}" @click="switchTab('project')"><a href="javascript:;">项目图片库</a></li> -->
-        <li :class="{active: currentTab === 'my'}" @click="getMyImages"><a href="javascript:;">我的图片</a></li>
-        <li :class="{active: currentTab === 'free'}"><a href="javascript:;" @click="getFreeImages">免费图库</a></li>
+        <li :class="{active: currentTab === 'my'}"><a href="javascript:;" @click.prevent="getMyImages">我的图片</a></li>
+        <li :class="{active: currentTab === 'free'}"><a href="javascript:;" @click.prevent="getFreeImages">免费图库</a></li>
       </ul>
     </div>
     <div slot="body" class="images-wrapper" v-if="currentTab === 'free'" style="padding: 0 25px;">
       <div v-for="(image, index) in freeImages" class="image-item" v-bind:class="{selected: currentImageIndex === index}" @click="selectImage(index)" @dblclick="pickImage(index)" :key="index">
-            <div class="image-item-wrapper">
-              <img :src="'//s1.ujustatic.com/freeimg/' + image.image + '@150w_150h'">
-              <div v-show="currentImageIndex === index" class="image-item-operation">
-                <div class="btn btn-primary btn-sm fr" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
-                <!-- <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div> -->
-              </div>
-            </div>
+        <div class="image-item-wrapper">
+          <img :src="'//s1.ujustatic.com/freeimg/' + image.image + '@150w_150h'">
+          <div v-show="currentImageIndex === index" class="image-item-operation">
+            <div class="btn btn-primary btn-sm fr" @click="pickImage(index)">&nbsp; 选择 &nbsp;</div>
+            <!-- <div class="btn btn-default btn-sm fr" @click="viewImage(index)"><span class="glyphicon glyphicon-zoom-in"></span></div> -->
           </div>
+        </div>
+      </div>
     </div>
     <div slot="body" class="images-wrapper" v-if="currentTab === 'my'">
       <div v-show="mainStatus === 'loading'" class="loading" key="loading">

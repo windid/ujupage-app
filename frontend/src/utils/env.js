@@ -3,3 +3,4 @@ export function getScrollbarWidth () {
   return window.innerWidth - document.body.clientWidth
 }
 
+export const isWindows = window.navigator.userAgent.indexOf('Windows') >= 0

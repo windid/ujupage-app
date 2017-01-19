@@ -315,3 +315,24 @@ const getSectionIds = (state, elementId) => {
     mobile: mobileSectionId
   }
 }
+
+// 对齐辅助功能
+export const updateAlign = ({ commit, state }, element) => {
+  commit(types.ALIGN_UPDATE, element)
+}
+
+export const clearAlign = ({ commit, state }) => {
+  commit(types.ALIGN_CLEAR)
+}
+
+export const updateMultiSelect = ({ commit, state }, selection) => {
+  commit(types.MULTI_SELECT_UPDATE, selection)
+}
+
+export const doneMultiSelect = ({ commit, state }) => {
+  commit(types.MULTI_SELECT_DONE)
+}
+
+export const clearMultiSelect = ({ commit, state }) => {
+  commit(types.MULTI_SELECT_CLEAR)
+}

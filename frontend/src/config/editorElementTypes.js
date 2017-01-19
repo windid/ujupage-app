@@ -39,7 +39,7 @@ export default {
 
   'button': {
     type: 'button',
-    text: '提交',
+    text: '按钮',
     image: '',
     props: {
       backgroundColor: '3',
@@ -115,7 +115,7 @@ export default {
     ],
     'button': {
       type: 'button',
-      text: '点击下载',
+      text: '提交',
       image: '',
       props: {
         backgroundColor: '3',
