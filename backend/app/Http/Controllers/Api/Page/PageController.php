@@ -123,11 +123,13 @@ class PageController extends Controller {
      * @param string $name 页面名称
      * @param string $url url地址
      * @param json $setting 页设置
+     * @param int $is_compat 支持端 0 只支持移动端 1 通用
      * @return json {
      *   id = 页面iD
      *   name = 项目ID
      *   url = 分组名称
      *   setting = 页面设置
+     *   is_compat = 支持端 0 只支持移动端 1 通用
      * }
      */
     public function store(Request $request) {        
@@ -146,6 +148,7 @@ class PageController extends Controller {
         
         $this->page->url = $request->get('url', '');
         $this->page->setting = $request->get('setting', '');
+        $this->page->is_compat = $request->get('is_compat', 1);
         $pagegroup->pages()->save($this->page);
         
         // 增加默认版本
@@ -168,10 +171,12 @@ class PageController extends Controller {
      * @param string $name 页面名称
      * @param string $url url地址
      * @param json $setting 页设置
+     * @param int $is_compat 支持端 0 只支持移动端 1 通用
      * @return json {
      *  id = 分组ID
      *  project_id = 项目ID
      *  name = 项目名称
+     *  is_compat = 支持端 0 只支持移动端 1 通用
      */
     public function update(Request $request, $page_id) {          
         $page = $this->initPGP($page_id);
@@ -198,6 +203,7 @@ class PageController extends Controller {
             }
         }
         
+        $page->is_compat = $request->get('is_compat', 1);
         $page->setting = $request->get('setting', '');        
         $pagegroup->pages()->save($page);
         
@@ -251,6 +257,7 @@ class PageController extends Controller {
         $new_page->url = '';
         $new_page->setting = $page->setting ? json_encode($page->setting) : "";
         $new_page->variation_history = $page->variation_history;
+        $new_page->is_compat = $page->is_compat;
         $new_page->save();
         $pagegroup->pages()->save($new_page);
         
