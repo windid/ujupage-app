@@ -24,6 +24,7 @@ export default {
   </div>
 </template>
 
+<style lang="scss" src="./style/bootstrap.scss"></style>
 <style>
 
 body {

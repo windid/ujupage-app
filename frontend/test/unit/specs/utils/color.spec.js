@@ -16,6 +16,6 @@ describe('Color utils', () => {
   })
 
   it('should return a color object', () => {
-    expect(Color('#fff')).to.be.a('object')
+    expect(Color('#fff')).to.be.an('object')
   })
 })
