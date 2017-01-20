@@ -23,6 +23,46 @@ function movable (x, y, timeStart) {
   return (condTime && condMove) || condHugeMove || condHugeTime
 }
 
+class SpeedTest {
+  constructor () {
+    this.COUNT = 4
+    this.distances = []
+    this.index = 0
+  }
+  reset () {
+    this.distances = []
+    this.index = 0
+  }
+  add (move, duration) {
+    this.distances[this.index] = {
+      d: duration,
+      m: move
+    }
+    this.index = (this.index + 1) % this.COUNT
+  }
+
+  speed () {
+    const count = this.distances.length
+    let sx = 0
+    let sy = 0
+    const m = { x: 0, y: 0 }
+    let d = 0
+    for (let i = 0; i < count; i++) {
+      d += this.distances[i].d
+      m.x += this.distances[i].m.x
+      m.y += this.distances[i].m.y
+    }
+    if (d === 0) return 0
+    sx = m.x / (d / 1000)
+    sy = m.y / (d / 1000)
+    return {
+      x: sx,
+      y: sy
+    }
+  }
+}
+const speedTest = new SpeedTest()
+
 export default {
   props: {
     draggable: {
@@ -60,19 +100,20 @@ export default {
       this.dragBegin()
       document.addEventListener('mousemove', this.onDragMove)
       document.addEventListener('mouseup', this.onDragEnd)
+      speedTest.reset()
     },
     onDragMove (e) {
       this.dragging = true
-      this.onDragCommon(e, (movement, forward) => {
-        this.dragMove(movement, forward)
+      this.onDragCommon(e, (move, offset, options) => {
+        this.dragMove(move, offset, options)
       })
     },
     onDragEnd (e) {
       document.body.style.cursor = this.windowOldCursor
       this.dragging = false
       this.dragRelease()
-      this.onDragCommon(e, (movement, forward) => {
-        this.dragEnd(movement, forward)
+      this.onDragCommon(e, (move, offset, options) => {
+        this.dragEnd(move, offset, options)
         this.lastMovement = null
       })
       document.removeEventListener('mousemove', this.onDragMove)
@@ -84,12 +125,21 @@ export default {
       // 当前位置对于初始位置的移动距离
       const x = X - this.dragStartX
       const y = Y - this.dragStartY
+
+      const _tempX = Math.abs(X - this.lastDragX)
+      const _tempY = Math.abs(Y - this.lastDragY)
+      const now = Date.now()
+      const dgap = now - this.lastDragTime
+      speedTest.add({ x: _tempX, y: _tempY }, dgap)
+
+      this.lastDragX = X
+      this.lastDragY = Y
       if (movable(x, y, this.dragStartTime)) {
-        let forward
+        let offset
         if (this.lastMovement === null) {
-          forward = { x, y }
+          offset = { x, y }
         } else {
-          forward = {
+          offset = {
             x: X - this.lastMovement.x,
             y: Y - this.lastMovement.y
           }
@@ -98,7 +148,10 @@ export default {
           x: X,
           y: Y
         }
-        callback({ x, y }, forward)
+        const options = {
+          speed: speedTest.speed()
+        }
+        callback({ x, y }, offset, options)
       }
     },
     /**
@@ -106,8 +159,8 @@ export default {
      * These methods should be implemented in real instances.
      */
     dragBegin () {},
-    dragMove (movement, forward) {},
-    dragEnd (movement, forward) {},
+    dragMove (move, offset, options) {},
+    dragEnd (move, offset, options) {},
     dragRelease () {},
     dragEnable () {},
     dragDisable () {}

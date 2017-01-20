@@ -82,6 +82,25 @@ export default {
       this.selection.width = 0
       this.selection.height = 0
       this.doneSelect()
+    },
+    lineStyle (line) {
+      if (!line) return null
+      return {
+        left: (line.vertical ? line.vAxis - 1 : line.min) + 'px',
+        top: (line.vertical ? line.min : line.vAxis - 1) + 'px',
+        [line.vertical ? 'height' : 'width']: line.length + 'px'
+      }
+    },
+    dotStyle (dot, line) {
+      if (!dot) return null
+      return {
+        position: 'absolute',
+        [line.dotSide.main]: (dot - line.min - 2) + 'px',
+        [line.dotSide.sub]: '-2px',
+        width: '4px',
+        height: '4px',
+        background: 'red'
+      }
     }
   }
 }
@@ -91,23 +110,15 @@ export default {
   <div class="workspace" @mousedown.prevent="onDragBegin">
     <div id="content-area" ref="contentArea" :style="{height: height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}">
       <div id="alignment-lines">
-        <div class="align-line" v-for="line in alignLines"
-        :class="line.vertical ? 'align-line-vertical' : 'align-line-horizontal'"
-        :style="{
-          left: (line.vertical ? line.vAxis - 1 : line.min) + 'px',
-          top: (line.vertical ? line.min : line.vAxis - 1) + 'px',
-          [line.vertical ? 'height' : 'width']: line.length + 'px'
-        }">
-          <div style='position: relative; width: 100%; height: 100%;'>
-            <div class="dot" v-for="dot in line.dots"
-            :style="{
-              position: 'absolute',
-              [line.dotSide.main]: (dot - line.min - 2) + 'px',
-              [line.dotSide.sub]: '-2px',
-              width: '4px',
-              height: '4px',
-              background: 'red'
-            }"></div>
+        <div class="lines-group" v-for="i in ['vertical', 'horizontal']">
+          <div class="align-line" v-for="j in [1, 2, 3]"
+          v-show='alignLines[i].length >= j'
+          :class="'align-line-' + i"
+          :style="lineStyle(alignLines[i][j-1])">
+            <div style='position: relative; width: 100%; height: 100%;' v-if='alignLines[i][j-1]'>
+              <div class="dot" v-for="dot in alignLines[i][j-1].dots"
+              :style="dotStyle(dot, alignLines[i][j-1])"></div>
+            </div>
           </div>
         </div>
       </div>
