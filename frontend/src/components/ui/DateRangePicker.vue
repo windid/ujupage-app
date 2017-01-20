@@ -81,6 +81,7 @@ const defaultPickerOptions = {
 }
 
 export default {
+  name: 'DateRangePicker',
   components: {
     DatePicker
   },

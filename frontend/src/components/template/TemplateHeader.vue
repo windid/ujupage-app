@@ -7,20 +7,11 @@ export default {
     Dropdown,
     ColorSchemes
   },
-  props: {
-    version: {
-      type: String,
-      default: 'mobile'
-    }
-  },
   data () {
     return {
     }
   },
   methods: {
-    switchVersion (version) {
-      this.$emit('switch-version', version)
-    },
     updateColors (colorScheme) {
       this.$emit('update-colors', colorScheme)
     }
@@ -35,16 +26,7 @@ export default {
         <span class="glyphicon glyphicon-chevron-left"></span> 返回模板列表
       </router-link>
     </div>
-
-    <div class="btn-group">
-      <div class="btn btn-default" :class="{ active: version === 'pc' }" @click="switchVersion('pc')">
-        桌面版 <span class="glyphicon glyphicon-blackboard"></span>
-      </div>
-      <div class="btn btn-default" :class="{ active: version === 'mobile' }" @click="switchVersion('mobile')">
-        移动版 <span class="glyphicon glyphicon-phone"></span>
-      </div>
-    </div>
-
+    <slot name="versionSwitcher"></slot>
     <div class="btn-toolbar fr">
       <!-- <div class="btn-group">
         <div class="btn btn-default">

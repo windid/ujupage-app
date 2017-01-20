@@ -1,12 +1,14 @@
 <script>
 import TemplateHeader from './TemplateHeader'
 import Previewer from '../common/Previewer'
+import VersionSwitcher from '../common/VersionSwitcher'
 import { mapActions } from 'vuex'
 import API from '../../API'
 
 export default {
   components: {
     TemplateHeader,
+    VersionSwitcher,
     Previewer
   },
   data () {
@@ -73,7 +75,9 @@ export default {
 
 <template>
   <div>
-    <template-header :version="version" @switch-version="switchVersion" @update-colors="updateColors" @use-template="useTemplate"></template-header>
+    <template-header :version="version" @switch-version="switchVersion" @update-colors="updateColors" @use-template="useTemplate">
+      <version-switcher slot="versionSwitcher" :version="version" @change="switchVersion"></version-switcher>
+    </template-header>
     <previewer :version="version" :url="url"></previewer>
   </div>
 </template>
