@@ -6,6 +6,7 @@ export default {
     Dropdown
   },
   props: {
+    page: Object,
     version: {
       type: String,
       default: 'mobile'
@@ -53,7 +54,7 @@ export default {
       </ul>
     </dropdown>
 
-    <div class="btn-group">
+    <div class="btn-group" v-if="page.is_compat">
       <div class="btn btn-default" :class="{ active: version === 'pc' }" @click="switchVersion('pc')">
         桌面版 <span class="glyphicon glyphicon-blackboard"></span>
       </div>

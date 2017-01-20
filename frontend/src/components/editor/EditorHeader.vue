@@ -162,7 +162,7 @@ export default {
 
     <ab-test @absplit="showSplit = true"></ab-test>
 
-    <div class="btn-group">
+    <div class="btn-group" v-if="page.is_compat">
       <div class="btn btn-default" :class="{ active: workspace.version === 'pc' }" @click="switchVersion('pc')">
         桌面版 <span class="glyphicon glyphicon-blackboard"></span>
       </div>
