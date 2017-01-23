@@ -98,7 +98,7 @@ export default {
     dateRange: {
       get () {
         const v = this.value
-        return [v.startDate, v.endDate]
+        return [moment(v.startDate).value(), moment(v.endDate).value()]
       },
       set (val) {
         const start = moment(val[0]).format('YYYY-MM-DD')
