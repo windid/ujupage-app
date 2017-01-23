@@ -9,6 +9,11 @@ function parseIntFromHex (val) {
   return parseInt(val, 16)
 }
 
+function fixed (f, precision) {
+  const p = Math.pow(10, precision)
+  return Math.floor(f * p) / p
+}
+
 function pad2 (c) {
   return c.length === 1 ? '0' + c : '' + c
 }
@@ -231,11 +236,11 @@ export function getValidColor (c, allow3chars = true) {
     c = Color(c)
   }
   if (!c.rgb) {
-    return c
+    return 'Invalid'
   }
   const { r, g, b } = c.rgb
   if (c.a !== 1) {
-    return `rgba(${r}, ${g}, ${b}, ${c.a.toFixed(2)})`
+    return `rgba(${r},${g},${b},${fixed(c.a, 2)})`
   } else {
     return '#' + rgb2hex(r, g, b, allow3chars)
   }
@@ -254,7 +259,7 @@ export function isValidColor (color) {
     matchers.hsla,
     matchers.hex3,
     matchers.hex6
-  ].some(re => re.test(color)) || color === 'transparent' || colorNames[color]
+  ].some(re => re.test(color)) || color === 'transparent' || !!colorNames[color]
 }
 
 function Color (color, old = {}) {

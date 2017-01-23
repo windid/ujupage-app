@@ -86,7 +86,7 @@ export default {
     </ul>
   </div>
   <div class="data-filter">
-    <version-switcher :show-all="true" :version="$route.query.ver" @change="switchVersion"></version-switcher>
+    <version-switcher v-if="page.is_compat" :show-all="true" :version="$route.query.ver" @change="switchVersion"></version-switcher>
     <dropdown :show="showVariations" @toggle="showVariations=!showVariations">
       <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
         {{variationName}}
