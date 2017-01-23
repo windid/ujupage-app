@@ -1,11 +1,13 @@
 <script>
+import VersionSwitcher from '../common/VersionSwitcher'
 import DateRangePicker from '../ui/DateRangePicker'
 import Dropdown from '../ui/Dropdown'
-import moment from 'moment'
+import moment from '../../utils/date'
 
 export default {
   props: ['title'],
   components: {
+    VersionSwitcher,
     DateRangePicker,
     Dropdown
   },
@@ -84,11 +86,7 @@ export default {
     </ul>
   </div>
   <div class="data-filter">
-    <div class="btn-group">
-      <div class="btn btn-default" :class="{ active: !$route.query.ver }" @click="switchVersion('')">全部</div>
-      <div class="btn btn-default" :class="{ active: $route.query.ver === 'pc' }" @click="switchVersion('pc')">桌面</div>
-      <div class="btn btn-default" :class="{ active: $route.query.ver === 'mobile' }" @click="switchVersion('mobile')">移动</div>
-    </div>
+    <version-switcher v-if="page.is_compat" :show-all="true" :version="$route.query.ver" @change="switchVersion"></version-switcher>
     <dropdown :show="showVariations" @toggle="showVariations=!showVariations">
       <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
         {{variationName}}
@@ -99,7 +97,8 @@ export default {
         <li v-for="variation in page.variations" :class="{active: $route.query.vid === variation.id}"><a href="javascript:;" @click="switchVariation(variation)">{{variation.name}}</a></li>
       </ul>
     </dropdown>
-    <date-range-picker v-model="date"></date-range-picker> 
+    <date-range-picker v-model="date"></date-range-picker>
+    
   </div>
 </div>
 </template>

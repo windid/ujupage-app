@@ -114,7 +114,7 @@ Moment.prototype = {
     return this
   },
 
-  addDates (inc) {
+  addDays (inc) {
     const d = this.date
     d.setDate(d.getDate() + inc)
     return this
@@ -150,7 +150,7 @@ Moment.prototype = {
         break
       case 'd':
       case 'days':
-        this.addDates(inc)
+        this.addDays(inc)
         break
       case 'h':
       case 'hours':

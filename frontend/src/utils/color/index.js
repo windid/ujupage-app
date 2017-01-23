@@ -9,6 +9,11 @@ function parseIntFromHex (val) {
   return parseInt(val, 16)
 }
 
+function fixed (f, precision) {
+  const p = Math.pow(10, precision)
+  return Math.floor(f * p) / p
+}
+
 function pad2 (c) {
   return c.length === 1 ? '0' + c : '' + c
 }
@@ -184,7 +189,7 @@ function getColor (color) {
   if (colorNames[color]) {
     color = colorNames[color]
   } else if (color === 'transparent') {
-    result.rgb = { r: 0, g: 0, b: 0 }
+    result.rgb = { r: 255, g: 255, b: 255 }
     result.a = 0
   }
   let match
@@ -224,17 +229,20 @@ function getColor (color) {
  * 根据传入的颜色对象，返回一个可用的css颜色取值
  * 若透明度a为1，返回以#开头的16进制，否则返回rgba()
  * @param  {object} c { rgb, hsl, hsv, a}
- * @return {string}   #xxxxxx|rgba(x,x,x,x)
+ * @return {string}   #xxx[xxx]|rgba(x,x,x,x)
  */
-export function getValidColor (c) {
+export function getValidColor (c, allow3chars = true) {
   if (!(typeof c.rgb === 'object')) {
     c = Color(c)
   }
+  if (!c.rgb) {
+    return 'Invalid'
+  }
   const { r, g, b } = c.rgb
   if (c.a !== 1) {
-    return `rgba(${r}, ${g}, ${b}, ${c.a.toFixed(2)})`
+    return `rgba(${r},${g},${b},${fixed(c.a, 2)})`
   } else {
-    return '#' + rgb2hex(r, g, b, true)
+    return '#' + rgb2hex(r, g, b, allow3chars)
   }
 }
 
@@ -251,7 +259,7 @@ export function isValidColor (color) {
     matchers.hsla,
     matchers.hex3,
     matchers.hex6
-  ].some(re => re.test(color)) || color === 'transparent' || colorNames[color]
+  ].some(re => re.test(color)) || color === 'transparent' || !!colorNames[color]
 }
 
 function Color (color, old = {}) {

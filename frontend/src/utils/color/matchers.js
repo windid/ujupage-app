@@ -26,6 +26,4 @@ const matchers = {
   hex6: /^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/
 }
 
-console.log(matchers)
-
 export default matchers

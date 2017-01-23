@@ -346,7 +346,7 @@ class ParseHtml {
 
     protected static function getColor ($str) {
         if ($str === "") {
-            return $color
+            return "transparent"
         } elseif (isset(self::$color_set[$str])) {
             return self::$color_set[$str]
         } else {

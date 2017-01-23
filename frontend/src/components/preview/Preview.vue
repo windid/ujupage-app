@@ -1,6 +1,7 @@
 <script>
 import PreviewHeader from './PreviewHeader'
 import Previewer from '../common/Previewer'
+import VersionSwitcher from '../common/VersionSwitcher'
 import API from '../../API'
 import '../../style/devices.min.css'
 import { find } from 'lodash'
@@ -8,6 +9,7 @@ import { find } from 'lodash'
 export default {
   components: {
     PreviewHeader,
+    VersionSwitcher,
     Previewer
   },
   data () {
@@ -49,7 +51,9 @@ export default {
 </script>
 <template>
 <div>
-  <preview-header v-if="!loading" :current-variation="currentVariation" :variations="variations" :page="page" :version="version" @switch-version="switchVersion"></preview-header>
+  <preview-header v-if="!loading" :current-variation="currentVariation" :variations="variations">
+    <version-switcher v-if="page.is_compat" slot="versionSwitcher" :version="version" @change="switchVersion"></version-switcher>
+  </preview-header>
   <previewer v-if="!loading" :version="version" :url="url"></previewer>
 </div>
 </template>

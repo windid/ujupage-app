@@ -3,6 +3,7 @@ import ColorSchemes from '../ui/ColorSchemes'
 import EditorSettings from './EditorSettings'
 import AbTest from './AbTest'
 import AbSplit from '../common/AbSplit'
+import VersionSwitcher from '../common/VersionSwitcher'
 import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
 import { urlKeyRE } from '../../utils'
@@ -14,7 +15,8 @@ export default {
     EditorSettings,
     AbTest,
     AbSplit,
-    Tooltip
+    Tooltip,
+    VersionSwitcher
   },
   data () {
     return {
@@ -161,15 +163,8 @@ export default {
     </div>
 
     <ab-test @absplit="showSplit = true"></ab-test>
-
-    <div class="btn-group">
-      <div class="btn btn-default" :class="{ active: workspace.version === 'pc' }" @click="switchVersion('pc')">
-        桌面版 <span class="glyphicon glyphicon-blackboard"></span>
-      </div>
-      <div class="btn btn-default" :class="{ active: workspace.version === 'mobile' }" @click="switchVersion('mobile')">
-        移动版 <span class="glyphicon glyphicon-phone"></span>
-      </div>
-    </div>
+  
+    <version-switcher v-if="page.is_compat" :version="workspace.version" @change="switchVersion"></version-switcher>
 
     <div class="btn-toolbar fr">
       <!-- <div class="btn-group">

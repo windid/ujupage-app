@@ -6,10 +6,6 @@ export default {
     Dropdown
   },
   props: {
-    version: {
-      type: String,
-      default: 'mobile'
-    },
     variations: {
       type: Array,
       default: []
@@ -22,11 +18,6 @@ export default {
   data () {
     return {
       showVariations: false
-    }
-  },
-  methods: {
-    switchVersion (version) {
-      this.$emit('switch-version', version)
     }
   }
 }
@@ -52,16 +43,7 @@ export default {
         </li>
       </ul>
     </dropdown>
-
-    <div class="btn-group">
-      <div class="btn btn-default" :class="{ active: version === 'pc' }" @click="switchVersion('pc')">
-        桌面版 <span class="glyphicon glyphicon-blackboard"></span>
-      </div>
-      <div class="btn btn-default" :class="{ active: version === 'mobile' }" @click="switchVersion('mobile')">
-        移动版 <span class="glyphicon glyphicon-phone"></span>
-      </div>
-    </div>
-
+    <slot name="versionSwitcher"></slot>
     <div class="btn-toolbar fr">
       <!-- <div class="btn-group">
         <div class="btn btn-default">
