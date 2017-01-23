@@ -232,7 +232,7 @@ export const modifyElement = ({ commit, state }, [elementId, newPropsObj, replac
 }
 
 // 添加元素
-export const addElement = ({ commit, state, getters }, type) => {
+export const addElement = ({ commit, state, getters }, [type, position]) => {
   // 如果还没有板块，那么新建一个板块
   if (state.editor.content.sections.length === 0) {
     addSection({ commit })
@@ -247,12 +247,25 @@ export const addElement = ({ commit, state, getters }, type) => {
   let sectionId = -1
   const currentVersion = state.editor.workspace.version
   const anotherVersion = state.editor.workspace.version === 'pc' ? 'mobile' : 'pc'
-  while (sumSectionsHeight < elementTopInPage) {
-    sectionId++
-    sectionHeight = parseInt(state.editor.content.sections[sectionId].style[currentVersion].height)
-    sumSectionsHeight += sectionHeight
+  let elementTop = 0
+  if (position) {
+    sumSectionsHeight = position.y
+    let height = 0
+    while (sumSectionsHeight >= 0) {
+      sectionId++
+      sectionHeight = parseInt(state.editor.content.sections[sectionId].style[currentVersion].height)
+      height = sumSectionsHeight
+      sumSectionsHeight -= sectionHeight
+    }
+    elementTop = height
+  } else {
+    while (sumSectionsHeight < elementTopInPage) {
+      sectionId++
+      sectionHeight = parseInt(state.editor.content.sections[sectionId].style[currentVersion].height)
+      sumSectionsHeight += sectionHeight
+    }
+    elementTop = elementTopInPage + sectionHeight - sumSectionsHeight
   }
-  const elementTop = elementTopInPage + sectionHeight - sumSectionsHeight
   element.style[currentVersion].top = elementTop + 'px'
   element.style[anotherVersion].top = '10px'
 
