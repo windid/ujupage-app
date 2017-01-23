@@ -11,7 +11,7 @@ function parseIntFromHex (val) {
 
 function fixed (f, precision) {
   const p = Math.pow(10, precision)
-  return Math.floor(f * p) / p
+  return Math.round(f * p) / p
 }
 
 function pad2 (c) {
