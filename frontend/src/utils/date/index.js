@@ -55,6 +55,22 @@ function removeFormattingTokens (input) {
   return input.replace(/\\/g, '')
 }
 
+export function isLeapYear (year) {
+  return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0
+}
+
+export function getDayCountOfMonth (year, month) {
+  if (month === 3 || month === 5 || month === 8 || month === 10) {
+    return 30
+  }
+
+  if (month === 1) {
+    return isLeapYear(year) ? 29 : 28
+  }
+
+  return 31
+}
+
 /**
  * 解析字符串到Date对象
  * @param  {string} dateStr 日期字符串
@@ -110,7 +126,16 @@ Moment.prototype = {
 
   addMonths (inc) {
     const d = this.date
-    d.setMonth(d.getMonth() + inc)
+    const date = d.getDate()
+    const tmpDate = new Date(d.getTime())
+    tmpDate.setMonth(d.getMonth() + inc, 1)
+    const year = tmpDate.getFullYear()
+    const month = tmpDate.getMonth()
+    const newMonthDayCount = getDayCountOfMonth(year, month)
+    if (newMonthDayCount < date) {
+      d.setDate(newMonthDayCount)
+    }
+    d.setFullYear(year, month)
     return this
   },
 

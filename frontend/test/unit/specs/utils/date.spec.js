@@ -86,6 +86,7 @@ describe('Date utils', () => {
       it('should add months correctly', () => {
         expect(moment('2017-1-8 12:34').addMonths(2).format('YYYY-MM-DD')).to.equal('2017-03-08')
         expect(moment('2017-1-8 12:34').add(15, 'months').format('YYYY-MM-DD')).to.equal('2018-04-08')
+        expect(moment('2016-12-31').add(2, 'months').format('YYYY-MM-DD')).to.equal('2017-02-28')
       })
 
       it('should add days correctly', () => {
@@ -103,6 +104,7 @@ describe('Date utils', () => {
       it('should subtract months correctly', () => {
         expect(moment('2017-1-8 12:34').subtract(2, 'months').format('YYYY-MM-DD')).to.equal('2016-11-08')
         expect(moment('2017-1-8 12:34').subtract(15, 'months').format('YYYY-MM-DD')).to.equal('2015-10-08')
+        expect(moment('2016-12-31').subtract(1, 'months').format('YYYY-MM-DD')).to.equal('2016-11-30')
       })
 
       it('should subtract days correctly', () => {
