@@ -14,7 +14,7 @@
   <link href="//app.ujupage.com/css/glyphicons.css?v20161223" rel="stylesheet">
   @endif
   <script src="//app.ujupage.com/js/libs/jquery-1.12.3.min.js"></script>
-  <script src="//app.ujupage.com/js/page.js?20170117"></script>
+  <script src="//app.ujupage.com/js/page.js?20170123"></script>
   <!-- <script src="/js/page.js"></script> -->
   @if ($content['settings']['hasMap'])
   <script src="//webapi.amap.com/maps?v=1.3&key=e3b78e84d1aedba49bc8a84c4e113e01&plugin=AMap.Scale,AMap.OverView,AMap.ToolBar"></script>
