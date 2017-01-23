@@ -4,19 +4,30 @@ import eventHandler from '../../utils/eventHandler'
 
 export default {
   name: 'editor-toolbar',
+  props: {
+    page: Object
+  },
   data () {
-    return {
-      basicTools: [
-        { name: '版块', style: 'modal-window', action: () => {
+    const basicTools = [
+      { name: '图片', style: 'picture', action: () => this.newElement('image') },
+      { name: '文字', style: 'font', action: () => this.newElement('text') },
+      { name: '按钮', style: 'hand-up', action: () => this.newElement('button') },
+      { name: '形状', style: 'stop', action: () => this.showShapePicker() },
+      { name: '图标', style: 'comment', action: () => this.newElement('icon') }
+    ]
+
+    if (this.page.is_compat) {
+      basicTools.unshift({
+        name: '版块',
+        style: 'modal-window',
+        action: () => {
           this.addSection()
           this.showShapes = false
-        } },
-        { name: '图片', style: 'picture', action: () => this.newElement('image') },
-        { name: '文字', style: 'font', action: () => this.newElement('text') },
-        { name: '按钮', style: 'hand-up', action: () => this.newElement('button') },
-        { name: '形状', style: 'stop', action: () => this.showShapePicker() },
-        { name: '图标', style: 'comment', action: () => this.newElement('icon') }
-      ],
+        }
+      })
+    }
+    return {
+      basicTools,
       advancedTools: [
         { name: '表单', style: 'edit', action: () => this.newElement('form') },
         { name: '视频', style: 'film', action: () => this.newElement('video') },
@@ -57,19 +68,21 @@ export default {
 
 </script>
 <template>
-  <div class="toolbar shadow" :style="{width: showAdvanced ? '166px' : '86px'}">
+  <div class="toolbar shadow" :style="{width: showAdvanced ? '166px' : '83px'}">
     <div class="toolbar-header">组件</div>
     <div class="toolbar-body">
-      <div class="basic-tools">
-        <div v-for="tool in basicTools" class="tool shadow" @click.stop="tool.action">
-          <span class="glyphicon" :class="'glyphicon-' + tool.style"></span>
-          <div class="tool-name">{{tool.name}}</div>
+      <div class="tool-list">
+        <div class="basic-tools">
+          <div v-for="tool in basicTools" class="tool shadow" @click.stop="tool.action">
+            <span class="glyphicon" :class="'glyphicon-' + tool.style"></span>
+            <div class="tool-name">{{tool.name}}</div>
+          </div>
         </div>
-      </div>
-      <div class="advanced-tools">
-        <div v-for="tool in advancedTools" class="tool shadow" @click.stop="tool.action">
-          <span class="glyphicon" :class="'glyphicon-' + tool.style"></span>
-          <div class="tool-name">{{tool.name}}</div>
+        <div class="advanced-tools">
+          <div v-for="tool in advancedTools" class="tool shadow" @click.stop="tool.action">
+            <span class="glyphicon" :class="'glyphicon-' + tool.style"></span>
+            <div class="tool-name">{{tool.name}}</div>
+          </div>
         </div>
       </div>
       <div class="show-advanced-btn" @click="showAdvanced = !showAdvanced">
@@ -132,10 +145,17 @@ export default {
   background-color:#fff;
 }
 
+.tool-list {
+  display: flex;
+  width: 164px;
+  justify-content: space-around;
+  /*float: left;*/
+}
+
 .advanced-tools {
-  position: absolute;
-  left: 80px;
-  top: 0;
+  /*position: absolute;*/
+  /*left: 80px;*/
+  /*top: 0;*/
 }
 
 .show-advanced-btn {
@@ -150,7 +170,7 @@ export default {
   transition: all .3s ease;
   width: 66px;
   height: 66px;
-  margin:10px;
+  margin: 10px 0;
   padding: 4px 8px;
   border: 5px solid #BEE1F1;
   border-radius: 50%;

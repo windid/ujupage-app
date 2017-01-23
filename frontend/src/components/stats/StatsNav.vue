@@ -1,12 +1,14 @@
 <script>
-import { DatePicker } from 'element-ui'
+import VersionSwitcher from '../common/VersionSwitcher'
+import DateRangePicker from '../ui/DateRangePicker'
 import Dropdown from '../ui/Dropdown'
-import moment from 'moment'
+import moment from '../../utils/date'
 
 export default {
   props: ['title'],
   components: {
-    DatePicker,
+    VersionSwitcher,
+    DateRangePicker,
     Dropdown
   },
   data () {
@@ -14,70 +16,10 @@ export default {
       duration: '',
       limitEndDate: moment().format('YYYY-MM-DD'),
       showVariations: false,
-      page: this.$store.getters.statsPage,
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: '今天',
-            onClick (picker) {
-              const today = new Date()
-              picker.$emit('pick', [today, today])
-            }
-          },
-          {
-            text: '昨天',
-            onClick (picker) {
-              const date = new Date()
-              date.setTime(date.getTime() - 3600 * 1000 * 24)
-              picker.$emit('pick', [date, date])
-            }
-          },
-          {
-            text: '最近7天',
-            onClick (picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近30天',
-            onClick (picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '本月',
-            onClick (picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setDate(1)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '上月',
-            onClick (picker) {
-              const start = moment().subtract(1, 'M')
-              const end = moment().subtract(1, 'M')
-              picker.$emit('pick', [start.startOf('month'), end.endOf('month')])
-            }
-          }
-        ],
-        disabledDate (d) {
-          return moment(d).isAfter()
-        }
-      }
+      page: this.$store.getters.statsPage
     }
   },
   methods: {
-    pickDate (v) {
-      console.log(v)
-    },
     newQuery (key, value) {
       return {
         ...this.$route.query,
@@ -128,23 +70,6 @@ export default {
           query: query
         })
       }
-    },
-    duration: {
-      get () {
-        return [this.date.startDate, this.date.endDate]
-      },
-      set (val) {
-        this.date = {
-          startDate: moment(val[0]).format('YYYY-MM-DD'),
-          endDate: moment(val[1]).format('YYYY-MM-DD')
-        }
-      }
-    },
-    showDuration () {
-      if (this.date.startDate === this.date.endDate) {
-        return this.date.startDate
-      }
-      return this.date.startDate + ' 至 ' + this.date.endDate
     }
   }
 }
@@ -161,11 +86,7 @@ export default {
     </ul>
   </div>
   <div class="data-filter">
-    <div class="btn-group">
-      <div class="btn btn-default" :class="{ active: !$route.query.ver }" @click="switchVersion('')">全部</div>
-      <div class="btn btn-default" :class="{ active: $route.query.ver === 'pc' }" @click="switchVersion('pc')">桌面</div>
-      <div class="btn btn-default" :class="{ active: $route.query.ver === 'mobile' }" @click="switchVersion('mobile')">移动</div>
-    </div>
+    <version-switcher v-if="page.is_compat" :show-all="true" :version="$route.query.ver" @change="switchVersion"></version-switcher>
     <dropdown :show="showVariations" @toggle="showVariations=!showVariations">
       <div class="btn btn-default dropdown-toggle" data-toggle="dropdown">
         {{variationName}}
@@ -176,51 +97,12 @@ export default {
         <li v-for="variation in page.variations" :class="{active: $route.query.vid === variation.id}"><a href="javascript:;" @click="switchVariation(variation)">{{variation.name}}</a></li>
       </ul>
     </dropdown>
-    <!-- <date-picker v-model="date" :limit-end-date="limitEndDate" position="right"></date-picker> -->
-    <div class="date-picker-wrap btn-group btn btn-default dropdown-toggle" data-toggle="dropdown">
-      <div>
-        <span>{{ showDuration }}</span>
-         &nbsp; <span class="glyphicon" :class="'glyphicon-menu-down'"></span>
-      </div>
-      <date-picker
-        :editable="false"
-        class="date-picker"
-        v-model="duration"
-        type="daterange"
-        align="right"
-        placeholder="请输入日期"
-        :picker-options="pickerOptions">
-        <div class="">efegegrege</div>
-      </date-picker>
-    </div>
+    <date-range-picker v-model="date"></date-range-picker>
     
   </div>
 </div>
 </template>
 
-<style lang="scss">
-.date-picker-wrap.btn {
-  position: relative;
-  .date-picker {
-    position: absolute;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    padding: 0;
-    input {
-      cursor: inherit;
-      padding: 0;
-      height: 100%;
-    }
-    .el-icon {
-      display: none;
-    }
-  }
-}
-
-</style>
 <style lang="scss" scoped>
 .data-filter {
   border-bottom: 1px solid #e9e9e9;

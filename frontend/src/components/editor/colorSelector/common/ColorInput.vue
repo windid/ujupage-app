@@ -32,7 +32,7 @@ export default {
     validator: {
       type: Function,
       default (val) {
-        return !Number.isNaN(val)
+        return !isNaN(val)
       }
     }
   },

@@ -4,7 +4,7 @@ import Navbar from './Navbar'
 import Overview from './Overview'
 import Conversion from './Conversion'
 import Traffic from './Traffic'
-import moment from 'moment'
+import moment from '../../utils/date'
 
 export default {
   name: 'Stats',
