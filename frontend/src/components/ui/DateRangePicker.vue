@@ -105,8 +105,8 @@ export default {
         const end = moment(val[1]).format('YYYY-MM-DD')
         if (start !== this.value.startDate || end !== this.value.endDate) {
           this.$emit('input', {
-            startDate: moment(val[0]).format('YYYY-MM-DD'),
-            endDate: moment(val[1]).format('YYYY-MM-DD')
+            startDate: start,
+            endDate: end
           })
         }
       }
@@ -135,7 +135,7 @@ export default {
       padding: 0;
       height: 100%;
     }
-    .el-icon {
+    .el-icon-date {
       display: none;
     }
   }
