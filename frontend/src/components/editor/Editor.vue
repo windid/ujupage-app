@@ -16,7 +16,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      saveStatus: 'saveStatus'
+      saveStatus: 'saveStatus',
+      page: 'editingPage'
     })
   },
   methods: {
@@ -58,7 +59,7 @@ export default {
   <div @mousedown="clearActiveElement">
   	<editor-header></editor-header>
     <div id="main-wrapper">
-      <editor-toolbar></editor-toolbar>
+      <editor-toolbar :page="page"></editor-toolbar>
       <editor-workspace></editor-workspace>
     </div>
   </div>
