@@ -144,9 +144,10 @@ export default {
     }
   },
   mounted () {
+    document.removeEventListener('keydown', this.onKey)
     document.addEventListener('keydown', this.onKey)
   },
-  destroy () {
+  destroyed () {
     document.removeEventListener('keydown', this.onKey)
   }
 
