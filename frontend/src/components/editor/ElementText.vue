@@ -169,6 +169,11 @@ export default {
         this.$refs.content.focus()
       }, 10)
     },
+    onPaste (event) {
+      event.preventDefault()
+      const text = event.clipboardData.getData('text/plain')
+      document.execCommand('insertHTML', false, text)
+    },
     contentDragStart (e) {
       if (e.target.nodeName.toUpperCase() === 'A') {
         e.preventDefault()
@@ -223,6 +228,7 @@ export default {
       @click.prevent
       @dragstart="contentDragStart"
       @mouseup="contentMouseUp"
+      @paste="onPaste"
       :contenteditable="editing" 
       spellcheck="false" 
       :style="merge({}, localElement.fontStyle, {
