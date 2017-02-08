@@ -24,8 +24,7 @@
           <color-input label="l" v-model="color.hsl.l" :filter="percentFilter" @on-change="inputChange"></color-input>
           <color-input label="a" v-model="color.a" :filter="alphaFilter" @on-change="inputChange"></color-input>
         </div>
-        <div class="toggle" @click="switchFields">
-        </div>
+        <div class="toggle" @click="switchFields"></div>
       </div>
     </div>
     <div class="footer">
