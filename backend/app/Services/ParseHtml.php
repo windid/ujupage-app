@@ -201,7 +201,11 @@ class ParseHtml {
     protected static function parseElementForm ($element_id, $element) {
         $props = $element['props'];
         self::$page['style']['common']['element-'.$element_id." label"] = self::parseStyles(['color'=>$props['labelColor']]);
-        self::$page['style']['common']['element-'.$element_id." input"] = self::parseStyles(['color'=>$props['inputColor'], 'backgroundColor'=>$props['fieldColor'], 'borderColor'=>$props['borderColor']]);
+        self::$page['style']['common']['element-'.$element_id." input"] = self::parseStyles([
+            'color'=>$props['inputColor'],
+            'backgroundColor'=>$props['fieldColor'],
+            'borderColor'=>$props['borderColor']
+        ]);
         self::$page['elements'][$element_id]['props']['goal'] = in_array('form', self::$page['settings']['goals']) ? 1 : 0;
         
         // 按钮
