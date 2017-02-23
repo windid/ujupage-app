@@ -6,7 +6,7 @@ import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
 import eventHandler from '../../utils/eventHandler'
-import * as editorHelper from '../../utils/editorHelper'
+import * as editorHelper from '../../utils/editor'
 
 // 纪录上一个操作的元素，需要用来判断在移动元素到新的section时已经发生了复制
 let EDIT_CACHE = {
@@ -67,6 +67,7 @@ export default {
         handles: 'e',
         aspectRatio: false
       },
+      updateTimer: null,
       dragging: false,
       resizing: false,
       startTop: 0,
@@ -92,9 +93,11 @@ export default {
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace',
-      alignIds: 'getAlignIds'
+      alignIds: 'getAlignIds',
+      multiMove: 'getMultiMove',
+      updatedSection: 'getUpdatedSection'
     }),
-    hasAligned () {
+    actived () {
       return this.alignIds.indexOf(this.elementId) >= 0
     },
     // 直接watch element.fixed居然无效，只好用计算属性来监听，不确定是不是Vue的bug
@@ -224,6 +227,9 @@ export default {
         y: getMin(move.y, this.verticalMax)
       }
     },
+    getPosTop () {
+      return getElementTop(this.$el) - 50 - this.$el.offsetTop
+    },
     dragBegin () {
       this.clearMultiSelect()
       if (!this.keyEventAttached) {
@@ -243,7 +249,7 @@ export default {
       const box = document.getElementById(boxContainer).getBoundingClientRect()
       this.horizontalMax = [box.left - self.left, box.right - self.right]
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
-      this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
+      this.startTop = this.getPosTop()
 
       editorHelper.alignBegin(this.elementId)
     },
@@ -376,30 +382,29 @@ export default {
     //   }
     // },
     getAlignmentInfo () {
-      const elRectangle = this.$refs.box.getBoundingClientRect()
+      const elRect = this.$refs.box.getBoundingClientRect()
       const containerRect = document.getElementById('content-area').getBoundingClientRect()
-      const left = elRectangle.left - containerRect.left
-      const right = elRectangle.right - containerRect.left
-      const top = elRectangle.top - containerRect.top
-      const bottom = elRectangle.bottom - containerRect.top
-      const hcenter = Math.round(left + elRectangle.width / 2)
-      const vcenter = Math.round(top + elRectangle.height / 2)
+      const left = elRect.left - containerRect.left
+      const right = elRect.right - containerRect.left
+      const top = elRect.top - containerRect.top
+      const bottom = elRect.bottom - containerRect.top
+      const hcenter = Math.round((left + right) / 2)
+      const vcenter = Math.round((top + bottom) / 2)
       const rect = {
-        width: elRectangle.width,
-        height: elRectangle.height,
-        left,
-        right,
-        top,
-        bottom,
-        hcenter,
-        vcenter
+        width: elRect.width,
+        height: elRect.height,
+        left, hcenter, right,
+        top, vcenter, bottom
       }
       return rect
     },
     updateAlignmentInfo (ifNew) {
+      const positionInPage = { top: parseInt(this.$el.style.top) + this.getPosTop(), left: parseInt(this.$el.style.left) }
       const element = {
         mid: this.mountedId,
         id: this.elementId,
+        sectionId: this.sectionId,
+        positionInPage,
         rect: this.getAlignmentInfo()
       }
       if (ifNew) {
@@ -446,9 +451,39 @@ export default {
     },
 
     'workspace.version': function (newVersion) {
-      setTimeout(() => {
+      clearTimeout(this.updateTimer)
+      this.updateTimer = setTimeout(() => {
         this.updateAlignmentInfo()
-      }, 1200)
+      }, 800)
+    },
+
+    'updatedSection': function (val) {
+      if (this.sectionId > val.id) {
+        this.updateAlignmentInfo()
+      }
+    },
+
+    'element.style': function (val) {
+      clearTimeout(this.updateTimer)
+      this.updateTimer = setTimeout(() => {
+        this.updateAlignmentInfo()
+      }, 800)
+    },
+
+    'multiMove': function (val) {
+      if (this.actived) {
+        const style = window.getComputedStyle(this.$el, null)
+        const getSize = (key) => parseInt(style[key])
+        const startPosLeft = getSize('left')
+        const startPosTop = getSize('top')
+        const left = startPosLeft + val.move.x
+        this.$el.style.left = left + 'px'
+        this.elPositionInPage.left = left
+        const top = startPosTop + val.move.y
+        this.$el.style.top = top + 'px'
+        const startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
+        this.elPositionInPage.top = startTop + top
+      }
     }
   },
   mounted () {
@@ -467,6 +502,9 @@ export default {
     this.updateAlignmentInfo(true)
   },
   destroyed () {
+    if (this.updateTimer !== null) {
+      clearTimeout(this.updateTimer)
+    }
     if (this.keyMoveTimer !== null) {
       clearTimeout(this.keyMoveTimer)
       this.keyMoveTimer = null
@@ -496,7 +534,7 @@ const getElementTop = (element) => {
 <template>
   <div class="element" @click="selectElement" @mousedown.stop="onDragBegin"
     ref="box"
-    :class="{'align-highlighted': hasAligned}"
+    :class="{'align-highlighted': actived}"
     :style="{
       display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
       left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,

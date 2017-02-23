@@ -175,9 +175,40 @@ export const removeElement = ({ commit, state }, [elementId, record = true]) => 
 
 // 移动元素
 export const moveElement = ({ commit, state }, [sectionId, elementId, positionInPage, elementHeight]) => {
+  moveSingleElement(commit, state, {
+    sectionId,
+    id: elementId,
+    positionInPage,
+    rect: {
+      height: elementHeight
+    }
+  })
+  commit(types.SAVE_CONTENT_STATE)
+}
+
+export const moveElements = ({ commit, state }, payload) => {
+  const elements = payload.elements
+  const count = elements.length
+  if (count > 0) {
+    for (let i = 0; i < count; i++) {
+      const element = elements[i]
+      /*
+      moveOneElement({ commit, state }, element, move)
+      */
+      moveSingleElement(commit, state, element)
+    }
+    commit(types.SAVE_CONTENT_STATE)
+  }
+}
+
+const moveSingleElement = (commit, state, payload) => {
+  const sectionId = payload.sectionId
+  const elementId = payload.id
+  const positionInPage = payload.positionInPage
+  const elementHeight = payload.rect.height
+
   let sumSectionsHeight = 0
   let sectionHeight = 0
-
   // 从元素中间到页头的高度
   const elementLine = positionInPage.top + elementHeight / 2
 
@@ -188,14 +219,14 @@ export const moveElement = ({ commit, state }, [sectionId, elementId, positionIn
     sectionHeight = parseInt(state.editor.content.sections[newSectionId].style[state.editor.workspace.version].height)
     sumSectionsHeight += sectionHeight
   }
-
   const newElement = merge({}, state.editor.content.elements[elementId])
-
   newElement.style[state.editor.workspace.version].top = positionInPage.top - (sumSectionsHeight - sectionHeight) + 'px'
   newElement.style[state.editor.workspace.version].left = positionInPage.left + 'px'
 
+  if (sectionId !== newSectionId) {
+    payload.sectionId = newSectionId
+  }
   commit(types.MOVE_ELEMENT, { elementId, newElement, sectionId, newSectionId })
-  commit(types.SAVE_CONTENT_STATE)
 }
 
 // 缩放元素
@@ -348,4 +379,8 @@ export const doneMultiSelect = ({ commit, state }) => {
 
 export const clearMultiSelect = ({ commit, state }) => {
   commit(types.MULTI_SELECT_CLEAR)
+}
+
+export const updateMultiMove = ({ commit, state }, payload) => {
+  commit(types.UPDATE_MULTI_MOVE, payload)
 }

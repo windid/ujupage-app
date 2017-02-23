@@ -100,3 +100,7 @@ export const getAlignIds = state => state.editor.assist.activeIds
 export const getAlignStatus = state => state.editor.assist.align.status
 
 export const getSelectionArea = state => state.editor.assist.selection
+
+export const getMultiMove = state => state.editor.assist.multi.move
+
+export const getUpdatedSection = state => state.editor.assist.updatedSection
