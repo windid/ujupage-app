@@ -4,21 +4,21 @@
 <template>
 <div id="header-wrapper">
   <div class="header">
-      <router-link to="/" class="logo"></router-link>
-      <!-- <ol class="breadcrumb fl">
-        <li><router-link to="/"><span class="glyphicon glyphicon-home"></span></router-link></li>
-        <li><router-link to="/project">Wendell的项目 <span class="caret"></span></router-link></li>
-        <li>Data</li>
-      </ol> -->
-      <div class="btn-toolbar header-nav">
-        <!-- <li><router-link to="/help">帮助</router-link></li> -->
-        <router-link active-class="active" to="/account" class="btn btn-default">
-          帐号 <span class="glyphicon glyphicon-user"></span>
-        </router-link>
-        <router-link active-class="active" to="/logout" class="btn btn-default">
-          退出 <span class="glyphicon glyphicon-log-out"></span>
-        </router-link>
-      </div>
+    <router-link to="/" class="logo"></router-link>
+    <!-- <ol class="breadcrumb fl">
+      <li><router-link to="/"><span class="glyphicon glyphicon-home"></span></router-link></li>
+      <li><router-link to="/project">Wendell的项目 <span class="caret"></span></router-link></li>
+      <li>Data</li>
+    </ol> -->
+    <div class="btn-toolbar header-nav">
+      <!-- <li><router-link to="/help">帮助</router-link></li> -->
+      <router-link active-class="active" to="/account" class="btn btn-default">
+        帐号 <span class="glyphicon glyphicon-user"></span>
+      </router-link>
+      <router-link active-class="active" to="/logout" class="btn btn-default">
+        退出 <span class="glyphicon glyphicon-log-out"></span>
+      </router-link>
+    </div>
   </div>
 </div>
 </template>
