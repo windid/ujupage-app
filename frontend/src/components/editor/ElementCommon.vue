@@ -446,7 +446,7 @@ export default {
     },
 
     'workspace.version': function (newVersion) {
-      setTimeout(() => {
+      this._updateAlignmentTimer = setTimeout(() => {
         this.updateAlignmentInfo()
       }, 1200)
     }
@@ -476,6 +476,7 @@ export default {
     }
     // 从位置信息中删除
     editorHelper.elementRemove(this.mountedId)
+    clearTimeout(this._updateAlignmentTimer)
   }
 }
 
@@ -525,7 +526,7 @@ const getElementTop = (element) => {
         @resize-end="resizeAction" 
         @resizing="resizeAction" 
         :side="side" 
-        :minSize="sizeRange.minHeight",
+        :minSize="sizeRange.minHeight"
         :key="dir"
       />
     </template>
