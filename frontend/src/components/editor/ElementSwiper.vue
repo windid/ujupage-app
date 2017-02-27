@@ -96,7 +96,7 @@ export default {
       </div>
       <div class="swiper-bullets">
         <ul>
-          <li v-for="n in localElement.data.images.length-1"><li>
+          <li v-for="n in localElement.data.images.length-1"></li>
         </ul>
       </div>
       <div class="swiper-buttons" v-if="localElement.data.button">

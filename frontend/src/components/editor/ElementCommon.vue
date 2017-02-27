@@ -533,7 +533,7 @@ const getElementTop = (element) => {
         <slot name="main-buttons-extend"></slot>
         <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed"><span class="glyphicon glyphicon-pushpin"></span></tooltip>
         <tooltip class="btn btn-default" @click.native.stop="duplicateElement(elementId)" content="复制一个">
-            <span class="glyphicon glyphicon-duplicate"></span>
+          <span class="glyphicon glyphicon-duplicate"></span>
         </tooltip>
         <tooltip class="btn btn-default" content="移到顶层" @click.native="indexElement([ elementId, 'top' ])">
           <span class="glyphicon glyphicon-circle-arrow-up"></span>
