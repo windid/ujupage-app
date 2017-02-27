@@ -4,8 +4,8 @@ const rawFiles = ['mp4', 'webm', 'ogv', 'flv', 'mov']
 const h5RawFiles = ['mp4', 'webm', 'ogv']
 
 const reg = {
-  raw: new RegExp(`\.(${rawFiles.join('|')})$`),
-  h5raw: new RegExp(`\.(${h5RawFiles.join('|')})$`)
+  raw: new RegExp(`.(${rawFiles.join('|')})$`),
+  h5raw: new RegExp(`.(${h5RawFiles.join('|')})$`)
 }
 
 function parseXML (code) {

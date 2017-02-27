@@ -1,7 +1,7 @@
 var path = require('path')
 var config = require('../config')
 var utils = require('./utils')
-var projectRoot = path.resolve(__dirname, '../src')
+var projectRoot = path.resolve(__dirname, '../')
 var webpack = require('webpack')
 
 module.exports = {
@@ -43,9 +43,7 @@ module.exports = {
     loaders: [
       {
         test: /\.vue$/,
-        loader: 'vue',
-        include: projectRoot,
-        exclude: /node_modules/
+        loader: 'vue'
       },
       {
         test: /\.js$/,
