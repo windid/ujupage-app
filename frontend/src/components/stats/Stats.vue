@@ -31,11 +31,6 @@ export default {
       }
     }
   },
-  filters: {
-    percentage (val) {
-      return (Math.round(val * 1000) / 10) + '%'
-    }
-  },
   methods: {
     getReportData () {
       this.loading = true

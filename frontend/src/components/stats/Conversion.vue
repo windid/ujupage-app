@@ -1,5 +1,6 @@
 <script>
 import StatsNav from './StatsNav'
+
 export default {
   components: {
     StatsNav

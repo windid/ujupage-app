@@ -1,7 +1,7 @@
 /**
  * Shorthand for querySelector
  */
-export function $ (selector, context = document) {
+export function query (selector, context = document) {
   return context.querySelector(selector)
 }
 
@@ -21,20 +21,6 @@ export function removeClass ($el, className) {
   }
   const regex = new RegExp(className + '\\s*', 'gi')
   $el.className = $el.className.replace(regex, '').trim()
-}
-
-export function show ($el) {
-  if (!$el) {
-    return
-  }
-  $el.style.display = ''
-}
-
-export function hide ($el) {
-  if (!$el) {
-    return
-  }
-  $el.style.display = 'none'
 }
 
 export function getOffset ($el) {

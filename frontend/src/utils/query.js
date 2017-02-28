@@ -88,6 +88,32 @@ $.fn.extend({
       }
     }
     return this
+  },
+  has (attr) {
+    return this.length > 0 ? this[0].hasAttribute(attr) : false
+  },
+  attr (name, val) {
+    if (typeof val === 'undefined') {
+      return this.length > 0 ? this[0].getAttribute(name) : null
+    } else {
+      this.each((el) => {
+        el.setAttribute(name, val)
+      })
+      return this
+    }
+  },
+  offset () {
+    if (this.length > 0) {
+      const el = this[0]
+      const docEl = document.documentElement
+      const boundingRect = el.getBoundingClientRect()
+      const top = boundingRect.top + window.pageYOffset - docEl.clientTop
+      const left = boundingRect.left + window.pageXOffset - docEl.clientLeft
+      return {
+        top,
+        left
+      }
+    }
   }
 })
 

@@ -1,6 +1,6 @@
 import Chartist from 'chartist'
 import {
-  $,
+  query,
   on,
   addClass,
   removeClass,
@@ -47,7 +47,7 @@ const ctTip = function (options) {
     let seriesIndex = 0
     let pointIndex = -1
 
-    let $tooltip = $('.' + options.classNames.tooltip, $container)
+    let $tooltip = query('.' + options.classNames.tooltip, $container)
     if (!$tooltip) {
       $tooltip = document.createElement('div')
       $tooltip.className = options.classNames.tooltip
@@ -118,13 +118,13 @@ const ctTip = function (options) {
 
     // 渲染tooltip数据
     function renderTooltip (data) {
-      $('.data-conversionRate .item-data', $tooltip).innerHTML = data.conversionRate + '%'
-      $('.data-conversions .item-data', $tooltip).innerHTML = data.conversions
-      $('.data-visitors .item-data', $tooltip).innerHTML = data.visitors
-      const $title = $('.' + options.classNames.title, $tooltip)
+      query('.data-conversionRate .item-data', $tooltip).innerHTML = data.conversionRate + '%'
+      query('.data-conversions .item-data', $tooltip).innerHTML = data.conversions
+      query('.data-visitors .item-data', $tooltip).innerHTML = data.visitors
+      const $title = query('.' + options.classNames.title, $tooltip)
       $title.innerHTML = '<span>' + chart.data.series[seriesIndex].name + '</span>'
       $title.className = options.classNames.title + ' ct-legend-' + Chartist.alphaNumerate(seriesIndex)
-      $('.' + options.classNames.xLabel, $tooltip).innerHTML = chart.data.labels[pointIndex]
+      query('.' + options.classNames.xLabel, $tooltip).innerHTML = chart.data.labels[pointIndex]
       addClass($tooltip, options.classNames.show)
       const height = $tooltip.offsetHeight
       const width = $tooltip.offsetWidth
