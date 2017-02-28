@@ -1,6 +1,5 @@
 <script>
 import StatsNav from './StatsNav'
-
 export default {
   components: {
     StatsNav
@@ -20,7 +19,6 @@ export default {
     }
   }
 }
-
 </script>
 
 <template>
@@ -28,7 +26,7 @@ export default {
     <stats-nav title="转化详情"></stats-nav>
     <div class="content-body">
       <h4>转化事件</h4>
-      <table v-if="goalData.length > 0" class="report table table-bordered table-hover">
+      <table v-if="goalData && goalData.length > 0" class="report table table-bordered table-hover">
         <thead>
           <tr>
             <th width="120px">转化类型</th>
@@ -48,7 +46,7 @@ export default {
       </table>
       <p v-else class="text-warning">报告期内没有转化数据。</p>
 
-      <template v-if="notGoalData.length > 0">
+      <template v-if="notGoalData && notGoalData.length > 0">
         <h4>非转化事件<span class="title-remark">(未被定义为转化的用户交互行为)</span></h4>
         <table class="report table table-bordered table-hover">
           <thead>
