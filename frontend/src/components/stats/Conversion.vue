@@ -7,7 +7,7 @@ export default {
   props: ['report'],
   filters: {
     percentage (val) {
-      return (Math.round(val * 10) / 10.0).toString() + '%'
+      return (Math.round(val * 10) / 10) + '%'
     }
   },
   computed: {

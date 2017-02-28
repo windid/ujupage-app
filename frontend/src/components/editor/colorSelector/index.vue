@@ -78,12 +78,12 @@ export default {
       this.color = Color({ hsv }, this.color)
     },
     changeHue (h) {
-      const c = this.color.hsl
+      const { hsl } = this.color
       this.color = Color({
         hsl: {
           h: h,
-          s: c.s,
-          l: c.l
+          s: hsl.s,
+          l: hsl.l
         }
       }, this.color)
     },
@@ -95,11 +95,11 @@ export default {
     },
     inputChange (label, val) {
       if ('rgb'.indexOf(label) > -1) {
-        const rgb = this.color.rgb
+        const { rgb } = this.color
         rgb[label] = val
         this.color = Color({ rgb }, this.color)
       } else if ('hsl'.indexOf(label) > -1) {
-        const hsl = this.color.hsl
+        const { hsl } = this.color
         hsl[label] = val
         this.color = Color({ hsl }, this.color)
       } else if (label === 'a') {
