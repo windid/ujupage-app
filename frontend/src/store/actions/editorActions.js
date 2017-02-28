@@ -173,6 +173,20 @@ export const removeElement = ({ commit, state }, [elementId, record = true]) => 
   record && commit(types.SAVE_CONTENT_STATE)
 }
 
+export const removeElements = ({ commit, state }, elements) => {
+  const len = elements.length
+  for (let i = 0; i < len; i++) {
+    const elementId = elements[i].id
+    const sectionIds = getSectionIds(state, elementId)
+    commit(types.REMOVE_ELEMENT, {
+      elementId,
+      sectionIds
+    })
+  }
+  commit(types.SAVE_CONTENT_STATE)
+  commit(types.MULTI_SELECT_CLEAR)
+}
+
 // 移动元素
 export const moveElement = ({ commit, state }, [sectionId, elementId, positionInPage, elementHeight]) => {
   moveSingleElement(commit, state, {
@@ -192,9 +206,6 @@ export const moveElements = ({ commit, state }, payload) => {
   if (count > 0) {
     for (let i = 0; i < count; i++) {
       const element = elements[i]
-      /*
-      moveOneElement({ commit, state }, element, move)
-      */
       moveSingleElement(commit, state, element)
     }
     commit(types.SAVE_CONTENT_STATE)

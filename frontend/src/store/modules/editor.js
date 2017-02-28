@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import * as types from '../mutation-types'
-import { merge } from 'lodash'
+import { merge, clone } from 'lodash'
 import randomChar from '../../utils/randomChar'
 
 const state = {
@@ -305,6 +305,8 @@ const mutations = {
 
   [types.MULTI_SELECT_CLEAR] (state) {
     state.assist.activeIds = []
+    const newState = clone(state.assist.selection)
+    state.assist.selection = newState
     state.assist.selection.visible = false
   }
 

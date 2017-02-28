@@ -1,5 +1,7 @@
 
 <script>
+import { Tooltip } from 'element-ui'
+
 import mouseDrag from '../../mixins/mouseDrag'
 import elementMoveMixin from '../../mixins/elementMoveMixin'
 import { mapActions } from 'vuex'
@@ -9,15 +11,32 @@ export default {
   name: 'multi-select',
   mixins: [mouseDrag, elementMoveMixin],
   props: ['wrapperStyle', 'innerStyle', 'visible'],
+  components: {
+    Tooltip
+  },
   data () {
-    return {}
+    return {
+      toolbarPosition: 'top left'
+    }
   },
   methods: {
     ...mapActions([
       'updateMultiMove',
       'clearMultiSelect',
-      'moveElements'
+      'moveElements',
+      'removeElements'
     ]),
+    showToolbar () {
+      this.$emit('change-button-group', 'main')
+
+      const viewTop = getElementTop(this.$el) - document.documentElement.scrollTop
+      const toolbarPositionY = (viewTop < 95) ? 'bottom' : 'top'
+
+      const viewRight = this.workspace.width - parseInt(this.element.style[this.workspace.version].left)
+      const toolbarPositionX = (viewRight < 0) ? 'right' : 'left'
+
+      this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX
+    },
     dragBegin () {
       // del
       this.bounds = this.getAlignmentInfo()
@@ -60,8 +79,28 @@ export default {
         elements,
         move: _move
       })
+    },
+    copy () {
+    },
+    moveTop () {},
+    moveBottom () {},
+    remove () {
+      this.removeElements(editorHelper.getMulti())
     }
   }
+}
+
+// 获取元素到页面顶部的距离
+const getElementTop = (element) => {
+  let actualTop = element.offsetTop
+  let current = element.offsetParent
+
+  while (current !== null) {
+    actualTop += current.offsetTop
+    current = current.offsetParent
+  }
+
+  return actualTop
 }
 </script>
 
@@ -75,7 +114,36 @@ export default {
     v-show="visible"
     class="select-disable"
     @mousedown.prevent.stop="onDragBegin"
-    :style="innerStyle"></div>
+    :style="innerStyle">
+    <div style="position: relative;">
+      <div v-show="visible" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
+        <div class="btn-group el-btn-group" role="group">
+          <slot name="main-buttons-extend"></slot>
+          <tooltip class="btn btn-default" @click.native.stop="copy()" content="复制一份">
+              <span class="glyphicon glyphicon-duplicate"></span>
+          </tooltip>
+          <tooltip class="btn btn-default" content="移到顶层" @click.native="moveTop()">
+            <span class="glyphicon glyphicon-circle-arrow-up"></span>
+          </tooltip>
+          <tooltip class="btn btn-default" content="移到底层" @click.native="moveBottom()">
+            <span class="glyphicon glyphicon-circle-arrow-down"></span>
+          </tooltip>
+          <tooltip class="btn btn-default" content="左对齐" @click.native="moveTop()">
+            <span class="glyphicon glyphicon-align-left"></span>
+          </tooltip>
+          <tooltip class="btn btn-default" content="居中对齐" @click.native="moveBottom()">
+            <span class="glyphicon glyphicon-align-center"></span>
+          </tooltip>
+          <tooltip class="btn btn-default" content="右对齐" @click.native="moveTop()">
+            <span class="glyphicon glyphicon-align-right"></span>
+          </tooltip>
+          <tooltip class="btn btn-default" content="删除" @click.native="remove()">
+            <span class="glyphicon glyphicon-trash"></span>
+          </tooltip>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -89,6 +157,7 @@ export default {
   position: absolute;
   outline: 1px solid red;
   background-color: rgba(216, 216, 216, 0.1);
-  z-index: 99999; cursor: pointer;
+  z-index: 99;
+  cursor: pointer;
 }
 </style>

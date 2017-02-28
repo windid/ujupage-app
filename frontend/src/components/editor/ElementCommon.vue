@@ -504,6 +504,7 @@ export default {
   destroyed () {
     if (this.updateTimer !== null) {
       clearTimeout(this.updateTimer)
+      this.updateTimer = null
     }
     if (this.keyMoveTimer !== null) {
       clearTimeout(this.keyMoveTimer)
@@ -619,49 +620,6 @@ const getElementTop = (element) => {
   outline: 1px solid #03ddff;
 }
 
-.el-toolbar {
-  position: absolute;
-  height: auto;
-  padding: 0;
-  z-index: 90000;
-  margin-bottom: 0;
-}
-
-.el-toolbar.top {
-  top: -43px;
-}
-
-.el-toolbar.bottom {
-  bottom: -43px;
-}
-
-.el-toolbar.left {
-  left: -1px;
-}
-
-.el-toolbar.right {
-  right: -1px;
-}
-
-.el-btn-group {
-  white-space: nowrap;
-  font-size: 0;
-}
-
-.el-btn-group > .btn, .el-btn-group > .btn-group {
-  float: none;
-}
-
-.el-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 110000;
-  background: white;
-  opacity: 0;
-  filter: alpha(opacity=1);
-}
-
 .resize-handle {
   z-index: 101000;
 }
@@ -713,6 +671,49 @@ const getElementTop = (element) => {
 </style>
 
 <style>
+  .el-toolbar {
+    position: absolute;
+    height: auto;
+    padding: 0;
+    z-index: 90000;
+    margin-bottom: 0;
+  }
+
+  .el-toolbar.top {
+    top: -43px;
+  }
+
+  .el-toolbar.bottom {
+    bottom: -43px;
+  }
+
+  .el-toolbar.left {
+    left: -1px;
+  }
+
+  .el-toolbar.right {
+    right: -1px;
+  }
+
+  .el-btn-group {
+    white-space: nowrap;
+    font-size: 0;
+  }
+
+  .el-btn-group > .btn, .el-btn-group > .btn-group {
+    float: none;
+  }
+
+  .el-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 110000;
+    background: white;
+    opacity: 0;
+    filter: alpha(opacity=1);
+  }
+
   .align-highlighted {
     outline: 1px solid red;
   }
