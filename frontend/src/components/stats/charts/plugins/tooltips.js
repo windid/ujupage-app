@@ -2,11 +2,10 @@ import Chartist from 'chartist'
 import {
   query,
   on,
-  addClass,
-  removeClass,
-  hasClass,
-  getOffset
+  hasClass
 } from './util'
+
+import $ from '../../../../utils/query'
 
 const defaultOptions = {
   offset: {
@@ -103,7 +102,7 @@ const ctTip = function (options) {
 
     // 鼠标移开图表时，隐藏tooltip
     on($container, 'mouseleave', false, e => {
-      removeClass($tooltip, options.classNames.show)
+      $($tooltip).removeClass(options.classNames.show)
     })
 
     // 切换tooltip数据
@@ -125,7 +124,7 @@ const ctTip = function (options) {
       $title.innerHTML = '<span>' + chart.data.series[seriesIndex].name + '</span>'
       $title.className = options.classNames.title + ' ct-legend-' + Chartist.alphaNumerate(seriesIndex)
       query('.' + options.classNames.xLabel, $tooltip).innerHTML = chart.data.labels[pointIndex]
-      addClass($tooltip, options.classNames.show)
+      $($tooltip).addClass(options.classNames.show)
       const height = $tooltip.offsetHeight
       const width = $tooltip.offsetWidth
       const offsetX = -width / 2 + options.offset.x
@@ -140,7 +139,7 @@ const ctTip = function (options) {
         const width = positions[0][1].x - positions[0][0].x
         const padding = chart.options.chartPadding
         const axisYOffset = chart.options.axisY.offset
-        const box = getOffset($container)
+        const box = $($container).offset()
         const offsetX = e.pageX - box.left
         const dx = Math.max(0, offsetX - axisYOffset - padding.left)
         const index = Math.round(dx / width)

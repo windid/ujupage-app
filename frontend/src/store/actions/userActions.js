@@ -36,21 +36,15 @@ export const register = ({ commit }, [user, success, error]) => {
   }, response => error(response))
 }
 
-export const getPassword = ({ commit }, [email, success, error]) => {
-  API.user.getPassword({}, { email: email }).then(response => {
-    success()
-  }, response => error(response))
+export const forgetPassword = ({ commit }, email) => {
+  return API.user.forgetPassword({}, { email })
 }
 
-export const resetPassword = ({ commit }, [token, password, success, error]) => {
-  API.user.resetPassword({}, {
-    token: token,
-    password: password,
+export const resetPassword = ({ commit }, [token, password]) => {
+  return API.user.resetPassword({}, {
+    token,
+    password,
     password_confirmation: password
-  }).then(response => {
-    success()
-  }, response => {
-    error(response)
   })
 }
 

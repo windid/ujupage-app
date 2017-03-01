@@ -1,6 +1,7 @@
 <script>
 import Auth from './Auth'
 import { mapActions } from 'vuex'
+import { emailRE } from '../../utils'
 
 export default {
   components: {
@@ -13,24 +14,23 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getPassword', 'loading', 'loadingDone']),
+    ...mapActions(['forgetPassword', 'loading', 'loadingDone']),
     formSubmit (e) {
       const email = e.target.email.value
-      const emailPattern = /^[A-Za-z0-9]+([-_.][A-Za-z0-9]+)*@([A-Za-z0-9]+[-.])+[A-Za-z0-9]{2,5}$/
-      if (!emailPattern.test(email)) {
+      if (!emailRE.test(email)) {
         this.error = '请输入正确的邮箱地址'
         return
       }
       this.loading()
-      this.getPassword([email, () => {
+      this.forgetPassword(email).then(() => {
         this.loadingDone()
         this.emailSent = true
-      }, (response) => {
-        if (response.status === 404) {
+      }).catch(err => {
+        if (err.status === 404) {
           this.error = '您输入的邮箱尚未注册。'
         }
         this.loadingDone()
-      }])
+      })
     }
   },
   mounted () {
