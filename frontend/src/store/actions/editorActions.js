@@ -1,6 +1,6 @@
 import API from '../../API'
 import * as types from '../mutation-types'
-import { merge, find } from 'lodash'
+import { merge, cloneDeep, find } from 'lodash'
 import elementTypes from '../../config/editorElementTypes'
 import defaultSection from '../../config/editorSection'
 
@@ -208,6 +208,22 @@ export const moveElements = ({ commit, state }, payload) => {
       const element = elements[i]
       moveSingleElement(commit, state, element)
     }
+    commit(types.SAVE_CONTENT_STATE)
+  }
+}
+
+export const alignMoveElements = ({ commit, state }, payload) => {
+  // 多选时候对齐移动元素
+  const data = payload.data
+  let count = 0
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i]
+    const element = cloneDeep(item.element)
+    element.positionInPage.left += item.move
+    moveSingleElement(commit, state, element)
+    count++
+  }
+  if (count > 0) {
     commit(types.SAVE_CONTENT_STATE)
   }
 }

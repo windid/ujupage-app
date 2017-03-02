@@ -17,11 +17,16 @@ function isOverlap (lhs, rhs) {
   return x && y
 }
 
+const DIR_LEFT = 1
+const DIR_RIGHT = 2
+const DIR_CENTER = 3
+
 // 多选操作
 class MultiSelect {
   constructor (dataManger) {
     this.dm = dataManger
     this.data = []
+    this.selection = null
   }
 
   select (selection) {
@@ -50,6 +55,7 @@ class MultiSelect {
       }
     })
     this.data = elements
+    this.selection = sl
     return {
       ids,
       selection: sl
@@ -72,6 +78,39 @@ class MultiSelect {
     }
   }
 
+  alignLeft () {
+    return this.alignMove(DIR_LEFT)
+  }
+  alignCenter () {
+    return this.alignMove(DIR_CENTER)
+  }
+  alignRight () {
+    return this.alignMove(DIR_RIGHT)
+  }
+
+  alignMove (direction) {
+    const s = this.selection
+    if (s === null) return null
+    const moves = []
+    for (let i = 0; i < this.data.length; i++) {
+      const e = this.data[i]
+      let move = s.left - e.rect.left
+      switch (direction) {
+        // 左对齐
+        case DIR_LEFT: break
+        // 居中对齐
+        case DIR_CENTER:
+          move += (s.right - s.left) / 2 - e.rect.width / 2
+          break
+        // 右对齐
+        case DIR_RIGHT:
+          move += (s.right - s.left) - e.rect.width
+          break
+      }
+      moves.push({ element: e, move })
+    }
+    return moves
+  }
 }
 
 export default MultiSelect

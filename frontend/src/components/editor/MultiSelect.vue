@@ -24,7 +24,8 @@ export default {
       'updateMultiMove',
       'clearMultiSelect',
       'moveElements',
-      'removeElements'
+      'removeElements',
+      'alignMoveElements'
     ]),
     showToolbar () {
       this.$emit('change-button-group', 'main')
@@ -84,6 +85,24 @@ export default {
     },
     moveTop () {},
     moveBottom () {},
+    alignLeft () {
+      const moves = editorHelper.selectionAlignLeft()
+      this.alignMove(moves)
+    },
+    alignCenter () {
+      const moves = editorHelper.selectionAlignCenter()
+      this.alignMove(moves)
+    },
+    alignRight () {
+      const moves = editorHelper.selectionAlignRight()
+      this.alignMove(moves)
+    },
+    alignMove (moves) {
+      if (moves === null) return
+      this.alignMoveElements({
+        data: moves
+      })
+    },
     remove () {
       this.removeElements(editorHelper.getMulti())
     }
@@ -128,13 +147,13 @@ const getElementTop = (element) => {
           <tooltip class="btn btn-default" content="移到底层" @click.native="moveBottom()">
             <span class="glyphicon glyphicon-circle-arrow-down"></span>
           </tooltip>
-          <tooltip class="btn btn-default" content="左对齐" @click.native="moveTop()">
+          <tooltip class="btn btn-default" content="左对齐" @click.native="alignLeft()">
             <span class="glyphicon glyphicon-align-left"></span>
           </tooltip>
-          <tooltip class="btn btn-default" content="居中对齐" @click.native="moveBottom()">
+          <tooltip class="btn btn-default" content="居中对齐" @click.native="alignCenter()">
             <span class="glyphicon glyphicon-align-center"></span>
           </tooltip>
-          <tooltip class="btn btn-default" content="右对齐" @click.native="moveTop()">
+          <tooltip class="btn btn-default" content="右对齐" @click.native="alignRight()">
             <span class="glyphicon glyphicon-align-right"></span>
           </tooltip>
           <tooltip class="btn btn-default" content="删除" @click.native="remove()">
