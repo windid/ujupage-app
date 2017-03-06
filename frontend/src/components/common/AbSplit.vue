@@ -65,22 +65,21 @@
           })
         }
         this.weights = [...weights]
+        // this.$forceUpdate()
       },
       inputWeight (e) {
         this.changeWeight(parseInt(e.target.getAttribute('data-index')), parseInt(e.target.value) || 0)
       }
     },
     created () {
-      let sumQuota = 0.0
       const weights = []
-      this.variations.forEach((variation) => {
-        sumQuota = sumQuota + parseFloat(variation.quota)
-      })
-      let sumWeight = 0
-      this.variations.forEach((variation, index) => {
+      const sumQuota = this.variations.reduce((sum, variation) => {
+        return sum + parseFloat(variation.quota)
+      }, 0)
+      const sumWeight = this.variations.reduce((sum, variation, index) => {
         weights[index] = parseInt(variation.quota / sumQuota * 100)
-        sumWeight += weights[index]
-      })
+        return sum + weights[index]
+      }, 0)
       weights[weights.length - 1] += (100 - sumWeight)
       this.weights = [...weights]
     }
