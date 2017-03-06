@@ -70,8 +70,4 @@
     border-style: dashed;
     background: #f9f9f9;
   }
-
-  .invite-btn {
-
-  }
 </style>

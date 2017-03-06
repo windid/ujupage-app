@@ -20,6 +20,7 @@
 
 <script>
 export default {
+  name: 'Previewer',
   props: {
     url: {
       type: String,
@@ -54,8 +55,8 @@ export default {
   z-index: 3;
   display: block;
   border: none;
-  height: 640px;
-  width: 360px;
+  height: 667px;
+  width: 375px;
   position: absolute;
   margin: auto;
   top: 0;

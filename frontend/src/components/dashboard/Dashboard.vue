@@ -1,5 +1,4 @@
 <script>
-import AppHeader from '../common/AppHeader.vue'
 import Workspace from './Workspace.vue'
 import ProjectList from './ProjectList'
 import ProjectMembers from './ProjectMembers'
@@ -7,7 +6,6 @@ import ProjectMembers from './ProjectMembers'
 export default {
   name: 'Dashboard',
   components: {
-    AppHeader,
     Workspace,
     ProjectList,
     ProjectMembers

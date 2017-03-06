@@ -39,11 +39,11 @@ export default {
     API.page.get({ id: this.$route.params.pageId }).then(response => {
       this.page = response.data
       document.title = this.page.name + ' - 预览 - 聚页'
-      API.variation.get({ pageId: this.$route.params.pageId }).then(response => {
-        this.variations = response.data
-        this.currentVariation = find(this.variations, v => v.id === parseInt(this.$route.params.variationId))
-        this.loading = false
-      })
+      return API.variation.get({ pageId: this.$route.params.pageId })
+    }).then(response => {
+      this.variations = response.data
+      this.currentVariation = find(this.variations, v => v.id === parseInt(this.$route.params.variationId))
+      this.loading = false
     })
   }
 }
