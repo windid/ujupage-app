@@ -206,6 +206,8 @@ export const moveElements = ({ commit, state }, payload) => {
   if (count > 0) {
     for (let i = 0; i < count; i++) {
       const element = elements[i]
+      element.positionInPage.left += payload.move.x
+      element.positionInPage.top += payload.move.y
       moveSingleElement(commit, state, element)
     }
     commit(types.SAVE_CONTENT_STATE)

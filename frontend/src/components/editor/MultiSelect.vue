@@ -75,7 +75,6 @@ export default {
         forward: offset
       })
       const elements = editorHelper.getMulti()
-      editorHelper.elementsMove(elements, _move)
       this.moveElements({
         elements,
         move: _move

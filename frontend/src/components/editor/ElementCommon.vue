@@ -468,22 +468,6 @@ export default {
       this.updateTimer = setTimeout(() => {
         this.updateAlignmentInfo()
       }, 800)
-    },
-
-    'multiMove': function (val) {
-      if (this.actived) {
-        const style = window.getComputedStyle(this.$el, null)
-        const getSize = (key) => parseInt(style[key])
-        const startPosLeft = getSize('left')
-        const startPosTop = getSize('top')
-        const left = startPosLeft + val.move.x
-        this.$el.style.left = left + 'px'
-        this.elPositionInPage.left = left
-        const top = startPosTop + val.move.y
-        this.$el.style.top = top + 'px'
-        const startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
-        this.elPositionInPage.top = startTop + top
-      }
     }
   },
   mounted () {
