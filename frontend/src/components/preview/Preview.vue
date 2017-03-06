@@ -3,7 +3,6 @@ import PreviewHeader from './PreviewHeader'
 import Previewer from '../common/Previewer'
 import VersionSwitcher from '../common/VersionSwitcher'
 import API from '../../API'
-import '../../style/devices.min.css'
 import { find } from 'lodash'
 
 export default {

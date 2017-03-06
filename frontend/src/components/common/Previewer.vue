@@ -33,6 +33,7 @@ export default {
 }
 </script>
 
+<style src="../../style/devices.css"></style>
 <style>
 .pc-iframe{
   position: absolute;
@@ -53,8 +54,8 @@ export default {
   z-index: 3;
   display: block;
   border: none;
-  height: 667px;
-  width: 375px;
+  height: 640px;
+  width: 360px;
   position: absolute;
   margin: auto;
   top: 0;
