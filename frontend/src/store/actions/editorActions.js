@@ -220,10 +220,11 @@ export const alignMoveElements = ({ commit, state }, payload) => {
   let count = 0
   for (let i = 0; i < data.length; i++) {
     const item = data[i]
-    const element = cloneDeep(item.element)
-    element.positionInPage.left += item.move
-    moveSingleElement(commit, state, element)
-    count++
+    if (item.move !== 0) {
+      const element = cloneDeep(item.element)
+      moveSingleElement(commit, state, element)
+      count++
+    }
   }
   if (count > 0) {
     commit(types.SAVE_CONTENT_STATE)

@@ -107,6 +107,10 @@ class MultiSelect {
           move += (s.right - s.left) - e.rect.width
           break
       }
+      e.positionInPage.left += move
+      e.rect.left += move
+      e.rect.right += move
+      e.rect.hcenter += move
       moves.push({ element: e, move })
     }
     return moves
