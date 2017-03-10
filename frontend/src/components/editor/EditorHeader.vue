@@ -49,6 +49,7 @@ export default {
     publish () {
       this.saveNotice(() => {
         if (!this.page.url) {
+          // need refactor
           this.getInput({
             header: '为您的页面选定一个URL地址',
             inputAddon: 'http://www.juyepage.com/',
@@ -115,26 +116,24 @@ export default {
         }
       }
       if (event.ctrlKey || event.metaKey) {
-        let keyCaptured = false
+        let keyCaptured = true
         const code = event.which || event.keyCode
         if (code === 83) {
           // ctrl + s 保存
-          keyCaptured = true
           this.saveVariation()
         } else if (code === 90) {
           if (event.shiftKey && !isWindows) {
             // mac: shift + ctrl + z 前进
-            keyCaptured = true
             this.redo()
           } else {
             // ctrl + z 后退
-            keyCaptured = true
             this.undo()
           }
         } else if (code === 82 && isWindows) {
           // windows: ctrl + r 前进
-          keyCaptured = true
           this.redo()
+        } else {
+          keyCaptured = false
         }
         if (keyCaptured) {
           event.stopPropagation()
