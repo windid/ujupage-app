@@ -109,9 +109,8 @@ export default {
     },
     onKey (event) {
       if (event.target) {
-        const tagName = event.target.tagName
-        const contentEditable = event.target.isContentEditable
-        if (tagName === 'INPUT' || tagName === 'TEXTAREA' || contentEditable) {
+        const { tagName, isContentEditable } = event.target
+        if (tagName === 'INPUT' || tagName === 'TEXTAREA' || isContentEditable) {
           return
         }
       }
@@ -197,8 +196,6 @@ export default {
 <style scoped>
 .flipx {
   transform: scaleX(-1);
-  /*IE*/
-  filter: FlipH;
 }
 
 .editor-header{
@@ -232,7 +229,7 @@ export default {
   line-height: 48px;
 }
 
-.editor-header .btn-group{
+.btn-group{
   margin:7px;
 }
 </style>
