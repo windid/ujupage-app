@@ -33,19 +33,19 @@ export default {
     colorSet: 'editorColorSet'
   }),
   methods: {
-    ...mapActions({
-      undo: 'undo',
-      redo: 'redo',
-      switchVersion: 'switchVersion',
-      saveVariation: 'saveVariation',
-      confirm: 'confirm',
-      getInput: 'getInput',
-      warning: 'warning',
-      setURL: 'setURL',
-      publishPage: 'publishPage',
-      traficSplit: 'traficSplit',
-      setColorSet: 'setColorSet'
-    }),
+    ...mapActions([
+      'undo',
+      'redo',
+      'switchVersion',
+      'saveVariation',
+      'confirm',
+      'getInput',
+      'warning',
+      'setURL',
+      'publishPage',
+      'traficSplit',
+      'setColorSet'
+    ]),
     publish () {
       this.saveNotice(() => {
         if (!this.page.url) {

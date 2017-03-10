@@ -120,6 +120,7 @@
   .bg-repeat li input {
     display: none;
   }
+ 
   .bg-repeat li label {
     display: block;
     width: 24px;
@@ -133,9 +134,11 @@
   .bg-repeat li label:hover {
     background-color: #ddd;
   }
+
   .bg-repeat li input:checked + label {
     background-color: #555;
   }
+
   .bg-repeat li label i {
     position: absolute;
     width: 0;
