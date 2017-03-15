@@ -289,7 +289,7 @@ export default {
       this.elPositionInPage.left = parseInt(this.$el.style.left)
       this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
-      this.updateAlignmentInfo()
+      this.updateDimen()
       this.clearAlign()
       editorHelper.alignEnd()
     },
@@ -311,7 +311,7 @@ export default {
       return handles.indexOf(handle) > -1
     },
     resizeStart (direction) {
-      this.bounds = this.getAlignmentInfo()
+      this.bounds = this.getDimen()
       const self = this.$el.getBoundingClientRect()
       const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
       const box = document.getElementById(boxContainer).getBoundingClientRect()
@@ -361,7 +361,7 @@ export default {
           height: parseInt(this.$el.style.height)
         }])
         this.$emit('resize-end')
-        this.updateAlignmentInfo()
+        this.updateDimen()
         this.clearAlign()
       } else {
         this.resizing = true
@@ -381,7 +381,7 @@ export default {
     //     }
     //   }
     // },
-    getAlignmentInfo () {
+    getDimen () {
       const elRect = this.$refs.box.getBoundingClientRect()
       const containerRect = document.getElementById('content-area').getBoundingClientRect()
       const left = elRect.left - containerRect.left
@@ -398,20 +398,26 @@ export default {
       }
       return rect
     },
-    updateAlignmentInfo (ifNew) {
+    updateDimen (ifNew) {
       const positionInPage = { top: parseInt(this.$el.style.top) + this.getPosTop(), left: parseInt(this.$el.style.left) }
       const element = {
         mid: this.mountedId,
         id: this.elementId,
         sectionId: this.sectionId,
         positionInPage,
-        rect: this.getAlignmentInfo()
+        rect: this.getDimen()
       }
       if (ifNew) {
         editorHelper.elementAdd(element)
       } else {
         editorHelper.elementUpdate(element)
       }
+    },
+    updateDimenAsync () {
+      clearTimeout(this.updateTimer)
+      this.updateTimer = setTimeout(() => {
+        this.updateDimen()
+      }, 800)
     },
     watchScroll () {
       this.watchEvent = eventHandler.listen(window, 'scroll', (e) => {
@@ -451,23 +457,17 @@ export default {
     },
 
     'workspace.version': function (newVersion) {
-      clearTimeout(this.updateTimer)
-      this.updateTimer = setTimeout(() => {
-        this.updateAlignmentInfo()
-      }, 800)
+      this.updateDimenAsync()
     },
 
     'updatedSection': function (val) {
       if (this.sectionId > val.id) {
-        this.updateAlignmentInfo()
+        this.updateDimen()
       }
     },
 
     'element.style': function (val) {
-      clearTimeout(this.updateTimer)
-      this.updateTimer = setTimeout(() => {
-        this.updateAlignmentInfo()
-      }, 800)
+      this.updateDimenAsync()
     }
   },
   mounted () {
@@ -483,7 +483,7 @@ export default {
       document.addEventListener('keydown', this.onKey)
       this.keyEventAttached = true
     }
-    this.updateAlignmentInfo(true)
+    this.updateDimen(true)
   },
   destroyed () {
     if (this.updateTimer !== null) {
