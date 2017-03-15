@@ -274,6 +274,20 @@ export const resizeElement = ({ commit, state }, [elementId, newSize]) => {
 
 // 修改元素层叠关系
 export const indexElement = ({ commit, state, getters }, [elementId, dir]) => {
+  indexOneElement({ commit, state, getters }, [elementId, dir])
+  commit(types.SAVE_CONTENT_STATE)
+}
+
+export const indexOfElements = ({ commit, state, getters }, [elements, dir]) => {
+  if (elements.length > 0) {
+    elements.forEach(element => {
+      indexOneElement({ commit, state, getters }, [element.id, dir])
+    })
+    commit(types.SAVE_CONTENT_STATE)
+  }
+}
+
+const indexOneElement = ({ commit, state, getters }, [elementId, dir]) => {
   const newElement = merge({}, state.editor.content.elements[elementId])
   if (dir === 'top') {
     newElement.style[state.editor.workspace.version]['zIndex'] = ++getters.elementsIndex[state.editor.workspace.version].max
@@ -282,7 +296,6 @@ export const indexElement = ({ commit, state, getters }, [elementId, dir]) => {
   }
 
   commit(types.MODIFY_ELEMENT, { elementId, newElement })
-  commit(types.SAVE_CONTENT_STATE)
 }
 
 // 修改元素：需要删除属性的时候，只能用replace = true对元素进行整体替换

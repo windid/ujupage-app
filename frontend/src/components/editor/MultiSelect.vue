@@ -25,7 +25,8 @@ export default {
       'clearMultiSelect',
       'moveElements',
       'removeElements',
-      'alignMoveElements'
+      'alignMoveElements',
+      'indexOfElements'
     ]),
     showToolbar () {
       this.$emit('change-button-group', 'main')
@@ -82,8 +83,12 @@ export default {
     },
     copy () {
     },
-    moveTop () {},
-    moveBottom () {},
+    moveTop () {
+      this.indexOfElements([editorHelper.getMulti(), 'top'])
+    },
+    moveBottom () {
+      this.indexOfElements([editorHelper.getMulti(), 'bottom'])
+    },
     alignLeft () {
       const moves = editorHelper.selectionAlignLeft()
       this.alignMove(moves)
@@ -137,9 +142,11 @@ const getElementTop = (element) => {
       <div v-show="visible" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
         <div class="btn-group el-btn-group" role="group">
           <slot name="main-buttons-extend"></slot>
+          <!--
           <tooltip class="btn btn-default" @click.native.stop="copy()" content="复制一份">
               <span class="glyphicon glyphicon-duplicate"></span>
           </tooltip>
+          -->
           <tooltip class="btn btn-default" content="移到顶层" @click.native="moveTop()">
             <span class="glyphicon glyphicon-circle-arrow-up"></span>
           </tooltip>
