@@ -474,6 +474,7 @@ export default {
     },
 
     'multiMove': function (val) {
+      if (!this.actived) return
       if (val === null) return
       if (val.started) {
         this.getStartPos()
