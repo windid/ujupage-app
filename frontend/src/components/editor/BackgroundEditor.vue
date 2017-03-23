@@ -77,8 +77,8 @@
         <p>背景图位置</p>
         <ul class="bg-repeat">
           <li v-for="(value, index) in positions">
-            <input type="radio" name="bg-position" :id="`bg-position${index}`" :value="value" v-model="background.position">
-            <label :for="`bg-position${index}`"><i></i></label>
+            <input type="radio" name="bg-position" :id="`bg-position-${index}`" :value="value" v-model="background.position">
+            <label :for="`bg-position-${index}`"><i></i></label>
           </li>
         </ul>
       </div>
@@ -87,7 +87,6 @@
 </template>
 
 <style scoped>
-
   .col {
     float: left;
     margin-right: 3%;
@@ -110,18 +109,18 @@
     margin: 0;
     padding: 0;
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
+    list-style: none;
   }
 
   .bg-repeat li {
     width: 33%;
-    list-style: none;
+    float: left;
   }
 
   .bg-repeat li input {
     display: none;
   }
+ 
   .bg-repeat li label {
     display: block;
     width: 24px;
@@ -135,17 +134,20 @@
   .bg-repeat li label:hover {
     background-color: #ddd;
   }
+
   .bg-repeat li input:checked + label {
     background-color: #555;
   }
+
   .bg-repeat li label i {
+    position: absolute;
     width: 0;
     height: 0;
-    position: absolute;
+    border-style: solid;
+    border-width: 0;
   }
 
   .bg-repeat li:nth-child(9n+1) label i {
-    border-style: solid;
     border-width: 8px 8px 0 0;
     border-color: #ccc transparent transparent transparent;
     top: 6px;
@@ -153,12 +155,8 @@
   }
 
   .bg-repeat li:nth-child(9n+3) label i {
-    width: 0;
-    height: 0;
-    border-style: solid;
     border-width: 0 8px 8px 0;
     border-color: transparent #ccc transparent transparent;
-    position: absolute;
     top: 6px;
     right: 6px;
   }
@@ -174,23 +172,15 @@
   }
 
   .bg-repeat li:nth-child(9n+7) label i {
-    width: 0;
-    height: 0;
-    border-style: solid;
     border-width: 8px 0 0 8px;
-    border-color: transparent transparent transparent #ccc;
-    position: absolute;
+    border-color: transparent transparent transparent  #ccc;
     bottom: 6px;
     left: 6px;
   }
 
   .bg-repeat li:nth-child(9n) label i {
-    width: 0;
-    height: 0;
-    border-style: solid;
     border-width: 0 0 8px 8px;
     border-color: transparent transparent #ccc transparent;
-    position: absolute;
     bottom: 6px;
     right: 6px;
   }

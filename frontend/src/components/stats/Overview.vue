@@ -7,6 +7,7 @@ import Chart from './charts/Chart'
 import { find } from 'lodash'
 
 export default {
+  name: 'StatsOverview',
   components: {
     StatsNav,
     Chart,
@@ -15,7 +16,7 @@ export default {
   props: ['report', 'params'],
   filters: {
     percentage (val) {
-      return (Math.round(val * 1000) / 10.0).toString() + '%'
+      return (Math.round(val * 1000) / 10) + '%'
     }
   },
   data () {

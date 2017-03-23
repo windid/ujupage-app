@@ -446,7 +446,7 @@ export default {
     },
 
     'workspace.version': function (newVersion) {
-      setTimeout(() => {
+      this._updateAlignmentTimer = setTimeout(() => {
         this.updateAlignmentInfo()
       }, 1200)
     }
@@ -476,6 +476,7 @@ export default {
     }
     // 从位置信息中删除
     editorHelper.elementRemove(this.mountedId)
+    clearTimeout(this._updateAlignmentTimer)
   }
 }
 
@@ -526,6 +527,7 @@ const getElementTop = (element) => {
         @resizing="resizeAction" 
         :side="side" 
         :minSize="sizeRange.minHeight"
+        :key="dir"
       />
     </template>
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
@@ -533,7 +535,7 @@ const getElementTop = (element) => {
         <slot name="main-buttons-extend"></slot>
         <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed"><span class="glyphicon glyphicon-pushpin"></span></tooltip>
         <tooltip class="btn btn-default" @click.native.stop="duplicateElement(elementId)" content="复制一个">
-            <span class="glyphicon glyphicon-duplicate"></span>
+          <span class="glyphicon glyphicon-duplicate"></span>
         </tooltip>
         <tooltip class="btn btn-default" content="移到顶层" @click.native="indexElement([ elementId, 'top' ])">
           <span class="glyphicon glyphicon-circle-arrow-up"></span>

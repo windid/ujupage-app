@@ -12,6 +12,7 @@
 
 <script>
 export default {
+  name: 'VersionSwitcher',
   props: {
     showAll: {
       type: Boolean,

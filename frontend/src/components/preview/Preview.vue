@@ -3,7 +3,6 @@ import PreviewHeader from './PreviewHeader'
 import Previewer from '../common/Previewer'
 import VersionSwitcher from '../common/VersionSwitcher'
 import API from '../../API'
-import '../../style/devices.min.css'
 import { find } from 'lodash'
 
 export default {
@@ -33,18 +32,18 @@ export default {
   },
   computed: {
     url () {
-      return '/api/pages/' + this.page.id + '/variations/' + this.currentVariation.id + '/preview'
+      return `/api/pages/${this.page.id}/variations/${this.currentVariation.id}/preview`
     }
   },
   created () {
     API.page.get({ id: this.$route.params.pageId }).then(response => {
       this.page = response.data
       document.title = this.page.name + ' - 预览 - 聚页'
-      API.variation.get({ pageId: this.$route.params.pageId }).then(response => {
-        this.variations = response.data
-        this.currentVariation = find(this.variations, v => v.id === parseInt(this.$route.params.variationId))
-        this.loading = false
-      })
+      return API.variation.get({ pageId: this.$route.params.pageId })
+    }).then(response => {
+      this.variations = response.data
+      this.currentVariation = find(this.variations, v => v.id === parseInt(this.$route.params.variationId))
+      this.loading = false
     })
   }
 }

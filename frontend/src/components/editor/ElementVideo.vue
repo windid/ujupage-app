@@ -20,7 +20,7 @@ export default {
       urlError: false,
       videoInfo: this.element.videoInfo ? merge({}, this.element.videoInfo) : {},
       size: {
-        with: null,
+        width: null,
         height: null
       }
     }

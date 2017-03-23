@@ -138,40 +138,40 @@ export default {
 </script>
 
 <template>
-<element-common
-  :element="element" 
-  :section-id="sectionId" 
-  :element-id="elementId"
-  :button-group="buttonGroup"
-  :resizable="resizable"
-  :resize="resize"
-  @change-button-group="changeButtonGroup"
-  @drag-start="editDone">
-  <div class="element-map" slot="content" @dblclick.stop="edit">
-    <div class="element-map-content" ref="mapContent"></div>
-    <div class="map-mask"></div>
-  </div>
-  <template slot="main-buttons-extend">
-    <div class="btn btn-primary" title="定位" @click.stop="edit">定位</div>
-  </template>
-  <template slot="button-groups">
-    <div v-if="buttonGroup === 'address'">
-      <div class="input-group search-form">
-        <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input" placeholder="输入地名，回车搜索"></input>
-        <div class="input-group-btn">
-          <div class="btn btn-primary" @click.stop="search">搜索</div>
+  <element-common
+    :element="element" 
+    :section-id="sectionId" 
+    :element-id="elementId"
+    :button-group="buttonGroup"
+    :resizable="resizable"
+    :resize="resize"
+    @change-button-group="changeButtonGroup"
+    @drag-start="editDone">
+    <div class="element-map" slot="content" @dblclick.stop="edit">
+      <div class="element-map-content" ref="mapContent"></div>
+      <div class="map-mask"></div>
+    </div>
+    <template slot="main-buttons-extend">
+      <div class="btn btn-primary" title="定位" @click.stop="edit">定位</div>
+    </template>
+    <template slot="button-groups">
+      <div v-if="buttonGroup === 'address'">
+        <div class="input-group search-form">
+          <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input" placeholder="输入地名，回车搜索">
+          <div class="input-group-btn">
+            <div class="btn btn-primary" @click.stop="search">搜索</div>
+          </div>
+        </div>
+        <div class="search-result" v-show="showList">
+          <ul>
+            <li
+              v-for="(pos, index) in posList"
+              @click="selectAddress(index)">{{pos.name}}</li>
+          </ul>
         </div>
       </div>
-      <div class="search-result" v-show="showList">
-        <ul>
-          <li
-            v-for="(pos, index) in posList"
-            @click="selectAddress(index)">{{pos.name}}</li>
-        </ul>
-      </div>
-    </div>
-  </template>
-</element-common>
+    </template>
+  </element-common>
 </template>
 
 <style scoped>

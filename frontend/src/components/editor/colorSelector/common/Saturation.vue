@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     bgColor () {
-      return 'hsl(' + this.hsv.h + ',100%, 50%)'
+      return `hsl(${this.hsv.h}, 100%, 50%)`
     },
     pointerTop () {
       return (100 - this.hsv.v) + '%'

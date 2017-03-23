@@ -82,7 +82,7 @@ export function parse (dateStr) {
 
   const timestamp = Date.parse(dateStr)
   if (Number.isNaN(timestamp)) {
-    throw new TypeError(`${dateStr} is an invalid argument for Date.parse`)
+    throw new TypeError(`Invalid argument`)
   }
   return new Date(timestamp)
 }

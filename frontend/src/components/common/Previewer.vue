@@ -20,6 +20,7 @@
 
 <script>
 export default {
+  name: 'Previewer',
   props: {
     url: {
       type: String,
@@ -33,6 +34,7 @@ export default {
 }
 </script>
 
+<style src="../../style/devices.css"></style>
 <style>
 .pc-iframe{
   position: absolute;

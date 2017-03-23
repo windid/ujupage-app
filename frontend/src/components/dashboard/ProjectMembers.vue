@@ -38,8 +38,8 @@
 </script>
 <template>
   <div style="float: right; margin: 10px 0">
-    <member v-for="member in members" :member="member" class="avatar"></member>
-    <member v-for="(email, id) in invited" :member="{id: id, email: email, name: email}" class="avatar invited"></member>
+    <member v-for="member in members" :member="member" class="avatar" :key="members.id"></member>
+    <member v-for="(email, id) in invited" :member="{id: id, email: email, name: email}" :key="id" class="avatar invited"></member>
     <tooltip v-if="isAdmin" content="邀请新成员" class="avatar invite-btn" @click.native="invite">+</tooltip>
   </div>
 </template>
@@ -69,9 +69,5 @@
   .avatar.invited {
     border-style: dashed;
     background: #f9f9f9;
-  }
-
-  .invite-btn {
-
   }
 </style>

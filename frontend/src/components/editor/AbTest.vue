@@ -15,7 +15,6 @@ export default {
   },
   methods: {
     ...mapActions([
-      'createEmptyVariation',
       'duplicateVariation',
       'removeVariation',
       'renameVariation',
@@ -52,10 +51,6 @@ export default {
           this.show = false
         }
       })
-    },
-    create () {
-      this.createEmptyVariation()
-      this.show = false
     },
     switchVariation (variation) {
       this.$router.push({ name: 'variation', params: { pageId: this.$route.params.pageId, variationId: variation.id }})

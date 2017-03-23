@@ -1,12 +1,11 @@
 <script>
-import { Tooltip, Button, Loading, Message } from 'element-ui'
+import { Tooltip, Loading, Message } from 'element-ui'
 import API from '../../API'
 import { mapActions } from 'vuex'
 
 export default {
   components: {
-    Tooltip,
-    'el-button': Button
+    Tooltip
   },
   data () {
     return {
@@ -74,7 +73,7 @@ export default {
         const height = img.naturalHeight || img.height
         if (width < 160 || height < 160) {
           // 如果图片尺寸太小
-          this.showDialog(this.messages.avatarTooSmall)
+          this.showMessage(this.messages.avatarTooSmall)
         } else {
           const data = new window.FormData()
           data.append('avatar', image)
@@ -91,7 +90,7 @@ export default {
             }
           }).catch(() => {
             console.error('用户头像上传失败')
-            this.showDialog(this.messages.avatarFail)
+            this.showMessage(this.messages.avatarFail)
           }).finally(() => {
             loader.close()
           })
@@ -100,7 +99,7 @@ export default {
       const URL = window.URL || window.webkitURL
       img.src = URL.createObjectURL(image)
     },
-    showDialog (message) {
+    showMessage (message) {
       Message[message.type]({
         message: message.content,
         showClose: true
@@ -112,20 +111,20 @@ export default {
       const data = new window.FormData()
       const name = this.user.name
       if (isEmpty(name)) {
-        this.showDialog(this.messages.fieldEmpty('用户名'))
+        this.showMessage(this.messages.fieldEmpty('用户名'))
         return
       }
       if (this.changePassword) {
         if (isEmpty(this.oldPassword)) {
-          this.showDialog(this.messages.fieldEmpty('旧密码'))
+          this.showMessage(this.messages.fieldEmpty('旧密码'))
           return
         }
         if (isEmpty(this.newPassword) || isEmpty(this.newPassword2)) {
-          this.showDialog(this.messages.fieldEmpty('新密码'))
+          this.showMessage(this.messages.fieldEmpty('新密码'))
           return
         }
         if (this.newPassword !== this.newPassword2) {
-          this.showDialog(this.messages.passNotMatch)
+          this.showMessage(this.messages.passNotMatch)
           return
         }
         data.append('old_password', this.oldPassword)
@@ -133,15 +132,13 @@ export default {
         data.append('password_confirmation', this.newPassword2)
       }
       data.append('name', name)
-      API.user.edit(data).then(
-      response => {
-        this.showDialog(this.messages.editSuccess)
+      API.user.edit(data).then(response => {
+        this.showMessage(this.messages.editSuccess)
         this.user = response.body
         this.editDone()
-      },
-      response => {
-        if (response.status === 401) {
-          this.showDialog(this.messages.authFail)
+      }).catch(err => {
+        if (err.status === 401) {
+          this.showMessage(this.messages.authFail)
         }
       })
     }

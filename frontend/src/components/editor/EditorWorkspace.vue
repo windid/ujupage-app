@@ -129,6 +129,7 @@ export default {
         v-for="(section, sectionId) in sections" 
         :section-id="sectionId"
         :section="section"
+        :key="sectionId"
       >
       </page-section>
     </div>
