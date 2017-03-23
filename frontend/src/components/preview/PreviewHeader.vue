@@ -24,7 +24,7 @@ export default {
 </script>
 
 <template>
-  <div class="fixed-header preview-header">
+  <div class="preview-header">
     <div class="home">
       <router-link :to="'/editor/' + $route.params.pageId + '/' + $route.params.variationId" class="home-link">
         <span class="glyphicon glyphicon-chevron-left"></span>
@@ -55,5 +55,39 @@ export default {
 </template>
 
 <style scoped>
+.preview-header{
+  position: fixed;
+  top: 0;
+  height:50px;
+  width:100%;
+  z-index: 1000001;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 0 8px #ddd;
+}
+
+.home {
+  float: left;
+  width: 50px;
+  margin-right:12px;
+  background: #f9f9f9;
+  border-right:1px solid #ddd;
+}
+
+.home:hover {
+  background: #f5f5f5;
+}
+
+.home-link {
+  display: block;
+  font-size:20px;
+  text-align: center;
+  line-height: 48px;
+}
+
+.preview-header .btn-group{
+  margin:7px;
+}
 
 </style>

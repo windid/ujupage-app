@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     url () {
-      return `/api/pages/${this.page.id}/variations/${this.currentVariation.id}/preview`
+      return '/api/pages/' + this.page.id + '/variations/' + this.currentVariation.id + '/preview'
     }
   },
   created () {
