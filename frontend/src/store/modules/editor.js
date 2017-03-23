@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import * as types from '../mutation-types'
-import { merge } from 'lodash'
+import { merge, clone } from 'lodash'
 import randomChar from '../../utils/randomChar'
 
 const state = {
@@ -40,7 +40,8 @@ const state = {
       right: 0,
       bottom: 0,
       visible: false
-    }
+    },
+    updatedSection: null
   },
 
   // 历史记录，用于撤销重做
@@ -143,6 +144,9 @@ const mutations = {
         state.workspace.undo = false
       }
     }
+    // 清理
+    state.assist.activeIds = []
+    state.assist.selection.visible = false
   },
 
   // 重做
@@ -156,6 +160,9 @@ const mutations = {
         state.workspace.redo = false
       }
     }
+    // 清理
+    state.assist.activeIds = []
+    state.assist.selection.visible = false
   },
 
   // 在移动版和桌面版之间切换
@@ -197,6 +204,9 @@ const mutations = {
   // 修改板块
   [types.MODIFY_SECTION] (state, { sectionId, style }) {
     state.content.sections[sectionId].style = merge({}, state.content.sections[sectionId].style, style)
+    state.assist.updatedSection = {
+      id: sectionId
+    }
   },
 
   // 设置在编辑状态中的板块
@@ -241,9 +251,17 @@ const mutations = {
   [types.MOVE_ELEMENT] (state, { elementId, newElement, sectionId, newSectionId }) {
     Vue.set(state.content.elements, elementId, merge({}, newElement))
     if (sectionId !== newSectionId) {
-      state.content.sections[sectionId]['elements'][state.workspace.version].splice(state.content.sections[sectionId]['elements'][state.workspace.version].indexOf(elementId), 1)
-      state.content.sections[newSectionId]['elements'][state.workspace.version].push(elementId)
+      const oldElements = state.content.sections[sectionId]['elements'][state.workspace.version]
+      const index = oldElements.indexOf(elementId)
+      oldElements.splice(index, 1)
+      const newElements = state.content.sections[newSectionId]['elements'][state.workspace.version]
+
+      newElements.push(elementId)
     }
+  },
+
+  [types.UPDATE_MULTI_MOVE] (state, payload) {
+    state.assist.multi.move = payload
   },
 
   [types.REMOVE_ELEMENT] (state, { elementId, sectionIds }) {
@@ -274,34 +292,9 @@ const mutations = {
     state.assist.activeIds = []
   },
 
-  [types.MULTI_SELECT_UPDATE] (state, selection) {
-    state.assist.activeIds = []
-    const rect = selection.rect
-    const computedRect = {
-      left: rect.left,
-      top: rect.top,
-      width: rect.width,
-      height: rect.height
-    }
-    const origin = selection.origin
-    computedRect.left -= origin.left
-    const sl = state.assist.selection
-    state.assist.elements.forEach(e => {
-      if (isOverlap(e.rect, computedRect)) {
-        if (state.assist.activeIds.length <= 0) {
-          sl.left = e.rect.left
-          sl.right = e.rect.right
-          sl.top = e.rect.top
-          sl.bottom = e.rect.bottom
-        } else {
-          sl.left = Math.min(sl.left, e.rect.left)
-          sl.top = Math.min(sl.top, e.rect.top)
-          sl.right = Math.max(sl.right, e.rect.right)
-          sl.bottom = Math.max(sl.bottom, e.rect.bottom)
-        }
-        state.assist.activeIds.push(e.id)
-      }
-    })
+  [types.MULTI_SELECT_UPDATE] (state, result) {
+    state.assist.activeIds = result.ids
+    state.assist.selection = result.selection
   },
 
   [types.MULTI_SELECT_DONE] (state) {
@@ -312,31 +305,11 @@ const mutations = {
 
   [types.MULTI_SELECT_CLEAR] (state) {
     state.assist.activeIds = []
-    state.assist.selection = {
-      left: 0,
-      top: 0,
-      right: 0,
-      bottom: 0,
-      visible: false
-    }
+    const newState = clone(state.assist.selection)
+    state.assist.selection = newState
+    state.assist.selection.visible = false
   }
 
-}
-
-function isOverlap (lhs, rhs) {
-  let x = false
-  let y = false
-  if (lhs.left >= rhs.left) {
-    x = (lhs.left - rhs.left) <= rhs.width
-  } else {
-    x = (rhs.left - lhs.left) <= lhs.width
-  }
-  if (lhs.top >= rhs.top) {
-    y = (lhs.top - rhs.top) <= rhs.height
-  } else {
-    y = (rhs.top - lhs.top) <= lhs.height
-  }
-  return x && y
 }
 
 export default {

@@ -6,7 +6,7 @@ import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
 import eventHandler from '../../utils/eventHandler'
-import * as editorHelper from '../../utils/editorHelper'
+import * as editorHelper from '../../utils/editor'
 
 // 纪录上一个操作的元素，需要用来判断在移动元素到新的section时已经发生了复制
 let EDIT_CACHE = {
@@ -67,6 +67,7 @@ export default {
         handles: 'e',
         aspectRatio: false
       },
+      updateTimer: null,
       dragging: false,
       resizing: false,
       startTop: 0,
@@ -92,9 +93,11 @@ export default {
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace',
-      alignIds: 'getAlignIds'
+      alignIds: 'getAlignIds',
+      multiMove: 'getMultiMove',
+      updatedSection: 'getUpdatedSection'
     }),
-    hasAligned () {
+    actived () {
       return this.alignIds.indexOf(this.elementId) >= 0
     },
     // 直接watch element.fixed居然无效，只好用计算属性来监听，不确定是不是Vue的bug
@@ -224,6 +227,9 @@ export default {
         y: getMin(move.y, this.verticalMax)
       }
     },
+    getPosTop () {
+      return getElementTop(this.$el) - 50 - this.$el.offsetTop
+    },
     dragBegin () {
       this.clearMultiSelect()
       if (!this.keyEventAttached) {
@@ -243,7 +249,7 @@ export default {
       const box = document.getElementById(boxContainer).getBoundingClientRect()
       this.horizontalMax = [box.left - self.left, box.right - self.right]
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
-      this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
+      this.startTop = this.getPosTop()
 
       editorHelper.alignBegin(this.elementId)
     },
@@ -283,7 +289,7 @@ export default {
       this.elPositionInPage.left = parseInt(this.$el.style.left)
       this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
-      this.updateAlignmentInfo()
+      this.updateDimen()
       this.clearAlign()
       editorHelper.alignEnd()
     },
@@ -305,7 +311,7 @@ export default {
       return handles.indexOf(handle) > -1
     },
     resizeStart (direction) {
-      this.bounds = this.getAlignmentInfo()
+      this.bounds = this.getDimen()
       const self = this.$el.getBoundingClientRect()
       const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
       const box = document.getElementById(boxContainer).getBoundingClientRect()
@@ -355,7 +361,7 @@ export default {
           height: parseInt(this.$el.style.height)
         }])
         this.$emit('resize-end')
-        this.updateAlignmentInfo()
+        this.updateDimen()
         this.clearAlign()
       } else {
         this.resizing = true
@@ -375,38 +381,43 @@ export default {
     //     }
     //   }
     // },
-    getAlignmentInfo () {
-      const elRectangle = this.$refs.box.getBoundingClientRect()
+    getDimen () {
+      const elRect = this.$refs.box.getBoundingClientRect()
       const containerRect = document.getElementById('content-area').getBoundingClientRect()
-      const left = elRectangle.left - containerRect.left
-      const right = elRectangle.right - containerRect.left
-      const top = elRectangle.top - containerRect.top
-      const bottom = elRectangle.bottom - containerRect.top
-      const hcenter = Math.round(left + elRectangle.width / 2)
-      const vcenter = Math.round(top + elRectangle.height / 2)
+      const left = elRect.left - containerRect.left
+      const right = elRect.right - containerRect.left
+      const top = elRect.top - containerRect.top
+      const bottom = elRect.bottom - containerRect.top
+      const hcenter = Math.round((left + right) / 2)
+      const vcenter = Math.round((top + bottom) / 2)
       const rect = {
-        width: elRectangle.width,
-        height: elRectangle.height,
-        left,
-        right,
-        top,
-        bottom,
-        hcenter,
-        vcenter
+        width: elRect.width,
+        height: elRect.height,
+        left, hcenter, right,
+        top, vcenter, bottom
       }
       return rect
     },
-    updateAlignmentInfo (ifNew) {
+    updateDimen (ifNew) {
+      const positionInPage = { top: parseInt(this.$el.style.top) + this.getPosTop(), left: parseInt(this.$el.style.left) }
       const element = {
         mid: this.mountedId,
         id: this.elementId,
-        rect: this.getAlignmentInfo()
+        sectionId: this.sectionId,
+        positionInPage,
+        rect: this.getDimen()
       }
       if (ifNew) {
         editorHelper.elementAdd(element)
       } else {
         editorHelper.elementUpdate(element)
       }
+    },
+    updateDimenAsync () {
+      clearTimeout(this.updateTimer)
+      this.updateTimer = setTimeout(() => {
+        this.updateDimen()
+      }, 800)
     },
     watchScroll () {
       this.watchEvent = eventHandler.listen(window, 'scroll', (e) => {
@@ -446,9 +457,17 @@ export default {
     },
 
     'workspace.version': function (newVersion) {
-      this._updateAlignmentTimer = setTimeout(() => {
-        this.updateAlignmentInfo()
-      }, 1200)
+      this.updateDimenAsync()
+    },
+
+    'updatedSection': function (val) {
+      if (this.sectionId > val.id) {
+        this.updateDimen()
+      }
+    },
+
+    'element.style': function (val) {
+      this.updateDimenAsync()
     }
   },
   mounted () {
@@ -464,9 +483,13 @@ export default {
       document.addEventListener('keydown', this.onKey)
       this.keyEventAttached = true
     }
-    this.updateAlignmentInfo(true)
+    this.updateDimen(true)
   },
   destroyed () {
+    if (this.updateTimer !== null) {
+      clearTimeout(this.updateTimer)
+      this.updateTimer = null
+    }
     if (this.keyMoveTimer !== null) {
       clearTimeout(this.keyMoveTimer)
       this.keyMoveTimer = null
@@ -497,7 +520,7 @@ const getElementTop = (element) => {
 <template>
   <div class="element" @click="selectElement" @mousedown.stop="onDragBegin"
     ref="box"
-    :class="{'align-highlighted': hasAligned}"
+    :class="{'align-highlighted': actived}"
     :style="{
       display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
       left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,
@@ -583,49 +606,6 @@ const getElementTop = (element) => {
   outline: 1px solid #03ddff;
 }
 
-.el-toolbar {
-  position: absolute;
-  height: auto;
-  padding: 0;
-  z-index: 90000;
-  margin-bottom: 0;
-}
-
-.el-toolbar.top {
-  top: -43px;
-}
-
-.el-toolbar.bottom {
-  bottom: -43px;
-}
-
-.el-toolbar.left {
-  left: -1px;
-}
-
-.el-toolbar.right {
-  right: -1px;
-}
-
-.el-btn-group {
-  white-space: nowrap;
-  font-size: 0;
-}
-
-.el-btn-group > .btn, .el-btn-group > .btn-group {
-  float: none;
-}
-
-.el-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 110000;
-  background: white;
-  opacity: 0;
-  filter: alpha(opacity=1);
-}
-
 .resize-handle {
   z-index: 101000;
 }
@@ -677,6 +657,49 @@ const getElementTop = (element) => {
 </style>
 
 <style>
+  .el-toolbar {
+    position: absolute;
+    height: auto;
+    padding: 0;
+    z-index: 90000;
+    margin-bottom: 0;
+  }
+
+  .el-toolbar.top {
+    top: -43px;
+  }
+
+  .el-toolbar.bottom {
+    bottom: -43px;
+  }
+
+  .el-toolbar.left {
+    left: -1px;
+  }
+
+  .el-toolbar.right {
+    right: -1px;
+  }
+
+  .el-btn-group {
+    white-space: nowrap;
+    font-size: 0;
+  }
+
+  .el-btn-group > .btn, .el-btn-group > .btn-group {
+    float: none;
+  }
+
+  .el-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 110000;
+    background: white;
+    opacity: 0;
+    filter: alpha(opacity=1);
+  }
+
   .align-highlighted {
     outline: 1px solid red;
   }
