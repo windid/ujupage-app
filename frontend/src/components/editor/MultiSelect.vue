@@ -55,12 +55,18 @@ export default {
       this.horizontalMax = [box.left - self.left, box.right - self.right]
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
       this.startTop = -50 - this.$el.offsetTop
+      this.updateMultiMove({
+        started: true
+      })
     },
     dragMove (move, offset) {
       if (move && move.x === 0 && move.y === 0) return
       const _move = this.actualMove(move)
       this.$refs.box.style.left = `${this.startPosLeft + _move.x}px`
       this.$refs.box.style.top = `${this.startPosTop + _move.y}px`
+      this.updateMultiMove({
+        move: _move
+      })
     },
     dragEnd (move, offset) {
       if (move.x === 0 && move.y === 0) return
