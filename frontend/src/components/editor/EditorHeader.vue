@@ -144,9 +144,10 @@ export default {
     }
   },
   mounted () {
+    document.removeEventListener('keydown', this.onKey)
     document.addEventListener('keydown', this.onKey)
   },
-  destroy () {
+  destroyed () {
     document.removeEventListener('keydown', this.onKey)
   }
 
@@ -174,10 +175,10 @@ export default {
       </div> -->
       <div class="btn-group">
         <tooltip content="撤销" class="btn btn-default" :class="{ disabled: !undoButton }" @click.native="undo">
-          <span class="glyphicon glyphicon-share-alt flipx"></span>
+          <div><span class="glyphicon glyphicon-share-alt flipx"></span></div>
         </tooltip>
         <tooltip content="重做" class="btn btn-default" :class="{ disabled: !redoButton }" @click.native="redo">
-          <span class="glyphicon glyphicon-share-alt"></span>
+          <div><span class="glyphicon glyphicon-share-alt"></span></div>
         </tooltip>
       </div>
       
