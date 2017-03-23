@@ -230,6 +230,12 @@ export default {
     getPosTop () {
       return getElementTop(this.$el) - 50 - this.$el.offsetTop
     },
+    getStartPos () {
+      const style = window.getComputedStyle(this.$el, null)
+      const getSize = (key) => parseInt(style[key])
+      this.startPosLeft = getSize('left')
+      this.startPosTop = getSize('top')
+    },
     dragBegin () {
       this.clearMultiSelect()
       if (!this.keyEventAttached) {
@@ -237,10 +243,7 @@ export default {
         this.keyEventAttached = true
       }
       EDIT_CACHE = { id: this.elementId, mountedId: this.mountedId }
-      const style = window.getComputedStyle(this.$el, null)
-      const getSize = (key) => parseInt(style[key])
-      this.startPosLeft = getSize('left')
-      this.startPosTop = getSize('top')
+      this.getStartPos()
       this.setActiveElementId(this.elementId)
       this.$emit('drag-start')
 
@@ -468,6 +471,21 @@ export default {
 
     'element.style': function (val) {
       this.updateDimenAsync()
+    },
+
+    'multiMove': function (val) {
+      if (val === null) return
+      if (val.started) {
+        this.getStartPos()
+      }
+      if (val.move) {
+        const left = this.startPosLeft + val.move.x
+        this.$el.style.left = left + 'px'
+        this.elPositionInPage.left = left
+        const top = this.startPosTop + val.move.y
+        this.$el.style.top = top + 'px'
+        this.elPositionInPage.top = top
+      }
     }
   },
   mounted () {
@@ -519,7 +537,7 @@ const getElementTop = (element) => {
 <template>
   <div class="element" @click="selectElement" @mousedown.stop="onDragBegin"
     ref="box"
-    :class="{'align-highlighted': actived}"
+    :class="{ 'active-highlighted': actived }"
     :style="{
       display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
       left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,
@@ -528,7 +546,7 @@ const getElementTop = (element) => {
       right: element.fixed ? element.fixedPosition.right : '',
       width: element.style[workspace.version].width,
       height: element.style[workspace.version].height || 'auto',
-      transition: (resizing || dragging) ? 'none' : 'all .3s'
+      transition: (actived || resizing || dragging) ? 'none' : 'all .3s'
     }"
   >
     <div class="el-content" :id="'element-' + elementId"
@@ -698,7 +716,7 @@ const getElementTop = (element) => {
     filter: alpha(opacity=1);
   }
 
-  .align-highlighted {
+  .active-highlighted {
     outline: 1px solid red;
   }
 </style>
