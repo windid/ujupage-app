@@ -151,7 +151,6 @@ export default {
 }
 </script>
 
-
 <template>
   <div class="fixed-header editor-header">
     <div class="home">
