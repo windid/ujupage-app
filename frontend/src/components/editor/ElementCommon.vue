@@ -574,18 +574,20 @@ const getElementTop = (element) => {
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
-        <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed"><span class="glyphicon glyphicon-pushpin"></span></tooltip>
+        <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed">
+          <div><span class="glyphicon glyphicon-pushpin"></span></div>
+        </tooltip>
         <tooltip class="btn btn-default" @click.native.stop="duplicateElement(elementId)" content="复制一个">
-          <span class="glyphicon glyphicon-duplicate"></span>
+          <div><span class="glyphicon glyphicon-duplicate"></span></div>
         </tooltip>
         <tooltip class="btn btn-default" content="移到顶层" @click.native="indexElement([ elementId, 'top' ])">
-          <span class="glyphicon glyphicon-circle-arrow-up"></span>
+          <div><span class="glyphicon glyphicon-circle-arrow-up"></span></div>
         </tooltip>
         <tooltip class="btn btn-default" content="移到底层" @click.native="indexElement([ elementId, 'bottom' ])">
-          <span class="glyphicon glyphicon-circle-arrow-down"></span>
+          <div><span class="glyphicon glyphicon-circle-arrow-down"></span></div>
         </tooltip>
         <tooltip class="btn btn-default" content="删除" @click.native="removeElement([elementId])">
-          <span class="glyphicon glyphicon-trash"></span>
+          <div><span class="glyphicon glyphicon-trash"></span></div>
         </tooltip>
       </div>
       <div v-show="buttonGroup === 'fixedEditing'" class="btn-group el-btn-group" role="group">
