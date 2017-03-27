@@ -93,9 +93,9 @@ export default {
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace',
-      alignIds: 'getAlignIds',
-      multiMove: 'getMultiMove',
-      updatedSection: 'getUpdatedSection'
+      alignIds: 'alignIds',
+      multiMove: 'multiMove',
+      updatedSection: 'updatedSection'
     }),
     actived () {
       return this.alignIds.indexOf(this.elementId) >= 0
