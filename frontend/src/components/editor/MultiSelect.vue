@@ -154,22 +154,22 @@ const getElementTop = (element) => {
           </tooltip>
           -->
           <tooltip class="btn btn-default" content="移到顶层" @click.native="moveTop()">
-            <span class="glyphicon glyphicon-circle-arrow-up"></span>
+            <div><span class="glyphicon glyphicon-circle-arrow-up"></span></div>
           </tooltip>
           <tooltip class="btn btn-default" content="移到底层" @click.native="moveBottom()">
-            <span class="glyphicon glyphicon-circle-arrow-down"></span>
+            <div><span class="glyphicon glyphicon-circle-arrow-down"></span></div>
           </tooltip>
           <tooltip class="btn btn-default" content="左对齐" @click.native="alignLeft()">
-            <span class="glyphicon glyphicon-align-left"></span>
+            <div><span class="glyphicon glyphicon-align-left"></span></div>
           </tooltip>
           <tooltip class="btn btn-default" content="居中对齐" @click.native="alignCenter()">
-            <span class="glyphicon glyphicon-align-center"></span>
+            <div><span class="glyphicon glyphicon-align-center"></span></div>
           </tooltip>
           <tooltip class="btn btn-default" content="右对齐" @click.native="alignRight()">
-            <span class="glyphicon glyphicon-align-right"></span>
+            <div><span class="glyphicon glyphicon-align-right"></span></div>
           </tooltip>
           <tooltip class="btn btn-default" content="删除" @click.native="remove()">
-            <span class="glyphicon glyphicon-trash"></span>
+            <div><span class="glyphicon glyphicon-trash"></span></div>
           </tooltip>
         </div>
       </div>

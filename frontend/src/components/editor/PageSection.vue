@@ -122,7 +122,7 @@ export default {
   <div  
     class="section"
     :style="mainStyle"
-    @mouseenter="mouseHere = true"
+    @mouseover="mouseHere = true"
     @mouseleave="mouseHere = false"
   >
     <!-- 蒙板 -->

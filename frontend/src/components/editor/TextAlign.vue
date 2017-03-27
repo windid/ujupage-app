@@ -26,7 +26,7 @@ export default {
 <template>
   <dropdown :show="show" @toggle="show = !show">
     <tooltip class="btn btn-default dropdown-toggle" data-toggle="dropdown" content="对齐" :disabled="show">
-      <span :class="'glyphicon glyphicon-align-' + value"></span> <span class="caret"></span>
+      <div><span :class="'glyphicon glyphicon-align-' + value"></span> <span class="caret"></span></div>
     </tooltip>
     <ul slot="dropdown-menu" class="dropdown-menu dropdown-menu-narrow">
       <li v-for="position in textPositions" @click="setValue(position)" :class="{'selected':value == position}">

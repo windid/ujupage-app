@@ -29,7 +29,7 @@ export default {
 <template>
   <dropdown :show="show" @toggle="show=!show">
     <tooltip class="btn btn-default dropdown-toggle" data-toggle="dropdown" content="行高" :disabled="show">
-      <span class="glyphicon glyphicon-text-height"></span> <span class="caret"></span>
+      <div><span class="glyphicon glyphicon-text-height"></span></div>
     </tooltip>
     <ul slot="dropdown-menu" class="dropdown-menu dropdown-menu-narrow">
       <li v-for="line in lineHeights" @click="setLineHeight(line)" :class="{'selected':value == line}">{{line}}</li>

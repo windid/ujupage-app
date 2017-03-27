@@ -168,7 +168,7 @@ export default {
     <div class="btn-toolbar fr">
       <!-- <div class="btn-group">
         <tooltip class="btn btn-default" content="帮助">
-          <span class="glyphicon glyphicon-question-sign"></span>
+          <div><span class="glyphicon glyphicon-question-sign"></span></div>
         </tooltip>
       </div> -->
       <div class="btn-group">
