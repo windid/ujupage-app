@@ -24,8 +24,8 @@ export default {
       workspace: 'editorWorkspace',
       height: 'editorHeight',
       sections: 'editorSections',
-      alignLines: 'getAlignLines',
-      selectionArea: 'getSelectionArea'
+      alignLines: 'alignLines',
+      selectionArea: 'selectionArea'
     })
   },
   data () {
