@@ -502,7 +502,8 @@ export default {
       document.addEventListener('keydown', this.onKey)
       this.keyEventAttached = true
     }
-    this.updateDimen(true)
+    // 在 mobile/pc 切换时有动画，如果元素曾移动到不同的版块，会重新生成
+    this.updateDimenAsync()
   },
   destroyed () {
     if (this.updateTimer !== null) {
