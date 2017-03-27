@@ -11,6 +11,8 @@ const state = {
     version: 'mobile',
     // 编辑状态中的板块id
     activeSectionId: null,
+    // 显示编辑按钮的板块Id
+    currentSectionId: 0,
     // 被选中的元素id
     activeElementId: '',
     // 编辑状态中的AB测试版本
@@ -212,6 +214,10 @@ const mutations = {
   // 设置在编辑状态中的板块
   [types.SET_ACTIVE_SECTION_ID] (state, { sectionId }) {
     state.workspace.activeSectionId = sectionId
+  },
+
+  [types.SET_CURRENT_SECTION_ID] (state, { sectionId }) {
+    state.workspace.currentSectionId = sectionId
   },
 
   // 设置选中的元素
