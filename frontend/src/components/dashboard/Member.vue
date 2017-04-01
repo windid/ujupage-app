@@ -75,21 +75,21 @@
 </script>
 
 <template>
-  <tooltip data-toggle="dropdown" v-model="show" :manual="true" @click.native="toggle">
+  <tooltip data-toggle="dropdown" v-model="show" :manual="true" @click.native="toggle" placement="bottom">
     <div>
       {{memberName}}
-      <div ref="tooltip" slot="content" class="tooltip-content">
-        <p v-if="memberRole === 'invited'">
-          {{member.email}}<br>
-          已邀请<br>
-        </p>
-        <p v-else>
-          {{member.name}}<br>
-          {{member.email}}<br>
-          {{memberRole === 'admin' ? '项目管理员' : '项目成员'}}<br>
-        </p>
-        <div v-if="isAdmin && memberRole !== 'admin'" class="btn btn-xs btn-danger" @click="remove">移除</div>
-      </div>
+    </div>
+    <div ref="tooltip" slot="content" class="tooltip-content">
+      <p v-if="memberRole === 'invited'">
+        {{member.email}}<br>
+        已邀请<br>
+      </p>
+      <p v-else>
+        {{member.name}}<br>
+        {{member.email}}<br>
+        {{memberRole === 'admin' ? '项目管理员' : '项目成员'}}<br>
+      </p>
+      <div v-if="isAdmin && memberRole !== 'admin'" class="btn btn-xs btn-danger" @click="remove">移除</div>
     </div>
   </tooltip>
 </template>
