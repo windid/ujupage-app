@@ -1,7 +1,7 @@
 <script>
-import elementMixin from '../../mixins/elementMixin'
+import elementMixin from 'mixins/elementMixin'
 import VideoEditor from './VideoEditor'
-import videoHandler from '../../utils/videoHandler'
+import videoHandler from 'utils/videoHandler'
 
 import { merge, isEqual } from 'lodash'
 

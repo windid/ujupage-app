@@ -2,7 +2,7 @@
   import SidebarPart from '../ui/SidebarPart'
   import BorderStyle from './BorderStyle'
   import ColorPicker from './ColorPicker'
-  import colorMixin from '../../mixins/colorMixin'
+  import colorMixin from 'mixins/colorMixin'
   import Dropdown from '../ui/Dropdown'
 
   export default {

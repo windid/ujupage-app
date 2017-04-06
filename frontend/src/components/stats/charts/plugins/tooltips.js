@@ -5,7 +5,7 @@ import {
   hasClass
 } from './util'
 
-import $ from '../../../../utils/query'
+import $ from 'utils/query'
 
 const defaultOptions = {
   offset: {

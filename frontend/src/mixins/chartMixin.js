@@ -1,7 +1,7 @@
 import Chartist from 'chartist'
 import { merge } from 'lodash'
-import '../components/stats/charts/plugins/legend'
-import '../components/stats/charts/plugins/tooltips'
+import 'components/stats/charts/plugins/legend'
+import 'components/stats/charts/plugins/tooltips'
 
 const allChartTypes = ['line', 'bar', 'pie']
 const defaultOptions = {

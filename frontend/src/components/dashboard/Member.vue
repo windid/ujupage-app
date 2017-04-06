@@ -1,8 +1,8 @@
 <script>
   import { Tooltip } from 'element-ui'
-  import eventHandler from '../../utils/eventHandler'
+  import eventHandler from 'utils/eventHandler'
   import { mapGetters, mapActions } from 'vuex'
-  import { chineseRE } from '../../utils'
+  import { chineseRE } from 'utils/index'
 
   export default {
     name: 'member',

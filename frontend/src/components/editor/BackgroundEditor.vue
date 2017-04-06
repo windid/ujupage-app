@@ -1,7 +1,7 @@
 <script>
   import SidebarPart from '../ui/SidebarPart'
   import ColorPicker from './ColorPicker'
-  import colorMixin from '../../mixins/colorMixin'
+  import colorMixin from 'mixins/colorMixin'
   import ImagePicker from './ImagePicker'
 
   export default {

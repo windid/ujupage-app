@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import moment, { msOfDay } from '../../utils/date'
+import moment, { msOfDay } from 'utils/date'
 import { DatePicker } from 'element-ui'
 
 const defaultPickerOptions = {

@@ -1,7 +1,7 @@
 <script>
 import ColorPicker from './ColorPicker'
 import CheckboxButton from './CheckboxButton'
-import colorMixin from '../../mixins/colorMixin'
+import colorMixin from 'mixins/colorMixin'
 
 export default {
   props: ['show', 'value'],

@@ -3,7 +3,7 @@ import {
   query
 } from './util'
 
-import $ from '../../../../utils/query'
+import $ from 'utils/query'
 
 const defaultOptions = {
   listClass: 'ct-legend-list',

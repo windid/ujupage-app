@@ -1,8 +1,8 @@
 <script>
 import ElementCommon from './ElementCommon'
 import TimerEditor from './TimerEditor'
-import colorMixin from '../../mixins/colorMixin.js'
-import elementMixin from '../../mixins/elementMixin'
+import colorMixin from 'mixins/colorMixin'
+import elementMixin from 'mixins/elementMixin'
 
 import { mapGetters, mapActions } from 'vuex'
 import { merge, isEqual } from 'lodash'

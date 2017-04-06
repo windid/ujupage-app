@@ -2,7 +2,7 @@
 import VersionSwitcher from '../common/VersionSwitcher'
 import DateRangePicker from '../ui/DateRangePicker'
 import Dropdown from '../ui/Dropdown'
-import moment from '../../utils/date'
+import moment from 'utils/date'
 
 export default {
   props: ['title'],

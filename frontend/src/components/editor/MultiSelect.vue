@@ -2,10 +2,10 @@
 <script>
 import { Tooltip } from 'element-ui'
 
-import mouseDrag from '../../mixins/mouseDrag'
-import elementMoveMixin from '../../mixins/elementMoveMixin'
+import mouseDrag from 'mixins/mouseDrag'
+import elementMoveMixin from 'mixins/elementMoveMixin'
 import { mapActions } from 'vuex'
-import * as editorHelper from '../../utils/editor'
+import * as editorHelper from 'utils/editor'
 
 export default {
   name: 'multi-select',

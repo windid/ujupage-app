@@ -1,7 +1,7 @@
 <script>
 import { mapActions } from 'vuex'
 import LinkEditor from './LinkEditor'
-import elementMixin from '../../mixins/elementMixin'
+import elementMixin from 'mixins/elementMixin'
 import { merge } from 'lodash'
 
 export default {

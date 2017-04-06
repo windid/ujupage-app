@@ -2,7 +2,7 @@
   import Member from './Member'
   import { Tooltip } from 'element-ui'
   import { mapGetters } from 'vuex'
-  import { emailRE } from '../../utils'
+  import { emailRE } from 'utils/index'
 
   export default {
     components: {
