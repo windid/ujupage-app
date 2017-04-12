@@ -142,9 +142,10 @@ export default {
     }
   },
   mounted () {
+    document.removeEventListener('keydown', this.onKey)
     document.addEventListener('keydown', this.onKey)
   },
-  destroy () {
+  destroyed () {
     document.removeEventListener('keydown', this.onKey)
   }
 
@@ -152,7 +153,7 @@ export default {
 </script>
 
 <template>
-  <div class="fixed-header editor-header">
+  <div class="editor-header">
     <div class="home">
       <router-link to="/" class="home-link">
         <span class="glyphicon glyphicon-home"></span>
@@ -166,15 +167,15 @@ export default {
     <div class="btn-toolbar fr">
       <!-- <div class="btn-group">
         <tooltip class="btn btn-default" content="帮助">
-          <span class="glyphicon glyphicon-question-sign"></span>
+          <div><span class="glyphicon glyphicon-question-sign"></span></div>
         </tooltip>
       </div> -->
       <div class="btn-group">
         <tooltip content="撤销" class="btn btn-default" :class="{ disabled: !undoButton }" @click.native="undo">
-          <span class="glyphicon glyphicon-share-alt flipx"></span>
+          <div><span class="glyphicon glyphicon-share-alt flipx"></span></div>
         </tooltip>
         <tooltip content="重做" class="btn btn-default" :class="{ disabled: !redoButton }" @click.native="redo">
-          <span class="glyphicon glyphicon-share-alt"></span>
+          <div><span class="glyphicon glyphicon-share-alt"></span></div>
         </tooltip>
       </div>
       
@@ -195,5 +196,40 @@ export default {
 <style scoped>
 .flipx {
   transform: scaleX(-1);
+}
+
+.editor-header{
+  position: fixed;
+  top: 0;
+  height:50px;
+  width:100%;
+  z-index: 1002;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 0 8px #ddd;
+}
+
+.home {
+  float: left;
+  width: 50px;
+  margin-right:12px;
+  background: #f9f9f9;
+  border-right:1px solid #ddd;
+}
+
+.home:hover {
+  background: #f5f5f5;
+}
+
+.home-link {
+  display: block;
+  font-size:20px;
+  text-align: center;
+  line-height: 48px;
+}
+
+.btn-group{
+  margin:7px;
 }
 </style>

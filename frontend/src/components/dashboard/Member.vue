@@ -75,8 +75,10 @@
 </script>
 
 <template>
-  <tooltip data-toggle="dropdown" v-model="show" :manual="true" @click.native="toggle">
-    {{memberName}}
+  <tooltip data-toggle="dropdown" v-model="show" :manual="true" @click.native="toggle" placement="bottom">
+    <div>
+      {{memberName}}
+    </div>
     <div ref="tooltip" slot="content" class="tooltip-content">
       <p v-if="memberRole === 'invited'">
         {{member.email}}<br>

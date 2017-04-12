@@ -1,6 +1,6 @@
 import API from '../../API'
 import * as types from '../mutation-types'
-import { merge, find } from 'lodash'
+import { merge, cloneDeep, find } from 'lodash'
 import elementTypes from '../../config/editorElementTypes'
 import defaultSection from '../../config/editorSection'
 
@@ -141,6 +141,11 @@ export const setActiveSectionId = ({ commit }, sectionId) => {
   commit(types.SET_ACTIVE_SECTION_ID, { sectionId })
 }
 
+// 设置当前活跃的板块
+export const setCurrentSectionId = ({ commit }, sectionId) => {
+  commit(types.SET_CURRENT_SECTION_ID, { sectionId })
+}
+
 // 撤销
 export const undo = ({ commit }) => commit(types.UNDO)
 
@@ -173,11 +178,72 @@ export const removeElement = ({ commit, state }, [elementId, record = true]) => 
   record && commit(types.SAVE_CONTENT_STATE)
 }
 
+export const removeElements = ({ commit, state }, elements) => {
+  const len = elements.length
+  for (let i = 0; i < len; i++) {
+    const elementId = elements[i].id
+    const sectionIds = getSectionIds(state, elementId)
+    commit(types.REMOVE_ELEMENT, {
+      elementId,
+      sectionIds
+    })
+  }
+  commit(types.SAVE_CONTENT_STATE)
+  commit(types.MULTI_SELECT_CLEAR)
+}
+
 // 移动元素
 export const moveElement = ({ commit, state }, [sectionId, elementId, positionInPage, elementHeight]) => {
+  moveSingleElement(commit, state, {
+    sectionId,
+    id: elementId,
+    positionInPage,
+    rect: {
+      height: elementHeight
+    }
+  })
+  commit(types.SAVE_CONTENT_STATE)
+}
+
+export const moveElements = ({ commit, state }, payload) => {
+  const elements = payload.elements
+  const count = elements.length
+  if (count > 0) {
+    for (let i = 0; i < count; i++) {
+      const element = elements[i]
+      element.positionInPage.left += payload.move.x
+      element.positionInPage.top += payload.move.y
+      moveSingleElement(commit, state, element)
+    }
+    commit(types.SAVE_CONTENT_STATE)
+  }
+}
+
+export const alignMoveElements = ({ commit, state }, payload) => {
+  // 多选时候对齐移动元素
+  const data = payload.data
+  let count = 0
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i]
+    if (item.move !== 0) {
+      const element = cloneDeep(item.element)
+      moveSingleElement(commit, state, element)
+      count++
+    }
+  }
+  if (count > 0) {
+    commit(types.SAVE_CONTENT_STATE)
+  }
+}
+
+const moveSingleElement = (commit, state, payload) => {
+  const sectionId = payload.sectionId
+  const elementId = payload.id
+  const positionInPage = payload.positionInPage
+  const elementHeight = payload.rect.height
+
   let sumSectionsHeight = 0
   let sectionHeight = 0
-
   // 从元素中间到页头的高度
   const elementLine = positionInPage.top + elementHeight / 2
 
@@ -188,14 +254,14 @@ export const moveElement = ({ commit, state }, [sectionId, elementId, positionIn
     sectionHeight = parseInt(state.editor.content.sections[newSectionId].style[state.editor.workspace.version].height)
     sumSectionsHeight += sectionHeight
   }
-
   const newElement = merge({}, state.editor.content.elements[elementId])
-
   newElement.style[state.editor.workspace.version].top = positionInPage.top - (sumSectionsHeight - sectionHeight) + 'px'
   newElement.style[state.editor.workspace.version].left = positionInPage.left + 'px'
 
+  if (sectionId !== newSectionId) {
+    payload.sectionId = newSectionId
+  }
   commit(types.MOVE_ELEMENT, { elementId, newElement, sectionId, newSectionId })
-  commit(types.SAVE_CONTENT_STATE)
 }
 
 // 缩放元素
@@ -213,6 +279,20 @@ export const resizeElement = ({ commit, state }, [elementId, newSize]) => {
 
 // 修改元素层叠关系
 export const indexElement = ({ commit, state, getters }, [elementId, dir]) => {
+  indexOneElement({ commit, state, getters }, [elementId, dir])
+  commit(types.SAVE_CONTENT_STATE)
+}
+
+export const indexOfElements = ({ commit, state, getters }, [elements, dir]) => {
+  if (elements.length > 0) {
+    elements.forEach(element => {
+      indexOneElement({ commit, state, getters }, [element.id, dir])
+    })
+    commit(types.SAVE_CONTENT_STATE)
+  }
+}
+
+const indexOneElement = ({ commit, state, getters }, [elementId, dir]) => {
   const newElement = merge({}, state.editor.content.elements[elementId])
   if (dir === 'top') {
     newElement.style[state.editor.workspace.version]['zIndex'] = ++getters.elementsIndex[state.editor.workspace.version].max
@@ -221,7 +301,6 @@ export const indexElement = ({ commit, state, getters }, [elementId, dir]) => {
   }
 
   commit(types.MODIFY_ELEMENT, { elementId, newElement })
-  commit(types.SAVE_CONTENT_STATE)
 }
 
 // 修改元素：需要删除属性的时候，只能用replace = true对元素进行整体替换
@@ -232,7 +311,7 @@ export const modifyElement = ({ commit, state }, [elementId, newPropsObj, replac
 }
 
 // 添加元素
-export const addElement = ({ commit, state, getters }, type) => {
+export const addElement = ({ commit, state, getters }, [type, position]) => {
   // 如果还没有板块，那么新建一个板块
   if (state.editor.content.sections.length === 0) {
     addSection({ commit })
@@ -247,12 +326,25 @@ export const addElement = ({ commit, state, getters }, type) => {
   let sectionId = -1
   const currentVersion = state.editor.workspace.version
   const anotherVersion = state.editor.workspace.version === 'pc' ? 'mobile' : 'pc'
-  while (sumSectionsHeight < elementTopInPage) {
-    sectionId++
-    sectionHeight = parseInt(state.editor.content.sections[sectionId].style[currentVersion].height)
-    sumSectionsHeight += sectionHeight
+  let elementTop = 0
+  if (position) {
+    sumSectionsHeight = position.y
+    let height = 0
+    while (sumSectionsHeight >= 0) {
+      sectionId++
+      sectionHeight = parseInt(state.editor.content.sections[sectionId].style[currentVersion].height)
+      height = sumSectionsHeight
+      sumSectionsHeight -= sectionHeight
+    }
+    elementTop = height
+  } else {
+    while (sumSectionsHeight < elementTopInPage) {
+      sectionId++
+      sectionHeight = parseInt(state.editor.content.sections[sectionId].style[currentVersion].height)
+      sumSectionsHeight += sectionHeight
+    }
+    elementTop = elementTopInPage + sectionHeight - sumSectionsHeight
   }
-  const elementTop = elementTopInPage + sectionHeight - sumSectionsHeight
   element.style[currentVersion].top = elementTop + 'px'
   element.style[anotherVersion].top = '10px'
 
@@ -335,4 +427,8 @@ export const doneMultiSelect = ({ commit, state }) => {
 
 export const clearMultiSelect = ({ commit, state }) => {
   commit(types.MULTI_SELECT_CLEAR)
+}
+
+export const updateMultiMove = ({ commit, state }, payload) => {
+  commit(types.UPDATE_MULTI_MOVE, payload)
 }

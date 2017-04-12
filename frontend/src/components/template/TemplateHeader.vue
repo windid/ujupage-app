@@ -20,7 +20,7 @@ export default {
 </script>
 
 <template>
-  <div class="fixed-header template-header">
+  <div class="template-header">
     <div class="home">
       <router-link tag="div" :to="{ name: 'templates', params: { tag: 'all' }, query: $route.query }" class="home-link">
         <span class="glyphicon glyphicon-chevron-left"></span> 返回模板列表
@@ -45,22 +45,38 @@ export default {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .template-header{
-  border-top: none;
-  .home {
-    width: 150px;
-  }
-
-  .home-link {
-    font-size: 14px;
-    text-align: center;
-    line-height: 49px;
-    cursor: pointer;
-  }
-
-  .btn-group{
-    margin: 8px;
-  }
+  position: fixed;
+  top: 0;
+  height:50px;
+  width:100%;
+  z-index: 100001;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 0 8px #ddd;
 }
+
+.home {
+  float: left;
+  width: 150px;
+  margin-right:12px;
+  background: #f9f9f9;
+  border-right:1px solid #ddd;
+}
+
+.home:hover {
+  background: #f5f5f5;
+}
+
+.home-link {
+  text-align: center;
+  line-height: 49px;
+  cursor: pointer;
+}
+
+.template-header .btn-group{
+  margin: 8px;
+}
+
 </style>

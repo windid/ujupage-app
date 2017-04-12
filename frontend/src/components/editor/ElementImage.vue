@@ -39,8 +39,8 @@ export default {
       }
       this.buttonGroup = 'main'
     },
-    imageOnload () {
-      this.$refs.element.updateAlignmentInfo()
+    onload () {
+      this.$refs.element.updateDimen()
     }
   },
   watch: {
@@ -95,11 +95,13 @@ export default {
     @change-draggable="changeDraggable"
   >
     <div slot="content" @dblclick="edit" @mousedown.prevent>
-      <img v-bind:src="element.src" :style="{width:'100%',height:'auto'}" @mousedown.prevent @load="imageOnload">
+      <img v-bind:src="element.src" :style="{width:'100%',height:'auto'}" @mousedown.prevent @load="onload">
     </div>
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="更换图片" @click.stop="edit">更换图片</div>
-      <tooltip class="btn btn-default" content="链接" @click.native="editLink"><span class="glyphicon glyphicon-link"></span></tooltip>
+      <tooltip class="btn btn-default" content="链接" @click.native="editLink">
+        <div><span class="glyphicon glyphicon-link"></span></div>
+      </tooltip>
     </template>
     <template slot="button-groups">
       <link-editor v-if="buttonGroup === 'link'" :link-editing="buttonGroup === 'link'" :link-obj="linkObj" @link-edit-done="editLinkDone"></link-editor>

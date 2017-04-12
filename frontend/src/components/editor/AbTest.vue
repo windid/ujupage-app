@@ -80,9 +80,15 @@ export default {
         <span class="variation-name" @click="switchVariation(variation)">{{variation.name}}</span>
         <span class="caret-right"></span>
         <div class="btn-group">
-          <tooltip class="btn btn-default" content="重命名" @click.native="rename(variation)"><span class="glyphicon glyphicon-pencil"></span></tooltip>
-          <tooltip class="btn btn-default" content="复制" @click.native="duplicate(variation)"><span class="glyphicon glyphicon-duplicate"></span></tooltip>
-          <tooltip class="btn btn-danger" content="删除" @click.native="remove(variation)"><span class="glyphicon glyphicon-trash"></span></tooltip>
+          <tooltip class="btn btn-default" content="重命名" @click.native="rename(variation)">
+            <div><span class="glyphicon glyphicon-pencil"></span></div>
+          </tooltip>
+          <tooltip class="btn btn-default" content="复制" @click.native="duplicate(variation)">
+            <div><span class="glyphicon glyphicon-duplicate"></span></div>
+          </tooltip>
+          <tooltip class="btn btn-danger" content="删除" @click.native="remove(variation)">
+            <div><span class="glyphicon glyphicon-trash"></span></div>
+          </tooltip>
         </div>
       </li>
       <li role="separator" class="divider"></li>

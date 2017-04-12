@@ -25,7 +25,6 @@ export default {
 </template>
 
 <style lang="scss" src="./style/bootstrap.scss"></style>
-<style lang="scss" src="./assets/styles/app.scss"></style>
 <style>
 
 body {

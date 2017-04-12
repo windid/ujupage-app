@@ -12,7 +12,7 @@ import ElementTimer from './ElementTimer'
 import ElementIcon from './ElementIcon'
 import ElementMap from './ElementMap'
 import ElementSwiper from './ElementSwiper'
-import resizer from '../ui/OnesideResizer'
+import Resizer from '../ui/OnesideResizer'
 import defaultSection from '../../config/editorSection'
 import { merge } from 'lodash'
 
@@ -40,7 +40,7 @@ export default {
     ElementIcon,
     ElementMap,
     ElementSwiper,
-    resizer
+    Resizer
   },
   data () {
     return {
@@ -86,7 +86,7 @@ export default {
       return this.workspace.activeSectionId === this.sectionId
     },
     showButton () {
-      return this.mouseHere && this.workspace.activeSectionId === null || this.workspace.activeSectionId === this.sectionId
+      return this.workspace.currentSectionId === this.sectionId && this.workspace.activeSectionId === null || this.workspace.activeSectionId === this.sectionId
     },
     height: function () {
       const height = this.section.style[this.workspace.version]['height']
@@ -98,7 +98,8 @@ export default {
       moveSection: 'moveSection',
       removeSection: 'removeSection',
       setActiveSectionId: 'setActiveSectionId',
-      modifySection: 'modifySection'
+      modifySection: 'modifySection',
+      setCurrentSectionId: 'setCurrentSectionId'
     }),
     resizeStart (size) {
       this.$refs.ruler.classList.add('active')
@@ -122,8 +123,7 @@ export default {
   <div  
     class="section"
     :style="mainStyle"
-    @mouseenter="mouseHere = true"
-    @mouseleave="mouseHere = false"
+    @mouseover="setCurrentSectionId(sectionId)"
   >
     <!-- 蒙板 -->
     <div class="section-mask" :style="maskStyle" v-if="localSection.style[workspace.version].background.image"></div>

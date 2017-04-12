@@ -6,7 +6,7 @@ import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
 import eventHandler from '../../utils/eventHandler'
-import * as editorHelper from '../../utils/editorHelper'
+import * as editorHelper from '../../utils/editor'
 
 // 纪录上一个操作的元素，需要用来判断在移动元素到新的section时已经发生了复制
 let EDIT_CACHE = {
@@ -67,6 +67,7 @@ export default {
         handles: 'e',
         aspectRatio: false
       },
+      updateTimer: null,
       dragging: false,
       resizing: false,
       startTop: 0,
@@ -92,9 +93,11 @@ export default {
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace',
-      alignIds: 'getAlignIds'
+      alignIds: 'alignIds',
+      multiMove: 'multiMove',
+      updatedSection: 'updatedSection'
     }),
-    hasAligned () {
+    actived () {
       return this.alignIds.indexOf(this.elementId) >= 0
     },
     // 直接watch element.fixed居然无效，只好用计算属性来监听，不确定是不是Vue的bug
@@ -224,6 +227,15 @@ export default {
         y: getMin(move.y, this.verticalMax)
       }
     },
+    getPosTop () {
+      return getElementTop(this.$el) - 50 - this.$el.offsetTop
+    },
+    getStartPos () {
+      const style = window.getComputedStyle(this.$el, null)
+      const getSize = (key) => parseInt(style[key])
+      this.startPosLeft = getSize('left')
+      this.startPosTop = getSize('top')
+    },
     dragBegin () {
       this.clearMultiSelect()
       if (!this.keyEventAttached) {
@@ -231,10 +243,7 @@ export default {
         this.keyEventAttached = true
       }
       EDIT_CACHE = { id: this.elementId, mountedId: this.mountedId }
-      const style = window.getComputedStyle(this.$el, null)
-      const getSize = (key) => parseInt(style[key])
-      this.startPosLeft = getSize('left')
-      this.startPosTop = getSize('top')
+      this.getStartPos()
       this.setActiveElementId(this.elementId)
       this.$emit('drag-start')
 
@@ -243,7 +252,7 @@ export default {
       const box = document.getElementById(boxContainer).getBoundingClientRect()
       this.horizontalMax = [box.left - self.left, box.right - self.right]
       this.verticalMax = [box.top - self.top, box.bottom - self.bottom]
-      this.startTop = getElementTop(this.$el) - 50 - this.$el.offsetTop
+      this.startTop = this.getPosTop()
 
       editorHelper.alignBegin(this.elementId)
     },
@@ -283,7 +292,7 @@ export default {
       this.elPositionInPage.left = parseInt(this.$el.style.left)
       this.elPositionInPage.top = parseInt(this.$el.style.top) + this.startTop
       this.moveElement([this.sectionId, this.elementId, this.elPositionInPage, this.$el.offsetHeight])
-      this.updateAlignmentInfo()
+      this.updateDimen()
       this.clearAlign()
       editorHelper.alignEnd()
     },
@@ -305,7 +314,7 @@ export default {
       return handles.indexOf(handle) > -1
     },
     resizeStart (direction) {
-      this.bounds = this.getAlignmentInfo()
+      this.bounds = this.getDimen()
       const self = this.$el.getBoundingClientRect()
       const boxContainer = this.element.fixed ? 'fixed-container' : 'content-area'
       const box = document.getElementById(boxContainer).getBoundingClientRect()
@@ -355,7 +364,7 @@ export default {
           height: parseInt(this.$el.style.height)
         }])
         this.$emit('resize-end')
-        this.updateAlignmentInfo()
+        this.updateDimen()
         this.clearAlign()
       } else {
         this.resizing = true
@@ -375,38 +384,43 @@ export default {
     //     }
     //   }
     // },
-    getAlignmentInfo () {
-      const elRectangle = this.$refs.box.getBoundingClientRect()
+    getDimen () {
+      const elRect = this.$refs.box.getBoundingClientRect()
       const containerRect = document.getElementById('content-area').getBoundingClientRect()
-      const left = elRectangle.left - containerRect.left
-      const right = elRectangle.right - containerRect.left
-      const top = elRectangle.top - containerRect.top
-      const bottom = elRectangle.bottom - containerRect.top
-      const hcenter = Math.round(left + elRectangle.width / 2)
-      const vcenter = Math.round(top + elRectangle.height / 2)
+      const left = elRect.left - containerRect.left
+      const right = elRect.right - containerRect.left
+      const top = elRect.top - containerRect.top
+      const bottom = elRect.bottom - containerRect.top
+      const hcenter = Math.round((left + right) / 2)
+      const vcenter = Math.round((top + bottom) / 2)
       const rect = {
-        width: elRectangle.width,
-        height: elRectangle.height,
-        left,
-        right,
-        top,
-        bottom,
-        hcenter,
-        vcenter
+        width: elRect.width,
+        height: elRect.height,
+        left, hcenter, right,
+        top, vcenter, bottom
       }
       return rect
     },
-    updateAlignmentInfo (ifNew) {
+    updateDimen (ifNew) {
+      const positionInPage = { top: parseInt(this.$el.style.top) + this.getPosTop(), left: parseInt(this.$el.style.left) }
       const element = {
         mid: this.mountedId,
         id: this.elementId,
-        rect: this.getAlignmentInfo()
+        sectionId: this.sectionId,
+        positionInPage,
+        rect: this.getDimen()
       }
       if (ifNew) {
         editorHelper.elementAdd(element)
       } else {
         editorHelper.elementUpdate(element)
       }
+    },
+    updateDimenAsync () {
+      clearTimeout(this.updateTimer)
+      this.updateTimer = setTimeout(() => {
+        this.updateDimen()
+      }, 800)
     },
     watchScroll () {
       this.watchEvent = eventHandler.listen(window, 'scroll', (e) => {
@@ -446,9 +460,33 @@ export default {
     },
 
     'workspace.version': function (newVersion) {
-      this._updateAlignmentTimer = setTimeout(() => {
-        this.updateAlignmentInfo()
-      }, 1200)
+      this.updateDimenAsync()
+    },
+
+    'updatedSection': function (val) {
+      if (this.sectionId > val.id) {
+        this.updateDimen()
+      }
+    },
+
+    'element.style': function (val) {
+      this.updateDimenAsync()
+    },
+
+    'multiMove': function (val) {
+      if (!this.actived) return
+      if (val === null) return
+      if (val.started) {
+        this.getStartPos()
+      }
+      if (val.move) {
+        const left = this.startPosLeft + val.move.x
+        this.$el.style.left = left + 'px'
+        this.elPositionInPage.left = left
+        const top = this.startPosTop + val.move.y
+        this.$el.style.top = top + 'px'
+        this.elPositionInPage.top = top
+      }
     }
   },
   mounted () {
@@ -464,9 +502,14 @@ export default {
       document.addEventListener('keydown', this.onKey)
       this.keyEventAttached = true
     }
-    this.updateAlignmentInfo(true)
+    // 在 mobile/pc 切换时有动画，如果元素曾移动到不同的版块，会重新生成
+    this.updateDimenAsync()
   },
   destroyed () {
+    if (this.updateTimer !== null) {
+      clearTimeout(this.updateTimer)
+      this.updateTimer = null
+    }
     if (this.keyMoveTimer !== null) {
       clearTimeout(this.keyMoveTimer)
       this.keyMoveTimer = null
@@ -497,7 +540,7 @@ const getElementTop = (element) => {
 <template>
   <div class="element" @click="selectElement" @mousedown.stop="onDragBegin"
     ref="box"
-    :class="{'align-highlighted': hasAligned}"
+    :class="{ 'active-highlighted': actived }"
     :style="{
       display: (element.fixed && documentScrollPx < element.fixedScrollPx) ? 'none' : 'block',
       left: element.fixed ? element.fixedPosition.left : element.style[workspace.version].left,
@@ -506,7 +549,7 @@ const getElementTop = (element) => {
       right: element.fixed ? element.fixedPosition.right : '',
       width: element.style[workspace.version].width,
       height: element.style[workspace.version].height || 'auto',
-      transition: (resizing || dragging) ? 'none' : 'all .3s'
+      transition: (actived || resizing || dragging) ? 'none' : 'all .3s'
     }"
   >
     <div class="el-content" :id="'element-' + elementId"
@@ -533,18 +576,20 @@ const getElementTop = (element) => {
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
-        <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed"><span class="glyphicon glyphicon-pushpin"></span></tooltip>
+        <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed">
+          <div><span class="glyphicon glyphicon-pushpin"></span></div>
+        </tooltip>
         <tooltip class="btn btn-default" @click.native.stop="duplicateElement(elementId)" content="复制一个">
-          <span class="glyphicon glyphicon-duplicate"></span>
+          <div><span class="glyphicon glyphicon-duplicate"></span></div>
         </tooltip>
         <tooltip class="btn btn-default" content="移到顶层" @click.native="indexElement([ elementId, 'top' ])">
-          <span class="glyphicon glyphicon-circle-arrow-up"></span>
+          <div><span class="glyphicon glyphicon-circle-arrow-up"></span></div>
         </tooltip>
         <tooltip class="btn btn-default" content="移到底层" @click.native="indexElement([ elementId, 'bottom' ])">
-          <span class="glyphicon glyphicon-circle-arrow-down"></span>
+          <div><span class="glyphicon glyphicon-circle-arrow-down"></span></div>
         </tooltip>
         <tooltip class="btn btn-default" content="删除" @click.native="removeElement([elementId])">
-          <span class="glyphicon glyphicon-trash"></span>
+          <div><span class="glyphicon glyphicon-trash"></span></div>
         </tooltip>
       </div>
       <div v-show="buttonGroup === 'fixedEditing'" class="btn-group el-btn-group" role="group">
@@ -581,49 +626,6 @@ const getElementTop = (element) => {
 
 .el-content:hover {
   outline: 1px solid #03ddff;
-}
-
-.el-toolbar {
-  position: absolute;
-  height: auto;
-  padding: 0;
-  z-index: 90000;
-  margin-bottom: 0;
-}
-
-.el-toolbar.top {
-  top: -43px;
-}
-
-.el-toolbar.bottom {
-  bottom: -43px;
-}
-
-.el-toolbar.left {
-  left: -1px;
-}
-
-.el-toolbar.right {
-  right: -1px;
-}
-
-.el-btn-group {
-  white-space: nowrap;
-  font-size: 0;
-}
-
-.el-btn-group > .btn, .el-btn-group > .btn-group {
-  float: none;
-}
-
-.el-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 110000;
-  background: white;
-  opacity: 0;
-  filter: alpha(opacity=1);
 }
 
 .resize-handle {
@@ -677,7 +679,50 @@ const getElementTop = (element) => {
 </style>
 
 <style>
-  .align-highlighted {
+  .el-toolbar {
+    position: absolute;
+    height: auto;
+    padding: 0;
+    z-index: 90000;
+    margin-bottom: 0;
+  }
+
+  .el-toolbar.top {
+    top: -43px;
+  }
+
+  .el-toolbar.bottom {
+    bottom: -43px;
+  }
+
+  .el-toolbar.left {
+    left: -1px;
+  }
+
+  .el-toolbar.right {
+    right: -1px;
+  }
+
+  .el-btn-group {
+    white-space: nowrap;
+    font-size: 0;
+  }
+
+  .el-btn-group > .btn, .el-btn-group > .btn-group {
+    float: none;
+  }
+
+  .el-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 110000;
+    background: white;
+    opacity: 0;
+    filter: alpha(opacity=1);
+  }
+
+  .active-highlighted {
     outline: 1px solid red;
   }
 </style>
