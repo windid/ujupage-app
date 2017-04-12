@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import eventHandler from '../../utils/eventHandler'
-import mouseDrag from '../../mixins/mouseDrag.js'
+import eventHandler from 'utils/eventHandler'
+import mouseDrag from 'mixins/mouseDrag.js'
 
 export default {
   name: 'editor-toolbar',

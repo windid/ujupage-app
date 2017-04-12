@@ -1,6 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import colorMixin from '../../mixins/colorMixin.js'
+import colorMixin from 'mixins/colorMixin.js'
 import ElementForm from './ElementForm'
 import ElementText from './ElementText'
 import ElementButton from './ElementButton'

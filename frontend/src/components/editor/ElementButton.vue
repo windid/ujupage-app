@@ -1,8 +1,8 @@
 <script>
 import LinkEditor from './LinkEditor'
 import ButtonEditor from './ButtonEditor'
-import elementMixin from '../../mixins/elementMixin'
-import colorMixin from '../../mixins/colorMixin'
+import elementMixin from 'mixins/elementMixin'
+import colorMixin from 'mixins/colorMixin'
 import elementTypes from '../../config/editorElementTypes'
 import { merge, isEqual } from 'lodash'
 

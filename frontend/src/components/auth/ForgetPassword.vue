@@ -1,7 +1,7 @@
 <script>
 import Auth from './Auth'
 import { mapActions } from 'vuex'
-import { emailRE } from '../../utils'
+import { emailRE } from 'utils/index'
 
 export default {
   components: {

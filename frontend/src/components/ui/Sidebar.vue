@@ -1,7 +1,7 @@
 <script>
-import eventHandler from '../../utils/eventHandler'
-import { getScrollbarWidth } from '../../utils/env'
-import $ from '../../utils/query'
+import eventHandler from 'utils/eventHandler'
+import { getScrollbarWidth } from 'utils/env'
+import $ from 'utils/query'
 
 export default {
   props: {

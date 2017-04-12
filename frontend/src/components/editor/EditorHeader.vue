@@ -6,8 +6,8 @@ import AbSplit from '../common/AbSplit'
 import VersionSwitcher from '../common/VersionSwitcher'
 import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
-import { urlKeyRE } from '../../utils'
-import { isWindows } from '../../utils/env'
+import { urlKeyRE } from 'utils/index'
+import { isWindows } from 'utils/env'
 
 export default {
   components: {

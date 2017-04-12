@@ -1,6 +1,6 @@
 <script>
 import { getScrollbarWidth } from '../../utils/env'
-import $ from '../../utils/query'
+import $ from 'utils/query'
 
 export default {
   props: {

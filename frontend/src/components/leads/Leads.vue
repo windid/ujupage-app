@@ -2,7 +2,7 @@
 import API from '../../API'
 import { Pagination } from 'element-ui'
 import DateRangePicker from '../ui/DateRangePicker'
-import moment from '../../utils/date'
+import moment from 'utils/date'
 import Dropdown from '../ui/Dropdown'
 
 export default {

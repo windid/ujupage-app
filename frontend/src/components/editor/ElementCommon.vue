@@ -1,12 +1,12 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import mouseDrag from '../../mixins/mouseDrag'
+import mouseDrag from 'mixins/mouseDrag'
 import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
-import eventHandler from '../../utils/eventHandler'
-import * as editorHelper from '../../utils/editor'
+import eventHandler from 'utils/eventHandler'
+import * as editorHelper from 'utils/editor'
 
 // 纪录上一个操作的元素，需要用来判断在移动元素到新的section时已经发生了复制
 let EDIT_CACHE = {

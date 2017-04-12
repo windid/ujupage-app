@@ -1,11 +1,11 @@
 <script>
-import colorMixin from '../../mixins/colorMixin.js'
+import colorMixin from 'mixins/colorMixin.js'
 import Dropdown from '../ui/Dropdown.vue'
 import Vue from 'vue'
 import { Popover } from 'element-ui'
 import ColorSelector from './colorSelector'
 import { mapGetters } from 'vuex'
-import { getValidColor, isValidColor } from '../../utils/color'
+import { getValidColor, isValidColor } from 'utils/color'
 
 Vue.use(Popover)
 

@@ -38,7 +38,7 @@ import Hue from './common/Hue'
 import Alpha from './common/Alpha'
 import ColorInput from './common/ColorInput'
 
-import Color from '../../../utils/color'
+import Color from 'utils/color'
 
 export default {
   name: 'color-picker',

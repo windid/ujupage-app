@@ -1,7 +1,7 @@
 <script>
 import ShapeEditor from './ShapeEditor'
-import colorMixin from '../../mixins/colorMixin'
-import elementMixin from '../../mixins/elementMixin'
+import colorMixin from 'mixins/colorMixin'
+import elementMixin from 'mixins/elementMixin'
 import { isEqual } from 'lodash'
 
 export default {
