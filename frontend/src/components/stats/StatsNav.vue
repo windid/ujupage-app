@@ -98,7 +98,6 @@ export default {
       </ul>
     </dropdown>
     <date-range-picker v-model="date"></date-range-picker>
-    
   </div>
 </div>
 </template>

@@ -152,7 +152,6 @@ export default {
 }
 </script>
 
-
 <template>
   <div class="editor-header">
     <div class="home">
