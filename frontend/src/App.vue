@@ -1,6 +1,6 @@
 <script>
-import MessageBox from './components/ui/MessageBox.vue'
-import Spinner from './components/ui/Spinner.vue'
+import MessageBox from './components/ui/MessageBox'
+import Spinner from './components/ui/Spinner'
 import Vue from 'vue'
 import { Loading } from 'element-ui'
 Vue.use(Loading)

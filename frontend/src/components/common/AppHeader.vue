@@ -19,7 +19,7 @@
           退出 <span class="glyphicon glyphicon-log-out"></span>
         </router-link>
       </div>
-    </template>
+    </div>
   </div>
 </div>
 </template>

@@ -88,7 +88,7 @@ export default {
           <tooltip class="btn btn-default" content="重命名" @click.native="rename(variation)"><span class="glyphicon glyphicon-pencil"></span></tooltip>
           <tooltip class="btn btn-default" content="复制" @click.native="duplicate(variation)"><span class="glyphicon glyphicon-duplicate"></span></tooltip>
           <tooltip class="btn btn-danger" content="删除" @click.native="remove(variation)"><span class="glyphicon glyphicon-trash"></span></tooltip>
-        </tooltip>
+        </div>
       </li>
       <li role="separator" class="divider"></li>
       <router-link :to="'/templates/all?pid=' + page.id" tag="li">新建一个版本</router-link>

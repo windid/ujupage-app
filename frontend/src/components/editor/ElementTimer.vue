@@ -125,7 +125,7 @@ export default {
       </div>
     </template>
   </element-common>
-  <timer-editor :show="editing" v-model="timerElement.data" @edit-done="editDone" @edit-change="editChange"></video-editor>
+  <timer-editor :show="editing" v-model="timerElement.data" @edit-done="editDone" @edit-change="editChange"></timer-editor>
 </div>
 </template>
 

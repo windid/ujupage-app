@@ -164,7 +164,6 @@ export default {
   :resize="resize"
   @change-button-group="changeButtonGroup"
   @drag-start="editDone">
-</div>
   <div class="element-map" slot="content" @dblclick.stop="edit">
     <div class="element-map-content" ref="mapContent"></div>
     <div class="map-mask"></div>
@@ -189,6 +188,7 @@ export default {
       </div>
     </div>
   </template>
+</element-common>
 </template>
 
 <style scoped>
