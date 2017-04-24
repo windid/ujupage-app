@@ -1,5 +1,5 @@
 import { mapGetters } from 'vuex'
-import Color, { isValidColor, getValidColor } from '../utils/color'
+import { isValidColor, getValidColor } from 'utils/color'
 
 export default {
   computed: mapGetters({
@@ -14,7 +14,7 @@ export default {
       } else if (typeof color === 'number' || /^\d$/.test(color)) {
         return this.colorSet[color]
       } else {
-        return getValidColor(Color(color))
+        return getValidColor(color)
       }
     }
   }

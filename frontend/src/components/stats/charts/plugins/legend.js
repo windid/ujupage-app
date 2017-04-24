@@ -1,12 +1,9 @@
 import Chartist from 'chartist'
 import {
-  $,
-  hasClass,
-  addClass,
-  removeClass,
-  show,
-  hide
+  query
 } from './util'
+
+import $ from 'utils/query'
 
 const defaultOptions = {
   listClass: 'ct-legend-list',
@@ -35,52 +32,52 @@ const Legend = function (options) {
         return options.filter(s.name || '', index, chart)
       })
 
-      const $container = chart.container
-      let $list = $('.' + options.listClass, $container.parentNode)
+      const elContainer = chart.container
+      let elList = query('.' + options.listClass, elContainer.parentNode)
 
-      if (!$list) {
-        $list = document.createElement('div')
-        $list.className = options.listClass
+      if (!elList) {
+        elList = document.createElement('div')
+        elList.className = options.listClass
         // 使用事件委托
-        $list.addEventListener('click', e => {
-          const $legend = e.target
-          if (!(hasClass($legend, options.legendClass) && $legend.hasAttribute('data-legend'))) {
+        elList.addEventListener('click', e => {
+          const $legend = $(e.target, elList)
+          if (!($legend.hasClass(options.legendClass) && $legend.has('data-legend'))) {
             return
           }
 
           e.preventDefault()
 
-          const state = $legend.getAttribute('data-legend')
+          const state = $legend.attr('data-legend')
 
-          if (hasClass($legend, options.disableClass)) {
-            show($('.ct-series-' + state, $container))
-            removeClass($legend, options.disableClass)
+          if ($legend.hasClass(options.disableClass)) {
+            $('.ct-series-' + state, elContainer).show()
+            $legend.removeClass(options.disableClass)
           } else {
-            hide($('.ct-series-' + state, $container))
-            addClass($legend, options.disableClass)
+            $('.ct-series-' + state, elContainer).hide()
+            $legend.addClass(options.disableClass)
           }
         })
       }
 
-      if ($list.childNodes.length === 0) {
+      if (elList.childNodes.length === 0) {
         legends.forEach((legend, index) => {
           const $legend = document.createElement('label')
           const state = Chartist.alphaNumerate(index)
           $legend.className = options.legendClass + ' ct-legend-' + state
           $legend.textContent = legend
           $legend.setAttribute('data-legend', state)
-          $list.appendChild($legend)
+          elList.appendChild($legend)
         })
       } else {
         // 显示状态初始化
         legends.forEach((legend, index) => {
           const state = Chartist.alphaNumerate(index)
-          if (hasClass($('.ct-legend-' + state, $list), options.disableClass)) {
-            hide($('.ct-series-' + state, $container))
+          if ($('.ct-legend-' + state, elList).hasClass(options.disableClass)) {
+            $('.ct-series-' + state, elContainer).hide()
           }
         })
       }
-      $container.parentNode.insertBefore($list, $container)
+      elContainer.parentNode.insertBefore(elList, elContainer)
     })
   }
 }

@@ -1,4 +1,4 @@
-import ElementCommon from '../components/editor/ElementCommon'
+import ElementCommon from 'components/editor/ElementCommon'
 import { Tooltip } from 'element-ui'
 import { merge } from 'lodash'
 import { mapGetters, mapActions } from 'vuex'

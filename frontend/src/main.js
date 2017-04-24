@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import Raven from 'raven-js'
 import RavenVue from 'raven-js/plugins/vue'
+
+import App from './App'
+
 import store from './store'
 import router from './router'
-import App from './App'
 import API from './API'
-import cookieHandler from './utils/cookieHandler'
-import './style/bootstrap.scss'
+import cookieHandler from 'utils/cookieHandler'
 
 if (process.env.NODE_ENV === 'production') {
   Raven.config('https://04878f0f86eb4c21b54fd0e63ed70e3a@sentry.io/126101').addPlugin(RavenVue, Vue).install()

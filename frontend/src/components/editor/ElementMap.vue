@@ -1,6 +1,18 @@
 <script>
-import elementMixin from '../../mixins/elementMixin'
+import elementMixin from 'mixins/elementMixin'
 import { merge, isEqual } from 'lodash'
+
+var mapInitStack = []
+var mapLoaded = false
+window.initMaps = function () {
+  mapLoaded = true
+  const len = mapInitStack.length
+  for (let i = 0; i < len; i++) {
+    const cb = mapInitStack[i]
+    if (cb instanceof Function) cb()
+  }
+  mapInitStack = []
+}
 
 export default {
   name: 'element-map',
@@ -55,6 +67,26 @@ export default {
           title: this.localElement.data.name
         })
         this.marker.setMap(this.map)
+      }
+    },
+    initAsync () {
+      if (!mapLoaded) {
+        if (!window.GaodeMapScript) {
+          const mapScript = document.createElement('script')
+          const script = document.getElementsByTagName('script')[0]
+          mapScript.type = 'text/javascript'
+          mapScript.async = true
+          mapScript.defer = true
+          mapScript.src = '//webapi.amap.com/maps?v=1.3&key=e3b78e84d1aedba49bc8a84c4e113e01&callback=initMaps&plugin=AMap.ToolBar'
+          script.parentNode.insertBefore(mapScript, script)
+          window.GaodeMapScript = mapScript
+        }
+        const vm = this
+        mapInitStack.push(function () {
+          vm.initMap()
+        })
+      } else {
+        this.initMap()
       }
     },
     editDone () {
@@ -112,66 +144,51 @@ export default {
     'element': function (val) {
       if (!isEqual(val, this.localElement)) {
         this.localElement = merge({}, val)
-        this.initMap()
+        this.initAsync()
       }
     }
   },
   mounted () {
-    if (!window.GaodeMapScript) {
-      const mapScript = document.createElement('script')
-      const script = document.getElementsByTagName('script')[0]
-      mapScript.type = 'text/javascript'
-      mapScript.async = true
-      mapScript.defer = true
-      mapScript.src = '//webapi.amap.com/maps?v=1.3&key=e3b78e84d1aedba49bc8a84c4e113e01&plugin=AMap.ToolBar'
-      script.parentNode.insertBefore(mapScript, script)
-      const vm = this
-      mapScript.onload = function () {
-        vm.initMap()
-      }
-      window.GaodeMapScript = mapScript
-    } else {
-      this.initMap()
-    }
+    this.initAsync()
   }
 }
 </script>
 
 <template>
-<element-common
-  :element="element" 
-  :section-id="sectionId" 
-  :element-id="elementId"
-  :button-group="buttonGroup"
-  :resizable="resizable"
-  :resize="resize"
-  @change-button-group="changeButtonGroup"
-  @drag-start="editDone">
-</div>
-  <div class="element-map" slot="content" @dblclick.stop="edit">
-    <div class="element-map-content" ref="mapContent"></div>
-    <div class="map-mask"></div>
-  </div>
-  <template slot="main-buttons-extend">
-    <div class="btn btn-primary" title="定位" @click.stop="edit">定位</div>
-  </template>
-  <template slot="button-groups">
-    <div v-if="buttonGroup === 'address'">
-      <div class="input-group search-form">
-        <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input" placeholder="输入地名，回车搜索"></input>
-        <div class="input-group-btn">
-          <div class="btn btn-primary" @click.stop="search">搜索</div>
+  <element-common
+    :element="element" 
+    :section-id="sectionId" 
+    :element-id="elementId"
+    :button-group="buttonGroup"
+    :resizable="resizable"
+    :resize="resize"
+    @change-button-group="changeButtonGroup"
+    @drag-start="editDone">
+    <div class="element-map" slot="content" @dblclick.stop="edit">
+      <div class="element-map-content" ref="mapContent"></div>
+      <div class="map-mask"></div>
+    </div>
+    <template slot="main-buttons-extend">
+      <div class="btn btn-primary" title="定位" @click.stop="edit">定位</div>
+    </template>
+    <template slot="button-groups">
+      <div v-if="buttonGroup === 'address'">
+        <div class="input-group search-form">
+          <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input" placeholder="输入地名，回车搜索">
+          <div class="input-group-btn">
+            <div class="btn btn-primary" @click.stop="search">搜索</div>
+          </div>
+        </div>
+        <div class="search-result" v-show="showList">
+          <ul>
+            <li
+              v-for="(pos, index) in posList"
+              @click="selectAddress(index)">{{pos.name}}</li>
+          </ul>
         </div>
       </div>
-      <div class="search-result" v-show="showList">
-        <ul>
-          <li
-            v-for="(pos, index) in posList"
-            @click="selectAddress(index)">{{pos.name}}</li>
-        </ul>
-      </div>
-    </div>
-  </template>
+    </template>
+  </element-common>
 </template>
 
 <style scoped>

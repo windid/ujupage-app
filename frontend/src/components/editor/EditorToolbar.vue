@@ -1,33 +1,47 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import eventHandler from '../../utils/eventHandler'
+import eventHandler from 'utils/eventHandler'
+import mouseDrag from 'mixins/mouseDrag.js'
 
 export default {
   name: 'editor-toolbar',
+  mixins: [mouseDrag],
+  props: {
+    page: Object
+  },
   data () {
-    return {
-      basicTools: [
-        { name: '版块', style: 'modal-window', action: () => {
+    const basicTools = [
+      { name: '图片', style: 'picture', action: 'image' },
+      { name: '文字', style: 'font', action: 'text' },
+      { name: '按钮', style: 'hand-up', action: 'button' },
+      { name: '形状', style: 'stop', action: () => this.showShapePicker() },
+      { name: '图标', style: 'comment', action: 'icon' }
+    ]
+
+    if (this.page.is_compat) {
+      basicTools.unshift({
+        name: '版块',
+        style: 'modal-window',
+        action: () => {
           this.addSection()
           this.showShapes = false
-        } },
-        { name: '图片', style: 'picture', action: () => this.newElement('image') },
-        { name: '文字', style: 'font', action: () => this.newElement('text') },
-        { name: '按钮', style: 'hand-up', action: () => this.newElement('button') },
-        { name: '形状', style: 'stop', action: () => this.showShapePicker() },
-        { name: '图标', style: 'comment', action: () => this.newElement('icon') }
-      ],
+        }
+      })
+    }
+    return {
+      basicTools,
       advancedTools: [
-        { name: '表单', style: 'edit', action: () => this.newElement('form') },
-        { name: '视频', style: 'film', action: () => this.newElement('video') },
-        { name: '地图', style: 'map-marker', action: () => this.newElement('map') },
+        { name: '表单', style: 'edit', action: 'form' },
+        { name: '视频', style: 'film', action: 'video' },
+        { name: '地图', style: 'map-marker', action: 'map' },
         // { name: '音乐', style: 'music', action: () => this.newElement('music') },
-        { name: '轮播图', style: 'transfer', action: () => this.newElement('swiper') },
+        { name: '轮播图', style: 'transfer', action: 'swiper' },
         { name: '倒计时', style: 'time', action: () => this.comming('timer') },
-        { name: 'HTML', style: 'header', action: () => this.newElement('html') }
+        { name: 'HTML', style: 'header', action: 'html' }
       ],
       showAdvanced: false,
-      showShapes: false
+      showShapes: false,
+      dragAction: null
     }
   },
   computed: mapGetters({
@@ -35,6 +49,14 @@ export default {
   }),
   methods: {
     ...mapActions(['addSection', 'addElement', 'warning']),
+    clickTool (tool) {
+      const action = tool.action
+      if (typeof action === 'function') {
+        action()
+      } else {
+        this.newElement([action])
+      }
+    },
     newElement (type) {
       this.addElement(type)
       this.showShapes = false
@@ -46,6 +68,50 @@ export default {
       this.warning({
         content: '攻城狮们正在争分夺秒开发这个组件，等几天再来试试吧。'
       })
+    },
+    dragMenu (event) {
+      const action = event.currentTarget.getAttribute('data-action')
+      this.dragAction = action
+      this.onDragBegin(event)
+    },
+    dragMove (move, offset, options) {
+      if (this.dragAction === null) {
+        return
+      }
+      const position = {
+        x: this.dragStartX + move.x,
+        y: this.dragStartY + move.y
+      }
+      const assist = document.querySelector('#main-wrapper')
+      let thumbnail = assist.querySelector('#drag-thumbnail')
+      if (!thumbnail) {
+        thumbnail = document.createElement('div')
+        thumbnail.id = 'drag-thumbnail'
+        assist.appendChild(thumbnail)
+      }
+      thumbnail.setAttribute('style', `
+        left: ${position.x - 40}px;
+        top: ${position.y + this.$ui.scrollTop() - 40}px;
+        width: 80px;
+        height: 80px;`)
+    },
+    dragEnd (move, offset, options) {
+      const position = {
+        x: this.dragStartX + move.x,
+        y: this.dragStartY + move.y
+      }
+      position.y += this.$ui.scrollTop()
+      if (this.dragAction) {
+        this.addElement([this.dragAction, position])
+      }
+      const thumbnail = document.querySelector('#drag-thumbnail')
+      if (thumbnail) {
+        thumbnail.style.display = 'none'
+      }
+      this.dragAction = null
+    },
+    getAction (action) {
+      return typeof action === 'function' ? null : action
     }
   },
   mounted () {
@@ -57,19 +123,27 @@ export default {
 
 </script>
 <template>
-  <div class="toolbar shadow" :style="{width: showAdvanced ? '166px' : '86px'}">
+  <div class="toolbar shadow" :style="{width: showAdvanced ? '166px' : '83px'}">
     <div class="toolbar-header">组件</div>
     <div class="toolbar-body">
-      <div class="basic-tools">
-        <div v-for="tool in basicTools" class="tool shadow" @click.stop="tool.action">
-          <span class="glyphicon" :class="'glyphicon-' + tool.style"></span>
-          <div class="tool-name">{{tool.name}}</div>
+      <div class="tool-list">
+        <div class="basic-tools">
+          <div v-for="tool in basicTools" class="tool shadow"
+            @click.stop="clickTool(tool)"
+            :data-action="getAction(tool.action)"
+            @mousedown.stop.prevent="dragMenu">
+            <span class="glyphicon" :class="'glyphicon-' + tool.style"></span>
+            <div class="tool-name">{{tool.name}}</div>
+          </div>
         </div>
-      </div>
-      <div class="advanced-tools">
-        <div v-for="tool in advancedTools" class="tool shadow" @click.stop="tool.action">
-          <span class="glyphicon" :class="'glyphicon-' + tool.style"></span>
-          <div class="tool-name">{{tool.name}}</div>
+        <div class="advanced-tools">
+          <div v-for="tool in advancedTools" class="tool shadow"
+            @click.stop="clickTool(tool)"
+            :data-action="getAction(tool.action)"
+            @mousedown.stop.prevent="dragMenu">
+            <span class="glyphicon" :class="'glyphicon-' + tool.style"></span>
+            <div class="tool-name">{{tool.name}}</div>
+          </div>
         </div>
       </div>
       <div class="show-advanced-btn" @click="showAdvanced = !showAdvanced">
@@ -78,21 +152,33 @@ export default {
       </div>
     </div>
     <div v-if="showShapes" class="shape-picker">
-      <div class="shape-item" @click.stop="newElement('square')">
+      <div class="shape-item"
+        @click.stop="clickTool({ action: 'square' })"
+        data-action="square"
+        @mousedown.stop.prevent="dragMenu">
         <div class="shape shape-box"></div>
         <div class="shape-name">方形</div>
       </div>
-      <div class="shape-item" @click.stop="newElement('circle')">
+      <div class="shape-item"
+        @click.stop="clickTool({ action: 'circle' })"
+        data-action="circle"
+        @mousedown.stop.prevent="dragMenu">
         <div class="shape shape-circle"></div>
         <div class="shape-name">圆形</div>
       </div>
-      <div class="shape-item" @click.stop="newElement('line')">
+      <div class="shape-item"
+        @click.stop="clickTool({ action: 'line' })"
+        data-action="line"
+        @mousedown.stop.prevent="dragMenu">
         <div class="shape">
           <div class="shape-line"></div>
         </div>
         <div class="shape-name">横线</div>
       </div>
-      <div class="shape-item" @click.stop="newElement('vline')">
+      <div class="shape-item"
+        @click.stop="clickTool({ action: 'vline' })"
+        data-action="vline"
+        @mousedown.stop.prevent="dragMenu">
         <div class="shape">
           <div class="shape-vline"></div>
         </div>
@@ -132,10 +218,17 @@ export default {
   background-color:#fff;
 }
 
+.tool-list {
+  display: flex;
+  width: 164px;
+  justify-content: space-around;
+  /*float: left;*/
+}
+
 .advanced-tools {
-  position: absolute;
-  left: 80px;
-  top: 0;
+  /*position: absolute;*/
+  /*left: 80px;*/
+  /*top: 0;*/
 }
 
 .show-advanced-btn {
@@ -150,7 +243,7 @@ export default {
   transition: all .3s ease;
   width: 66px;
   height: 66px;
-  margin:10px;
+  margin: 10px 0;
   padding: 4px 8px;
   border: 5px solid #BEE1F1;
   border-radius: 50%;
@@ -227,4 +320,13 @@ export default {
   border-color: #98CFE9;
 }
 
+</style>
+
+<style>
+#drag-thumbnail {
+  position: absolute;
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px dashed red;
+}
 </style>

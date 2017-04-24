@@ -31,7 +31,8 @@ export default {
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace',
-      sections: 'editorSections'
+      sections: 'editorSections',
+      page: 'editingPage'
     }),
     show () {
       return this.workspace.activeSectionId !== null
@@ -87,7 +88,7 @@ export default {
   <sidebar v-if="show" :show="show" @close="setActiveSectionId(null)" style="z-index: 1020;">
     <div slot="header">
       <div class="btn btn-success" @click="setActiveSectionId(null)">完成</div>
-      <tooltip placement="left" content="同时修改桌面版和移动版" class="fr">
+      <tooltip v-if="page.is_compat" placement="left" content="同时修改桌面版和移动版" class="fr">
         <h5><label><input type="checkbox" v-model="sync"> 同步修改</label></h5>
       </tooltip>
     </div>
@@ -96,7 +97,7 @@ export default {
       <background-editor v-model="style.background"></background-editor>
       <div class="sidebar-block">
         <div>
-          <label><input type="checkbox" v-model="style.background.stretch"/> 背景拉伸到边缘</label> &nbsp; &nbsp; 
+          <label v-if="page.is_compat"><input type="checkbox" v-model="style.background.stretch"/> 背景拉伸到边缘</label> &nbsp; &nbsp; 
           <label v-if="style.background.image"><input type="checkbox" v-model="style.background.fixed"/> 背景固定不滚动</label>
         </div>
       </div>

@@ -1,11 +1,11 @@
 <script>
-import colorMixin from '../../mixins/colorMixin.js'
+import colorMixin from 'mixins/colorMixin.js'
 import Dropdown from '../ui/Dropdown.vue'
 import Vue from 'vue'
 import { Popover } from 'element-ui'
 import ColorSelector from './colorSelector'
 import { mapGetters } from 'vuex'
-import { getValidColor } from '../../utils/color'
+import { getValidColor, isValidColor } from 'utils/color'
 
 Vue.use(Popover)
 
@@ -52,12 +52,11 @@ export default {
       this.hasFocus = false
     },
     inputColor (e) {
-      let newColor = e.target.value
-      if (newColor.toString().charAt(0) !== '#') {
-        newColor = '#' + newColor
+      const newColor = e.target.value
+      if (isValidColor(newColor)) {
+        this.color = getValidColor(newColor)
+        this.$emit('input', this.color, true)
       }
-      this.color = newColor
-      this.$emit('input', this.color, true)
     },
     inputDone () {
       this.show = false

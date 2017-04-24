@@ -4,8 +4,10 @@ import FixedContainer from './FixedContainer'
 import SectionEditor from './SectionEditor'
 import ImageLibrary from './ImageLibrary'
 import { mapGetters, mapActions } from 'vuex'
-import mouseDrag from '../../mixins/mouseDrag'
+import mouseDrag from 'mixins/mouseDrag'
 import ElementCommon from './ElementCommon'
+import MultiSelect from './MultiSelect'
+import * as editorHelper from 'utils/editor'
 
 export default {
   mixins: [mouseDrag],
@@ -14,15 +16,16 @@ export default {
     FixedContainer,
     SectionEditor,
     ImageLibrary,
-    ElementCommon
+    ElementCommon,
+    MultiSelect
   },
   computed: {
     ...mapGetters({
       workspace: 'editorWorkspace',
       height: 'editorHeight',
       sections: 'editorSections',
-      alignLines: 'getAlignLines',
-      selectionArea: 'getSelectionArea'
+      alignLines: 'alignLines',
+      selectionArea: 'selectionArea'
     })
   },
   data () {
@@ -69,10 +72,10 @@ export default {
       }
       origin.top -= top + this.dragStartY
       if (forward.x !== 0 || forward.y !== 0) {
-        this.updateSelect({
+        this.updateSelect(editorHelper.multiSelect({
           rect: this.selection,
           origin
-        })
+        }))
       }
     },
     dragRelease () {
@@ -93,13 +96,25 @@ export default {
     },
     dotStyle (dot, line) {
       if (!dot) return null
+      const dotSide = {
+        main: line.vertical ? 'top' : 'left',
+        sub: line.vertical ? 'left' : 'top'
+      }
       return {
         position: 'absolute',
-        [line.dotSide.main]: (dot - line.min - 2) + 'px',
-        [line.dotSide.sub]: '-2px',
+        [dotSide.main]: (dot - line.min - 2) + 'px',
+        [dotSide.sub]: '-2px',
         width: '4px',
         height: '4px',
         background: 'red'
+      }
+    },
+    selectionStyle (selectionArea) {
+      return {
+        left: selectionArea.left + 'px',
+        top: selectionArea.top + 'px',
+        width: (selectionArea.right - selectionArea.left) + 'px',
+        height: (selectionArea.bottom - selectionArea.top) + 'px'
       }
     }
   }
@@ -129,6 +144,7 @@ export default {
         v-for="(section, sectionId) in sections" 
         :section-id="sectionId"
         :section="section"
+        :key="sectionId"
       >
       </page-section>
     </div>
@@ -141,19 +157,10 @@ export default {
       width: selection.width + 'px',
       height: selection.height + 'px'
     }"></div>
-    <div :style="{height: height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px', position: 'absolute', left: '50%', top: 0}"
-    @mousedown.prevent>
-      <div style="position: absolute; outline: 1px solid red; background-color: rgba(216, 216, 216, 0.1); z-index: 99999; cursor: pointer;"
-      v-if="selectionArea.visible"
-      class="select-disable"
-      @mousedown.prevent.stop
-      :style="{
-        left: selectionArea.left + 'px',
-        top: selectionArea.top + 'px',
-        width: (selectionArea.right - selectionArea.left) + 'px',
-        height: (selectionArea.bottom - selectionArea.top) + 'px'
-      }"></div>
-    </div>
+    <multi-select
+      :wrapperStyle="{height: height + 'px', width: (workspace.width) + 'px', marginLeft:(-workspace.width/2) +'px'}"
+      :visible="selectionArea.visible"
+      :innerStyle="selectionStyle(selectionArea)"></multi-select>
   </div>
 </template>
 

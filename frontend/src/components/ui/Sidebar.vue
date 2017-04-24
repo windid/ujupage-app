@@ -1,7 +1,7 @@
 <script>
-import eventHandler from '../../utils/eventHandler'
-import { getScrollbarWidth } from '../../utils/env'
-import $ from '../../utils/query'
+import eventHandler from 'utils/eventHandler'
+import { getScrollbarWidth } from 'utils/env'
+import $ from 'utils/query'
 
 export default {
   props: {
@@ -30,7 +30,7 @@ export default {
     bodyScrollable (val) {
       const $body = $(document.body)
       const $editorHeader = $('.editor-header')
-      const sidebarBody = this.$refs.sidebarBody
+      const { sidebarBody } = this.$refs
       const $sidebar = $(this.$el)
       this.$nextTick(() => {
         if (val) {

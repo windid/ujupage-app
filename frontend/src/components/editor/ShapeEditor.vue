@@ -1,7 +1,7 @@
 <script>
 import Sidebar from '../ui/Sidebar'
 import SidebarPart from '../ui/SidebarPart'
-import colorMixin from '../../mixins/colorMixin'
+import colorMixin from 'mixins/colorMixin'
 import BorderEditor from './BorderEditor'
 import ShadowEditor from './ShadowEditor'
 import BackgroundEditor from './BackgroundEditor'

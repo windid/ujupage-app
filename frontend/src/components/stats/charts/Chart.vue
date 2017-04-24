@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import chartMixin from '../../../mixins/chartMixin'
+import chartMixin from 'mixins/chartMixin'
 
 export default {
   name: 'chart-line',
@@ -14,7 +14,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../../assets/styles/chartist_setting.scss';
+@import '~assets/styles/chartist_setting';
 @import '~chartist/dist/scss/chartist';
 .ct-chart {
   max-width: 100%;

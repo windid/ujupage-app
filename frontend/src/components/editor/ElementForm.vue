@@ -1,7 +1,7 @@
 <script>
 import FormEditor from './FormEditor'
-import colorMixin from '../../mixins/colorMixin'
-import elementMixin from '../../mixins/elementMixin'
+import colorMixin from 'mixins/colorMixin'
+import elementMixin from 'mixins/elementMixin'
 // import elementTypes from '../../config/editorElementTypes'
 import { merge, isEqual } from 'lodash'
 
@@ -86,7 +86,7 @@ export default {
 
         <template v-if="field.type === 'textarea'">
           <label :class="{'label-inside': localElement.props.labelInside}" :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label>
-          <textarea class="form-control form-field-input" :style="fieldStyles" rows="3"></textarea>
+          <textarea class="form-control" :style="fieldStyles" rows="3"></textarea>
         </template>
 
         <template v-if="field.type === 'radio'">

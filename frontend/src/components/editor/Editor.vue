@@ -3,7 +3,10 @@ import EditorHeader from './EditorHeader.vue'
 import EditorToolbar from './EditorToolbar.vue'
 import EditorWorkspace from './EditorWorkspace.vue'
 import { mapGetters, mapActions } from 'vuex'
-import eventHandler from '../../utils/eventHandler'
+import Vue from 'vue'
+import eventHandler from 'utils/eventHandler'
+import Ui from 'utils/ui'
+Vue.use(Ui)
 
 const leaveMessage = '您对该页面所作修改尚未保存，现在离开导致您所作的修改丢失，确定吗?'
 
@@ -16,7 +19,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      saveStatus: 'saveStatus'
+      saveStatus: 'saveStatus',
+      page: 'editingPage'
     })
   },
   methods: {
@@ -58,7 +62,7 @@ export default {
   <div @mousedown="clearActiveElement">
   	<editor-header></editor-header>
     <div id="main-wrapper">
-      <editor-toolbar></editor-toolbar>
+      <editor-toolbar :page="page"></editor-toolbar>
       <editor-workspace></editor-workspace>
     </div>
   </div>

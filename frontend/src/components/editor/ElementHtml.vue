@@ -1,5 +1,5 @@
 <script>
-import elementMixin from '../../mixins/elementMixin'
+import elementMixin from 'mixins/elementMixin'
 
 export default {
   mixins: [elementMixin],

@@ -26,8 +26,8 @@ var Site = {
     $("[fixed]").each(function(){
       const el = $(this)
       const fixedPx = parseInt(el.attr('fixed'))
-      $('body').scroll(function(){
-        if ($('body').scrollTop() > fixedPx) {
+      $( window ).scroll(function(){
+        if ($( window ).scrollTop() > fixedPx) {
           el.fadeIn(400);
         } else {
           el.fadeOut(400);

@@ -53,7 +53,7 @@ export default {
       const url = 'auth/register'
       return Vue.http.post(url, data)
     },
-    getPassword (params, data) {
+    forgetPassword (params, data) {
       const url = 'auth/password/forget'
       return Vue.http.post(url, data)
     },

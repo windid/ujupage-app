@@ -1,8 +1,8 @@
 <script>
   import { Tooltip } from 'element-ui'
-  import eventHandler from '../../utils/eventHandler'
+  import eventHandler from 'utils/eventHandler'
   import { mapGetters, mapActions } from 'vuex'
-  import { chineseRE } from '../../utils'
+  import { chineseRE } from 'utils/index'
 
   export default {
     name: 'member',
@@ -75,17 +75,19 @@
 </script>
 
 <template>
-  <tooltip data-toggle="dropdown" v-model="show" :manual="true" @click.native="toggle">
-    {{memberName}}
+  <tooltip data-toggle="dropdown" v-model="show" :manual="true" @click.native="toggle" placement="bottom">
+    <div>
+      {{memberName}}
+    </div>
     <div ref="tooltip" slot="content" class="tooltip-content">
       <p v-if="memberRole === 'invited'">
-        {{member.email}}<br/>
-        已邀请<br/>
+        {{member.email}}<br>
+        已邀请<br>
       </p>
       <p v-else>
-        {{member.name}}<br/>
-        {{member.email}}<br/>
-        {{memberRole === 'admin' ? '项目管理员' : '项目成员'}}<br/>
+        {{member.name}}<br>
+        {{member.email}}<br>
+        {{memberRole === 'admin' ? '项目管理员' : '项目成员'}}<br>
       </p>
       <div v-if="isAdmin && memberRole !== 'admin'" class="btn btn-xs btn-danger" @click="remove">移除</div>
     </div>

@@ -1,8 +1,8 @@
 <script>
 import ColorPicker from './ColorPicker'
 import IconPicker from './IconPicker'
-import elementMixin from '../../mixins/elementMixin'
-import colorMixin from '../../mixins/colorMixin'
+import elementMixin from 'mixins/elementMixin'
+import colorMixin from 'mixins/colorMixin'
 
 export default {
   mixins: [colorMixin, elementMixin],

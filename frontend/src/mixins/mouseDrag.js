@@ -14,12 +14,11 @@ const HUGE_MOVE_THRESHOLD = 40
 const TIME_THRESHOLD = 1000 * 0.12 // 毫秒
 const HUGE_TIME_THRESHOLD = 1000
 
-function movable (x, y, timeStart) {
-  const timeLapse = Date.now() - timeStart
+function movable (dx, dy, timeLapse) {
   const condTime = timeLapse > TIME_THRESHOLD
   const condHugeTime = timeLapse > HUGE_TIME_THRESHOLD
-  const condMove = Math.abs(x) > MOVE_THRESHOLD || Math.abs(y) > MOVE_THRESHOLD
-  const condHugeMove = Math.abs(x) > HUGE_MOVE_THRESHOLD || Math.abs(y) > HUGE_MOVE_THRESHOLD
+  const condMove = dx > MOVE_THRESHOLD || dy > MOVE_THRESHOLD
+  const condHugeMove = dx > HUGE_MOVE_THRESHOLD || dy > HUGE_MOVE_THRESHOLD
   return (condTime && condMove) || condHugeMove || condHugeTime
 }
 
@@ -134,7 +133,7 @@ export default {
 
       this.lastDragX = X
       this.lastDragY = Y
-      if (movable(x, y, this.dragStartTime)) {
+      if (movable(Math.abs(x), Math.abs(y), now - this.dragStartTime)) {
         let offset
         if (this.lastMovement === null) {
           offset = { x, y }
