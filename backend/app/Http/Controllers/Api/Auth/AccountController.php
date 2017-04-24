@@ -7,6 +7,13 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Services\OSS;
 
 class AccountController extends Controller{
+    
+    /**
+     * 获取当前的用户信息
+     * 
+     * @return json User
+     */
+    
     public function current(){
         $this->user = auth()->user();
         if (!$this->user) {
@@ -17,7 +24,14 @@ class AccountController extends Controller{
     
     
     /**
-     * 修改用户信息
+     * 修改用户信息及上传头像
+     * 
+     * @param File avatar 头像图片
+     * @param string name 用户名字
+     * @param string old_password 旧密码
+     * @param string password 新密码
+     * @param string password_confirmation 确认密码
+     * @return json User
      */
     public function update(Request $request) {
         
