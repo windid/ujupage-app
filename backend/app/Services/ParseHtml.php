@@ -253,6 +253,7 @@ class ParseHtml {
                 self::$page['style']['common']['element-'.$element_id]['border-bottom'] = $border;
             } elseif ($element['subType'] === 'vline') {
                 self::$page['style']['common']['element-'.$element_id]['border-right'] = $border;
+                self::$page['style']['common']['element-'.$element_id]['margin-left'] = "10px";
             } else {
                 self::$page['style']['common']['element-'.$element_id]['border'] = $border;
             }
