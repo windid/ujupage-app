@@ -4,7 +4,7 @@ import { Tooltip } from 'element-ui'
 
 import mouseDrag from '../../mixins/mouseDrag'
 import elementMoveMixin from '../../mixins/elementMoveMixin'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import * as editorHelper from '../../utils/editor'
 
 export default {
@@ -19,6 +19,11 @@ export default {
       toolbarPosition: 'top left'
     }
   },
+  computed: {
+    ...mapGetters({
+      workspace: 'editorWorkspace'
+    })
+  },
   methods: {
     ...mapActions([
       'updateMultiMove',
@@ -31,10 +36,10 @@ export default {
     showToolbar () {
       this.$emit('change-button-group', 'main')
 
-      const viewTop = getElementTop(this.$el) - document.documentElement.scrollTop
+      const viewTop = getElementTop(this.$refs.box) - document.documentElement.scrollTop
       const toolbarPositionY = (viewTop < 95) ? 'bottom' : 'top'
 
-      const viewRight = this.workspace.width - parseInt(this.element.style[this.workspace.version].left)
+      const viewRight = this.workspace.width - parseInt(this.innerStyle.left)
       const toolbarPositionX = (viewRight < 0) ? 'right' : 'left'
 
       this.toolbarPosition = toolbarPositionY + ' ' + toolbarPositionX
@@ -116,12 +121,19 @@ export default {
     remove () {
       this.removeElements(editorHelper.getMulti())
     }
+  },
+  watch: {
+    'visible': function (newVal) {
+      if (newVal) {
+        this.showToolbar()
+      }
+    }
   }
 }
 
 // 获取元素到页面顶部的距离
 const getElementTop = (element) => {
-  let actualTop = element.offsetTop
+  let actualTop = parseInt(element.style.top)
   let current = element.offsetParent
 
   while (current !== null) {
@@ -144,7 +156,7 @@ const getElementTop = (element) => {
     class="select-disable"
     @mousedown.prevent.stop="onDragBegin"
     :style="innerStyle">
-    <div style="position: relative;">
+    <div style="position: relative; width: 100%; height: 100%;">
       <div v-show="visible" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
         <div class="btn-group el-btn-group" role="group">
           <slot name="main-buttons-extend"></slot>
