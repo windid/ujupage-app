@@ -550,7 +550,7 @@ class PageController extends Controller {
             $values[] = mb_convert_encoding($str, 'gbk');
             // $values[] = iconv('utf-8', 'gbk', $str);
         }        
-
+        echo implode("\n" ,$values);exit;
         header("Content-type:text/csv");
         header("Content-Disposition:attachment;filename=".$page->name."_商机".date('YmdHis') . '.csv');
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
