@@ -72,7 +72,7 @@ $.fn.extend({
     return this
   },
   css (props, value) {
-    if (util.isPlainObject(props)) {
+    if (typeof props === 'object') {
       for (const prop in props) {
         this.each(el => {
           el.style[util.camelize(prop)] = props[prop]
