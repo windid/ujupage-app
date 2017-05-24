@@ -211,6 +211,7 @@ use AuthenticatesAndRegistersUsers,
             //return redirect()->intended('/');
             return $this->successCreated(['id' => $user->id, 'name' => $user->name, 'email' => $user->email]);
         }
+        return $request;
         
         return $this->errorUnauthorized();
     }
