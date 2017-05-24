@@ -220,7 +220,6 @@ use AuthenticatesAndRegistersUsers,
      */
     public function getLogout(Request $request) {
         $user = Auth::user();
-        return 'Release Test';
         if ($user) {
             Auth::logout();
             User::where('id', $user->id)
