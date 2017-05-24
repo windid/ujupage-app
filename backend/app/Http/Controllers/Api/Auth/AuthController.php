@@ -194,8 +194,6 @@ use AuthenticatesAndRegistersUsers,
      * @return \Illuminate\Http\Response
      */
     public function postLogin(Request $request) {
-
-        return $request;
         
         $validator = $this->validate($request, [
             $this->loginUsername() => 'required|exists:users,email', 'password' => 'required',
@@ -213,7 +211,7 @@ use AuthenticatesAndRegistersUsers,
             //return redirect()->intended('/');
             return $this->successCreated(['id' => $user->id, 'name' => $user->name, 'email' => $user->email]);
         }
-
+        
         return $this->errorUnauthorized();
     }
     
