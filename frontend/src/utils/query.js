@@ -1,3 +1,6 @@
+/**
+ * A mini jQuery library
+ */
 import { isPlainObject, camelize } from 'utils'
 
 const $ = function (selector, context = document) {

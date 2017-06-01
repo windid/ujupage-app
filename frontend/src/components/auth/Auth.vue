@@ -14,7 +14,7 @@
 </div>
 </template>
 
-<style scoped>
+<style>
 .auth-container {
   margin: 50px auto;
   width: 500px;
