@@ -6,19 +6,15 @@ export const loadUser = ({ commit }, user) => {
 }
 
 export const requireLogin = ({ commit }) => {
-
+  commit(types.SHOW_AUTH_DIALOG, true)
 }
 
-export const login = ({ commit }, [email, password, remember, success, error]) => {
-  API.auth.save({}, {
-    email: email,
-    password: password,
-    remember: remember
-  }).then(response => {
+export const login = ({ commit }, form) => {
+  return API.auth.save({}, form).then(response => {
     const user = response.data
     commit(types.LOG_IN, { user })
-    success()
-  }, response => error(response))
+    return response
+  })
 }
 
 export const logout = ({ commit }, success) => {
@@ -28,12 +24,12 @@ export const logout = ({ commit }, success) => {
   })
 }
 
-export const register = ({ commit }, [user, success, error]) => {
-  API.user.save({}, user).then(response => {
+export const register = ({ commit }, form) => {
+  return API.user.save({}, form).then(response => {
     const user = response.data
     commit(types.LOG_IN, { user })
-    success()
-  }, response => error(response))
+    return response
+  })
 }
 
 export const forgetPassword = ({ commit }, email) => {

@@ -1,7 +1,8 @@
 import * as types from '../mutation-types'
 
 const state = {
-  current: null
+  current: null,
+  showAuthDialog: false
 }
 
 const mutations = {
@@ -13,6 +14,9 @@ const mutations = {
   },
   [types.EDIT_USER] (state, { userInfo }) {
     state.current = userInfo
+  },
+  [types.SHOW_AUTH_DIALOG] (state, show) {
+    state.showAuthDialog = show
   }
 }
 

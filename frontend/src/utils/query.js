@@ -1,4 +1,7 @@
-import { util } from 'vue'
+/**
+ * A mini jQuery library
+ */
+import { isPlainObject, camelize } from 'utils'
 
 const $ = function (selector, context = document) {
   return new $.fn.Init(selector, context)
@@ -72,10 +75,10 @@ $.fn.extend({
     return this
   },
   css (props, value) {
-    if (typeof props === 'object') {
+    if (isPlainObject(props)) {
       for (const prop in props) {
         this.each(el => {
-          el.style[util.camelize(prop)] = props[prop]
+          el.style[camelize(prop)] = props[prop]
         })
       }
     } else {

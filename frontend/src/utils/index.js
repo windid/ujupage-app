@@ -5,10 +5,19 @@ export const emailRE = /^[A-Za-z0-9]+([-_.][A-Za-z0-9]+)*@([A-Za-z0-9]+[-.])+[A-
 // 匹配页面url key的正则表达式
 export const urlKeyRE = /^[a-zA-Z0-9]{3,}$/
 
-export function addLeadingZeros (n, len) {
+export const addLeadingZeros = (n, len) => {
   let output = Math.abs(n).toString()
   while (output.length < len) {
     output = '0' + output
   }
   return output
+}
+
+export const isPlainObject = obj => {
+  return Object.prototype.toString.call(obj) === '[object Object]'
+}
+
+const camelizeRE = /-(\w)/g
+export const camelize = str => {
+  return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : '')
 }

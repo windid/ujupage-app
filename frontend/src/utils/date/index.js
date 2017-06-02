@@ -38,11 +38,7 @@ export function format (date, fm) {
 
   for (let i = 0; i < len; i++) {
     formatter = formatters[arr[i]]
-    if (formatter) {
-      arr[i] = formatter(date)
-    } else {
-      arr[i] = removeFormattingTokens(arr[i])
-    }
+    arr[i] = formatter ? formatter(date) : removeFormattingTokens(arr[i])
   }
 
   return arr.join('')
