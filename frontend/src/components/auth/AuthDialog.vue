@@ -1,8 +1,8 @@
 <template>
-  <el-dialog v-model="showAuthDialog" size="tiny">
+  <el-dialog v-model="showAuthDialog" size="tiny" @close="onClose">
     <div v-if="showLogin">
       <div class="auth-header">登陆</div>
-      <login-form @pass="onSuccess"></login-form>
+      <login-form @pass="onClose"></login-form>
       <p class="auth-extra">
         还没有聚页账户？
         <a href="javascript:;" @click="toggleForm">注册用户</a>
@@ -10,7 +10,7 @@
     </div>
     <div v-else>
       <div class="auth-header">注册</div>
-      <register-form @pass="onSuccess"></register-form>
+      <register-form @pass="onClose"></register-form>
       <p class="auth-extra">
         已经有聚页账户？
         <a href="javascript:;" @click="toggleForm">登陆</a>
@@ -38,11 +38,11 @@ export default {
       showLogin: true
     }
   },
-  computed: mapState({
-    showAuthDialog: state => state.user.showAuthDialog
-  }),
+  computed: mapState('user', [
+    'showAuthDialog'
+  ]),
   methods: {
-    onSuccess () {
+    onClose () {
       this.$store.commit(types.SHOW_AUTH_DIALOG, false)
     },
     toggleForm () {
