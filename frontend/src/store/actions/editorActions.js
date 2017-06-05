@@ -3,7 +3,7 @@ import * as types from '../mutation-types'
 import { merge, cloneDeep, find } from 'lodash'
 import elementTypes from '../../config/editorElementTypes'
 import defaultSection from '../../config/editorSection'
-
+import { getScrollTop } from 'utils/ui'
 // 数据初始化，在路由中调用
 export const editorInit = ({ commit, state }, [route, callback = false]) => {
   const pageId = route.params.pageId
@@ -318,7 +318,7 @@ export const addElement = ({ commit, state, getters }, [type, position]) => {
   }
 
   // 计算元素应该进入哪个板块，以及在板块中的高
-  const scrollTop = document.body.scrollTop || document.documentElement.scrollTop
+  const scrollTop = getScrollTop()
   const element = merge({}, elementTypes[type])
   const elementTopInPage = scrollTop + 150
   let sumSectionsHeight = 0
