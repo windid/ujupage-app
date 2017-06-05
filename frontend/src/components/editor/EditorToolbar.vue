@@ -36,7 +36,7 @@ export default {
         { name: '地图', style: 'map-marker', action: 'map' },
         // { name: '音乐', style: 'music', action: () => this.newElement('music') },
         { name: '轮播图', style: 'transfer', action: 'swiper' },
-        { name: '倒计时', style: 'time', action: () => this.comming('timer') },
+        { name: '倒计时', style: 'time', action: 'timer' },
         { name: 'HTML', style: 'header', action: 'html' }
       ],
       showAdvanced: false,

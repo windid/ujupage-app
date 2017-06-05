@@ -188,7 +188,6 @@ class AlignManager {
   // 更新对齐的线和元素
   alignSearch (offset) {
     if (this.currentElement === null) return
-    console.log('search')
     const element = this.moveCurrent(offset)
 
     const condX = this.groupCache.findX(offset.x)

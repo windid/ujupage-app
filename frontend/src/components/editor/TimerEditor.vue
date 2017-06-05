@@ -44,6 +44,7 @@ export default {
 
 <style>
 .timer-editor-body {
+  padding: 10px 0;
 }
 .timer-editor-body label {
   font-weight: normal;

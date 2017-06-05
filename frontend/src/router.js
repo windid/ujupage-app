@@ -51,11 +51,11 @@ const router = new VueRouter({
     { path: '/register', name: 'register', component: Register },
     { path: '/forgetpassword', name: 'forgetpassword', component: ForgetPassword },
     { path: '/resetpassword/:token', name: 'resetpassword', component: ResetPassword },
-    { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
+    { path: '/editor/:pageId', name: 'editor', component: Editor, meta: { preFetch: 'editorInit' }},
     { path: '/editor/:pageId/:variationId', name: 'variation', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
     { path: '/preview/:pageId/:variationId', name: 'preview', component: Preview, meta: { requiresAuth: true }},
     { path: '/template/:templateId', name: 'template', component: Template },
-    { path: '/', component: Home, meta: { requiresAuth: true },
+    { path: '/', component: Home,
       children: [
         { path: '', name: 'dashboard', component: Dashboard, meta: { preFetch: 'dashboardInit' }},
         { path: '/account', name: 'account', component: Account },
