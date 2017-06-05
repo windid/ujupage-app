@@ -38,9 +38,9 @@ export default {
       showLogin: true
     }
   },
-  computed: mapState('user', [
-    'showAuthDialog'
-  ]),
+  computed: mapState({
+    showAuthDialog: state => state.user.showAuthDialog
+  }),
   methods: {
     onClose () {
       this.$store.commit(types.SHOW_AUTH_DIALOG, false)
