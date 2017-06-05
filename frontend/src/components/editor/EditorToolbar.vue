@@ -74,6 +74,16 @@ export default {
       this.dragAction = action
       this.onDragBegin(event)
     },
+    dragBegin () {
+      const assist = document.querySelector('#main-wrapper')
+      this._thumbnail = assist.querySelector('#drag-thumbnail')
+      if (!this._thumbnail) {
+        this._thumbnail = document.createElement('div')
+        this._thumbnail.id = 'drag-thumbnail'
+        assist.appendChild(this._thumbnail)
+      }
+      this._scrollTop = this.$ui.scrollTop()
+    },
     dragMove (move, offset, options) {
       if (this.dragAction === null) {
         return
@@ -82,31 +92,22 @@ export default {
         x: this.dragStartX + move.x,
         y: this.dragStartY + move.y
       }
-      const assist = document.querySelector('#main-wrapper')
-      let thumbnail = assist.querySelector('#drag-thumbnail')
-      if (!thumbnail) {
-        thumbnail = document.createElement('div')
-        thumbnail.id = 'drag-thumbnail'
-        assist.appendChild(thumbnail)
-      }
-      thumbnail.setAttribute('style', `
+      this._thumbnail.setAttribute('style', `
         left: ${position.x - 40}px;
-        top: ${position.y + this.$ui.scrollTop() - 40}px;
-        width: 80px;
-        height: 80px;`)
+        top: ${position.y + this._scrollTop - 40}px;
+        `)
     },
     dragEnd (move, offset, options) {
       const position = {
         x: this.dragStartX + move.x,
         y: this.dragStartY + move.y
       }
-      position.y += this.$ui.scrollTop()
+      position.y += this._scrollTop
       if (this.dragAction) {
         this.addElement([this.dragAction, position])
       }
-      const thumbnail = document.querySelector('#drag-thumbnail')
-      if (thumbnail) {
-        thumbnail.style.display = 'none'
+      if (this._thumbnail) {
+        this._thumbnail.style.display = 'none'
       }
       this.dragAction = null
     },
@@ -328,5 +329,7 @@ export default {
   z-index: 9999;
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px dashed red;
+  width: 80px;
+  height: 80px;
 }
 </style>
