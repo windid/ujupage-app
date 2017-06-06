@@ -38,11 +38,7 @@ export function format (date, fm) {
 
   for (let i = 0; i < len; i++) {
     formatter = formatters[arr[i]]
-    if (formatter) {
-      arr[i] = formatter(date)
-    } else {
-      arr[i] = removeFormattingTokens(arr[i])
-    }
+    arr[i] = formatter ? formatter(date) : removeFormattingTokens(arr[i])
   }
 
   return arr.join('')
@@ -53,6 +49,22 @@ function removeFormattingTokens (input) {
     return input.replace(/^\[|]$/g, '')
   }
   return input.replace(/\\/g, '')
+}
+
+export function isLeapYear (year) {
+  return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0
+}
+
+export function getDayCountOfMonth (year, month) {
+  if (month === 3 || month === 5 || month === 8 || month === 10) {
+    return 30
+  }
+
+  if (month === 1) {
+    return isLeapYear(year) ? 29 : 28
+  }
+
+  return 31
 }
 
 /**
@@ -66,7 +78,7 @@ export function parse (dateStr) {
 
   const timestamp = Date.parse(dateStr)
   if (Number.isNaN(timestamp)) {
-    throw new TypeError(`${dateStr} is an invalid argument for Date.parse`)
+    throw new TypeError(`Invalid argument`)
   }
   return new Date(timestamp)
 }
@@ -110,7 +122,16 @@ Moment.prototype = {
 
   addMonths (inc) {
     const d = this.date
-    d.setMonth(d.getMonth() + inc)
+    const date = d.getDate()
+    const tmpDate = new Date(d.getTime())
+    tmpDate.setMonth(d.getMonth() + inc, 1)
+    const year = tmpDate.getFullYear()
+    const month = tmpDate.getMonth()
+    const newMonthDayCount = getDayCountOfMonth(year, month)
+    if (newMonthDayCount < date) {
+      d.setDate(newMonthDayCount)
+    }
+    d.setFullYear(year, month)
     return this
   },
 

@@ -1,5 +1,5 @@
 import API from '../../API'
-import cookieHandler from '../../utils/cookieHandler'
+import cookieHandler from 'utils/cookieHandler'
 import * as types from '../mutation-types'
 import { find } from 'lodash'
 

@@ -8,7 +8,7 @@ import BorderEditor from './BorderEditor'
 import SidebarPart from '../ui/SidebarPart'
 import { Slider } from 'element-ui'
 
-import colorMixin from '../../mixins/colorMixin'
+import colorMixin from 'mixins/colorMixin'
 import { mapActions } from 'vuex'
 
 export default {

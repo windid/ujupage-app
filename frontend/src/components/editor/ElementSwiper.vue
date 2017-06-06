@@ -1,5 +1,5 @@
 <script>
-import elementMixin from '../../mixins/elementMixin'
+import elementMixin from 'mixins/elementMixin'
 import SwiperEditor from './SwiperEditor'
 import { isEqual } from 'lodash'
 
@@ -73,11 +73,11 @@ export default {
 
 <template>
 <element-common
-  :element="element" 
-  :section-id="sectionId" 
+  :element="element"
+  :section-id="sectionId"
   :element-id="elementId"
   :button-group="buttonGroup"
-  :dimensionContraint="constraints" 
+  :dimensionContraint="constraints"
   @change-button-group="changeButtonGroup"
   :resizable="resizable"
   :resize="resize"

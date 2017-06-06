@@ -1,7 +1,7 @@
 <script>
-import elementMixin from '../../mixins/elementMixin'
+import elementMixin from 'mixins/elementMixin'
 import VideoEditor from './VideoEditor'
-import videoHandler from '../../utils/videoHandler'
+import videoHandler from 'utils/videoHandler'
 
 import { merge, isEqual } from 'lodash'
 
@@ -20,7 +20,7 @@ export default {
       urlError: false,
       videoInfo: this.element.videoInfo ? merge({}, this.element.videoInfo) : {},
       size: {
-        with: null,
+        width: null,
         height: null
       }
     }

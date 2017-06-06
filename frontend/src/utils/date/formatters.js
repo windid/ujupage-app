@@ -1,4 +1,4 @@
-import { addLeadingZeros } from '../index'
+import { addLeadingZeros } from 'utils/index'
 
 export const formatters = {
   M (date) {

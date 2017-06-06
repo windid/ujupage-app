@@ -4,10 +4,10 @@ import FixedContainer from './FixedContainer'
 import SectionEditor from './SectionEditor'
 import ImageLibrary from './ImageLibrary'
 import { mapGetters, mapActions } from 'vuex'
-import mouseDrag from '../../mixins/mouseDrag'
+import mouseDrag from 'mixins/mouseDrag'
 import ElementCommon from './ElementCommon'
 import MultiSelect from './MultiSelect'
-import * as editorHelper from '../../utils/editor'
+import * as editorHelper from 'utils/editor'
 
 export default {
   mixins: [mouseDrag],
@@ -144,6 +144,7 @@ export default {
         v-for="(section, sectionId) in sections" 
         :section-id="sectionId"
         :section="section"
+        :key="sectionId"
       >
       </page-section>
     </div>

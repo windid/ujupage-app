@@ -1,8 +1,8 @@
 <script>
 import LinkEditor from './LinkEditor'
 import ButtonEditor from './ButtonEditor'
-import elementMixin from '../../mixins/elementMixin'
-import colorMixin from '../../mixins/colorMixin'
+import elementMixin from 'mixins/elementMixin'
+import colorMixin from 'mixins/colorMixin'
 import elementTypes from '../../config/editorElementTypes'
 import { merge, isEqual } from 'lodash'
 
@@ -94,7 +94,9 @@ export default {
 
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
-      <tooltip class="btn btn-default" content="链接" @click.native="editLink"><span class="glyphicon glyphicon-link"></span></tooltip>
+      <tooltip class="btn btn-default" content="链接" @click.native="editLink">
+        <div><span class="glyphicon glyphicon-link"></span></div>
+      </tooltip>
     </template>
     <template slot="button-groups">
       <div v-show="buttonGroup === 'edit'" class="btn-group el-btn-group" role="group">

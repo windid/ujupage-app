@@ -6,8 +6,8 @@ import AbSplit from '../common/AbSplit'
 import VersionSwitcher from '../common/VersionSwitcher'
 import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
-import { urlKeyRE } from '../../utils'
-import { isWindows } from '../../utils/env'
+import { urlKeyRE } from 'utils/index'
+import { isWindows } from 'utils/env'
 
 export default {
   components: {
@@ -33,22 +33,23 @@ export default {
     colorSet: 'editorColorSet'
   }),
   methods: {
-    ...mapActions({
-      undo: 'undo',
-      redo: 'redo',
-      switchVersion: 'switchVersion',
-      saveVariation: 'saveVariation',
-      confirm: 'confirm',
-      getInput: 'getInput',
-      warning: 'warning',
-      setURL: 'setURL',
-      publishPage: 'publishPage',
-      traficSplit: 'traficSplit',
-      setColorSet: 'setColorSet'
-    }),
+    ...mapActions([
+      'undo',
+      'redo',
+      'switchVersion',
+      'saveVariation',
+      'confirm',
+      'getInput',
+      'warning',
+      'setURL',
+      'publishPage',
+      'traficSplit',
+      'setColorSet'
+    ]),
     publish () {
       this.saveNotice(() => {
         if (!this.page.url) {
+          // need refactor
           this.getInput({
             header: '为您的页面选定一个URL地址',
             inputAddon: 'http://www.juyepage.com/',
@@ -108,33 +109,30 @@ export default {
     },
     onKey (event) {
       if (event.target) {
-        const tagName = event.target.tagName
-        const contentEditable = event.target.isContentEditable
-        if (tagName === 'INPUT' || tagName === 'TEXTAREA' || contentEditable) {
+        const { tagName, isContentEditable } = event.target
+        if (tagName === 'INPUT' || tagName === 'TEXTAREA' || isContentEditable) {
           return
         }
       }
       if (event.ctrlKey || event.metaKey) {
-        let keyCaptured = false
+        let keyCaptured = true
         const code = event.which || event.keyCode
         if (code === 83) {
           // ctrl + s 保存
-          keyCaptured = true
           this.saveVariation()
         } else if (code === 90) {
           if (event.shiftKey && !isWindows) {
             // mac: shift + ctrl + z 前进
-            keyCaptured = true
             this.redo()
           } else {
             // ctrl + z 后退
-            keyCaptured = true
             this.undo()
           }
         } else if (code === 82 && isWindows) {
           // windows: ctrl + r 前进
-          keyCaptured = true
           this.redo()
+        } else {
+          keyCaptured = false
         }
         if (keyCaptured) {
           event.stopPropagation()
@@ -154,9 +152,8 @@ export default {
 }
 </script>
 
-
 <template>
-  <div class="editor-header">
+  <div class="fixed-header editor-header">
     <div class="home">
       <router-link to="/" class="home-link">
         <span class="glyphicon glyphicon-home"></span>
@@ -170,15 +167,15 @@ export default {
     <div class="btn-toolbar fr">
       <!-- <div class="btn-group">
         <tooltip class="btn btn-default" content="帮助">
-          <span class="glyphicon glyphicon-question-sign"></span>
+          <div><span class="glyphicon glyphicon-question-sign"></span></div>
         </tooltip>
       </div> -->
       <div class="btn-group">
         <tooltip content="撤销" class="btn btn-default" :class="{ disabled: !undoButton }" @click.native="undo">
-          <span class="glyphicon glyphicon-share-alt flipx"></span>
+          <div><span class="glyphicon glyphicon-share-alt flipx"></span></div>
         </tooltip>
         <tooltip content="重做" class="btn btn-default" :class="{ disabled: !redoButton }" @click.native="redo">
-          <span class="glyphicon glyphicon-share-alt"></span>
+          <div><span class="glyphicon glyphicon-share-alt"></span></div>
         </tooltip>
       </div>
       
@@ -199,42 +196,5 @@ export default {
 <style scoped>
 .flipx {
   transform: scaleX(-1);
-  /*IE*/
-  filter: FlipH;
-}
-
-.editor-header{
-  position: fixed;
-  top: 0;
-  height:50px;
-  width:100%;
-  z-index: 1002;
-  background: #fff;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  box-shadow: 0 0 8px #ddd;
-}
-
-.home {
-  float: left;
-  width: 50px;
-  margin-right:12px;
-  background: #f9f9f9;
-  border-right:1px solid #ddd;
-}
-
-.home:hover {
-  background: #f5f5f5;
-}
-
-.home-link {
-  display: block;
-  font-size:20px;
-  text-align: center;
-  line-height: 48px;
-}
-
-.editor-header .btn-group{
-  margin:7px;
 }
 </style>

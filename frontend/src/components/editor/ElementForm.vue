@@ -1,7 +1,7 @@
 <script>
 import FormEditor from './FormEditor'
-import colorMixin from '../../mixins/colorMixin'
-import elementMixin from '../../mixins/elementMixin'
+import colorMixin from 'mixins/colorMixin'
+import elementMixin from 'mixins/elementMixin'
 // import elementTypes from '../../config/editorElementTypes'
 import { merge, isEqual } from 'lodash'
 
@@ -86,20 +86,13 @@ export default {
 
         <template v-if="field.type === 'textarea'">
           <label :class="{'label-inside': localElement.props.labelInside}" :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label>
-          <textarea class="form-control form-field-input" :style="fieldStyles" rows="3"></textarea>
+          <textarea class="form-control" :style="fieldStyles" rows="3"></textarea>
         </template>
 
-        <template v-if="field.type === 'radio'">
+        <template v-if="field.type === 'radio' || field.type === 'checkbox'">
           <div v-if="!field.hideLabel"><label :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label></div>
-          <div v-for="option in field.options" track-by="$index" :class="{'options-in-line':field.optionsInLine}">
-            <label :style="{color:getColor(localElement.props.labelColor)}"><input type="radio"> {{option}}</label>
-          </div>
-        </template>
-
-        <template v-if="field.type === 'checkbox'">
-          <div v-if="!field.hideLabel"><label :style="{color:getColor(localElement.props.labelColor)}">{{field.label}}</label></div>
-          <div v-for="option in field.options" track-by="$index" :class="{'options-in-line':field.optionsInLine}">
-            <label :style="{color:getColor(localElement.props.labelColor)}"><input type="checkbox"> {{option}}</label>
+          <div v-for="(option, index) in field.options" :key="index" :class="{'options-in-line':field.optionsInLine}">
+            <label :style="{color:getColor(localElement.props.labelColor)}"><input :type.prop="field.type"> {{option}}</label>
           </div>
         </template>
 

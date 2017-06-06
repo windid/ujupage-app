@@ -97,7 +97,7 @@ export default {
       <background-editor v-model="style.background"></background-editor>
       <div class="sidebar-block">
         <div>
-          <label><input type="checkbox" v-model="style.background.stretch"/> 背景拉伸到边缘</label> &nbsp; &nbsp; 
+          <label v-if="page.is_compat"><input type="checkbox" v-model="style.background.stretch"/> 背景拉伸到边缘</label> &nbsp; &nbsp; 
           <label v-if="style.background.image"><input type="checkbox" v-model="style.background.fixed"/> 背景固定不滚动</label>
         </div>
       </div>

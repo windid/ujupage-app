@@ -53,6 +53,7 @@ const mutations = {
 
   [types.SET_CURRENT_PAGEGROUP] (state, { pageGroup }) {
     state.currentPageGroup = pageGroup
+    state.pages = []
   },
 
   [types.CREATE_PAGEGROUP] (state, { pageGroup }) {

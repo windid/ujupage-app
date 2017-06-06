@@ -28,13 +28,13 @@ export default {
         return
       }
       this.loading()
-      this.resetPassword([token, password, () => {
+      this.resetPassword([token, password]).then(() => {
         this.loadingDone()
         this.success = true
-      }, (response) => {
+      }).catch(res => {
         this.loadingDone()
-        this.error = response.error
-      }])
+        this.error = res.error
+      })
     }
   },
   mounted () {

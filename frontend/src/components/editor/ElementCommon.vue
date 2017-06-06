@@ -1,12 +1,12 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
-import mouseDrag from '../../mixins/mouseDrag'
+import mouseDrag from 'mixins/mouseDrag'
 import resizer from '../ui/OnesideResizer'
 import FixedEditor from './FixedEditor'
 import { Tooltip } from 'element-ui'
-import eventHandler from '../../utils/eventHandler'
-import * as editorHelper from '../../utils/editor'
+import eventHandler from 'utils/eventHandler'
+import * as editorHelper from 'utils/editor'
 
 // 纪录上一个操作的元素，需要用来判断在移动元素到新的section时已经发生了复制
 let EDIT_CACHE = {
@@ -519,6 +519,7 @@ export default {
     }
     // 从位置信息中删除
     editorHelper.elementRemove(this.mountedId)
+    clearTimeout(this._updateAlignmentTimer)
   }
 }
 
@@ -569,23 +570,26 @@ const getElementTop = (element) => {
         @resizing="resizeAction"
         :side="side"
         :minSize="['n', 'e'].indexOf(side) >= 0 ? sizeRange.minHeight: sizeRange.minWidth"
+        :key="dir"
       />
     </template>
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
-        <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed"><span class="glyphicon glyphicon-pushpin"></span></tooltip>
+        <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed">
+          <div><span class="glyphicon glyphicon-pushpin"></span></div>
+        </tooltip>
         <tooltip class="btn btn-default" @click.native.stop="duplicateElement(elementId)" content="复制一个">
-            <span class="glyphicon glyphicon-duplicate"></span>
+          <div><span class="glyphicon glyphicon-duplicate"></span></div>
         </tooltip>
         <tooltip class="btn btn-default" content="移到顶层" @click.native="indexElement([ elementId, 'top' ])">
-          <span class="glyphicon glyphicon-circle-arrow-up"></span>
+          <div><span class="glyphicon glyphicon-circle-arrow-up"></span></div>
         </tooltip>
         <tooltip class="btn btn-default" content="移到底层" @click.native="indexElement([ elementId, 'bottom' ])">
-          <span class="glyphicon glyphicon-circle-arrow-down"></span>
+          <div><span class="glyphicon glyphicon-circle-arrow-down"></span></div>
         </tooltip>
         <tooltip class="btn btn-default" content="删除" @click.native="removeElement([elementId])">
-          <span class="glyphicon glyphicon-trash"></span>
+          <div><span class="glyphicon glyphicon-trash"></span></div>
         </tooltip>
       </div>
       <div v-show="buttonGroup === 'fixedEditing'" class="btn-group el-btn-group" role="group">

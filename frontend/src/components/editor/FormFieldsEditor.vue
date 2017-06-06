@@ -1,7 +1,7 @@
 <script>
 import ColorPicker from './ColorPicker'
 import Dropdown from '../ui/Dropdown'
-import colorMixin from '../../mixins/colorMixin'
+import colorMixin from 'mixins/colorMixin'
 import Vue from 'vue'
 
 export default {

@@ -141,6 +141,11 @@ export const setActiveSectionId = ({ commit }, sectionId) => {
   commit(types.SET_ACTIVE_SECTION_ID, { sectionId })
 }
 
+// 设置当前活跃的板块
+export const setCurrentSectionId = ({ commit }, sectionId) => {
+  commit(types.SET_CURRENT_SECTION_ID, { sectionId })
+}
+
 // 撤销
 export const undo = ({ commit }) => commit(types.UNDO)
 

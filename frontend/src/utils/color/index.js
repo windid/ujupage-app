@@ -11,7 +11,7 @@ function parseIntFromHex (val) {
 
 function fixed (f, precision) {
   const p = Math.pow(10, precision)
-  return Math.floor(f * p) / p
+  return Math.round(f * p) / p
 }
 
 function pad2 (c) {
@@ -107,7 +107,7 @@ export function rgb2hex (r, g, b, allow3chars) {
 }
 
 /**
- * 将rgb转为hsl
+ * 将rgb转为hsl,http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
  */
 export function rgb2hsl ({ r, g, b }) {
   r = bound01(r, 255)

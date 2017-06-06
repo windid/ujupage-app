@@ -75,7 +75,7 @@
       <p class="text-muted">所有的模板都是响应式的，同时支持PC和移动。每个模板都支持多达30种配色方案。</p>
       <div>
         <div class="template empty-page" @click="createEmptyPage">空白页</div>
-        <router-link tag="div" v-for="template in templates" :to="{ name: 'template', params: { templateId: template.id }, query: $route.query }" class="template">
+        <router-link tag="div" v-for="template in templates" :key="template.id" :to="{ name: 'template', params: { templateId: template.id }, query: $route.query }" class="template">
           <img :src="template.image_url + '@300w.png'" alt="">
         </router-link>
         <div style="clear: both;"></div>

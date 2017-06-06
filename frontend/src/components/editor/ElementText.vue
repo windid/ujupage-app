@@ -1,6 +1,6 @@
 <script>
-import elementMixin from '../../mixins/elementMixin'
-import colorMixin from '../../mixins/colorMixin'
+import elementMixin from 'mixins/elementMixin'
+import colorMixin from 'mixins/colorMixin'
 import ColorPicker from './ColorPicker'
 import FontSize from './FontSize'
 import LineHeight from './LineHeight'
@@ -245,17 +245,20 @@ export default {
       @mousedown.prevent>
         <color-picker v-model="localColor" @inputFocus="colorInputFocus" @input="colorInput">
           <tooltip class="btn btn-default dropdown-toggle" data-toggle="dropdown" content="颜色" >
-            <span class="glyphicon glyphicon-text-color" :style="{color:getColor(localColor)}"></span> 
-            <span class="caret"></span>
+            <div>
+              <span class="glyphicon glyphicon-text-color" :style="{color:getColor(localColor)}"></span> 
+            </div>
           </tooltip>
         </color-picker>
         <font-size v-model="localElement.fontStyle.fontSize"></font-size>
         <line-height v-model="localElement.fontStyle.lineHeight"></line-height>
         <text-align v-model="localElement.fontStyle.textAlign"></text-align>
-        <tooltip class="btn btn-default" content="加粗" @click.native="styleText('bold')">B</tooltip>
+        <tooltip class="btn btn-default" content="加粗" @click.native="styleText('bold')"><div>B</div></tooltip>
         <tooltip class="btn btn-default" content="斜体" @click.native="styleText('italic')"><i>I</i></tooltip>
         <tooltip class="btn btn-default" content="下划线" @click.native="styleText('underline')"><u>U</u></tooltip>
-        <tooltip class="btn btn-default" :class="{unlink: linkSelected}" content="链接" @click.native="link"><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></tooltip>
+        <tooltip class="btn btn-default" :class="{unlink: linkSelected}" content="链接" @click.native="link">
+          <div><span class="glyphicon glyphicon-link" :class="{unlink: linkSelected}"></span></div>
+        </tooltip>
         <div class="btn btn-success" title="完成编辑" @click="editDone">完成</div>
       </div>
       <div v-show="buttonGroup === 'edit' && addingLink" class="el-btn-group form-inline form-createlinks"

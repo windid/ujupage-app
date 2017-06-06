@@ -1,4 +1,7 @@
-import { util } from 'vue'
+/**
+ * A mini jQuery library
+ */
+import { isPlainObject, camelize } from 'utils'
 
 const $ = function (selector, context = document) {
   return new $.fn.Init(selector, context)
@@ -72,10 +75,10 @@ $.fn.extend({
     return this
   },
   css (props, value) {
-    if (util.isPlainObject(props)) {
+    if (isPlainObject(props)) {
       for (const prop in props) {
         this.each(el => {
-          el.style[util.camelize(prop)] = props[prop]
+          el.style[camelize(prop)] = props[prop]
         })
       }
     } else {
@@ -88,6 +91,32 @@ $.fn.extend({
       }
     }
     return this
+  },
+  has (attr) {
+    return this.length > 0 ? this[0].hasAttribute(attr) : false
+  },
+  attr (name, val) {
+    if (typeof val === 'undefined') {
+      return this.length > 0 ? this[0].getAttribute(name) : null
+    } else {
+      this.each((el) => {
+        el.setAttribute(name, val)
+      })
+      return this
+    }
+  },
+  offset () {
+    if (this.length > 0) {
+      const el = this[0]
+      const docEl = document.documentElement
+      const boundingRect = el.getBoundingClientRect()
+      const top = boundingRect.top + window.pageYOffset - docEl.clientTop
+      const left = boundingRect.left + window.pageXOffset - docEl.clientLeft
+      return {
+        top,
+        left
+      }
+    }
   }
 })
 

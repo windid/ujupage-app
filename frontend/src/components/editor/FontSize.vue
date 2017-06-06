@@ -44,7 +44,7 @@ export default {
 <template>
   <dropdown :show="show" @toggle="show=!show">
     <tooltip class="btn btn-default dropdown-toggle" data-toggle="dropdown" content="字号" :disabled="show">
-      {{fontSizeInt}} <span class="caret"></span>
+      <div>{{fontSizeInt}}</div>
     </tooltip>
     <div slot="dropdown-menu" class="dropdown-menu" :class="{'dropdown-menu-right':position === 'right'}">
       <div class="font-size-wrapper">

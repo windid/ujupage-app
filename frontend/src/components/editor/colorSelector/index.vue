@@ -24,8 +24,7 @@
           <color-input label="l" v-model="color.hsl.l" :filter="percentFilter" @on-change="inputChange"></color-input>
           <color-input label="a" v-model="color.a" :filter="alphaFilter" @on-change="inputChange"></color-input>
         </div>
-        <div class="toggle" @click="switchFields">
-        </div>
+        <div class="toggle" @click="switchFields"></div>
       </div>
     </div>
     <div class="footer">
@@ -39,7 +38,7 @@ import Hue from './common/Hue'
 import Alpha from './common/Alpha'
 import ColorInput from './common/ColorInput'
 
-import Color from '../../../utils/color'
+import Color from 'utils/color'
 
 export default {
   name: 'color-picker',
@@ -79,12 +78,12 @@ export default {
       this.color = Color({ hsv }, this.color)
     },
     changeHue (h) {
-      const c = this.color.hsl
+      const { hsl } = this.color
       this.color = Color({
         hsl: {
           h: h,
-          s: c.s,
-          l: c.l
+          s: hsl.s,
+          l: hsl.l
         }
       }, this.color)
     },
@@ -96,11 +95,11 @@ export default {
     },
     inputChange (label, val) {
       if ('rgb'.indexOf(label) > -1) {
-        const rgb = this.color.rgb
+        const { rgb } = this.color
         rgb[label] = val
         this.color = Color({ rgb }, this.color)
       } else if ('hsl'.indexOf(label) > -1) {
-        const hsl = this.color.hsl
+        const { hsl } = this.color
         hsl[label] = val
         this.color = Color({ hsl }, this.color)
       } else if (label === 'a') {

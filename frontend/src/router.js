@@ -34,6 +34,9 @@ import ResetPassword from './components/auth/ResetPassword'
 const router = new VueRouter({
   mode: 'history',
   base: __dirname,
+  scrollBehavior (to, from, savedPosition) {
+    return savedPosition || { x: 0, y: 0 }
+  },
   routes: [
     { path: '/login', name: 'login', component: Login,
       beforeEnter (to, from, next) {

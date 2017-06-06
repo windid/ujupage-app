@@ -1,5 +1,5 @@
 import { mapGetters } from 'vuex'
-import { isValidColor, getValidColor } from '../utils/color'
+import { isValidColor, getValidColor } from 'utils/color'
 
 export default {
   computed: mapGetters({

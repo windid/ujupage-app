@@ -2,6 +2,7 @@
 export const LOG_IN = 'LOG_IN'
 export const LOG_OUT = 'LOG_OUT'
 export const EDIT_USER = 'EDIT_USER'
+export const SHOW_AUTH_DIALOG = 'SHOW_AUTH_DIALOG'
 
 // stats
 export const LOAD_STATS_PAGE = 'LOAD_STATS_PAGE'
@@ -74,6 +75,7 @@ export const MOVE_SECTION = 'MOVE_SECTION'
 export const REMOVE_SECTION = 'REMOVE_SECTION'
 export const MODIFY_SECTION = 'MODIFY_SECTION'
 export const SET_ACTIVE_SECTION_ID = 'SET_ACTIVE_SECTION_ID'
+export const SET_CURRENT_SECTION_ID = 'SET_CURRENT_SECTION_ID'
 
 export const SET_ACTIVE_ELEMENT_ID = 'SET_ACTIVE_ELEMENT_ID'
 export const MODIFY_ELEMENT = 'MODIFY_ELEMENT'

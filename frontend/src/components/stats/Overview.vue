@@ -1,12 +1,13 @@
 <script>
 import StatsNav from './StatsNav'
 import AbSplit from '../common/AbSplit'
-import moment from '../../utils/date'
+import moment from 'utils/date'
 import { mapGetters, mapActions } from 'vuex'
 import Chart from './charts/Chart'
 import { find } from 'lodash'
 
 export default {
+  name: 'StatsOverview',
   components: {
     StatsNav,
     Chart,
@@ -15,7 +16,7 @@ export default {
   props: ['report', 'params'],
   filters: {
     percentage (val) {
-      return (Math.round(val * 1000) / 10.0).toString() + '%'
+      return (Math.round(val * 1000) / 10) + '%'
     }
   },
   data () {

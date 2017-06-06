@@ -1,6 +1,7 @@
 <script>
 import MessageBox from './components/ui/MessageBox'
 import Spinner from './components/ui/Spinner'
+import AuthDialog from './components/auth/AuthDialog'
 import Vue from 'vue'
 import { Loading } from 'element-ui'
 Vue.use(Loading)
@@ -9,7 +10,8 @@ export default {
   name: 'App',
   components: {
     MessageBox,
-    Spinner
+    Spinner,
+    AuthDialog
   }
 }
 </script>
@@ -21,10 +23,13 @@ export default {
     </transition>
     <message-box></message-box>
     <spinner></spinner>
+    <auth-dialog></auth-dialog>
   </div>
 </template>
 
 <style lang="scss" src="./style/bootstrap.scss"></style>
+<style lang="scss" src="assets/styles/app.scss"></style>
+
 <style>
 
 body {
