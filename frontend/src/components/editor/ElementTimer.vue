@@ -86,7 +86,7 @@ export default {
     @resizing='onResize'
     @change-button-group="changeButtonGroup"
     @change-draggable="changeDraggable">
-    <div slot="content" class="element-countdown">
+    <div slot="content" class="element-countdown" @dblclick.stop="edit">
       <div class="element-countdown-content">
         <div class="countdown-item">
           <div class="timer-label" :style="labelStyle">日</div>

@@ -22,9 +22,12 @@ export default {
     <div class="btn btn-success" @click="$emit('edit-done')">完成</div>
   </div>
   <div slot="body" class="timer-editor-body">
-    <div class="form-group form-inline">
-      <input class="form-control" type="date" v-model="value.date"></input>
-      <input class="form-control" type="time" v-model="value.time"></input>
+    <div class="form-group">
+      <el-date-picker
+        v-model='value.date'
+        type='datetime'
+        placeholder="选择日期时间">
+      </el-date-picker>
     </div>
     <div class="form-group">
       <label>标签颜色</label>
