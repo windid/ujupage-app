@@ -7,6 +7,7 @@ export const loadUser = ({ commit }, user) => {
 
 export const requireLogin = ({ commit }) => {
   commit(types.SHOW_AUTH_DIALOG, true)
+  commit(types.LOG_OUT)
 }
 
 export const login = ({ commit }, form) => {
