@@ -324,11 +324,10 @@ export default {
   'timer': {
     type: 'timer',
     data: {
-      date: null,
-      time: null,
-      labelColor: null,
-      numberColor: null,
-      timerColor: null
+      datetime: new Date(),
+      labelColor: '2',
+      numberColor: '0',
+      timerColor: '3'
     },
     style: {
       'pc': {

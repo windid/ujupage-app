@@ -24,7 +24,7 @@ export default {
   <div slot="body" class="timer-editor-body">
     <div class="form-group">
       <el-date-picker
-        v-model='value.date'
+        v-model='value.datetime'
         type='datetime'
         placeholder="选择日期时间">
       </el-date-picker>
