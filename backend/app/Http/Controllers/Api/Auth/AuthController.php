@@ -58,12 +58,26 @@ use AuthenticatesAndRegistersUsers,
         ]);
     }
 
-    
+    /**
+     * 访问用户注册页面
+     * 
+     * @param string $i 邀请码
+     */
     public function getRegister(string $i = '') {
         return view('auth.register', ['i' => $i]);
     }
     
-
+    /**
+     * 用户提交注册信息
+     * 如果带有激请码,将绑定该邀请项目
+     * 
+     * @param string name 用户名字
+     * @param string email 邮箱
+     * @param string password 密码
+     * @param string i 邀请码
+     * 
+     * @return json User
+     */
     public function postRegister(Request $request) {
         $validator = $this->validator($request->all());
         $request->merge(['username' => $request->input('email')]);

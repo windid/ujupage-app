@@ -63,16 +63,21 @@ class TemplateController extends Controller {
         $tags = request()->has('tags') ? explode(',', request('tags')) : [];
         array_walk($tags, [$this, 'toInt']);
         
-        \DB::enableQueryLog();
         $templates = $this->hubTemplate
                 ->join('hub_template_tag_relateds', 'template_id', '=', $this->hubTemplate->getTable() . '.id')
-                ->groupBy($this->hubTemplate->getTable() . '.id')
+                ->join('page_variations', 'variation_id', '=', 'page_variations.id')
+                ->join('pages', 'pages.id', '=', 'page_variations.page_id')
+                ->where(function($query){
+                    if (request()->has('is_compat')) {
+                        return $query->where('is_compat', request('is_compat', 0));
+                    }
+                })
                 ->orderBy('order_by', 'asc')
-                ->select([$this->hubTemplate->getTable() . '.id', 'image_url']);
+                ->groupBy($this->hubTemplate->getTable() . '.id')
+                ->select([$this->hubTemplate->getTable() . '.id', 'image_url', 'is_compat']);
         if (!empty($tags)) {
             $templates = $templates->whereIn('tag_id', $tags);
         }
-        
         return $this->successOK($templates->get()->toArray());
     }
     
@@ -156,6 +161,7 @@ class TemplateController extends Controller {
             
         } elseif (request()->has('page_name')) {         
             $pagegroup = $this->initPG(request('group_id', 0));
+            $templatePage = $this->initPGP($templateVariation->page_id);
             if (get_class($pagegroup) == 'Illuminate\Http\JsonResponse') {
                 return $pagegroup;
             }
@@ -167,6 +173,7 @@ class TemplateController extends Controller {
             $page->url = '';
             $page->setting = "";
             $page->variation_history = 0;
+            $page->is_compat = $templatePage->is_compat;
             $page->save();
             $pagegroup->pages()->save($page);
             
