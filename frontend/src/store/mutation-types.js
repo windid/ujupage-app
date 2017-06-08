@@ -6,6 +6,7 @@ export const SHOW_AUTH_DIALOG = 'SHOW_AUTH_DIALOG'
 
 // stats
 export const LOAD_STATS_PAGE = 'LOAD_STATS_PAGE'
+export const STATS_TRAFIC_SPLIT = 'STATS_TRAFIC_SPLIT'
 
 // projects
 export const LOAD_PROJECTS = 'LOAD_PROJECTS'

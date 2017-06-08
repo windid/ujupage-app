@@ -30,8 +30,8 @@ const AppInit = () => {
       if (response.status === 401) {
         store.dispatch('requireLogin')
         return new Promise(resolve => {
-          store.watch(state => state.user.current, val => {
-            val && resolve(Vue.http(request))
+          store.watch(state => state.user.current, userInfo => {
+            userInfo && resolve(Vue.http(request))
           })
         })
       }

@@ -36,10 +36,12 @@
           quota[variation.id] = this.weights[index]
         })
         this.loading()
+        this.error = ''
         API.page.split({ id: this.pageId }, { quota: quota }).then(response => {
           this.$emit('update-split', quota)
           this.$emit('close')
-        }).catch(() => {
+        }).catch(err => {
+          console.log(err)
           this.error = '保存失败，请稍后再试！'
         }).finally(() => {
           this.loadingDone()
