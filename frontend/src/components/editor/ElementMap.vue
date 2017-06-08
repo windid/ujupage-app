@@ -156,8 +156,8 @@ export default {
 
 <template>
   <element-common
-    :element="element" 
-    :section-id="sectionId" 
+    :element="element"
+    :section-id="sectionId"
     :element-id="elementId"
     :button-group="buttonGroup"
     :resizable="resizable"
@@ -174,7 +174,7 @@ export default {
     <template slot="button-groups">
       <div v-if="buttonGroup === 'address'">
         <div class="input-group search-form">
-          <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input" placeholder="输入地名，回车搜索">
+          <input type="text" class="form-control" v-model="input" @keydown.enter="search" ref="input" placeholder="输入地名，回车搜索"></input>
           <div class="input-group-btn">
             <div class="btn btn-primary" @click.stop="search">搜索</div>
           </div>

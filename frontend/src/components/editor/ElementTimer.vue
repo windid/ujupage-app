@@ -5,7 +5,7 @@ import colorMixin from 'mixins/colorMixin'
 import elementMixin from 'mixins/elementMixin'
 
 import { mapGetters, mapActions } from 'vuex'
-import { merge, isEqual } from 'lodash'
+import { isEqual } from 'lodash'
 
 export default {
   name: 'element-timer',
@@ -17,7 +17,6 @@ export default {
   },
   data () {
     return {
-      timerElement: merge({}, this.element),
       resize: {
         handles: 'e'
       },
@@ -53,7 +52,7 @@ export default {
       'setActiveElementId'
     ]),
     color (field) {
-      return this.getColor(this.timerElement.data[field])
+      return this.getColor(this.localElement.data[field])
     },
     edit () {
       this.editing = true
@@ -62,11 +61,13 @@ export default {
     editDone () {
       this.editing = false
       this.buttonGroup = 'main'
-      if (!isEqual(this.element, this.timerElement)) {
-        this.modifyElement([this.elementId, this.timerElement])
+      if (!isEqual(this.element, this.localElement)) {
+        this.modifyElement([this.elementId, this.localElement])
       }
     },
     editChange () {
+    },
+    onResize (direction, size) {
     }
   }
 }
@@ -74,17 +75,18 @@ export default {
 
 <template>
 <div class="element-wrapper">
-  <element-common 
-    :element="element" 
-    :section-id="sectionId" 
-    :element-id="elementId" 
-    :button-group="buttonGroup" 
-    :resize="resize" 
-    :resizable="resizable" 
-    :dimensionContraint="constraints" 
-    @change-button-group="changeButtonGroup" 
+  <element-common
+    :element="element"
+    :section-id="sectionId"
+    :element-id="elementId"
+    :button-group="buttonGroup"
+    :resize="resize"
+    :resizable="resizable"
+    :dimensionContraint="constraints"
+    @resizing='onResize'
+    @change-button-group="changeButtonGroup"
     @change-draggable="changeDraggable">
-    <div slot="content" class="element-countdown">
+    <div slot="content" class="element-countdown" @dblclick.stop="edit">
       <div class="element-countdown-content">
         <div class="countdown-item">
           <div class="timer-label" :style="labelStyle">日</div>
@@ -125,7 +127,7 @@ export default {
       </div>
     </template>
   </element-common>
-  <timer-editor :show="editing" v-model="timerElement.data" @edit-done="editDone" @edit-change="editChange"></timer-editor>
+  <timer-editor :show="editing" v-model="localElement.data" @edit-done="editDone" @edit-change="editChange"></timer-editor>
 </div>
 </template>
 

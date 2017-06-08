@@ -73,11 +73,11 @@ export default {
 
 <template>
 <element-common
-  :element="element" 
-  :section-id="sectionId" 
+  :element="element"
+  :section-id="sectionId"
   :element-id="elementId"
   :button-group="buttonGroup"
-  :dimensionContraint="constraints" 
+  :dimensionContraint="constraints"
   @change-button-group="changeButtonGroup"
   :resizable="resizable"
   :resize="resize"
@@ -96,7 +96,7 @@ export default {
       </div>
       <div class="swiper-bullets">
         <ul>
-          <li v-for="n in localElement.data.images.length-1"></li>
+          <li v-for="n in localElement.data.images.length"></li>
         </ul>
       </div>
       <div class="swiper-buttons" v-if="localElement.data.button">

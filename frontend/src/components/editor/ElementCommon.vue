@@ -555,21 +555,21 @@ const getElementTop = (element) => {
     <div class="el-content" :id="'element-' + elementId"
       :style="{
         zIndex: element.style[workspace.version].zIndex,
-      }" 
+      }"
       :class="{'outline':workspace.activeElementId === elementId}"
     >
       <slot name="content"></slot>
     </div>
     <template v-if="resizable">
-      <resizer v-for="(side, dir) in {'n': 'top', 'e': 'right', 's': 'bottom', 'w': 'left'}" 
-        v-if="hasResizer(dir)" 
-        :class="'resizable-' + dir" 
-        :autoStyle="false" 
-        @resize-start="resizeStart" 
-        @resize-end="resizeAction" 
-        @resizing="resizeAction" 
-        :side="side" 
-        :minSize="sizeRange.minHeight"
+      <resizer v-for="(side, dir) in {'n': 'top', 'e': 'right', 's': 'bottom', 'w': 'left'}"
+        v-if="hasResizer(dir)"
+        :class="'resizable-' + dir"
+        :autoStyle="false"
+        @resize-start="resizeStart"
+        @resize-end="resizeAction"
+        @resizing="resizeAction"
+        :side="side"
+        :minSize="['n', 'e'].indexOf(side) >= 0 ? sizeRange.minHeight: sizeRange.minWidth"
         :key="dir"
       />
     </template>

@@ -58,7 +58,7 @@ export default {
       this.buttonGroup = 'main'
     },
     imageOnload () {
-      this.$refs.element.updateAlignmentInfo()
+      this.$refs.element.updateDimen()
     }
   },
   watch: {
@@ -71,27 +71,27 @@ export default {
 
 <template>
   <element-common
-    :element="element" 
+    :element="element"
     ref="element"
-    :section-id="sectionId" 
-    :element-id="elementId" 
-    :button-group="buttonGroup" 
-    :draggable="draggable" 
-    :resize="resize" 
-    :resizable="resizable" 
+    :section-id="sectionId"
+    :element-id="elementId"
+    :button-group="buttonGroup"
+    :draggable="draggable"
+    :resize="resize"
+    :resizable="resizable"
     :fixedEditable="true"
-    @change-button-group="changeButtonGroup" 
-    @change-draggable="changeDraggable" 
+    @change-button-group="changeButtonGroup"
+    @change-draggable="changeDraggable"
     @drag-start="editDone"
   >
     <div slot="content" :class="{'element-button-text': !localElement.image}"
-      @dblclick="edit" 
+      @dblclick="edit"
       ref="content"
       :style="buttonStyles">
       <img v-if="localElement.image" :src="localElement.image" :style="{width: 'auto', 'max-width':'100%', height:'auto'}" @mousedown.prevent @load="imageOnload">
       <span v-else>{{localElement.text}}</span>
     </div>
-    
+
     <template slot="main-buttons-extend">
       <div class="btn btn-primary" title="编辑" @click.stop="edit">编辑</div>
       <tooltip class="btn btn-default" content="链接" @click.native="editLink">
