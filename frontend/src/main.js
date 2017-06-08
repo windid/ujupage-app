@@ -29,9 +29,20 @@ const AppInit = () => {
     next((response) => {
       if (response.status === 401) {
         store.dispatch('requireLogin')
+        return new Promise(resolve => {
+          store.watch(state => state.user.current, val => {
+            val && resolve(Vue.http(request))
+          })
+        })
       }
     })
   })
+
+  Vue.http.interceptor.before = function (req, next) {
+    console.log(req)
+    next(res => {
+    })
+  }
 
   /* eslint-disable no-new */
   new Vue({

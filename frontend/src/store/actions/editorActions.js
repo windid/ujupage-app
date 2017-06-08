@@ -4,7 +4,6 @@ import { merge, cloneDeep, find } from 'lodash'
 import elementTypes from '../../config/editorElementTypes'
 import defaultSection from '../../config/editorSection'
 import { getScrollTop } from 'utils/ui'
-import { requireLogin } from 'utils/user'
 
 // 数据初始化，在路由中调用
 export const editorInit = ({ commit, state }, [route, callback = false]) => {
@@ -83,7 +82,7 @@ export const saveVariation = ({ commit, state }, callback = false) => {
   const content = JSON.stringify(state.editor.content)
   const params = { pageId: state.editor.page.id, id: state.editor.workspace.activeVariation.id }
   const data = { htmljson: content }
-  requireLogin(() => API.variation.update(params, data)).then(res => {
+  API.variation.update(params, data).then(res => {
     commit(types.SAVE_VARIATION)
     callback && callback()
   })
