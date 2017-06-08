@@ -570,6 +570,7 @@ const getElementTop = (element) => {
         @resizing="resizeAction"
         :side="side"
         :minSize="['n', 'e'].indexOf(side) >= 0 ? sizeRange.minHeight: sizeRange.minWidth"
+        :key="dir"
       />
     </template>
     <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>

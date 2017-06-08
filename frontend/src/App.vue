@@ -1,10 +1,15 @@
 <script>
-import MessageBox from './components/ui/MessageBox.vue'
-import Spinner from './components/ui/Spinner.vue'
+import MessageBox from './components/ui/MessageBox'
+import Spinner from './components/ui/Spinner'
 import AuthDialog from './components/auth/AuthDialog'
 import Vue from 'vue'
-import { Loading } from 'element-ui'
+
+import {
+  Loading,
+  DatePicker
+} from 'element-ui'
 Vue.use(Loading)
+Vue.use(DatePicker)
 
 export default {
   name: 'App',
