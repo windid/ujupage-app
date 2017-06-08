@@ -38,12 +38,6 @@ const AppInit = () => {
     })
   })
 
-  Vue.http.interceptor.before = function (req, next) {
-    console.log(req)
-    next(res => {
-    })
-  }
-
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
