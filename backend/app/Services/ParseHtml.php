@@ -115,6 +115,7 @@ class ParseHtml {
         }
         echo $element_id;
         print_r(self::$page['style']['pc']['element-'.$element_id]);
+        print_r($element['style']);
 
         if (isset(self::$elements['mobile'][$element_id])){
             $element['style']['mobile']['top'] = ($element['style']['mobile']['top'] + self::$elements['mobile'][$element_id])."px";
