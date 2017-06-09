@@ -1,8 +1,13 @@
 import * as types from '../mutation-types'
+import { noop, isPlainObject } from 'utils/index'
 
 const state = {
   current: null,
-  showAuthDialog: false
+  authDialog: {
+    show: false,
+    onPass: noop,
+    onFail: noop
+  }
 }
 
 const mutations = {
@@ -15,8 +20,17 @@ const mutations = {
   [types.EDIT_USER] (state, { userInfo }) {
     state.current = userInfo
   },
-  [types.SHOW_AUTH_DIALOG] (state, show) {
-    state.showAuthDialog = show
+  [types.SET_AUTH_DIALOG] (state, dialog) {
+    const authDialog = state.authDialog
+    if (isPlainObject(dialog)) {
+      for (const key in authDialog) {
+        if (dialog[key]) {
+          authDialog[key] = dialog[key]
+        }
+      }
+    } else {
+      authDialog.show = dialog
+    }
   }
 }
 

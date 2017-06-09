@@ -5,8 +5,12 @@ export const loadUser = ({ commit }, user) => {
   commit(types.LOG_IN, { user })
 }
 
-export const requireLogin = ({ commit }) => {
-  commit(types.SHOW_AUTH_DIALOG, true)
+export const requireLogin = ({ commit }, { onPass, onFail }) => {
+  commit(types.SET_AUTH_DIALOG, {
+    show: true,
+    onPass,
+    onFail
+  })
   commit(types.LOG_OUT)
 }
 

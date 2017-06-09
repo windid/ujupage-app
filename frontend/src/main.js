@@ -28,10 +28,11 @@ const AppInit = () => {
     }
     next((response) => {
       if (response.status === 401) {
-        store.dispatch('requireLogin')
         return new Promise(resolve => {
-          store.watch(state => state.user.current, userInfo => {
-            userInfo && resolve(Vue.http(request))
+          store.dispatch('requireLogin', {
+            onPass () {
+              resolve(Vue.http(request))
+            }
           })
         })
       }

@@ -2,7 +2,7 @@
 export const LOG_IN = 'LOG_IN'
 export const LOG_OUT = 'LOG_OUT'
 export const EDIT_USER = 'EDIT_USER'
-export const SHOW_AUTH_DIALOG = 'SHOW_AUTH_DIALOG'
+export const SET_AUTH_DIALOG = 'SET_AUTH_DIALOG'
 
 // stats
 export const LOAD_STATS_PAGE = 'LOAD_STATS_PAGE'

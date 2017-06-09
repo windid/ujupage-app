@@ -2,7 +2,7 @@
   <el-dialog v-model="showAuthDialog" size="tiny" @close="onClose">
     <div v-if="showLogin">
       <div class="auth-header">登陆</div>
-      <login-form @pass="onClose"></login-form>
+      <login-form @pass="onPass"></login-form>
       <p class="auth-extra">
         还没有聚页账户？
         <a href="javascript:;" @click="toggleForm">注册用户</a>
@@ -10,7 +10,7 @@
     </div>
     <div v-else>
       <div class="auth-header">注册</div>
-      <register-form @pass="onClose"></register-form>
+      <register-form @pass="onPass"></register-form>
       <p class="auth-extra">
         已经有聚页账户？
         <a href="javascript:;" @click="toggleForm">登陆</a>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import { Dialog } from 'element-ui'
 import * as types from 'store/mutation-types'
 import LoginForm from './LoginForm'
@@ -38,12 +38,19 @@ export default {
       showLogin: true
     }
   },
-  computed: mapState({
-    showAuthDialog: state => state.user.showAuthDialog
-  }),
+  computed: {
+    ...mapGetters(['authDialog']),
+    showAuthDialog () {
+      return this.authDialog.show
+    }
+  },
   methods: {
     onClose () {
-      this.$store.commit(types.SHOW_AUTH_DIALOG, false)
+      this.$store.commit(types.SET_AUTH_DIALOG, false)
+    },
+    onPass () {
+      this.$store.commit(types.SET_AUTH_DIALOG, false)
+      this.authDialog.onPass()
     },
     toggleForm () {
       this.showLogin = !this.showLogin

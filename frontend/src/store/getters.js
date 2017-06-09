@@ -2,6 +2,7 @@ import { isEqual } from 'lodash'
 
 // user
 export const isLogin = state => !!state.user.current
+export const authDialog = state => state.user.authDialog
 
 // stats
 export const statsPage = state => state.stats.page
