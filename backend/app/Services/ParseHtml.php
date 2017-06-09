@@ -113,6 +113,7 @@ class ParseHtml {
         } else {
             self::$page['style']['pc']['element-'.$element_id] = array("display"=>"none");
         }
+            print_r(self::$page['style']['pc']['element-'.$element_id]);
 
         if (isset(self::$elements['mobile'][$element_id])){
             $element['style']['mobile']['top'] = ($element['style']['mobile']['top'] + self::$elements['mobile'][$element_id])."px";
@@ -127,7 +128,7 @@ class ParseHtml {
         }
 
         if (isset($element['fixed']) && $element['fixed']) {
-            print_r(self::$page['style']['mobile']['element-'.$element_id]);
+            print_r(self::$page['style']['pc']['element-'.$element_id]);
             unset(self::$page['style']['pc']['element-'.$element_id]['display']);
             unset(self::$page['style']['pc']['element-'.$element_id]['top']);
             unset(self::$page['style']['pc']['element-'.$element_id]['left']);
