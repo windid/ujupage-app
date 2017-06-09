@@ -113,9 +113,6 @@ class ParseHtml {
         } else {
             self::$page['style']['pc']['element-'.$element_id] = array("display"=>"none");
         }
-        echo $element_id;
-        print_r(self::$page['style']['pc']['element-'.$element_id]);
-        print_r($element['style']);
 
         if (isset(self::$elements['mobile'][$element_id])){
             $element['style']['mobile']['top'] = ($element['style']['mobile']['top'] + self::$elements['mobile'][$element_id])."px";
@@ -130,22 +127,19 @@ class ParseHtml {
         }
 
         if (isset($element['fixed']) && $element['fixed']) {
-            print_r(self::$page['style']['pc']['element-'.$element_id]);
             unset(self::$page['style']['pc']['element-'.$element_id]['display']);
             unset(self::$page['style']['pc']['element-'.$element_id]['top']);
             unset(self::$page['style']['pc']['element-'.$element_id]['left']);
             unset(self::$page['style']['mobile']['element-'.$element_id]['display']);
             unset(self::$page['style']['mobile']['element-'.$element_id]['top']);
             unset(self::$page['style']['mobile']['element-'.$element_id]['left']);
-            print_r(self::$page['style']['mobile']['element-'.$element_id]);
 
             self::$page['style']['pc']['element-'.$element_id]['position'] = 'fixed';
             self::$page['style']['pc']['element-'.$element_id]['top'] = $element['fixedPosition']['top'];
             self::$page['style']['pc']['element-'.$element_id]['bottom'] = $element['fixedPosition']['bottom'];
             self::$page['style']['pc']['element-'.$element_id]['margin-left'] = $element['fixedPosition']['left'];
-            print_r(self::$page['style']['mobile']['element-'.$element_id]);
-            // self::$page['style']['pc']['element-'.$element_id]['z-index'] += 50000;
-            // self::$page['style']['mobile']['element-'.$element_id]['z-index'] += 50000;
+            self::$page['style']['pc']['element-'.$element_id]['z-index'] = $element['style']['pc']['zIndex'] + 50000;
+            self::$page['style']['mobile']['element-'.$element_id]['z-index'] = $element['style']['mobile']['zIndex'] + 50000;
             if ($element['fixedScrollPx']) {
                 self::$page['style']['pc']['element-'.$element_id]['display'] = 'none';
             }
