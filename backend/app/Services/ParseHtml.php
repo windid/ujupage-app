@@ -138,8 +138,9 @@ class ParseHtml {
             self::$page['style']['pc']['element-'.$element_id]['top'] = $element['fixedPosition']['top'];
             self::$page['style']['pc']['element-'.$element_id]['bottom'] = $element['fixedPosition']['bottom'];
             self::$page['style']['pc']['element-'.$element_id]['margin-left'] = $element['fixedPosition']['left'];
-            self::$page['style']['pc']['element-'.$element_id]['zIndex'] += 50000;
-            self::$page['style']['mobile']['element-'.$element_id]['zIndex'] += 50000;
+            print_r(self::$page['style']['pc']['element-'.$element_id]);
+            // self::$page['style']['pc']['element-'.$element_id]['z-index'] += 50000;
+            // self::$page['style']['mobile']['element-'.$element_id]['z-index'] += 50000;
             if ($element['fixedScrollPx']) {
                 self::$page['style']['pc']['element-'.$element_id]['display'] = 'none';
             }
