@@ -43,11 +43,7 @@ export default {
     }
   },
   mounted () {
-    const container = this.$refs.container
-    this.containerHeight = container.clientHeight
-    this.contentHeight = container.scrollHeight
-    this._$container = container
-    this.scrollTop = container.scrollTop
+    this.setViewData()
   },
   computed: {
     barHeight () {
@@ -65,6 +61,12 @@ export default {
     }
   },
   methods: {
+    setViewData () {
+      const container = this.$refs.container
+      this.containerHeight = container.clientHeight
+      this.contentHeight = container.scrollHeight
+      this.scrollTop = container.scrollTop
+    },
     updateScrollTop (value) {
       if (value < 0) {
         this.scrollTop = 0
@@ -75,18 +77,21 @@ export default {
       }
     },
     onWheel (e) {
-      clearTimeout(this._timeout)
-      this.isScrolling = true
-      const deltaY = getDeltaYFromEvent(e)
-      this.updateScrollTop(this.scrollTop - deltaY)
-      this._timeout = setTimeout(() => {
-        this.isScrolling = false
-      }, 1000)
+      this.setViewData()
+      if (this.containerHeight < this.contentHeight) {
+        clearTimeout(this._timeout)
+        this.isScrolling = true
+        const deltaY = getDeltaYFromEvent(e)
+        this.updateScrollTop(this.scrollTop - deltaY)
+        this._timeout = setTimeout(() => {
+          this.isScrolling = false
+        }, 1000)
+      }
     }
   },
   watch: {
     scrollTop (v) {
-      this._$container.scrollTop = v
+      this.$refs.container.scrollTop = v
     }
   }
 }

@@ -1,8 +1,10 @@
 <script>
-import { getScrollbarWidth } from '../../utils/env'
-import $ from 'utils/query'
+import VScrollbar from './VScrollbar'
 
 export default {
+  components: {
+    VScrollbar
+  },
   props: {
     show: {
       type: Boolean,
@@ -15,27 +17,6 @@ export default {
     height: {
       type: String,
       default: 'auto'
-    }
-  },
-  data () {
-    return {
-      mouseOnBody: false
-    }
-  },
-  watch: {
-    show (val) {
-      const $body = $(document.body)
-      const $editorHeader = $('.editor-header')
-      this.$nextTick(() => {
-        if (val) {
-          const paddingRight = getScrollbarWidth() + 'px'
-          $body.addClass('no-scroll').css('padding-right', paddingRight)
-          $editorHeader.css('padding-right', paddingRight)
-        } else {
-          $body.css('padding-right', '0px').removeClass('no-scroll')
-          $editorHeader.css('padding-right', '0px')
-        }
-      })
     }
   }
 }
@@ -52,12 +33,9 @@ export default {
           <slot name="header"></slot>
         </div>
         
-        <div class="modal-body container-fluid"
-          ref="modalBody"
-          @mouseenter="mouseOnBody = true"
-          @mouseleave="mouseOnBody = false">
+        <v-scrollbar class="modal-body container-fluid">
           <slot name="body"></slot>
-        </div>
+        </v-scrollbar>
 
         <div class="modal-footer">
           <slot name="footer">

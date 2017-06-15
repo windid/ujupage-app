@@ -17,6 +17,9 @@ export default {
       bodyScrollable: true
     }
   },
+  updated () {
+    console.log('sidebar updated')
+  },
   mounted () {
     var el = this.$el
     this._closeEvent = eventHandler.listen(window, 'click', (e) => {
@@ -36,8 +39,7 @@ export default {
 <transition name="sidebar">
   <div v-if="show" class="sidebar" @mousedown.stop>
     <div class="sidebar-header">
-      <slot name="header">
-      </slot>
+      <slot name="header"></slot>
     </div>
     <v-scrollbar class="sidebar-body">
       <slot name="body"></slot>
