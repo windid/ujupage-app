@@ -2,7 +2,7 @@
   <div class="previewer">
     <iframe v-if="version === 'pc'" class="pc-iframe" :src="url" frameborder="0"></iframe>
     <div v-if="version === 'mobile'" class="mobile-preview">           
-      <div class="marvel-device iphone6 silver">
+      <div class="marvel-device iphone6 silver" :style="sizeStyle">
           <div class="top-bar"></div>
           <div class="sleep"></div>
           <div class="volume"></div>
@@ -12,13 +12,15 @@
           <div class="screen"></div>
           <div class="home"></div>
           <div class="bottom-bar"></div>
-          <iframe class="mobile-iframe" :src="url" frameborder="0"></iframe>
+          <iframe class="mobile-iframe" :style="sizeStyle" :src="url" frameborder="0"></iframe>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getScrollbarWidth } from 'utils/env'
+
 export default {
   name: 'Previewer',
   props: {
@@ -30,6 +32,25 @@ export default {
       type: String,
       default: 'mobile'
     }
+  },
+  data () {
+    return {
+      width: 360,
+      height: 640
+    }
+  },
+  computed: {
+    sizeStyle () {
+      return {
+        width: this.width + 'px',
+        height: this.height + 'px'
+      }
+    }
+  },
+  mounted () {
+    const w = getScrollbarWidth()
+    this.height += Math.floor(w * this.height / this.width)
+    this.width += w
   }
 }
 </script>
@@ -49,14 +70,14 @@ export default {
   width: 100%;
   text-align:center;
 }
-.mobile-iframe{
+.mobile-iframe {
   overflow-x: hidden;
   overflow-y: scroll;
   z-index: 3;
   display: block;
   border: none;
-  height: 667px;
-  width: 375px;
+  height: 640px;
+  width: 360px;
   position: absolute;
   margin: auto;
   top: 0;

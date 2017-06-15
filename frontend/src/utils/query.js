@@ -48,13 +48,13 @@ $.fn.extend({
 
 $.fn.extend({
   show () {
-    this.each((el) => {
+    this.each(el => {
       el.style.display = ''
     })
     return this
   },
   hide () {
-    this.each((el) => {
+    this.each(el => {
       el.style.display = 'none'
     })
     return this
@@ -63,13 +63,13 @@ $.fn.extend({
     return this.length > 0 && this[0].classList.contains(className)
   },
   addClass (className) {
-    this.each((el) => {
+    this.each(el => {
       el.classList.add(className)
     })
     return this
   },
   removeClass (className) {
-    this.each((el) => {
+    this.each(el => {
       el.classList.remove(className)
     })
     return this
@@ -99,7 +99,7 @@ $.fn.extend({
     if (typeof val === 'undefined') {
       return this.length > 0 ? this[0].getAttribute(name) : null
     } else {
-      this.each((el) => {
+      this.each(el => {
         el.setAttribute(name, val)
       })
       return this
