@@ -1,9 +1,11 @@
 <script>
 import eventHandler from 'utils/eventHandler'
-import { getScrollbarWidth } from 'utils/env'
-import $ from 'utils/query'
+import VScrollbar from './VScrollbar'
 
 export default {
+  components: {
+    VScrollbar
+  },
   props: {
     show: {
       type: Boolean,
@@ -25,26 +27,6 @@ export default {
   },
   beforeDestroy () {
     if (this._closeEvent) this._closeEvent.remove()
-  },
-  watch: {
-    bodyScrollable (val) {
-      const $body = $(document.body)
-      const $editorHeader = $('.editor-header')
-      const { sidebarBody } = this.$refs
-      const $sidebar = $(this.$el)
-      this.$nextTick(() => {
-        if (val) {
-          $body.css('padding-right', '0px').removeClass('no-scroll')
-          $editorHeader.css('padding-right', '0px')
-          $sidebar.css('padding-right', '0px')
-        } else if (sidebarBody && sidebarBody.scrollHeight > sidebarBody.clientHeight) {
-          const paddingRight = getScrollbarWidth() + 'px'
-          $body.addClass('no-scroll').css('padding-right', paddingRight)
-          $editorHeader.css('padding-right', paddingRight)
-          $sidebar.css('padding-right', paddingRight)
-        }
-      })
-    }
   }
 }
 </script>
@@ -57,13 +39,9 @@ export default {
       <slot name="header">
       </slot>
     </div>
-    <div class="sidebar-body"
-      ref="sidebarBody"
-      @mouseenter="bodyScrollable = false"
-      @mouseleave="bodyScrollable = true">
-      <slot name="body">
-      </slot>
-    </div>
+    <v-scrollbar class="sidebar-body">
+      <slot name="body"></slot>
+    </v-scrollbar>
   </div>
 </transition>
 
