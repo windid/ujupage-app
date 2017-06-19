@@ -85,7 +85,7 @@ export default {
         this.updateScrollTop(this.scrollTop - deltaY)
         this._timeout = setTimeout(() => {
           this.isScrolling = false
-        }, 1000)
+        }, 800)
       }
     }
   },
@@ -110,5 +110,4 @@ export default {
   border-radius: 6px;
   background-color: rgba(0,0,0,.5);
 }
-
 </style>

@@ -17,9 +17,6 @@ export default {
       bodyScrollable: true
     }
   },
-  updated () {
-    console.log('sidebar updated')
-  },
   mounted () {
     var el = this.$el
     this._closeEvent = eventHandler.listen(window, 'click', (e) => {
