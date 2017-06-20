@@ -55,7 +55,7 @@ const router = new VueRouter({
     { path: '/editor/:pageId/:variationId', name: 'variation', component: Editor, meta: { requiresAuth: true, preFetch: 'editorInit' }},
     { path: '/preview/:pageId/:variationId', name: 'preview', component: Preview, meta: { requiresAuth: true }},
     { path: '/template/:templateId', name: 'template', component: Template },
-    { path: '/', component: Home,
+    { path: '/', component: Home, meta: { requiresAuth: true },
       children: [
         { path: '', name: 'dashboard', component: Dashboard, meta: { preFetch: 'dashboardInit' }},
         { path: '/account', name: 'account', component: Account },
