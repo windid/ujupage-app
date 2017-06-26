@@ -3,6 +3,7 @@ import Dropdown from '../ui/Dropdown.vue'
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'PageItem',
   props: {
     pageItem: {
       type: Object

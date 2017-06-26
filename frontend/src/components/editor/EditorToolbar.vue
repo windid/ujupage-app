@@ -4,7 +4,7 @@ import eventHandler from 'utils/eventHandler'
 import mouseDrag from 'mixins/mouseDrag.js'
 
 export default {
-  name: 'editor-toolbar',
+  name: 'EditorToolbar',
   mixins: [mouseDrag],
   props: {
     page: Object

@@ -10,6 +10,7 @@ import MultiSelect from './MultiSelect'
 import * as editorHelper from 'utils/editor'
 
 export default {
+  name: 'EditorWorkspace',
   mixins: [mouseDrag],
   components: {
     PageSection,

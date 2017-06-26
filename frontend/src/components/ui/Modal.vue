@@ -2,6 +2,7 @@
 import VScrollbar from './VScrollbar'
 
 export default {
+  name: 'Modal',
   components: {
     VScrollbar
   },

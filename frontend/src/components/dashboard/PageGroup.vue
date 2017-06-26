@@ -2,6 +2,7 @@
 import { mapActions } from 'vuex'
 
 export default {
+  name: 'PageGroup',
   props: {
     pageGroup: {
       type: Object

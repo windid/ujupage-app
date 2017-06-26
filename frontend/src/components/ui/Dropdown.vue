@@ -1,6 +1,7 @@
 <script>
   import eventHandler from 'utils/eventHandler'
   export default {
+    name: 'Dropdown',
     props: {
       show: Boolean,
       // 向上还是向下弹出菜单，默认向下，向上用up

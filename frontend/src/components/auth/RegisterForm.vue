@@ -24,6 +24,7 @@ import { mapActions } from 'vuex'
 import { emailRE } from 'utils/index'
 
 export default {
+  name: 'RegisterForm',
   data () {
     return {
       error: '',

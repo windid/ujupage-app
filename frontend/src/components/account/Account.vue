@@ -4,6 +4,7 @@ import API from '../../API'
 import { mapActions } from 'vuex'
 
 export default {
+  name: 'Account',
   components: {
     Tooltip
   },

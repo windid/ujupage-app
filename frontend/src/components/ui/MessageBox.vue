@@ -2,6 +2,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'MessageBox',
   computed: mapGetters({
     msg: 'message',
     show: 'showMessage'

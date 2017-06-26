@@ -5,7 +5,7 @@
   import { chineseRE } from 'utils/index'
 
   export default {
-    name: 'member',
+    name: 'Member',
     props: {
       member: {
         type: Object,

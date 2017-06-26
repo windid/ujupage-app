@@ -3,6 +3,7 @@ import Auth from './Auth'
 import RegisterForm from './RegisterForm'
 
 export default {
+  name: 'Register',
   components: {
     Auth,
     RegisterForm

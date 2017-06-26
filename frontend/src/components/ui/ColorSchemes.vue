@@ -2,6 +2,7 @@
 import Dropdown from '../ui/Dropdown.vue'
 
 export default {
+  name: 'ColorSchemes',
   components: {
     Dropdown
   },

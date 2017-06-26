@@ -2,7 +2,7 @@
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'image-picker',
+  name: 'ImagePicker',
   props: {
     'value': {
       required: true

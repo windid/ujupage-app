@@ -10,6 +10,7 @@ import { urlKeyRE } from 'utils/index'
 import { isWindows } from 'utils/env'
 
 export default {
+  name: 'EditorHeader',
   components: {
     ColorSchemes,
     EditorSettings,

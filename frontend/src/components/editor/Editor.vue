@@ -11,7 +11,7 @@ Vue.use(Ui)
 const leaveMessage = '您对该页面所作修改尚未保存，现在离开导致您所作的修改丢失，确定吗?'
 
 export default {
-  name: 'editor',
+  name: 'Editor',
   components: {
     EditorHeader,
     EditorToolbar,

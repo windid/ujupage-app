@@ -4,6 +4,7 @@ import PageGroup from './PageGroup.vue'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  name: 'DashboardWorkspace',
   components: {
     PageItem,
     PageGroup

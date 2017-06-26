@@ -3,6 +3,7 @@ import Dropdown from '../ui/Dropdown.vue'
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'DashboardProjects',
   components: {
     Dropdown
   },

@@ -28,6 +28,7 @@ function getDeltaYFromEvent (e) {
 }
 
 export default {
+  name: 'VScrollbar',
   props: {
     tag: {
       type: String,

@@ -4,6 +4,7 @@ import { Tooltip } from 'element-ui'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  name: 'AbTest',
   components: {
     Dropdown,
     Tooltip

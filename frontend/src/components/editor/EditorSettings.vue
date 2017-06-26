@@ -4,6 +4,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { merge } from 'lodash'
 
 export default {
+  name: 'EditorSettings',
   components: {
     Modal
   },

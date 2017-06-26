@@ -5,6 +5,7 @@
   import { emailRE } from 'utils/index'
 
   export default {
+    name: 'ProjectMembers',
     components: {
       Member,
       Tooltip

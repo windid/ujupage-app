@@ -3,6 +3,7 @@ import eventHandler from 'utils/eventHandler'
 import VScrollbar from './VScrollbar'
 
 export default {
+  name: 'Sidebar',
   components: {
     VScrollbar
   },
