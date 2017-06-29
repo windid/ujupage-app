@@ -1,5 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { throttle } from 'lodash'
 
 import mouseDrag from 'mixins/mouseDrag'
 import resizer from '../ui/OnesideResizer'
@@ -69,6 +70,11 @@ export default {
       },
       updateTimer: null,
       dragging: false,
+      dragCache: { move: null, offset: null, options: null },
+      dragThrottle: throttle(() => {
+        const cache = this.dragCache
+        this._dragMove(cache.move, cache.offset, cache.options)
+      }, 50),
       resizing: false,
       startTop: 0,
       startPosLeft: 0,
@@ -257,6 +263,11 @@ export default {
       editorHelper.alignBegin(this.elementId)
     },
     dragMove (move, offset, options) {
+      this.dragCache = { move, offset, options }
+      this.dragThrottle()
+    },
+    // drag&&move callback for throttle
+    _dragMove (move, offset, options) {
       if (move.x === 0 && move.y === 0) return
       if (this.buttonGroup !== 'position') {
         this.$emit('change-button-group', 'position')
@@ -474,8 +485,7 @@ export default {
     },
 
     'multiMove': function (val) {
-      if (!this.actived) return
-      if (val === null) return
+      if (!this.actived || val === null) return
       if (val.started) {
         this.getStartPos()
       }
@@ -571,9 +581,9 @@ const getElementTop = (element) => {
         :side="side"
         :minSize="['n', 'e'].indexOf(side) >= 0 ? sizeRange.minHeight: sizeRange.minWidth"
         :key="dir"
-      />
+      ></resizer>
     </template>
-    <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop>
+    <div v-if="workspace.activeElementId === elementId" class="el-toolbar" :class="toolbarPosition" @mousedown.stop="() => {}">
       <div v-show="buttonGroup === 'main'" class="btn-group el-btn-group" role="group">
         <slot name="main-buttons-extend"></slot>
         <tooltip v-if="fixedEditable" class="btn btn-default" content="固定位置" @click.native.stop="editFixed">
