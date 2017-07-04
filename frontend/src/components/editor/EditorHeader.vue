@@ -38,6 +38,7 @@ export default {
       'undo',
       'redo',
       'switchVersion',
+      'autoSave',
       'saveVariation',
       'confirm',
       'getInput',
@@ -146,7 +147,7 @@ export default {
     document.removeEventListener('keydown', this.onKey)
     document.addEventListener('keydown', this.onKey)
   },
-  destroyed () {
+  beforeDestroy () {
     document.removeEventListener('keydown', this.onKey)
   }
 

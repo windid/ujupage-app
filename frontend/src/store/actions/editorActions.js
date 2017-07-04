@@ -4,9 +4,10 @@ import { merge, cloneDeep, find } from 'lodash'
 import elementTypes from '../../config/editorElementTypes'
 import defaultSection from '../../config/editorSection'
 import { getScrollTop } from 'utils/ui'
+import contentCache from 'utils/editor/contentCache'
 
 // 数据初始化，在路由中调用
-export const editorInit = ({ commit, state }, [route, callback = false]) => {
+export const editorInit = ({ commit, state, dispatch }, [route, callback = false]) => {
   const pageId = route.params.pageId
   API.page.get({ id: pageId }).then(response => {
     const page = response.data
@@ -15,7 +16,7 @@ export const editorInit = ({ commit, state }, [route, callback = false]) => {
       commit(types.LOAD_PAGE, { page })
       const variationId = route.params.variationId || page.variations[0].id
       const variation = find(page.variations, v => v.id === parseInt(variationId))
-      loadVariation({ commit, state }, [variation, callback])
+      dispatch('loadVariation', [variation, callback])
     })
   })
 }
@@ -26,11 +27,12 @@ export const traficSplit = ({ commit }, traficWeights) => {
 }
 
 // 加载编辑内容
-export const loadVariation = ({ commit, state }, [variation, callback = false]) => {
+export const loadVariation = ({ commit, state, dispatch }, [variation, callback = false]) => {
   API.variation.get({ pageId: state.editor.page.id, id: variation.id }).then(response => {
     const content = JSON.parse(response.data.html_json)
     commit(types.LOAD_VARIATION, { variation, content })
     callback && callback()
+    dispatch('initAutoSavedContent', variation)
   })
 }
 
@@ -46,12 +48,12 @@ export const createEmptyVariation = ({ commit, state }, [pageId, callback = fals
 }
 
 // 复制版本
-export const duplicateVariation = ({ commit, state }, variation) => {
+export const duplicateVariation = ({ commit, state, dispatch }, variation) => {
   API.variation.duplicate({ pageId: state.editor.page.id, id: variation.id }, {}).then(response => {
     const variation = response.data
     variation.quota = 1
     commit(types.CREATE_VARIATION, { variation })
-    loadVariation({ commit, state }, [variation])
+    dispatch('loadVariation', [variation])
   })
 }
 
@@ -63,11 +65,11 @@ export const renameVariation = ({ commit, state }, [variation, newName]) => {
 }
 
 // 删除版本
-export const removeVariation = ({ commit, state }, variation) => {
+export const removeVariation = ({ commit, state, dispatch }, variation) => {
   API.variation.delete({ pageId: state.editor.page.id, id: variation.id }).then(response => {
     commit(types.REMOVE_VARIATION, { variation })
     if (variation.id === state.editor.workspace.activeVariation.id) {
-      loadVariation({ commit, state }, [state.editor.page.variations[0]])
+      dispatch('loadVariation', [state.editor.page.variations[0]])
     }
   })
 }
@@ -75,6 +77,30 @@ export const removeVariation = ({ commit, state }, variation) => {
 // 保存设置
 export const saveSettings = ({ commit }, settings) => {
   commit(types.SAVE_SETTINGS, { settings })
+}
+
+export const initAutoSavedContent = ({ state, commit, dispatch }, variation) => {
+  const json = contentCache.get(state.editor.page.id, variation.id)
+  if (json) {
+    dispatch('confirm', {
+      header: '在缓存中检测到上次未保存的修改',
+      content: '是否载入修改过的内容？',
+      onConfirm: () => {
+        try {
+          const content = JSON.parse(json)
+          commit(types.LOAD_VARIATION_CONTENT, content)
+        } catch (e) {
+        }
+      }
+    })
+  }
+}
+
+// 自动保存到浏览器缓存
+export const autoSave = ({ state, commit }) => {
+  commit(types.SAVE_CONTENT_STATE)
+  const { page, content, workspace: { activeVariation: variation }} = state.editor
+  contentCache.save(page, variation, content)
 }
 
 // 保存
@@ -85,6 +111,7 @@ export const saveVariation = ({ commit, state }, callback = false) => {
   API.variation.update(params, data).then(res => {
     commit(types.SAVE_VARIATION)
     callback && callback()
+    contentCache.remove(state.editor.page.id, state.editor.workspace.activeVariation.id)
   })
 }
 
@@ -105,14 +132,15 @@ export const publishPage = ({ commit, state }, successCb) => {
 }
 
 // 添加板块
-export const addSection = ({ commit }) => {
+export const addSection = ({ commit, dispatch }) => {
   const section = merge({}, defaultSection)
   commit(types.ADD_SECTION, { section })
-  commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // commit(types.SAVE_CONTENT_STATE)
 }
 
 // 调整板块次序
-export const moveSection = ({ commit, state }, [dir, sectionId]) => {
+export const moveSection = ({ commit, state, dispatch }, [dir, sectionId]) => {
   let targetId = sectionId
   const sourceId = sectionId
   if (dir === 'down' && sectionId < state.editor.content.sections.length - 1) {
@@ -123,20 +151,23 @@ export const moveSection = ({ commit, state }, [dir, sectionId]) => {
   }
   if (sourceId !== targetId) {
     commit(types.MOVE_SECTION, { sourceId, targetId })
-    commit(types.SAVE_CONTENT_STATE)
+    dispatch('autoSave')
+    // commit(types.SAVE_CONTENT_STATE)
   }
 }
 
 // 修改板块
-export const modifySection = ({ commit }, [sectionId, style]) => {
+export const modifySection = ({ commit, dispatch }, [sectionId, style]) => {
   commit(types.MODIFY_SECTION, { sectionId, style })
-  commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // commit(types.SAVE_CONTENT_STATE)
 }
 
 // 删除板块
-export const removeSection = ({ commit }, sectionId) => {
+export const removeSection = ({ commit, dispatch }, sectionId) => {
   commit(types.REMOVE_SECTION, { sectionId })
-  commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // commit(types.SAVE_CONTENT_STATE)
 }
 
 // 设置编辑状态中的板块
@@ -161,10 +192,11 @@ export const switchVersion = ({ commit }, version) => {
 }
 
 // 设置配色方案
-export const setColorSet = ({ commit, state }, colorSet) => {
+export const setColorSet = ({ commit, state, dispatch }, colorSet) => {
   if (colorSet !== state.editor.content.colorSet) {
     commit(types.SET_COLOR_SET, { colorSet })
-    commit(types.SAVE_CONTENT_STATE)
+    dispatch('autoSave')
+    // commit(types.SAVE_CONTENT_STATE)
   }
 }
 
@@ -174,14 +206,15 @@ export const setActiveElementId = ({ commit }, elementId) => {
 }
 
 // 删除元素
-export const removeElement = ({ commit, state }, [elementId, record = true]) => {
+export const removeElement = ({ commit, state, dispatch }, [elementId, record = true]) => {
   // 取得元素所在的板块ID
   const sectionIds = getSectionIds(state, elementId)
   commit(types.REMOVE_ELEMENT, { elementId, sectionIds })
-  record && commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // record && commit(types.SAVE_CONTENT_STATE)
 }
 
-export const removeElements = ({ commit, state }, elements) => {
+export const removeElements = ({ commit, state, dispatch }, elements) => {
   const len = elements.length
   for (let i = 0; i < len; i++) {
     const elementId = elements[i].id
@@ -191,12 +224,13 @@ export const removeElements = ({ commit, state }, elements) => {
       sectionIds
     })
   }
-  commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // commit(types.SAVE_CONTENT_STATE)
   commit(types.MULTI_SELECT_CLEAR)
 }
 
 // 移动元素
-export const moveElement = ({ commit, state }, [sectionId, elementId, positionInPage, elementHeight]) => {
+export const moveElement = ({ commit, state, dispatch }, [sectionId, elementId, positionInPage, elementHeight]) => {
   moveSingleElement(commit, state, {
     sectionId,
     id: elementId,
@@ -205,10 +239,11 @@ export const moveElement = ({ commit, state }, [sectionId, elementId, positionIn
       height: elementHeight
     }
   })
-  commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // commit(types.SAVE_CONTENT_STATE)
 }
 
-export const moveElements = ({ commit, state }, payload) => {
+export const moveElements = ({ commit, state, dispatch }, payload) => {
   const elements = payload.elements
   const count = elements.length
   if (count > 0) {
@@ -218,11 +253,12 @@ export const moveElements = ({ commit, state }, payload) => {
       element.positionInPage.top += payload.move.y
       moveSingleElement(commit, state, element)
     }
-    commit(types.SAVE_CONTENT_STATE)
+    dispatch('autoSave')
+    // commit(types.SAVE_CONTENT_STATE)
   }
 }
 
-export const alignMoveElements = ({ commit, state }, payload) => {
+export const alignMoveElements = ({ commit, state, dispatch }, payload) => {
   // 多选时候对齐移动元素
   const data = payload.data
   let count = 0
@@ -235,7 +271,8 @@ export const alignMoveElements = ({ commit, state }, payload) => {
     }
   }
   if (count > 0) {
-    commit(types.SAVE_CONTENT_STATE)
+    dispatch('autoSave')
+    // commit(types.SAVE_CONTENT_STATE)
   }
 }
 
@@ -268,7 +305,7 @@ const moveSingleElement = (commit, state, payload) => {
 }
 
 // 缩放元素
-export const resizeElement = ({ commit, state }, [elementId, newSize]) => {
+export const resizeElement = ({ commit, state, dispatch }, [elementId, newSize]) => {
   const newElement = merge({}, state.editor.content.elements[elementId])
   const oldHeight = newElement['style'][state.editor.workspace.version]['height']
   const height = (oldHeight && oldHeight !== 'auto') ? newSize.height + 'px' : 'auto'
@@ -277,21 +314,24 @@ export const resizeElement = ({ commit, state }, [elementId, newSize]) => {
   newElement.style[state.editor.workspace.version]['height'] = height
 
   commit(types.MODIFY_ELEMENT, { elementId, newElement })
-  commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // commit(types.SAVE_CONTENT_STATE)
 }
 
 // 修改元素层叠关系
-export const indexElement = ({ commit, state, getters }, [elementId, dir]) => {
+export const indexElement = ({ commit, state, getters, dispatch }, [elementId, dir]) => {
   indexOneElement({ commit, state, getters }, [elementId, dir])
-  commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // commit(types.SAVE_CONTENT_STATE)
 }
 
-export const indexOfElements = ({ commit, state, getters }, [elements, dir]) => {
+export const indexOfElements = ({ commit, state, getters, dispatch }, [elements, dir]) => {
   if (elements.length > 0) {
     elements.forEach(element => {
       indexOneElement({ commit, state, getters }, [element.id, dir])
     })
-    commit(types.SAVE_CONTENT_STATE)
+    dispatch('autoSave')
+    // commit(types.SAVE_CONTENT_STATE)
   }
 }
 
@@ -307,14 +347,15 @@ const indexOneElement = ({ commit, state, getters }, [elementId, dir]) => {
 }
 
 // 修改元素：需要删除属性的时候，只能用replace = true对元素进行整体替换
-export const modifyElement = ({ commit, state }, [elementId, newPropsObj, replace = false]) => {
+export const modifyElement = ({ commit, state, dispatch }, [elementId, newPropsObj, replace = false]) => {
   const newElement = replace ? merge({}, newPropsObj) : merge({}, state.editor.content.elements[elementId], newPropsObj)
   commit(types.MODIFY_ELEMENT, { elementId, newElement })
-  commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // commit(types.SAVE_CONTENT_STATE)
 }
 
 // 添加元素
-export const addElement = ({ commit, state, getters }, [type, position]) => {
+export const addElement = ({ commit, state, getters, dispatch }, [type, position]) => {
   // 如果还没有板块，那么新建一个板块
   if (state.editor.content.sections.length === 0) {
     addSection({ commit })
@@ -356,11 +397,11 @@ export const addElement = ({ commit, state, getters }, [type, position]) => {
   element.style.mobile.zIndex = getters.elementsIndex.mobile.max
 
   commit(types.ADD_ELEMENT, { sectionId, element })
-  type !== 'image' && commit(types.SAVE_CONTENT_STATE)
+  type !== 'image' && dispatch('autoSave') // commit(types.SAVE_CONTENT_STATE)
 }
 
 // 复制元素
-export const duplicateElement = ({ commit, state, getters }, elementId) => {
+export const duplicateElement = ({ commit, state, getters, dispatch }, elementId) => {
   const sectionIds = getSectionIds(state, elementId)
 
   const newElement = merge({}, state.editor.content.elements[elementId])
@@ -389,7 +430,8 @@ export const duplicateElement = ({ commit, state, getters }, elementId) => {
   newElement.style.mobile.top = (parseInt(newElement.style.mobile.top) + 20) + 'px'
 
   commit(types.DUPULICATE_ELEMENT, { newElement, sectionIds })
-  commit(types.SAVE_CONTENT_STATE)
+  dispatch('autoSave')
+  // commit(types.SAVE_CONTENT_STATE)
 }
 
 // 获取元素所在的板块Id

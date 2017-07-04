@@ -54,41 +54,46 @@ const state = {
   }
 }
 
+const defaultContent = {
+  settings: {
+    seo: {
+      pageTitle: '',
+      keywords: '',
+      description: ''
+    },
+    goals: [],
+    code: {
+      header: '',
+      bodyIn: '',
+      bodyOut: ''
+    },
+    style: {
+      width: {
+        pc: 960,
+        mobile: 360
+      }
+    }
+  },
+  colorSet: ['#FCFFF5', '#D1DBBD', '#91AA9D', '#3E606F', '#193441'],
+  sections: [],
+  elements: {}
+}
+
 const mutations = {
   [types.LOAD_PAGE] (state, { page }) {
     state.page = merge({}, page)
   },
 
   [types.LOAD_VARIATION] (state, { variation, content }) {
-    const defaultContent = {
-      settings: {
-        seo: {
-          pageTitle: '',
-          keywords: '',
-          description: ''
-        },
-        goals: [],
-        code: {
-          header: '',
-          bodyIn: '',
-          bodyOut: ''
-        },
-        style: {
-          width: {
-            pc: 960,
-            mobile: 360
-          }
-        }
-      },
-      colorSet: ['#FCFFF5', '#D1DBBD', '#91AA9D', '#3E606F', '#193441'],
-      sections: [],
-      elements: {}
-    }
     state.workspace.activeVariation = variation
     state.content = merge({}, defaultContent, content)
     state.history.states = [merge({}, state.content)]
     state.history.index = 0
     state.history.saved = merge({}, state.content)
+  },
+
+  [types.LOAD_VARIATION_CONTENT] (state, content) {
+    state.content = merge({}, defaultContent, content)
   },
 
   // 保存
