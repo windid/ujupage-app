@@ -1,4 +1,5 @@
-import { STORAGE_KEY_PREFIX } from '../../config/constants'
+// localStorage缓存key前缀
+const STORAGE_KEY_PREFIX = 'editor_content_'
 
 export default {
   save (page, variation, content) {
