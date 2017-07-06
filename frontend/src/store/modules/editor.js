@@ -92,6 +92,7 @@ const mutations = {
     state.history.saved = merge({}, state.content)
   },
 
+  // 只载入当前页面版本的内容
   [types.LOAD_VARIATION_CONTENT] (state, content) {
     state.content = merge({}, defaultContent, content)
   },

@@ -79,6 +79,7 @@ export const saveSettings = ({ commit }, settings) => {
   commit(types.SAVE_SETTINGS, { settings })
 }
 
+// 在页面加载之后检测是否有缓存内容
 export const initAutoSavedContent = ({ state, commit, dispatch }, variation) => {
   const json = contentCache.get(state.editor.page.id, variation.id)
   if (json) {
