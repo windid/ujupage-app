@@ -48,9 +48,16 @@ export default {
     }
   },
   mounted () {
-    const w = getScrollbarWidth()
-    this.height += Math.floor(w * this.height / this.width)
-    this.width += w
+    const iframe = document.querySelector('.mobile-iframe')
+    const frameWindow = iframe.contentWindow
+    frameWindow.onload = () => {
+      const body = iframe.contentDocument.body
+      if (body.offsetHeight > frameWindow.innerHeight) {
+        const w = getScrollbarWidth()
+        this.height += Math.floor(w * this.height / this.width)
+        this.width += w
+      }
+    }
   }
 }
 </script>
