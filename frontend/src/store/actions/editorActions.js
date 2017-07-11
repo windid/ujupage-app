@@ -4,7 +4,7 @@ import { merge, cloneDeep, find } from 'lodash'
 import elementTypes from '../../config/editorElementTypes'
 import defaultSection from '../../config/editorSection'
 import { getScrollTop } from 'utils/ui'
-import contentCache from 'utils/editor/contentCache'
+import { pageContentCache, pageVersionCache } from 'utils/cache.js'
 
 // 数据初始化，在路由中调用
 export const editorInit = ({ commit, state, dispatch }, [route, callback = false]) => {
@@ -17,6 +17,7 @@ export const editorInit = ({ commit, state, dispatch }, [route, callback = false
       const variationId = route.params.variationId || page.variations[0].id
       const variation = find(page.variations, v => v.id === parseInt(variationId))
       dispatch('loadVariation', [variation, callback])
+      dispatch('initVersion', variation)
     })
   })
 }
@@ -81,7 +82,7 @@ export const saveSettings = ({ commit }, settings) => {
 
 // 在页面加载之后检测是否有缓存内容
 export const initAutoSavedContent = ({ state, commit, dispatch }, variation) => {
-  const json = contentCache.get(state.editor.page.id, variation.id)
+  const json = pageContentCache.get(state.editor.page.id, variation.id)
   if (json) {
     dispatch('confirm', {
       header: '在缓存中检测到上次未保存的修改',
@@ -101,7 +102,7 @@ export const initAutoSavedContent = ({ state, commit, dispatch }, variation) => 
 export const autoSave = ({ state, commit }) => {
   commit(types.SAVE_CONTENT_STATE)
   const { page, content, workspace: { activeVariation: variation }} = state.editor
-  contentCache.save(page, variation, content)
+  pageContentCache.save(page, variation, content)
 }
 
 // 保存
@@ -112,7 +113,7 @@ export const saveVariation = ({ commit, state }, callback = false) => {
   API.variation.update(params, data).then(res => {
     commit(types.SAVE_VARIATION)
     callback && callback()
-    contentCache.remove(state.editor.page.id, state.editor.workspace.activeVariation.id)
+    pageContentCache.remove(state.editor.page.id, state.editor.workspace.activeVariation.id)
   })
 }
 
@@ -187,9 +188,18 @@ export const undo = ({ commit }) => commit(types.UNDO)
 // 重做
 export const redo = ({ commit }) => commit(types.REDO)
 
+// 根据浏览器缓存初始化版本(桌面/移动)
+export function initVersion ({ state, commit }, variation) {
+  const version = pageVersionCache.get(state.editor.page.id, variation.id)
+  if (version) {
+    commit(types.SWITCH_VERSION, { version })
+  }
+}
+
 // 在移动和桌面版本间切换
-export const switchVersion = ({ commit }, version) => {
+export const switchVersion = ({ state, commit }, version) => {
   commit(types.SWITCH_VERSION, { version })
+  pageVersionCache.save(state.editor.page, state.editor.workspace.activeVariation, version)
 }
 
 // 设置配色方案
