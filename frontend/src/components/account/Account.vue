@@ -66,7 +66,8 @@ export default {
       this.$refs.file.value = null
       this.$refs.file.click()
     },
-    avatarLoad (event) {
+    avatarLoad () {
+      const URL = window.URL || window.webkitURL
       const image = this.$refs.file.files[0]
       var img = document.createElement('img')
       img.onload = () => {
@@ -90,14 +91,14 @@ export default {
               this.editDone()
             }
           }).catch(() => {
-            console.error('用户头像上传失败')
             this.showMessage(this.messages.avatarFail)
           }).finally(() => {
             loader.close()
           })
         }
+        // 释放 object url
+        URL.revokeObjectURL(img.src)
       }
-      const URL = window.URL || window.webkitURL
       img.src = URL.createObjectURL(image)
     },
     showMessage (message) {
