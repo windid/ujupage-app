@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="showAuthDialog" size="tiny" @close="onClose">
+  <el-dialog v-model="showAuthDialog" size="tiny">
     <div v-if="showLogin">
       <div class="auth-header">登陆</div>
       <login-form @pass="onPass"></login-form>
@@ -40,14 +40,16 @@ export default {
   },
   computed: {
     ...mapGetters(['authDialog']),
-    showAuthDialog () {
-      return this.authDialog.show
+    showAuthDialog: {
+      get () {
+        return this.authDialog.show
+      },
+      set (val) {
+        this.$store.commit(types.SET_AUTH_DIALOG, val)
+      }
     }
   },
   methods: {
-    onClose () {
-      this.$store.commit(types.SET_AUTH_DIALOG, false)
-    },
     onPass () {
       this.$store.commit(types.SET_AUTH_DIALOG, false)
       this.authDialog.onPass()

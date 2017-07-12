@@ -27,7 +27,7 @@ const AppInit = () => {
       request.headers.map['X-XSRF-TOKEN'] = [xsrfToken]
     }
     next(response => {
-      if (response.status === 401 && store.getters.isLogin) {
+      if (response.status === 401 && store.getters.isLogin && !request.slient) {
         return new Promise(resolve => {
           store.dispatch('requireLogin', {
             onPass () {

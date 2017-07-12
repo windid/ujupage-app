@@ -64,7 +64,7 @@ export default {
     // 修改用户信息，头像等
     edit (data) {
       const url = 'auth/account/update'
-      return Vue.http.post(url, data)
+      return Vue.http.post(url, data, { slient: true })
     }
   }
 }

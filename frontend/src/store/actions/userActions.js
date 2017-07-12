@@ -11,7 +11,6 @@ export const requireLogin = ({ commit }, { onPass, onFail }) => {
     onPass,
     onFail
   })
-  commit(types.LOG_OUT)
 }
 
 export const login = ({ commit }, form) => {
