@@ -12,15 +12,15 @@ const KEY_PREFIX = {
  */
 function cacheCreator (prefix, serialize, deserialize) {
   return {
-    save (page, variation, content) {
-      localStorage.setItem(`${prefix}${page.id}_${variation.id}`, serialize ? serialize(content) : content)
+    save (key, content) {
+      localStorage.setItem(`${prefix}${key}`, serialize ? serialize(content) : content)
     },
-    get (pageId, variationId) {
-      const content = localStorage.getItem(`${prefix}${pageId}_${variationId}`)
+    get (key) {
+      const content = localStorage.getItem(`${prefix}${key}`)
       return deserialize ? deserialize(content) : content
     },
-    remove (pageId, variationId) {
-      localStorage.removeItem(`${prefix}${pageId}_${variationId}`)
+    remove (key) {
+      localStorage.removeItem(`${prefix}${key}`)
     }
   }
 }

@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     onPass () {
-      this.$store.commit(types.SET_AUTH_DIALOG, false)
+      this.showAuthDialog = false
       this.authDialog.onPass()
     },
     toggleForm () {

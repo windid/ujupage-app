@@ -82,7 +82,7 @@ export const saveSettings = ({ commit }, settings) => {
 
 // 在页面加载之后检测是否有缓存内容
 export const initAutoSavedContent = ({ state, commit, dispatch }, variation) => {
-  const json = pageContentCache.get(state.editor.page.id, variation.id)
+  const json = pageContentCache.get(`${state.editor.page.id}_${variation.id}`)
   if (json) {
     dispatch('confirm', {
       header: '在缓存中检测到上次未保存的修改',
@@ -102,7 +102,7 @@ export const initAutoSavedContent = ({ state, commit, dispatch }, variation) => 
 export const autoSave = ({ state, commit }) => {
   commit(types.SAVE_CONTENT_STATE)
   const { page, content, workspace: { activeVariation: variation }} = state.editor
-  pageContentCache.save(page, variation, content)
+  pageContentCache.save(`${page.id}_${variation.id}`, content)
 }
 
 // 保存
@@ -113,7 +113,7 @@ export const saveVariation = ({ commit, state }, callback = false) => {
   API.variation.update(params, data).then(res => {
     commit(types.SAVE_VARIATION)
     callback && callback()
-    pageContentCache.remove(state.editor.page.id, state.editor.workspace.activeVariation.id)
+    pageContentCache.remove(`${state.editor.page.id}_${state.editor.workspace.activeVariation.id}`)
   })
 }
 
@@ -190,7 +190,7 @@ export const redo = ({ commit }) => commit(types.REDO)
 
 // 根据浏览器缓存初始化版本(桌面/移动)
 export function initVersion ({ state, commit }, variation) {
-  const version = pageVersionCache.get(state.editor.page.id, variation.id)
+  const version = pageVersionCache.get(state.editor.page.id)
   if (version) {
     commit(types.SWITCH_VERSION, { version })
   }
@@ -199,7 +199,7 @@ export function initVersion ({ state, commit }, variation) {
 // 在移动和桌面版本间切换
 export const switchVersion = ({ state, commit }, version) => {
   commit(types.SWITCH_VERSION, { version })
-  pageVersionCache.save(state.editor.page, state.editor.workspace.activeVariation, version)
+  pageVersionCache.save(state.editor.page.id, version)
 }
 
 // 设置配色方案
