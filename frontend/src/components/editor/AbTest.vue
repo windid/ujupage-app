@@ -35,7 +35,6 @@ export default {
     duplicate (variation) {
       this.duplicateVariation(variation).then(newVariation => {
         this.getVariation(newVariation)
-        // this.$router.push({ name: 'variation', params: { variationId: newVariation.id }})
       })
       this.show = false
     },
@@ -60,7 +59,6 @@ export default {
     },
     switchVariation (variation) {
       this.getVariation(variation)
-      // this.$router.push({ name: 'variation', params: { pageId: this.$route.params.pageId, variationId: variation.id }})
       this.show = false
     },
     getVariation (variation, replace) {
