@@ -33,7 +33,10 @@ export default {
       })
     },
     duplicate (variation) {
-      this.duplicateVariation(variation)
+      this.duplicateVariation(variation).then(newVariation => {
+        this.getVariation(newVariation)
+        // this.$router.push({ name: 'variation', params: { variationId: newVariation.id }})
+      })
       this.show = false
     },
     remove (variation) {
@@ -48,14 +51,25 @@ export default {
         header: '确定删除？',
         content: '「' + variation.name + '」将被删除，其流量配额将按比例分配给其他版本',
         onConfirm: () => {
-          this.removeVariation(variation)
+          this.removeVariation(variation).then(current => {
+            this.getVariation(current, true /* replace */)
+          })
           this.show = false
         }
       })
     },
     switchVariation (variation) {
-      this.$router.push({ name: 'variation', params: { pageId: this.$route.params.pageId, variationId: variation.id }})
+      this.getVariation(variation)
+      // this.$router.push({ name: 'variation', params: { pageId: this.$route.params.pageId, variationId: variation.id }})
       this.show = false
+    },
+    getVariation (variation, replace) {
+      const route = { name: 'variation', params: { variationId: variation.id }}
+      if (replace) {
+        this.$router.replace(route)
+      } else {
+        this.$router.push(route)
+      }
     }
   },
   computed: {

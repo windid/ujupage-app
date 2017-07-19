@@ -50,11 +50,12 @@ export const createEmptyVariation = ({ commit, state }, [pageId, callback = fals
 
 // 复制版本
 export const duplicateVariation = ({ commit, state, dispatch }, variation) => {
-  API.variation.duplicate({ pageId: state.editor.page.id, id: variation.id }, {}).then(response => {
+  return API.variation.duplicate({ pageId: state.editor.page.id, id: variation.id }, {}).then(response => {
     const variation = response.data
     variation.quota = 1
     commit(types.CREATE_VARIATION, { variation })
-    dispatch('loadVariation', [variation])
+    // dispatch('loadVariation', [variation])
+    return variation
   })
 }
 
@@ -67,11 +68,13 @@ export const renameVariation = ({ commit, state }, [variation, newName]) => {
 
 // 删除版本
 export const removeVariation = ({ commit, state, dispatch }, variation) => {
-  API.variation.delete({ pageId: state.editor.page.id, id: variation.id }).then(response => {
+  return API.variation.delete({ pageId: state.editor.page.id, id: variation.id }).then(response => {
     commit(types.REMOVE_VARIATION, { variation })
-    if (variation.id === state.editor.workspace.activeVariation.id) {
-      dispatch('loadVariation', [state.editor.page.variations[0]])
+    const activeVariation = state.editor.workspace.activeVariation
+    if (variation.id === activeVariation.id) {
+      return state.editor.page.variations[0]
     }
+    return activeVariation
   })
 }
 
