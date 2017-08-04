@@ -193,9 +193,12 @@ export const redo = ({ commit }) => commit(types.REDO)
 
 // 根据浏览器缓存初始化版本(桌面/移动)
 export function initVersion ({ state, commit }, variation) {
-  const version = pageVersionCache.get(state.editor.page.id)
+  const { page, workspace } = state.editor
+  const version = pageVersionCache.get(page.id)
   if (version) {
     commit(types.SWITCH_VERSION, { version })
+  } else if (!page.is_compat && workspace.version === 'pc') {
+    commit(types.SWITCH_VERSION, { version: 'mobile' })
   }
 }
 

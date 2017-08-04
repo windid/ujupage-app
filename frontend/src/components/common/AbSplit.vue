@@ -92,7 +92,7 @@
   <modal :show="show" @close="$emit('close')" width="300px" height="500px">
     <h4 slot="header">版本流量分配</h4>
     <div slot="body">
-      <div v-for="(variation, index) in variations" class="form-inline var-item">
+      <div v-for="(variation, index) in variations" :key="variation.id" class="form-inline var-item">
         <div class="form-group var-name">
           <label>{{variation.name}}</label>
         </div>
